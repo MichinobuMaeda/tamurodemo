@@ -89,8 +89,8 @@ export const User = mongoose.model('User', UserSchema)
 
 const GroupSchema = new Schema({
   name: { type: String, required: true, unique: true },
-  groups: { type: Array, 'default': [] },
-  users:  { type: Array, 'default': [] },
+  gids: { type: Array, 'default': [] },
+  uids: { type: Array, 'default': [] },
 }, {
   versionKey: 'ver',
 })
@@ -98,28 +98,28 @@ const GroupSchema = new Schema({
 GroupSchema.statics.build = (obj) => {
   if (!isObject(obj)) return { errors: [err.required('')] }
   let errors = []
-  let { name, groups, users } = obj
+  let { name, gids, uids } = obj
   if (!isStringRequired(name)) {
     errors.push(err.required('name'))
   }
-  groups = buildArray(groups)
-  errors = groups.reduce((ret, cur, i) => {
+  gids = buildArray(gids)
+  errors = gids.reduce((ret, cur, i) => {
     if (!isStringRequired(cur)) {
-      errors.push(err.required(`groups.${i}`))
+      errors.push(err.required(`gids.${i}`))
     }
     return ret
   }, errors)
-  users = buildArray(users)
-  errors = users.reduce((ret, cur, i) => {
+  uids = buildArray(uids)
+  errors = uids.reduce((ret, cur, i) => {
     if (!isStringRequired(cur)) {
-      errors.push(err.required(`users.${i}`))
+      errors.push(err.required(`uids.${i}`))
     }
     return ret
   }, errors)
   return errors.length ? { errors: errors } : {
     name: name,
-    groups: groups,
-    users: users,
+    gids: gids,
+    uids: uids,
   }
 }
 
@@ -130,15 +130,15 @@ GroupSchema.statics.validate = async function(obj) {
   if (0 < (await Group.count({ name: ret.name, _id: { $ne: obj._id } }))) {
     errors.push(err.unique('name'))
   }
-  errors = await ret.groups.reduce(async (base, cur, i) => {
+  errors = await ret.gids.reduce(async (base, cur, i) => {
     if (0 == (await Group.count({ _id: cur }))) {
-      base.push(err.reference(`groups.${i}`))
+      base.push(err.reference(`gids.${i}`))
     }
     return base
   }, errors)
-  errors = await ret.users.reduce(async (base, cur, i) => {
+  errors = await ret.uids.reduce(async (base, cur, i) => {
     if (0 == (await User.count({ _id: cur }))) {
-      base.push(err.reference(`users.${i}`))
+      base.push(err.reference(`uids.${i}`))
     }
     return base
   }, errors)
@@ -198,7 +198,7 @@ PrimSchema.statics.build = function(obj) {
 export const Prim = mongoose.model('Prim', PrimSchema)
 
 const CredSchema = new Schema({
-  user:     { type: String, required: true },
+  uid:     { type: String, required: true },
   provider: { type: String, required: true },
   authId:   { type: String, required: true },
   attr: Schema.Types.Mixed,
@@ -206,16 +206,16 @@ const CredSchema = new Schema({
   versionKey: 'ver',
 })
 
-CredSchema.index({ user: 1, provider: 1 }, { unique: true })
+CredSchema.index({ uid: 1, provider: 1 }, { unique: true })
 
 CredSchema.index({ provider: 1, authId: 1 }, { unique: true })
 
 CredSchema.statics.build = function(obj) {
   if (!isObject(obj)) return { errors: [err.required('')] }
   let errors = []
-  let { user, provider, authId, attr } = obj
-  if (!isStringRequired(user)) {
-    errors.push(err.required('user'))
+  let { uid, provider, authId, attr } = obj
+  if (!isStringRequired(uid)) {
+    errors.push(err.required('uid'))
   }
   if (!isStringRequired(provider)) {
     errors.push(err.required('provider'))
@@ -232,7 +232,7 @@ CredSchema.statics.build = function(obj) {
     errors.push(err.required('authId'))
   }
   return errors.length ? { errors: errors } : {
-    user: user,
+    uid: uid,
     provider: provider,
     authId: authId,
     attr: attr,
@@ -243,12 +243,12 @@ CredSchema.statics.validate = async function(obj) {
   let ret = Cred.build(obj)
   if (ret.errors) { return ret }
   let errors = []
-  if (0 == (await User.count({ _id: obj.user }))) {
-    errors.push(err.reference('user'))
+  if (0 == (await User.count({ _id: obj.uid }))) {
+    errors.push(err.reference('uid'))
   } else if (0 < (await Cred.count({
       provider: obj.provider,
       authId: obj.authId,
-      user: { $ne: obj.user }
+      uid: { $ne: obj.uid }
     }))) {
     errors.push(err.unique('authId'))
   }
@@ -266,7 +266,7 @@ CredSchema.statics.update = async function(obj) {
   if (ret.errors) { return ret }
   ret.ver = obj.ver + 1
   ret = await Cred.findOneAndUpdate({
-    user: obj.user,
+    uid: obj.uid,
     provider: obj.provider,
     ver: obj.ver,
   }, ret)
@@ -275,7 +275,7 @@ CredSchema.statics.update = async function(obj) {
 
 CredSchema.statics.delete = async function(obj) {
   let ret = await Cred.findOneAndRemove({
-    user: obj.user,
+    uid: obj.uid,
     provider: obj.provider,
     ver: obj.ver,
   })
@@ -285,9 +285,9 @@ CredSchema.statics.delete = async function(obj) {
 export const Cred =  mongoose.model('Cred', CredSchema)
 
 const SessionSchema = new Schema({
-  user:     { type: String, require: true },
+  uid:      { type: String, require: true },
   provider: { type: String, require: true },
-  groups:   { type: Array, 'default': [] },
+  gids:     { type: Array, 'default': [] },
   admin:    { type: Boolean, 'default': false },
   manager:  { type: Boolean, 'default': false },
   createdAt:{ type: Date, index: true },
@@ -298,22 +298,22 @@ const SessionSchema = new Schema({
 
 SessionSchema.statics.build = async function(obj) {
   if (!isObject(obj)) return { errors: [err.required('')] }
-  let { user, provider } = obj
+  let { uid, provider } = obj
   let errors = []
-  if (!isStringRequired(user)) {
-    errors.push(err.string('user'))
+  if (!isStringRequired(uid)) {
+    errors.push(err.string('uid'))
   }
   if (!isStringRequired(provider)) {
     errors.push(err.string('provider'))
   }
   let prim = await Prim.findOne({}).exec()
-  let groups = await getGroups(user)
+  let gids = await getGroups(uid)
   return errors.length ? { errors: errors } : {
-    user: user,
+    uid: uid,
     provider: provider,
-    groups: groups,
-    admin: (groups.indexOf(prim.admin) > -1),
-    manager: (groups.indexOf(prim.manager) > -1),
+    gids: gids,
+    admin: (gids.indexOf(prim.admin) > -1),
+    manager: (gids.indexOf(prim.manager) > -1),
     createdAt: new Date(),
   }
 }
@@ -322,10 +322,10 @@ SessionSchema.statics.validate = async function(obj) {
   let ret = await Session.build(obj)
   if (ret.errors) { return ret }
   let errors = []
-  if (0 == (await User.count({ _id: obj.user }))) {
-    errors.push(err.reference('user'))
+  if (0 == (await User.count({ _id: obj.uid }))) {
+    errors.push(err.reference('uid'))
   }
-  if (0 == (await Cred.count({ user: obj.user, provider: obj.provider }))) {
+  if (0 == (await Cred.count({ uid: obj.uid, provider: obj.provider }))) {
     errors.push(err.reference('provider'))
   }
   return errors.length ? { errors: errors } : ret
@@ -347,15 +347,15 @@ export const Session = mongoose.model('Session', SessionSchema)
 export async function getGroups(id) {
   let ret = []
   if (!id) { return ret }
-  let groups = []
+  let gids = []
   if (Object.prototype.toString.call(id) !== '[object Array]') {
-    groups = (await Group.find({ users: id.toString() }).exec())
+    gids = (await Group.find({ uids: id.toString() }).exec())
   } else {
     ret = ret.concat(id)
-    groups = await Group.find({ groups: { $in: id }}).exec()
+    gids = await Group.find({ gids: { $in: id }}).exec()
   }
-  groups = groups.map(g => g._id.toString()).filter(v => ret.indexOf(v) < 0)
-  return groups.length == 0 ? ret : getGroups(ret.concat(groups))
+  gids = gids.map(g => g._id.toString()).filter(v => ret.indexOf(v) < 0)
+  return gids.length == 0 ? ret : getGroups(ret.concat(gids))
 }
 
 export const Log = mongoose.model('Log', new Schema({

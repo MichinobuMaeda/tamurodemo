@@ -92,12 +92,9 @@ export default class Service {
       })
 
       .put('/users/:uid/ver/:ver', this.authSelfOrManager, async (ctx) => {
-        if (ctx.request.body._id != ctx.params.uid) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('uid') ] })
-          return
-        }
-        if (ctx.request.body.ver != ctx.params.ver) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('ver') ] })
+        let errors = this.isMatchBodyAndParam(ctx)
+        if (errors) {
+          ctx.body = JSON.stringify({ errors: errors })
           return
         }
         ctx.body = JSON.stringify(await User.update(ctx.request.body))
@@ -116,12 +113,9 @@ export default class Service {
       })
 
       .put('/groups/:gid/ver/:ver', this.authManager, async (ctx) => {
-        if (ctx.request.body._id != ctx.params.gid) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('gid') ] })
-          return
-        }
-        if (ctx.request.body.ver != ctx.params.ver) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('ver') ] })
+        let errors = this.isMatchBodyAndParam(ctx)
+        if (errors) {
+          ctx.body = JSON.stringify({ errors: errors })
           return
         }
         ctx.body = JSON.stringify(await Group.update(ctx.request.body))
@@ -138,7 +132,7 @@ export default class Service {
         }
         let user = await User.create(ctx.request.body)
         let parent = await Group.findById(ctx.params.gid)
-        parent.users = [user._id.toString()].concat(parent.users)
+        parent.uids = [user._id.toString()].concat(parent.uids)
         await parent.save()
         ctx.body = JSON.stringify(user)
       })
@@ -149,7 +143,7 @@ export default class Service {
           ctx.body = JSON.stringify({ errors: [ err.reference('gid') ] })
           return
         }
-        ctx.body = JSON.stringify(await User.find({ _id: { $in: parent.users } }))
+        ctx.body = JSON.stringify(await User.find({ _id: { $in: parent.uids } }))
       })
 
       .post('/groups/:gid/groups', this.authManager, async (ctx) => {
@@ -159,7 +153,7 @@ export default class Service {
         }
         let group = await Group.create(ctx.request.body)
         let parent = await Group.findById(ctx.params.gid)
-        parent.groups = [group._id.toString()].concat(parent.groups)
+        parent.gids = [group._id.toString()].concat(parent.gids)
         await parent.save()
         ctx.body = JSON.stringify(group)
       })
@@ -170,20 +164,13 @@ export default class Service {
           ctx.body = JSON.stringify({ errors: [ err.reference('gid') ] })
           return
         }
-        ctx.body = JSON.stringify(await Group.find({ _id: { $in: parent.groups } }))
+        ctx.body = JSON.stringify(await Group.find({ _id: { $in: parent.gids } }))
       })
 
       .post('/users/:uid/creds/:provider', this.authSelfOrManager, async (ctx) => {
-        if (ctx.request.body.user != ctx.params.uid) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('uid') ] })
-          return
-        }
-        if (ctx.request.body.provider != ctx.params.provider) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('provider') ] })
-          return
-        }
-        if (!(await User.count({ _id: ctx.params.uid }))) {
-          ctx.body = JSON.stringify({ errors: [ err.reference('uid') ] })
+        let errors = this.isMatchBodyAndParam(ctx)
+        if (errors) {
+          ctx.body = JSON.stringify({ errors: errors })
           return
         }
         if (ctx.request.body.provider == prv.password && ctx.request.body.attr) {
@@ -201,7 +188,7 @@ export default class Service {
           ctx.body = JSON.stringify({ errors: [ err.reference('uid') ] })
           return
         }
-        let res = await Cred.find({ user: ctx.params.uid })
+        let res = await Cred.find({ uid: ctx.params.uid })
         ctx.body = JSON.stringify(res.map(cred => {
           if (cred.provider == prv.password && cred.attr) {
             cred.attr.password = null
@@ -211,20 +198,9 @@ export default class Service {
       })
 
       .put('/users/:uid/creds/:provider/ver/:ver', this.authSelfOrManager, async (ctx) => {
-        if (ctx.request.body.user != ctx.params.uid) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('uid') ] })
-          return
-        }
-        if (ctx.request.body.provider != ctx.params.provider) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('provider') ] })
-          return
-        }
-        if (ctx.request.body.ver != ctx.params.ver) {
-          ctx.body = JSON.stringify({ errors: [ err.conflict('ver') ] })
-          return
-        }
-        if (!(await User.count({ _id: ctx.params.uid }))) {
-          ctx.body = JSON.stringify({ errors: [ err.reference('uid') ] })
+        let errors = this.isMatchBodyAndParam(ctx)
+        if (errors) {
+          ctx.body = JSON.stringify({ errors: errors })
           return
         }
         if (ctx.request.body.provider == prv.password && ctx.request.body.attr) {
@@ -239,7 +215,7 @@ export default class Service {
 
       .del('/users/:uid/creds/:provider/ver/:ver', this.authSelfOrManager, async (ctx) => {
         ctx.body = JSON.stringify(await Cred.delete({
-          user: ctx.params.uid,
+          uid: ctx.params.uid,
           provider: ctx.params.provider,
           ver: ctx.params.ver
         }))
@@ -276,7 +252,7 @@ export default class Service {
       log.info(`POST /session FAILED: provider:${provider}, authId:${authId}`)
       return { errors: [err.auth('')] }
     }
-    password = password ? this.digestPassword(cred.user, password) : null
+    password = password ? this.digestPassword(cred.uid, password) : null
     if (provider == prv.password) {
       if (cred.authId != authId || !cred.attr || cred.attr.password != password) {
         log.info(`POST /session FAILED: provider:${provider}, authId:${authId} password:*********`)
@@ -286,7 +262,7 @@ export default class Service {
       log.info(`POST /session FAILED: provider:${provider}, authId:${authId}`)
       return { errors: [err.auth('')] }
     }
-    log.info(`POST /session SUCCESS: user:${cred.user}`)
+    log.info(`POST /session SUCCESS: uid:${cred.uid}`)
     return await Session.create(cred)
   }
 
@@ -314,9 +290,9 @@ export default class Service {
     admin = new Group(admin)
     manager = new Group(manager)
     user = new User(user)
-    top.groups = [admin._id.toString(), manager._id.toString()]
-    admin.users = [user._id.toString()]
-    manager.users = [user._id.toString()]
+    top.gids = [admin._id.toString(), manager._id.toString()]
+    admin.uids = [user._id.toString()]
+    manager.uids = [user._id.toString()]
     let prim = Prim.build({
       top: top._id.toString(),
       admin: admin._id.toString(),
@@ -328,7 +304,7 @@ export default class Service {
       attr.password = this.digestPassword(user._id.toString(), attr.password)
     }
     let cred = Cred.build({
-      user: user._id.toString(),
+      uid: user._id.toString(),
       provider: provider,
       authId: authId,
       attr: attr,
@@ -355,9 +331,9 @@ export default class Service {
     return ret.length ? (target ? target.concat(ret) : ret) : target
   }
 
-  digestPassword(user, password) {
+  digestPassword(uid, password) {
     let hash = crypto.createHash('sha256')
-    hash.update(`${user}:${this.conf.seed}:${password}`)
+    hash.update(`${uid}:${this.conf.seed}:${password}`)
     return hash.digest('hex')
   }
 
@@ -392,10 +368,36 @@ export default class Service {
   async authSelfOrManager(ctx, next) {
     if (!ctx.session) {
       ctx.body = JSON.stringify({ errors: [ err.signin('') ] })
-    } else if ((!ctx.session.manager) && (ctx.params.uid != ctx.session.user)) {
+    } else if ((!ctx.session.manager) && (ctx.params.uid != ctx.session.uid)) {
       ctx.body = JSON.stringify({ errors: [ err.priv('manager|uid') ] })
     } else {
       await next()
     }
+  }
+
+  isMatchBodyAndParam(ctx) {
+    let errors = []
+    if (ctx.request.body.uid && ctx.params.uid) {
+      if (ctx.request.body.uid != ctx.params.uid) {
+        errors.push(err.conflict('uid'))
+      }
+    } else if (ctx.request.body._id && ctx.params.uid) {
+      if (ctx.request.body._id != ctx.params.uid) {
+        errors.push(err.conflict('uid'))
+      }
+    } else if (ctx.request.body._id && ctx.params.gid) {
+      if (ctx.request.body._id != ctx.params.gid) {
+        errors.push(err.conflict('gid'))
+      }
+    }
+    if (ctx.request.body.provider && ctx.params.provider &&
+        ctx.request.body.provider != ctx.params.provider) {
+      errors.push(err.conflict('provider'))
+    }
+    if ((ctx.request.body.ver || ctx.request.body.ver === 0) && ctx.params.ver &&
+        ctx.request.body.ver != ctx.params.ver) {
+      errors.push(err.conflict('ver'))
+    }
+    return errors.length ? errors : null
   }
 }

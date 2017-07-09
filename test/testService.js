@@ -65,36 +65,36 @@ describe('Service', function() {
       expect(srv.appendNestedErrors([], [], 'top')).to.have.deep.members([])
       expect(srv.appendNestedErrors([
         { path: 'name', error: 'required' },
-        { path: 'groups', error: 'array' },
+        { path: 'gids', error: 'array' },
       ], [], 'top')).to.have.deep.members([
         { path: 'name', error: 'required' },
-        { path: 'groups', error: 'array' },
+        { path: 'gids', error: 'array' },
       ])
       expect(srv.appendNestedErrors([
         { path: 'name', error: 'required' },
-        { path: 'groups', error: 'array' },
+        { path: 'gids', error: 'array' },
       ], null, 'top')).to.have.deep.members([
         { path: 'name', error: 'required' },
-        { path: 'groups', error: 'array' },
+        { path: 'gids', error: 'array' },
       ])
       expect(srv.appendNestedErrors([
         { path: 'name', error: 'required' },
-        { path: 'groups', error: 'array' },
+        { path: 'gids', error: 'array' },
       ], [
         { path: 'name', error: 'string' },
-        { path: 'users', error: 'array' },
+        { path: 'uids', error: 'array' },
       ], 'top')).to.have.deep.members([
         { path: 'name', error: 'required' },
-        { path: 'groups', error: 'array' },
+        { path: 'gids', error: 'array' },
         { path: 'top.name', error: 'string' },
-        { path: 'top.users', error: 'array' },
+        { path: 'top.uids', error: 'array' },
       ])
       expect(srv.appendNestedErrors(null, [
         { path: 'name', error: 'string' },
-        { path: 'users', error: 'array' },
+        { path: 'uids', error: 'array' },
       ], 'top')).to.have.deep.members([
         { path: 'top.name', error: 'string' },
-        { path: 'top.users', error: 'array' },
+        { path: 'top.uids', error: 'array' },
       ])
     })
   })
@@ -133,7 +133,7 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
       let res = await agent.get('/')
-      expect(JSON.parse(res.text)).to.have.keys(["_id", "ver", "name", "groups", "users"])
+      expect(JSON.parse(res.text)).to.have.keys(["_id", "ver", "name", "gids", "uids"])
     })
   })
   describe('PUT /', () => {
@@ -157,7 +157,7 @@ describe('Service', function() {
     })
   })
   describe('#setup()', () => {
-    it('should create primary groups, a user and a credential.', async () => {
+    it('should create primary gids, a user and a credential.', async () => {
       let setup = getSetupData()
       let ret = await srv.setup(setup)
       expect(await User.count({})).to.equal(1)
@@ -165,7 +165,7 @@ describe('Service', function() {
       expect(await Prim.count({})).to.equal(1)
       expect(await Cred.count({})).to.equal(1)
     })
-    it('should not create primary groups, a user and a credential if error.', async () => {
+    it('should not create primary gids, a user and a credential if error.', async () => {
       let setup = getSetupData()
       setup.top.name = ""
       let ret = await srv.setup(setup)
@@ -229,7 +229,7 @@ describe('Service', function() {
     })
   })
   describe('PUT /setup', () => {
-    it('should create primary groups, a user and a credential.', async () => {
+    it('should create primary gids, a user and a credential.', async () => {
       let setup = getSetupData()
       let res = await chai.request(api).put('/setup').type('json').send(setup)
       expect(res).to.have.status(200)
@@ -238,7 +238,7 @@ describe('Service', function() {
       top = JSON.parse((await chai.request(api).get('/')).text)
       expect(top).to.deep.equal({ name: setup.top.name })
     })
-    it('should not create primary groups, a user and a credential if error.', async () => {
+    it('should not create primary gids, a user and a credential if error.', async () => {
       let setup = getSetupData()
       setup.top.name = ""
       let res = await chai.request(api).put('/setup').type('json').send(setup)
@@ -288,9 +288,9 @@ describe('Service', function() {
       expect(JSON.parse(res.text)._id).to.equal(srv.prim.top)
       await new Promise(resolve => setTimeout(resolve, 100))
       let sess = await Session.findOne({})
-      expect(sess.user).to.equal(manager.users[0])
+      expect(sess.uid).to.equal(manager.uids[0])
       expect(sess.provider).to.equal('password')
-      expect(sess.groups).to.have.members(
+      expect(sess.gids).to.have.members(
         [srv.prim.top, srv.prim.admin, srv.prim.manager]
       )
       expect(sess.admin).is.true
@@ -322,7 +322,7 @@ describe('Service', function() {
         errors: [ { path: '', error: 'auth' } ]
       })
       let cred4 = await new Cred({
-        user: manager.users[0],
+        uid: manager.uids[0],
         provider: "test",
         authId: "user1id",
       })
@@ -398,7 +398,7 @@ describe('Service', function() {
 
       let sess = await Session.findOne({})
       expect(await Session.count({})).to.equal(1)
-      expect(sess.user).to.equal(manager.users[0])
+      expect(sess.uid).to.equal(manager.uids[0])
 
       res = await agent1.del('/sessions').type('json').send({})
       let top = await Group.findById(srv.prim.top)
@@ -690,11 +690,11 @@ describe('Service', function() {
         _id: group4._id.toString(),
         ver: group4.ver,
         name: group4.name,
-        users: [user1._id.toString()]
+        uids: [user1._id.toString()]
       })
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(group4.ver + 1)
-      expect(res.users).to.have.members([user1._id.toString()])
+      expect(res.uids).to.have.members([user1._id.toString()])
     })
     it('should not update with invalid gid nor ver.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -707,7 +707,7 @@ describe('Service', function() {
         _id: group4._id.toString(),
         ver: (group4.ver - 1),
         name: group4.name,
-        users: [user1._id.toString()]
+        uids: [user1._id.toString()]
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'ver', error: 'match' } ]
@@ -718,7 +718,7 @@ describe('Service', function() {
         _id: group4._id.toString(),
         ver: group4.ver,
         name: group4.name,
-        users: [user1._id.toString()]
+        uids: [user1._id.toString()]
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'ver', error: 'conflict' } ]
@@ -729,7 +729,7 @@ describe('Service', function() {
         _id: "dummy",
         ver: group4.ver,
         name: group4.name,
-        users: [user1._id.toString()]
+        uids: [user1._id.toString()]
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'gid', error: 'conflict' } ]
@@ -817,7 +817,7 @@ describe('Service', function() {
       let user1 = await User.findOne({ name: "User 1" })
       let user3 = await User.findOne({ name: "User 3" })
       let user4 = await User.findOne({ name: "User 4" })
-      expect(manager.users).to.have.deep.members([
+      expect(manager.uids).to.have.deep.members([
         user1._id.toString(),
         user3._id.toString(),
         user4._id.toString(),
@@ -920,7 +920,7 @@ describe('Service', function() {
       expect(res.name).to.equal("Group 4")
       let top = await Group.findById(srv.prim.top)
       let group4 = await Group.findOne({ name: "Group 4" })
-      expect(top.groups).to.have.deep.members([
+      expect(top.gids).to.have.deep.members([
         srv.prim.admin,
         srv.prim.manager,
         group4._id.toString(),
@@ -959,7 +959,7 @@ describe('Service', function() {
     })
   })
   describe('GET /groups/:gid/groups', () => {
-    it('should return groups list of a group for a member.', async () => {
+    it('should return gids list of a group for a member.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
       let top = await Group.findOne({ name: "Top" }).exec()
@@ -1015,7 +1015,7 @@ describe('Service', function() {
       const user4 = await User.create({ name: "User 4" })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
       .type('json').send({
-        user: user4._id.toString(),
+        uid: user4._id.toString(),
         provider: "password",
         authId: "user4id",
         attr: { password: "user4pass" },
@@ -1031,7 +1031,7 @@ describe('Service', function() {
       const user4 = await User.findOne({ name: "User 4" })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
       .type('json').send({
-        user: user4._id.toString(),
+        uid: user4._id.toString(),
         provider: "password",
         authId: "user4id",
         attr: { password: "user4pass" },
@@ -1047,7 +1047,7 @@ describe('Service', function() {
 
       let res = await chai.request(api).post(`/users/${user1._id.toString()}/creds/password`)
       .type('json').send({
-        user: user1._id.toString(),
+        uid: user1._id.toString(),
         provider: "password",
         authId: "user1id",
         attr: { password: "user1pass" },
@@ -1060,7 +1060,7 @@ describe('Service', function() {
       const user4 = await User.findOne({ name: "User 4" })
       res = await agent.post(`/users/${user1._id.toString()}/creds/password`)
       .type('json').send({
-        user: user1._id.toString(),
+        uid: user1._id.toString(),
         provider: "password",
         authId: "user1id",
         attr: { password: "user1pass" },
@@ -1071,7 +1071,7 @@ describe('Service', function() {
 
       res = await (await loginAsAdmin()).post(`/users/${user1._id.toString()}/creds/password`)
       .type('json').send({
-        user: user1._id.toString(),
+        uid: user1._id.toString(),
         provider: "password",
         authId: "user1id",
         attr: { password: "user1pass" },
@@ -1089,7 +1089,7 @@ describe('Service', function() {
       const agent = await loginAsManager()
       let res = await agent.post(`/users/${uid}/creds/password`)
       .type('json').send({
-        user: uid,
+        uid: uid,
         provider: "password",
         authId: "user1id",
         attr: { password: "user1pass" },
@@ -1100,7 +1100,7 @@ describe('Service', function() {
 
       res = await agent.post(`/users/${uid}/creds/password`)
       .type('json').send({
-        user: "dummy",
+        uid: "dummy",
         provider: "password",
         authId: "user1id",
         attr: { password: "user1pass" },
@@ -1111,7 +1111,7 @@ describe('Service', function() {
 
       res = await agent.post(`/users/${uid}/creds/password`)
       .type('json').send({
-        user: uid,
+        uid: uid,
         provider: "dummy",
         authId: "user1id",
         attr: { password: "user1pass" },
@@ -1130,7 +1130,7 @@ describe('Service', function() {
       let list = JSON.parse(res.text)
       expect(list).to.have.length(1)
       expect(list[0].ver).to.equal(0)
-      expect(list[0].user).to.equal(user4._id.toString())
+      expect(list[0].uid).to.equal(user4._id.toString())
       expect(list[0].attr.password).is.null
 
       agent = await loginAsManager()
@@ -1138,7 +1138,7 @@ describe('Service', function() {
       list = JSON.parse(res.text)
       expect(list).to.have.length(1)
       expect(list[0].ver).to.equal(0)
-      expect(list[0].user).to.equal(user4._id.toString())
+      expect(list[0].uid).to.equal(user4._id.toString())
       expect(list[0].attr.password).is.null
     })
     it('should reject except managers and the user.', async () => {
@@ -1147,7 +1147,7 @@ describe('Service', function() {
       const user4 = await User.create({ name: "User 4" })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
       .type('json').send({
-        user: user4._id.toString(),
+        uid: user4._id.toString(),
         provider: "password",
         authId: "user4id",
         attr: { password: "user4pass" },
@@ -1174,12 +1174,12 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let agent = await loginAsUser4()
       const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ user: user4._id.toString(),provider: 'password' })
+      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
       let res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver,
-        user: cred4.user,
+        uid: cred4.uid,
         provider: cred4.provider,
         authId: cred4.authId,
         attr: { password: "dummy" },
@@ -1194,7 +1194,7 @@ describe('Service', function() {
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver,
-        user: cred4.user,
+        uid: cred4.uid,
         provider: cred4.provider,
         authId: cred4.authId,
         attr: { password: "user4pass" },
@@ -1209,12 +1209,12 @@ describe('Service', function() {
       await loginAsUser4()
       let agent = await loginAsAdmin()
       const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ user: user4._id.toString(), provider: 'password' })
+      let cred4 = await Cred.findOne({ uid: user4._id.toString(), provider: 'password' })
       let res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver,
-        user: cred4.user,
+        uid: cred4.uid,
         provider: cred4.provider,
         authId: cred4.authId,
         attr: { password: "dummy" },
@@ -1228,13 +1228,13 @@ describe('Service', function() {
       let agent = await loginAsUser4()
       const user4 = await User.findOne({ name: "User 4" })
       await User.findOneAndRemove({ name: "User 4" })
-      let cred4 = await Cred.findOne({ user: user4._id.toString(),provider: 'password' })
+      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
 
       let res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver,
-        user: "dummy",
+        uid: "dummy",
         provider: cred4.provider,
         authId: cred4.authId,
         attr: { password: "dummy" },
@@ -1247,7 +1247,7 @@ describe('Service', function() {
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver,
-        user: cred4.user,
+        uid: cred4.uid,
         provider: "dummy",
         authId: cred4.authId,
         attr: { password: "dummy" },
@@ -1260,7 +1260,7 @@ describe('Service', function() {
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver + 1,
-        user: cred4.user,
+        uid: cred4.uid,
         provider: cred4.provider,
         authId: cred4.authId,
         attr: { password: "dummy" },
@@ -1273,7 +1273,7 @@ describe('Service', function() {
       .type('json').send({
         _id: cred4._id.toString(),
         ver: cred4.ver,
-        user: cred4.user,
+        uid: cred4.uid,
         provider: cred4.provider,
         authId: cred4.authId,
         attr: { password: "dummy" },
@@ -1289,7 +1289,7 @@ describe('Service', function() {
       await loginAsUser4()
       let agent = await loginAsManager()
       const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ user: user4._id.toString(),provider: 'password' })
+      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
       let res = await agent.delete(`/users/${user4._id.toString()}/creds/password/ver/0`)
       expect(JSON.parse(res.text)).to.deep.equal({})
     })
@@ -1297,7 +1297,7 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let agent = await loginAsUser4()
       const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ user: user4._id.toString(),provider: 'password' })
+      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
       let res = await agent.delete(`/users/${user4._id.toString()}/creds/password/ver/0`)
       expect(JSON.parse(res.text)).to.deep.equal({})
     })
@@ -1306,7 +1306,7 @@ describe('Service', function() {
       await loginAsUser4()
       let agent = await loginAsAdmin()
       const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ user: user4._id.toString(),provider: 'password' })
+      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
       let res = await agent.delete(`/users/${user4._id.toString()}/creds/password/ver/0`)
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
@@ -1332,10 +1332,10 @@ function getSetupData() {
 async function loginAsAdmin() {
   const user2 = await User.create({ name: "User 2" })
   const manager = await Group.findOne({ name: "Admin" }).exec()
-  manager.users.push(user2._id.toString())
+  manager.uids.push(user2._id.toString())
   await manager.save()
   const cred2 = await Cred.create({
-    user: user2._id.toString(),
+    uid: user2._id.toString(),
     provider: "password",
     authId: "user2id",
     attr: { password: digestPassword(user2._id.toString(), "user2pass") }
@@ -1352,10 +1352,10 @@ async function loginAsAdmin() {
 async function loginAsManager() {
   const user3 = await User.create({ name: "User 3" })
   const manager = await Group.findOne({ name: "Manager" }).exec()
-  manager.users.push(user3._id.toString())
+  manager.uids.push(user3._id.toString())
   await manager.save()
   const cred3 = await Cred.create({
-    user: user3._id.toString(),
+    uid: user3._id.toString(),
     provider: "password",
     authId: "user3id",
     attr: { password: digestPassword(user3._id.toString(), "user3pass") }
@@ -1372,7 +1372,7 @@ async function loginAsManager() {
 async function loginAsUser4() {
   const user4 = await User.create({ name: "User 4" })
   const cred4 = await Cred.create({
-    user: user4._id.toString(),
+    uid: user4._id.toString(),
     provider: "password",
     authId: "user4id",
     attr: { password: digestPassword(user4._id.toString(), "user4pass") }
@@ -1386,8 +1386,8 @@ async function loginAsUser4() {
   return agent
 }
 
-function digestPassword(user, password) {
+function digestPassword(uid, password) {
   let hash = crypto.createHash('sha256')
-  hash.update(`${user}:${conf.seed}:${password}`)
+  hash.update(`${uid}:${conf.seed}:${password}`)
   return hash.digest('hex')
 }
