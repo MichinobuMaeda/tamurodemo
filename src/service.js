@@ -92,11 +92,8 @@ export default class Service {
       })
 
       .put('/users/:uid/ver/:ver', this.authSelfOrManager, async (ctx) => {
-        let errors = this.isMatchBodyAndParam(ctx)
-        if (errors) {
-          ctx.body = JSON.stringify({ errors: errors })
-          return
-        }
+        ctx.request.body._id = ctx.params.uid
+        ctx.request.body.ver = parseInt(ctx.params.ver)
         ctx.body = JSON.stringify(await User.update(ctx.request.body))
       })
 
@@ -113,11 +110,8 @@ export default class Service {
       })
 
       .put('/groups/:gid/ver/:ver', this.authManager, async (ctx) => {
-        let errors = this.isMatchBodyAndParam(ctx)
-        if (errors) {
-          ctx.body = JSON.stringify({ errors: errors })
-          return
-        }
+        ctx.request.body._id = ctx.params.gid
+        ctx.request.body.ver = parseInt(ctx.params.ver)
         ctx.body = JSON.stringify(await Group.update(ctx.request.body))
       })
 
@@ -168,11 +162,8 @@ export default class Service {
       })
 
       .post('/users/:uid/creds/:provider', this.authSelfOrManager, async (ctx) => {
-        let errors = this.isMatchBodyAndParam(ctx)
-        if (errors) {
-          ctx.body = JSON.stringify({ errors: errors })
-          return
-        }
+        ctx.request.body.uid = ctx.params.uid
+        ctx.request.body.provider = ctx.params.provider
         if (ctx.request.body.provider == prv.password && ctx.request.body.attr) {
           ctx.request.body.attr.password = this.digestPassword(ctx.params.uid, ctx.request.body.attr.password)
         }
@@ -198,11 +189,9 @@ export default class Service {
       })
 
       .put('/users/:uid/creds/:provider/ver/:ver', this.authSelfOrManager, async (ctx) => {
-        let errors = this.isMatchBodyAndParam(ctx)
-        if (errors) {
-          ctx.body = JSON.stringify({ errors: errors })
-          return
-        }
+        ctx.request.body.uid = ctx.params.uid
+        ctx.request.body.provider = ctx.params.provider
+        ctx.request.body.ver = parseInt(ctx.params.ver)
         if (ctx.request.body.provider == prv.password && ctx.request.body.attr) {
           ctx.request.body.attr.password = this.digestPassword(ctx.params.uid, ctx.request.body.attr.password)
         }
@@ -373,31 +362,5 @@ export default class Service {
     } else {
       await next()
     }
-  }
-
-  isMatchBodyAndParam(ctx) {
-    let errors = []
-    if (ctx.request.body.uid && ctx.params.uid) {
-      if (ctx.request.body.uid != ctx.params.uid) {
-        errors.push(err.conflict('uid'))
-      }
-    } else if (ctx.request.body._id && ctx.params.uid) {
-      if (ctx.request.body._id != ctx.params.uid) {
-        errors.push(err.conflict('uid'))
-      }
-    } else if (ctx.request.body._id && ctx.params.gid) {
-      if (ctx.request.body._id != ctx.params.gid) {
-        errors.push(err.conflict('gid'))
-      }
-    }
-    if (ctx.request.body.provider && ctx.params.provider &&
-        ctx.request.body.provider != ctx.params.provider) {
-      errors.push(err.conflict('provider'))
-    }
-    if ((ctx.request.body.ver || ctx.request.body.ver === 0) && ctx.params.ver &&
-        ctx.request.body.ver != ctx.params.ver) {
-      errors.push(err.conflict('ver'))
-    }
-    return errors.length ? errors : null
   }
 }

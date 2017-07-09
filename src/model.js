@@ -198,7 +198,7 @@ PrimSchema.statics.build = function(obj) {
 export const Prim = mongoose.model('Prim', PrimSchema)
 
 const CredSchema = new Schema({
-  uid:     { type: String, required: true },
+  uid:      { type: String, required: true },
   provider: { type: String, required: true },
   authId:   { type: String, required: true },
   attr: Schema.Types.Mixed,

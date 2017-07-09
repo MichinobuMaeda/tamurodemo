@@ -510,44 +510,6 @@ describe('Service', function() {
       expect(res.ver).to.equal(user4.ver + 1)
       expect(res.profile).to.deep.equal({ tel: "01-2345-6789" })
     })
-    it('should not update with invalid uid nor ver.', async () => {
-      await chai.request(api).put('/setup').type('json').send(getSetupData())
-      await loginAsUser4()
-      let user4 = await User.findOne({ name: "User 4" })
-      const agent = await loginAsManager()
-      let res = await agent.put(`/users/${user4._id.toString()}/ver/${user4.ver - 1}`)
-      .type('json').send({
-        _id: user4._id.toString(),
-        ver: (user4.ver - 1),
-        name: user4.name,
-        profile: { tel: "01-2345-6789" }
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'ver', error: 'match' } ]
-      })
-
-      res = await agent.put(`/users/${user4._id.toString()}/ver/${user4.ver - 1}`)
-      .type('json').send({
-        _id: user4._id.toString(),
-        ver: user4.ver,
-        name: user4.name,
-        profile: { tel: "01-2345-6789" }
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'ver', error: 'conflict' } ]
-      })
-
-      res = await agent.put(`/users/${user4._id.toString()}/ver/${user4.ver}`)
-      .type('json').send({
-        _id: "dummy",
-        ver: user4.ver,
-        name: user4.name,
-        profile: { tel: "01-2345-6789" }
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'uid', error: 'conflict' } ]
-      })
-    })
     it('should reject except managers.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let res = await chai.request(api).put('/users/id/ver/1')
@@ -695,45 +657,6 @@ describe('Service', function() {
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(group4.ver + 1)
       expect(res.uids).to.have.members([user1._id.toString()])
-    })
-    it('should not update with invalid gid nor ver.', async () => {
-      await chai.request(api).put('/setup').type('json').send(getSetupData())
-      await Group.create({ name: "Group 4" })
-      let group4 = await Group.findOne({ name: "Group 4" })
-      let user1 = await User.findOne({ name: "User 1" })
-      const agent = await loginAsManager()
-      let res = await agent.put(`/groups/${group4._id.toString()}/ver/${group4.ver - 1}`)
-      .type('json').send({
-        _id: group4._id.toString(),
-        ver: (group4.ver - 1),
-        name: group4.name,
-        uids: [user1._id.toString()]
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'ver', error: 'match' } ]
-      })
-
-      res = await agent.put(`/groups/${group4._id.toString()}/ver/${group4.ver - 1}`)
-      .type('json').send({
-        _id: group4._id.toString(),
-        ver: group4.ver,
-        name: group4.name,
-        uids: [user1._id.toString()]
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'ver', error: 'conflict' } ]
-      })
-
-      res = await agent.put(`/groups/${group4._id.toString()}/ver/${group4.ver}`)
-      .type('json').send({
-        _id: "dummy",
-        ver: group4.ver,
-        name: group4.name,
-        uids: [user1._id.toString()]
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'gid', error: 'conflict' } ]
-      })
     })
     it('should reject except managers.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -1080,46 +1003,6 @@ describe('Service', function() {
         errors: [ { path: 'manager|uid', error: 'priv' } ]
       })
     })
-    it('should reject invalid uid or provider.', async () => {
-      await chai.request(api).put('/setup').type('json').send(getSetupData())
-      const user1 = await User.findOne({ name: "User 1" })
-      const uid = user1._id.toString()
-      await User.findOneAndRemove({ name: "User 1" })
-
-      const agent = await loginAsManager()
-      let res = await agent.post(`/users/${uid}/creds/password`)
-      .type('json').send({
-        uid: uid,
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'uid', error: 'reference' } ]
-      })
-
-      res = await agent.post(`/users/${uid}/creds/password`)
-      .type('json').send({
-        uid: "dummy",
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'uid', error: 'conflict' } ]
-      })
-
-      res = await agent.post(`/users/${uid}/creds/password`)
-      .type('json').send({
-        uid: uid,
-        provider: "dummy",
-        authId: "user1id",
-        attr: { password: "user1pass" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'provider', error: 'conflict' } ]
-      })
-    })
   })
   describe('GET /users/:uid/creds', () => {
     it('should return credential list for a manager or the user.', async () => {
@@ -1221,65 +1104,6 @@ describe('Service', function() {
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
-      })
-    })
-    it('should reject invalid uid, provider or ver.', async () => {
-      await chai.request(api).put('/setup').type('json').send(getSetupData())
-      let agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
-      await User.findOneAndRemove({ name: "User 4" })
-      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
-
-      let res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver,
-        uid: "dummy",
-        provider: cred4.provider,
-        authId: cred4.authId,
-        attr: { password: "dummy" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'uid', error: 'conflict' } ]
-      })
-
-      res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver,
-        uid: cred4.uid,
-        provider: "dummy",
-        authId: cred4.authId,
-        attr: { password: "dummy" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'provider', error: 'conflict' } ]
-      })
-
-      res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver + 1,
-        uid: cred4.uid,
-        provider: cred4.provider,
-        authId: cred4.authId,
-        attr: { password: "dummy" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'ver', error: 'conflict' } ]
-      })
-
-      res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver,
-        uid: cred4.uid,
-        provider: cred4.provider,
-        authId: cred4.authId,
-        attr: { password: "dummy" },
-      })
-      expect(JSON.parse(res.text)).to.deep.equal({
-        errors: [ { path: 'uid', error: 'reference' } ]
       })
     })
   })

@@ -618,6 +618,7 @@ describe('model', function() {
         name: "abc"
       })
       let user = await User.findById(ret._id)
+      expect(user.ver).to.equal(0)
       expect(user.name).to.equal("abc")
     })
     it('should return error for a invalid user object.', async () => {
@@ -633,6 +634,7 @@ describe('model', function() {
         name: "abc"
       })
       let group = await Group.findById(ret._id)
+      expect(group.ver).to.equal(0)
       expect(group.name).to.deep.equal("abc")
     })
     it('should return error for a invalid group object.', async () => {
@@ -654,6 +656,7 @@ describe('model', function() {
         attr: { password: "xyz" }
       })
       let cred = await Cred.findById(ret._id)
+      expect(cred.ver).to.equal(0)
       expect(cred.uid).to.equal(user1._id.toString())
     })
     it('should return error for a invalid prime object.', async () => {
@@ -678,6 +681,7 @@ describe('model', function() {
       user.profile = { a: "xyz" }
       let modified = await User.update(user)
       user = await User.findById(ret._id)
+      expect(user.ver).to.equal(1)
       expect(user.name).to.equal("def")
       expect(user.profile).to.deep.equal({ a: "xyz" })
     })
@@ -694,6 +698,7 @@ describe('model', function() {
         errors: [ { path: 'name', error: 'required' } ]
       })
       user = await User.findById(ret._id)
+      expect(user.ver).to.equal(0)
       expect(user.name).to.equal("abc")
       expect(user.profile).to.deep.equal({})
     })
@@ -711,6 +716,7 @@ describe('model', function() {
         errors: [ { path: 'ver', error: 'match' } ]
       })
       user = await User.findById(ret._id)
+      expect(user.ver).to.equal(0)
       expect(user.name).to.equal("abc")
       expect(user.profile).to.deep.equal({})
     })
@@ -733,6 +739,7 @@ describe('model', function() {
       group.uids = [user1._id.toString()]
       let modified = await Group.update(group)
       group = await Group.findById(ret._id)
+      expect(group.ver).to.equal(1)
       expect(group.name).to.equal("def")
       expect(group.gids).to.have.members([group1._id.toString()])
       expect(group.uids).to.have.members([user1._id.toString()])
@@ -757,6 +764,7 @@ describe('model', function() {
         errors: [ { path: 'name', error: 'required' } ]
       })
       group = await Group.findById(ret._id)
+      expect(group.ver).to.equal(0)
       expect(group.name).to.equal("abc")
       expect(group.gids).to.have.members([])
       expect(group.uids).to.have.members([])
@@ -782,6 +790,7 @@ describe('model', function() {
         errors: [ { path: 'ver', error: 'match' } ]
       })
       group = await Group.findById(ret._id)
+      expect(group.ver).to.equal(0)
       expect(group.name).to.equal("abc")
       expect(group.gids).to.have.members([])
       expect(group.uids).to.have.members([])
@@ -804,6 +813,7 @@ describe('model', function() {
       cred.attr.password = "xyz"
       let modified = await Cred.update(cred)
       cred = await Cred.findById(ret._id)
+      expect(cred.ver).to.equal(1)
       expect(cred.authId).to.equal("def")
       expect(cred.attr.password).to.deep.equal("xyz")
     })
@@ -826,6 +836,7 @@ describe('model', function() {
         errors: [ { path: 'authId', error: 'required' } ]
       })
       cred = await Cred.findById(ret._id)
+      expect(cred.ver).to.equal(0)
       expect(cred.authId).to.equal("user1id")
       expect(cred.attr.password).to.deep.equal("user1pass")
     })
@@ -849,6 +860,7 @@ describe('model', function() {
         errors: [ { path: 'ver', error: 'match' } ]
       })
       cred = await Cred.findById(ret._id)
+      expect(cred.ver).to.equal(0)
       expect(cred.authId).to.equal("user1id")
       expect(cred.attr.password).to.deep.equal("user1pass")
     })
