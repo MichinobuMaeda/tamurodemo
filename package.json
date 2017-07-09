@@ -1,0 +1,30 @@
+{
+  "name": "tamuro.api",
+  "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src --out-dir lib --source-maps",
+    "test": "npm run build; ./test/mongo-start.sh; nyc mocha; nyc report --reporter=lcov; ./test/mongo-stop.sh",
+    "start": "npm run build; ./test/mongo-start.sh; node lib/index.js; ./test/mongo-stop.sh"
+  },
+  "author": "Michinobu Maeda",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.0.2",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.4.2",
+    "nyc": "^11.0.3",
+    "rewire": "^2.5.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "bunyan": "^1.8.10",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.2.1",
+    "mongoose": "^4.10.8"
+  }
+}
