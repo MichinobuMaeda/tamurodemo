@@ -6,11 +6,11 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-export const prv = [
+export const providers = [
   'password',
 ].reduce((ret, e) => { ret[e] = e; return ret }, {})
 
-export const err = [
+export const errors = [
   'required',
   'string',
   'number',

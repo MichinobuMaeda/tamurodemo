@@ -11,7 +11,7 @@ import Koa from 'koa'
 import Router from 'koa-router'
 import bodyParser from 'koa-bodyparser'
 
-import { err, prv } from './constants'
+import { errors as err, providers as prv } from './constants'
 import { log, mongoose, User, Group, Prim, Cred, Session } from './model'
 
 
@@ -203,11 +203,7 @@ export default class Service {
       })
 
       .del('/users/:uid/creds/:provider/ver/:ver', this.authSelfOrManager, async (ctx) => {
-        ctx.body = JSON.stringify(await Cred.delete({
-          uid: ctx.params.uid,
-          provider: ctx.params.provider,
-          ver: ctx.params.ver
-        }))
+        ctx.body = JSON.stringify(await Cred.delete(ctx.params))
       })
 
     this.api.keys = [this.conf.seed]
@@ -234,8 +230,7 @@ export default class Service {
     await this.api.listen(this.conf.port);
   }
 
-  async authenticate(input) {
-    let { provider, authId, password } = input
+  async authenticate({ provider, authId, password }) {
     let cred = await Cred.findOne({ provider: provider, authId: authId }).exec()
     if (!cred) {
       log.info(`POST /session FAILED: provider:${provider}, authId:${authId}`)
@@ -264,10 +259,10 @@ export default class Service {
 
   async setup(obj) {
     let errors = []
-    let top = Group.build(obj.top)
-    let admin = Group.build(obj.admin)
-    let manager = Group.build(obj.manager)
-    let user = User.build(obj.user)
+    let top = await Group.validate(obj.top, false)
+    let admin = await Group.validate(obj.admin, false)
+    let manager = await Group.validate(obj.manager, false)
+    let user = await User.validate(obj.user, false)
     errors = this.appendNestedErrors(errors, top.errors, 'top')
     errors = this.appendNestedErrors(errors, admin.errors, 'admin')
     errors = this.appendNestedErrors(errors, manager.errors, 'manager')
@@ -282,7 +277,7 @@ export default class Service {
     top.gids = [admin._id.toString(), manager._id.toString()]
     admin.uids = [user._id.toString()]
     manager.uids = [user._id.toString()]
-    let prim = Prim.build({
+    let prim = Prim.validate({
       top: top._id.toString(),
       admin: admin._id.toString(),
       manager: manager._id.toString(),
@@ -292,12 +287,12 @@ export default class Service {
     if (attr && attr.password) {
       attr.password = this.digestPassword(user._id.toString(), attr.password)
     }
-    let cred = Cred.build({
+    let cred = await Cred.validate({
       uid: user._id.toString(),
       provider: provider,
       authId: authId,
       attr: attr,
-    })
+    }, false)
     errors = this.appendNestedErrors(errors, cred.errors, 'cred')
     if (errors.length) {
       return { errors: errors }
