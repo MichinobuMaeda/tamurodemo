@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /*  
  * Copyright (c) 2017, Michinobu Maeda 
@@ -6,7 +6,7 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-const chai = require('chai');
+const chai = require('chai')
 const expect = chai.expect
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
@@ -23,10 +23,10 @@ describe('model', function() {
   before(async () => {
     await mongoose.connect(conf.mongodb)
   })
-  beforeEach(async () => {
+  beforeEach(() => {
     return mongoose.connection.db.dropDatabase()
   })
-  afterEach(async () => {})
+  afterEach(() => null)
   after(async () => {
     await mongoose.disconnect()
   })
@@ -165,13 +165,13 @@ describe('model', function() {
       expect(buildNumber('a')).is.null
       expect(buildNumber(0)).to.equals(0)
       expect(buildNumber(1)).to.equals(1)
-      expect(buildNumber("1")).to.equals(1)
-      expect(buildNumber(".1")).to.equals(0.1)
-      expect(buildNumber("1.")).to.equals(1)
-      expect(buildNumber("-.1")).to.equals(-0.1)
-      expect(buildNumber("-1.")).to.equals(-1)
-      expect(buildNumber("1.1")).to.equals(1.1)
-      expect(buildNumber("-1.1")).to.equals(-1.1)
+      expect(buildNumber('1')).to.equals(1)
+      expect(buildNumber('.1')).to.equals(0.1)
+      expect(buildNumber('1.')).to.equals(1)
+      expect(buildNumber('-.1')).to.equals(-0.1)
+      expect(buildNumber('-1.')).to.equals(-1)
+      expect(buildNumber('1.1')).to.equals(1.1)
+      expect(buildNumber('-1.1')).to.equals(-1.1)
       expect(buildNumber(new Date())).is.null
       expect(buildNumber([])).is.null
       expect(buildNumber({})).is.null
@@ -186,17 +186,17 @@ describe('model', function() {
       expect(buildDate('a')).is.null
       expect(buildDate(0)).is.null
       expect(buildDate(1)).is.null
-      expect(buildDate(new Date("2000/12/31")).getTime()
-      ).to.equal(new Date("2000/12/31").getTime())
-      expect(buildDate("2000/12/31").getTime()
-      ).to.equal(new Date("2000/12/31").getTime())
-      expect(buildDate("2000/12/31 5:06").getTime()
-      ).to.equal(new Date("2000/12/31 5:06").getTime())
-      expect(buildDate("2000-12-31T23:58:59Z").getTime()
-      ).to.equal(new Date("2000-12-31T23:58:59Z").getTime())
-      expect(buildDate("2000-12-31T23:58:59+09:00").getTime()
-      ).to.equal(new Date("2000-12-31T23:58:59+09:00").getTime())
-      expect(buildDate("2000-12-31T23:58:59+09:00").getTimezoneOffset()
+      expect(buildDate(new Date('2000/12/31')).getTime()
+      ).to.equal(new Date('2000/12/31').getTime())
+      expect(buildDate('2000/12/31').getTime()
+      ).to.equal(new Date('2000/12/31').getTime())
+      expect(buildDate('2000/12/31 5:06').getTime()
+      ).to.equal(new Date('2000/12/31 5:06').getTime())
+      expect(buildDate('2000-12-31T23:58:59Z').getTime()
+      ).to.equal(new Date('2000-12-31T23:58:59Z').getTime())
+      expect(buildDate('2000-12-31T23:58:59+09:00').getTime()
+      ).to.equal(new Date('2000-12-31T23:58:59+09:00').getTime())
+      expect(buildDate('2000-12-31T23:58:59+09:00').getTimezoneOffset()
       ).to.equal(-9 * 60)
       expect(buildDate([])).is.null
       expect(buildDate({})).is.null
@@ -228,7 +228,7 @@ describe('model', function() {
       expect(buildObject([])).is.null
       expect(buildObject([0, 1, 2])).is.null
       expect(buildObject({})).to.deep.equal({})
-      expect(buildObject({a: "123"})).to.deep.equal({a: "123"})
+      expect(buildObject({a: '123'})).to.deep.equal({a: '123'})
     })
   })
   describe('#Prim.validate()', () => {
@@ -241,39 +241,39 @@ describe('model', function() {
         ]
       })
       expect(Prim.validate({
-        top: "abc",
-        admin: "def",
-        manager: "xyz",
+        top: 'abc',
+        admin: 'def',
+        manager: 'xyz',
         ver: 1,
       })).to.deep.equal({
-        top: "abc",
-        admin: "def",
-        manager: "xyz",
+        top: 'abc',
+        admin: 'def',
+        manager: 'xyz',
       })
       expect(Prim.validate({
-        top: "abc",
-        admin: "def",
-        manager: "xyz"
+        top: 'abc',
+        admin: 'def',
+        manager: 'xyz'
       })).to.deep.equal({
-        top: "abc",
-        admin: "def",
-        manager: "xyz",
+        top: 'abc',
+        admin: 'def',
+        manager: 'xyz',
       })
       expect(Prim.validate({
-        admin: "def",
-        manager: "xyz",
+        admin: 'def',
+        manager: 'xyz',
       })).to.deep.equal({
         errors: [ { path: 'top', error: 'required' } ]
       })
       expect(Prim.validate({
-        top: "abc",
-        manager: "xyz",
+        top: 'abc',
+        manager: 'xyz',
       })).to.deep.equal({
         errors: [ { path: 'admin', error: 'required' } ]
       })
       expect(Prim.validate({
-        top: "abc",
-        admin: "def",
+        top: 'abc',
+        admin: 'def',
       })).to.deep.equal({
         errors: [ { path: 'manager', error: 'required' } ]
       })
@@ -288,58 +288,58 @@ describe('model', function() {
         errors: [ { path: 'name', error: 'required' } ]
       })
       expect(await User.validate({
-        name: "abc"
+        name: 'abc'
       })).to.deep.equal({
-        name: "abc",
+        name: 'abc',
         profile: {},
       })
       expect(await User.validate({
-        name: "abc",
+        name: 'abc',
         profile: null,
         ver: 0
       })).to.deep.equal({
-        name: "abc",
+        name: 'abc',
         profile: {},
       })
       expect(await User.validate({
-        name: "abc",
+        name: 'abc',
         profile: {},
         ver: 1
       })).to.deep.equal({
-        name: "abc",
+        name: 'abc',
         profile: {},
       })
       expect(await User.validate({
-        name: "abc",
-        profile: { a: "xyz" },
+        name: 'abc',
+        profile: { a: 'xyz' },
         ver: 0
       })).to.deep.equal({
-        name: "abc",
-        profile: { a: "xyz" }, 
+        name: 'abc',
+        profile: { a: 'xyz' }, 
       })
       expect(await User.validate({
-        name: "abc",
-        profile: "xyz"
+        name: 'abc',
+        profile: 'xyz'
       })).to.deep.equal({
         errors: [ { path: 'profile', error: 'object' } ]
       })
       let user1 = await User.validate({
-        name: "abc"
+        name: 'abc'
       })
       expect(user1).to.deep.equals({
-        name: "abc",
+        name: 'abc',
         profile: {},
       })
       let user2 = await User.validate({
-        name: "abc"
+        name: 'abc'
       })
       expect(user2).to.deep.equals({
-        name: "abc",
+        name: 'abc',
         profile: {},
       })
       await (new User(user1)).save()
       expect(await User.validate({
-        name: "abc"
+        name: 'abc'
       })).to.deep.equals({
         errors: [ { path: 'name', error: 'unique' } ]
       })
@@ -354,9 +354,9 @@ describe('model', function() {
         errors: [ { path: 'name', error: 'required' } ]
       })
       expect(await Group.validate({
-        name: "abc",
-        gids: ["0000a00b12a0bb6c07a94c09", ""],
-        uids: ["0000a17b2f4b806d6f206525"],
+        name: 'abc',
+        gids: ['0000a00b12a0bb6c07a94c09', ''],
+        uids: ['0000a17b2f4b806d6f206525'],
         ver: 0
       })).to.deep.equal({
         errors: [
@@ -365,9 +365,9 @@ describe('model', function() {
         ]
       })
       expect(await Group.validate({
-        name: "abc",
-        gids: ["0000a00b12a0bb6c07a94c09"],
-        uids: ["0000a17b2f4b806d6f206525", ""]
+        name: 'abc',
+        gids: ['0000a00b12a0bb6c07a94c09'],
+        uids: ['0000a17b2f4b806d6f206525', '']
       })).to.deep.equal({
         errors: [
           { path: 'gids.0', error: 'reference' },
@@ -375,51 +375,51 @@ describe('model', function() {
         ]
       })
       let group1 = await Group.validate({
-        name: "abc"
+        name: 'abc'
       })
       expect(group1).to.deep.equal({
-        name: "abc",
+        name: 'abc',
         gids: [],
         uids: [],
       })
       group1 = new Group(group1)
       expect(await Group.validate({
-        name: "abc",
+        name: 'abc',
         gids: [group1._id.toString()],
       })).to.deep.equal({
         errors: [ { path: 'gids.0', error: 'reference' } ]
       })
       await group1.save()
       expect(await Group.validate({
-        name: "abc",
+        name: 'abc',
         gids: [group1._id.toString()],
       })).to.deep.equal({
         errors: [ { path: 'name', error: 'unique' } ]
       })
       expect(await Group.validate({
-        name: "def",
+        name: 'def',
         gids: [group1._id.toString()]
       })).to.deep.equal({
-        name: "def",
+        name: 'def',
         gids: [group1._id.toString()],
         uids: [],
       })
       let user1 = await User.validate({
-        name: "abc"
+        name: 'abc'
       })
       user1 = new User(user1)
       expect(await Group.validate({
-        name: "def",
+        name: 'def',
         uids: [user1._id.toString()],
       })).to.deep.equal({
         errors: [ { path: 'uids.0', error: 'reference' } ]
       })
       await user1.save()
       expect(await Group.validate({
-        name: "def",
+        name: 'def',
         uids: [user1._id.toString()]
       })).to.deep.equal({
-        name: "def",
+        name: 'def',
         gids: [],
         uids: [user1._id.toString()],
       })
@@ -428,13 +428,13 @@ describe('model', function() {
   describe('#Cred.validate()', () => {
     it('should return errors if not consistent.', async () => {
       let user1 = await User.validate({
-        name: "abc"
+        name: 'abc'
       })
       user1 = new User(user1)
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def", attr: { password: "ghi" },
+        provider: 'password',
+        authId: 'def', attr: { password: 'ghi' },
       })).to.deep.equal({
         errors: [ { path: 'uid', error: 'reference' } ]
       })
@@ -448,121 +448,121 @@ describe('model', function() {
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" },
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' },
         ver: 1
       })).to.deep.equal({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" },
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' },
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })).to.deep.equal({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" },
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' },
       })
       expect(await Cred.validate({
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })).to.deep.equal({
         errors: [ { path: 'uid', error: 'required' } ]
       })
       expect(await Cred.validate({
         uid: user1._id.toString(), authId:
-        "def", attr: { password: "xyz" }
+        'def', attr: { password: 'xyz' }
       })).to.deep.equal({
         errors: [ { path: 'provider', error: 'required' } ]
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "dummy",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'dummy',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })).to.deep.equal({
         errors: [ { path: 'provider', error: 'provider' } ]
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        attr: { password: "xyz" }
+        provider: 'password',
+        attr: { password: 'xyz' }
       })).to.deep.equal({
         errors: [ { path: 'authId', error: 'required' } ]
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
+        provider: 'password',
+        authId: 'def',
         attr: {  }
       })).to.deep.equal({
         errors: [ { path: 'attr.password', error: 'required' } ]
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: "dummy"
+        provider: 'password',
+        authId: 'def',
+        attr: 'dummy'
       })).to.deep.equal({
         errors: [ { path: 'attr.password', error: 'required' } ]
       })
       expect(await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def"
+        provider: 'password',
+        authId: 'def'
       })).to.deep.equal({
         errors: [ { path: 'attr.password', error: 'required' } ]
       })
       let cred1 = await Cred.validate({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def", attr: { password: "ghi" },
+        provider: 'password',
+        authId: 'def', attr: { password: 'ghi' },
       })
       expect(cred1).to.deep.equal({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def", attr: { password: "ghi" },
+        provider: 'password',
+        authId: 'def', attr: { password: 'ghi' },
       })
       cred1 = new Cred(cred1)
       await cred1.save()
       let user2 = await User.create({
-        name: "xyz"
+        name: 'xyz'
       })
       await user2.save()
       expect(await Cred.validate({
         uid: user2._id.toString(),
-        provider: "password",
-        authId: "def", attr: { password: "xyz" },
+        provider: 'password',
+        authId: 'def', attr: { password: 'xyz' },
       })).to.deep.equal({
         errors: [ { path: 'authId', error: 'unique' } ]
       })
       let cred2 = await Cred.validate({
         uid: user2._id.toString(),
-        provider: "password",
-        authId: "ghi", attr: { password: "xyz" },
+        provider: 'password',
+        authId: 'ghi', attr: { password: 'xyz' },
       })
       expect(cred2).to.deep.equal({
         uid: user2._id.toString(),
-        provider: "password",
-        authId: "ghi", attr: { password: "xyz" },
+        provider: 'password',
+        authId: 'ghi', attr: { password: 'xyz' },
       })
     })
   })
   describe('#User.create()', () => {
     it('should create the user entity.', async () => {
       let ret = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let user = await User.findById(ret._id)
       expect(user.ver).to.equal(0)
-      expect(user.name).to.equal("abc")
+      expect(user.name).to.equal('abc')
     })
     it('should return error for a invalid user object.', async () => {
       let ret = await User.create({})
@@ -574,11 +574,11 @@ describe('model', function() {
   describe('#Group.create()', () => {
     it('should create and return a modified group object.', async () => {
       let ret = await Group.create({
-        name: "abc"
+        name: 'abc'
       })
       let group = await Group.findById(ret._id)
       expect(group.ver).to.equal(0)
-      expect(group.name).to.deep.equal("abc")
+      expect(group.name).to.deep.equal('abc')
     })
     it('should return error for a invalid group object.', async () => {
       let ret = await Group.create({})
@@ -590,13 +590,13 @@ describe('model', function() {
   describe('#Cred.create()', () => {
     it('should create and return a modified credential object.', async () => {
       let user1 = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let ret = await Cred.create({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })
       let cred = await Cred.findById(ret._id)
       expect(cred.ver).to.equal(0)
@@ -604,9 +604,9 @@ describe('model', function() {
     })
     it('should return error for a invalid prime object.', async () => {
       let ret = await Cred.create({
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })
       expect(ret).to.deep.equal({
         errors: [ { path: 'uid', error: 'required' } ]
@@ -616,90 +616,90 @@ describe('model', function() {
   describe('#User.update()', () => {
     it('should update the user entity if not conflict.', async () => {
       let ret = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let user = await User.findById(ret._id)
       expect(user._id.toString()).to.equal(ret._id.toString())
-      user.name = "def"
-      user.profile = { a: "xyz" }
-      let modified = await User.update(user)
+      user.name = 'def'
+      user.profile = { a: 'xyz' }
+      await User.update(user)
       user = await User.findById(ret._id)
       expect(user.ver).to.equal(1)
-      expect(user.name).to.equal("def")
-      expect(user.profile).to.deep.equal({ a: "xyz" })
+      expect(user.name).to.equal('def')
+      expect(user.profile).to.deep.equal({ a: 'xyz' })
     })
     it('should not update the user entity if error.', async () => {
       let ret = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let user = await User.findById(ret._id)
       expect(user._id.toString()).to.equal(ret._id.toString())
-      user.name = ""
-      user.profile = { a: "xyz" }
+      user.name = ''
+      user.profile = { a: 'xyz' }
       let error = await User.update(user)
       expect(error).to.deep.equal({
         errors: [ { path: 'name', error: 'required' } ]
       })
       user = await User.findById(ret._id)
       expect(user.ver).to.equal(0)
-      expect(user.name).to.equal("abc")
+      expect(user.name).to.equal('abc')
       expect(user.profile).to.deep.equal({})
     })
     it('should not update the user entity if conflict.', async () => {
       let ret = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let user = await User.findById(ret._id)
       expect(user._id.toString()).to.equal(ret._id.toString())
       ++ user.ver
-      user.name = "def"
-      user.profile = { a: "xyz" }
+      user.name = 'def'
+      user.profile = { a: 'xyz' }
       let error = await User.update(user)
       expect(error).to.deep.equal({
         errors: [ { path: 'ver', error: 'match' } ]
       })
       user = await User.findById(ret._id)
       expect(user.ver).to.equal(0)
-      expect(user.name).to.equal("abc")
+      expect(user.name).to.equal('abc')
       expect(user.profile).to.deep.equal({})
     })
   })
   describe('#Group.update()', () => {
     it('should update the group entity if not conflict.', async () => {
       let user1 = await User.create({
-        name: "ABC"
+        name: 'ABC'
       })
       let group1 = await Group.create({
-        name: "123"
+        name: '123'
       })
       let ret = await Group.create({
-        name: "abc"
+        name: 'abc'
       })
       let group = await Group.findById(ret._id)
       expect(group._id.toString()).to.equal(ret._id.toString())
-      group.name = "def"
+      group.name = 'def'
       group.gids = [group1._id.toString()]
       group.uids = [user1._id.toString()]
-      let modified = await Group.update(group)
+      await Group.update(group)
       group = await Group.findById(ret._id)
       expect(group.ver).to.equal(1)
-      expect(group.name).to.equal("def")
+      expect(group.name).to.equal('def')
       expect(group.gids).to.have.members([group1._id.toString()])
       expect(group.uids).to.have.members([user1._id.toString()])
     })
     it('should not update the group entity if error.', async () => {
       let user1 = await User.create({
-        name: "123"
+        name: '123'
       })
       let group1 = await Group.create({
-        name: "123"
+        name: '123'
       })
       let ret = await Group.create({
-        name: "abc"
+        name: 'abc'
       })
       let group = await Group.findById(ret._id)
       expect(group._id.toString()).to.equal(ret._id.toString())
-      group.name = ""
+      group.name = ''
       group.gids = [group1._id.toString()]
       group.uids = [user1._id.toString()]
       let error = await Group.update(group)
@@ -708,24 +708,24 @@ describe('model', function() {
       })
       group = await Group.findById(ret._id)
       expect(group.ver).to.equal(0)
-      expect(group.name).to.equal("abc")
+      expect(group.name).to.equal('abc')
       expect(group.gids).to.have.members([])
       expect(group.uids).to.have.members([])
     })
     it('should not update the group entity if conflict.', async () => {
       let user1 = await User.create({
-        name: "123"
+        name: '123'
       })
       let group1 = await Group.create({
-        name: "123"
+        name: '123'
       })
       let ret = await Group.create({
-        name: "abc"
+        name: 'abc'
       })
       let group = await Group.findById(ret._id)
       expect(group._id.toString()).to.equal(ret._id.toString())
       ++ group.ver
-      group.name = "def"
+      group.name = 'def'
       group.gids = [group1._id.toString()]
       group.uids = [user1._id.toString()]
       let error = await Group.update(group)
@@ -734,7 +734,7 @@ describe('model', function() {
       })
       group = await Group.findById(ret._id)
       expect(group.ver).to.equal(0)
-      expect(group.name).to.equal("abc")
+      expect(group.name).to.equal('abc')
       expect(group.gids).to.have.members([])
       expect(group.uids).to.have.members([])
     })
@@ -742,76 +742,76 @@ describe('model', function() {
   describe('#Cred.update()', () => {
     it('should update the credential entity if not conflict.', async () => {
       let user1 = await User.create({
-        name: "123"
+        name: '123'
       })
       let ret = await Cred.create({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
+        provider: 'password',
+        authId: 'user1id',
+        attr: { password: 'user1pass' },
       })
       let cred = await Cred.findById(ret._id)
       expect(cred._id.toString()).to.equal(ret._id.toString())
-      cred.authId = "def"
-      cred.attr.password = "xyz"
-      let modified = await Cred.update(cred)
+      cred.authId = 'def'
+      cred.attr.password = 'xyz'
+      await Cred.update(cred)
       cred = await Cred.findById(ret._id)
       expect(cred.ver).to.equal(1)
-      expect(cred.authId).to.equal("def")
-      expect(cred.attr.password).to.deep.equal("xyz")
+      expect(cred.authId).to.equal('def')
+      expect(cred.attr.password).to.deep.equal('xyz')
     })
     it('should not update the credential entity if error.', async () => {
       let user1 = await User.create({
-        name: "123"
+        name: '123'
       })
       let ret = await Cred.create({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
+        provider: 'password',
+        authId: 'user1id',
+        attr: { password: 'user1pass' },
       })
       let cred = await Cred.findById(ret._id)
       expect(cred._id.toString()).to.equal(ret._id.toString())
-      cred.authId = ""
-      cred.attr.password = "xyz"
+      cred.authId = ''
+      cred.attr.password = 'xyz'
       let error = await Cred.update(cred)
       expect(error).to.deep.equal({
         errors: [ { path: 'authId', error: 'required' } ]
       })
       cred = await Cred.findById(ret._id)
       expect(cred.ver).to.equal(0)
-      expect(cred.authId).to.equal("user1id")
-      expect(cred.attr.password).to.deep.equal("user1pass")
+      expect(cred.authId).to.equal('user1id')
+      expect(cred.attr.password).to.deep.equal('user1pass')
     })
     it('should not update the credential entity if conflict.', async () => {
       let user1 = await User.create({
-        name: "123"
+        name: '123'
       })
       let ret = await Cred.create({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
+        provider: 'password',
+        authId: 'user1id',
+        attr: { password: 'user1pass' },
       })
       let cred = await Cred.findById(ret._id)
       expect(cred._id.toString()).to.equal(ret._id.toString())
       ++ cred.ver
-      cred.authId = "def"
-      cred.attr.password = "xyz"
+      cred.authId = 'def'
+      cred.attr.password = 'xyz'
       let error = await Cred.update(cred)
       expect(error).to.deep.equal({
         errors: [ { path: 'ver', error: 'match' } ]
       })
       cred = await Cred.findById(ret._id)
       expect(cred.ver).to.equal(0)
-      expect(cred.authId).to.equal("user1id")
-      expect(cred.attr.password).to.deep.equal("user1pass")
+      expect(cred.authId).to.equal('user1id')
+      expect(cred.attr.password).to.deep.equal('user1pass')
     })
   })
   describe('#User.delete()', () => {
     it('should delete the user entity if not conflict.', async () => {
       let ret = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let user = await User.findById(ret._id)
       expect(user._id.toString()).to.equal(ret._id.toString())
@@ -822,7 +822,7 @@ describe('model', function() {
     })
     it('should not delete the user entity if conflict.', async () => {
       let ret = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let user = await User.findById(ret._id)
       expect(user._id.toString()).to.equal(ret._id.toString())
@@ -838,7 +838,7 @@ describe('model', function() {
   describe('#Group.delete()', () => {
     it('should delete the group entity if not conflict.', async () => {
       let ret = await Group.create({
-        name: "abc"
+        name: 'abc'
       })
       let group = await Group.findById(ret._id)
       expect(group._id.toString()).to.equal(ret._id.toString())
@@ -849,7 +849,7 @@ describe('model', function() {
     })
     it('should not delete the group entity if conflict.', async () => {
       let ret = await Group.create({
-        name: "abc"
+        name: 'abc'
       })
       let group = await Group.findById(ret._id)
       expect(group._id.toString()).to.equal(ret._id.toString())
@@ -865,13 +865,13 @@ describe('model', function() {
   describe('#Cred.delete()', () => {
     it('should delete the credential entity if not conflict.', async () => {
       let user1 = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let ret = await Cred.create({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })
       let cred = await Cred.findById(ret._id)
       expect(cred._id.toString()).to.equal(ret._id.toString())
@@ -882,13 +882,13 @@ describe('model', function() {
     })
     it('should not delete the credential entity if conflict.', async () => {
       let user1 = await User.create({
-        name: "abc"
+        name: 'abc'
       })
       let ret = await Cred.create({
         uid: user1._id.toString(),
-        provider: "password",
-        authId: "def",
-        attr: { password: "xyz" }
+        provider: 'password',
+        authId: 'def',
+        attr: { password: 'xyz' }
       })
       let cred = await Cred.findById(ret._id)
       expect(cred._id.toString()).to.equal(ret._id.toString())
@@ -903,13 +903,13 @@ describe('model', function() {
   })
   describe('#getGroups()', () => {
     it('should get gids of gids.', async () => {
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      let { top, admin, manager, cred1 } = await getTestPrimeObjects()
       let gids = await getGroups(cred1.uid)
       expect(gids).to.have.members([top._id.toString(), admin._id.toString(), manager._id.toString()])
 
-      let group1 = await Group.create({name: "Group 1"})
-      let group2 = await Group.create({name: "Group 2"})
-      let user2 = await User.create({name: "User 2"})
+      let group1 = await Group.create({name: 'Group 1'})
+      let group2 = await Group.create({name: 'Group 2'})
+      let user2 = await User.create({name: 'User 2'})
       manager.gids.push(group1._id.toString())
       group1.gids.push(group2._id.toString())
       group2.gids.push(manager._id.toString())
@@ -924,51 +924,52 @@ describe('model', function() {
       expect(gids).to.have.members([])
     })
   })
-  describe('#Session.build()', () => {
+  describe('#Session.validate()', () => {
     it('should return the session object from a credential.', async () => {
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
-      let sess = await Session.build(cred1)
+      let { top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      let sess = await Session.validate(cred1)
       expect(sess.uid).to.equal(user1._id.toString())
       expect(sess.provider).to.equal(cred1.provider)
-      expect(sess.gids).to.have.members([top._id.toString(), admin._id.toString(), manager._id.toString()])
+      expect(sess.gids).to.have.members([
+        top._id.toString(),
+        admin._id.toString(),
+        manager._id.toString()
+      ])
       expect(sess.admin).is.true
       expect(sess.manager).is.true
       expect(sess.createdAt.getTime()).is.not.greaterThan(new Date().getTime())
     })
     it('should return errors for invalid inputs.', async () => {
-      let ret = await Session.build(null)
+      let ret = await Session.validate()
       expect(ret).to.deep.equal({
-        errors: [ { path: '', error: 'required' } ]
+        errors: [
+          { path: 'uid', error: 'string' },
+          { path: 'provider', error: 'string' },
+        ]
       })
-      ret = await Session.build({ provider: "password"})
-      expect(ret).to.deep.equal({
-        errors: [ { path: 'uid', error: 'string' } ]
-      })
-      ret = await Session.build({ uid: "dummy"})
-      expect(ret).to.deep.equal({
-        errors: [ { path: 'provider', error: 'string' } ]
-      })
-    })
-  })
-  describe('#Session.validate()', () => {
-    it('should return the session object from a credential.', async () => {
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
-      let sess = await Session.validate(cred1)
-      expect(sess.uid).to.equal(user1._id.toString())
-    })
-    it('should return errors for invalid inputs.', async () => {
-      let ret = await Session.validate({ provider: "password"})
+      ret = await Session.validate({ provider: 'password'})
       expect(ret).to.deep.equal({
         errors: [ { path: 'uid', error: 'string' } ]
       })
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      ret = await Session.validate({ provider: 'password'})
+      expect(ret).to.deep.equal({
+        errors: [ { path: 'uid', error: 'string' } ]
+      })
+      let { user1 } = await getTestPrimeObjects()
       let uid = user1._id.toString()
-      ret = await Session.validate({ uid: uid, provider: "dummy" })
+      ret = await Session.validate({ uid: uid})
+      expect(ret).to.deep.equal({
+        errors: [
+          { path: 'provider', error: 'reference' },
+          { path: 'provider', error: 'string' },
+        ]
+      })
+      ret = await Session.validate({ uid: uid, provider: 'dummy' })
       expect(ret).to.deep.equal({
         errors: [ { path: 'provider', error: 'reference' } ]
       })
       await User.findByIdAndRemove(uid)
-      ret = await Session.validate({ uid: uid, provider: "password" })
+      ret = await Session.validate({ uid: uid, provider: 'password' })
       expect(ret).to.deep.equal({
         errors: [ { path: 'uid', error: 'reference' } ]
       })
@@ -976,15 +977,15 @@ describe('model', function() {
   })
   describe('#Session.create()', () => {
     it('should create the session object from a credential.', async () => {
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      let { cred1 } = await getTestPrimeObjects()
       let sess = await Session.create(cred1)
       expect(await Session.findById(sess._id.toString())).is.not.null
     })
     it('should not create the session for invalid inputs.', async () => {
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      let { user1 } = await getTestPrimeObjects()
       let uid = user1._id.toString()
       await User.findByIdAndRemove(uid)
-      let ret = await Session.create({ uid: uid, provider: "password" })
+      let ret = await Session.create({ uid: uid, provider: 'password' })
       expect(ret).to.deep.equal({
         errors: [ { path: 'uid', error: 'reference' } ]
       })
@@ -993,7 +994,7 @@ describe('model', function() {
   })
   describe('#Session.delete()', () => {
     it('should delete the session object.', async () => {
-      let { prim, top, admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      let { cred1 } = await getTestPrimeObjects()
       let sess = await Session.create(cred1)
       let sid = sess._id.toString()
       let ret = await Session.delete(sid)
@@ -1008,7 +1009,7 @@ describe('model', function() {
     it('should accept string and object messages.', async () => {
       let stream = new LogStream()
       stream.write([])
-      log.info({ attr: { a:"xyz" } })
+      log.info({ attr: { a:'xyz' } })
       await new Promise(resolve => setTimeout(resolve, 10))
       log.info('message1')
       await new Promise(resolve => setTimeout(resolve, 10))
@@ -1016,7 +1017,7 @@ describe('model', function() {
       await new Promise(resolve => setTimeout(resolve, 100))
       let logs = await Log.find({}).sort({ time: 1 }).exec()
       expect(logs).to.have.length(3)
-      expect(logs[0].attr).to.deep.equal({ a:"xyz" })
+      expect(logs[0].attr).to.deep.equal({ a:'xyz' })
       expect(logs[0].msg).to.equal('')
       expect(logs[1].attr).is.undefined
       expect(logs[1].msg).to.equal('message1')
@@ -1028,16 +1029,16 @@ describe('model', function() {
 
 async function getTestPrimeObjects() {
   let top = await new Group(await Group.validate({
-    name: "Top"
+    name: 'Top'
   }, false))
   let admin = await new Group(await Group.validate({
-    name: "Admin"
+    name: 'Admin'
   }, false))
   let manager = await new Group(await Group.validate({
-    name: "Manager"
+    name: 'Manager'
   }, false))
   let user1 = await new User(await User.validate({
-    name: "User 1"
+    name: 'User 1'
   }, false))
   top.gids = [ admin._id.toString(), manager._id.toString() ]
   admin.uids = [ user1._id.toString() ]
@@ -1049,9 +1050,9 @@ async function getTestPrimeObjects() {
   }))
   let cred1 = await new Cred(await Cred.validate({
     uid: user1._id.toString(),
-    provider: "password",
-    authId: "user1id",
-    attr: { password: "user1pass" }
+    provider: 'password',
+    authId: 'user1id',
+    attr: { password: 'user1pass' }
   }, false))
   await prim.save()
   await top.save()

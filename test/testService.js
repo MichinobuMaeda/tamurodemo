@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /*  
  * Copyright (c) 2017, Michinobu Maeda 
@@ -7,7 +7,7 @@
  */
 
 const crypto = require('crypto')
-const chai = require('chai');
+const chai = require('chai')
 const expect = chai.expect
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
@@ -17,15 +17,15 @@ const { log, mongoose, User, Group, Prim, Cred, Session, Log } = require('../lib
 const DebugLog = class {
   write(rec) {
     let obj = JSON.parse(rec)
-    console.log(`${obj.time}:${obj.level}:${obj.msg}${obj.attr ? JSON.stringify(obj.attr) : ''}`)
+    console.warn(`${obj.time}:${obj.level}:${obj.msg}${obj.attr ? JSON.stringify(obj.attr) : ''}`)
   }
 }
 
 log.addStream({
-  name: "test",
+  name: 'test',
   stream: new DebugLog(),
-  level: "debug"
-});
+  level: 'debug'
+})
 
 const conf = require('../conf.sample.js')
 const Service = require('../lib/service')
@@ -41,7 +41,7 @@ describe('Service', function() {
     srv.prim = null
     return mongoose.connection.db.dropDatabase()
   })
-  afterEach(async () => {})
+  afterEach(() => null)
   after(async () => {
     await mongoose.disconnect()
   })
@@ -61,7 +61,7 @@ describe('Service', function() {
     })
   })
   describe('#appendNestedErrors()', () => {
-    it('should append errors of nested nodes.', async () => {
+    it('should append errors of nested nodes.', () => {
       expect(srv.appendNestedErrors([], [], 'top')).to.have.deep.members([])
       expect(srv.appendNestedErrors([
         { path: 'name', error: 'required' },
@@ -116,7 +116,7 @@ describe('Service', function() {
     it('should return top group name only if no session after setup.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let res = await chai.request(api).get('/')
-      expect(JSON.parse(res.text)).to.deep.equal({ name: "Top" })
+      expect(JSON.parse(res.text)).to.deep.equal({ name: 'Top' })
     })
     it('should return top group name only if session expired.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -127,13 +127,13 @@ describe('Service', function() {
         await sess.save()
       })
       let res = await agent.get('/')
-      expect(JSON.parse(res.text)).to.deep.equal({ name: "Top" })
+      expect(JSON.parse(res.text)).to.deep.equal({ name: 'Top' })
     })
     it('should return top group object if has session after setup.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
       let res = await agent.get('/')
-      expect(JSON.parse(res.text)).to.have.keys(["_id", "ver", "name", "gids", "uids"])
+      expect(JSON.parse(res.text)).to.have.keys(['_id', 'ver', 'name', 'gids', 'uids'])
     })
   })
   describe('PUT /', () => {
@@ -159,7 +159,7 @@ describe('Service', function() {
   describe('#setup()', () => {
     it('should create primary gids, a user and a credential.', async () => {
       let setup = getSetupData()
-      let ret = await srv.setup(setup)
+      await srv.setup(setup)
       expect(await User.count({})).to.equal(1)
       expect(await Group.count({})).to.equal(3)
       expect(await Prim.count({})).to.equal(1)
@@ -167,31 +167,31 @@ describe('Service', function() {
     })
     it('should not create primary gids, a user and a credential if error.', async () => {
       let setup = getSetupData()
-      setup.top.name = ""
+      setup.top.name = ''
       let ret = await srv.setup(setup)
       expect(ret).to.deep.equal({
         errors: [{ path: 'top.name', error: 'required' }]
       })
       setup = getSetupData()
-      setup.admin.name = ""
+      setup.admin.name = ''
       ret = await srv.setup(setup)
       expect(ret).to.deep.equal({
         errors: [{ path: 'admin.name', error: 'required' }]
       })
       setup = getSetupData()
-      setup.manager.name = ""
+      setup.manager.name = ''
       ret = await srv.setup(setup)
       expect(ret).to.deep.equal({
         errors: [{ path: 'manager.name', error: 'required' }]
       })
       setup = getSetupData()
-      setup.user.name = ""
+      setup.user.name = ''
       ret = await srv.setup(setup)
       expect(ret).to.deep.equal({
         errors: [{ path: 'user.name', error: 'required' }]
       })
       setup = getSetupData()
-      setup.cred.provider = ""
+      setup.cred.provider = ''
       ret = await srv.setup(setup)
       expect(ret).to.deep.equal({
         errors: [{ path: 'cred.provider', error: 'required' }]
@@ -240,7 +240,7 @@ describe('Service', function() {
     })
     it('should not create primary gids, a user and a credential if error.', async () => {
       let setup = getSetupData()
-      setup.top.name = ""
+      setup.top.name = ''
       let res = await chai.request(api).put('/setup').type('json').send(setup)
       expect(res).to.have.status(200)
       let top = JSON.parse(res.text)
@@ -278,12 +278,12 @@ describe('Service', function() {
 
       // before sign in
       let res = await agent1.get('/')
-      expect(JSON.parse(res.text)).to.deep.equal({ name: "Top" })
+      expect(JSON.parse(res.text)).to.deep.equal({ name: 'Top' })
 
       res = await agent1.post('/sessions').type('json').send({
-        provider: "password",
-        authId: "user1id",
-        password: "user1pass",
+        provider: 'password',
+        authId: 'user1id',
+        password: 'user1pass',
       })
       expect(JSON.parse(res.text)._id).to.equal(srv.prim.top)
       await new Promise(resolve => setTimeout(resolve, 100))
@@ -306,30 +306,30 @@ describe('Service', function() {
       let manager = await Group.findById(srv.prim.manager)
       const agent1 = chai.request.agent(api)
       let res = await agent1.post('/sessions').type('json').send({
-        provider: "password",
-        authId: "dummy",
-        password: "user1pass",
+        provider: 'password',
+        authId: 'dummy',
+        password: 'user1pass',
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: '', error: 'auth' } ]
       })
       res = await agent1.post('/sessions').type('json').send({
-        provider: "password",
-        authId: "user1id",
-        password: "dummy",
+        provider: 'password',
+        authId: 'user1id',
+        password: 'dummy',
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: '', error: 'auth' } ]
       })
       let cred4 = await new Cred({
         uid: manager.uids[0],
-        provider: "test",
-        authId: "user1id",
+        provider: 'test',
+        authId: 'user1id',
       })
       cred4.save()
       res = await agent1.post('/sessions').type('json').send({
-        provider: "test",
-        authId: "user1id",
+        provider: 'test',
+        authId: 'user1id',
       })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: '', error: 'auth' } ]
@@ -387,9 +387,9 @@ describe('Service', function() {
       let manager = await Group.findById(srv.prim.manager)
       const agent1 = chai.request.agent(api)
       let res = await agent1.post('/sessions').type('json').send({
-        provider: "password",
-        authId: "user1id",
-        password: "user1pass",
+        provider: 'password',
+        authId: 'user1id',
+        password: 'user1pass',
       })
 
       // before sign out
@@ -406,7 +406,7 @@ describe('Service', function() {
 
       // after sign out
       res = await agent1.get('/')
-      expect(JSON.parse(res.text)).to.deep.equal({ name: "Top" })
+      expect(JSON.parse(res.text)).to.deep.equal({ name: 'Top' })
 
       expect(await Session.count({})).to.equal(0)
 
@@ -431,8 +431,8 @@ describe('Service', function() {
       let res = await agent.get('/users')
       let list = JSON.parse(res.text)
       expect(list).to.have.length(2)
-      expect(list[0].name).to.equals("User 1")
-      expect(list[1].name).to.equals("User 3")
+      expect(list[0].name).to.equals('User 1')
+      expect(list[1].name).to.equals('User 3')
     })
     it('should reject except managers.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -456,7 +456,7 @@ describe('Service', function() {
     it('should return a user for a member.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
-      let user4 = await User.findOne({ name: "User 4" }).exec()
+      let user4 = await User.findOne({ name: 'User 4' }).exec()
       let res = await agent.get(`/users/${user4._id.toString()}`)
       expect(JSON.parse(res.text)._id).to.equal(user4._id.toString())
     })
@@ -482,33 +482,33 @@ describe('Service', function() {
     it('should update a user for a manager or the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsUser4()
-      let user4 = await User.findOne({ name: "User 4" })
+      let user4 = await User.findOne({ name: 'User 4' })
       const agent = await loginAsManager()
       let res = await agent.put(`/users/${user4._id.toString()}/ver/${user4.ver}`)
-      .type('json').send({
-        _id: user4._id.toString(),
-        ver: user4.ver,
-        name: user4.name,
-        profile: { tel: "01-2345-6789" }
-      })
+        .type('json').send({
+          _id: user4._id.toString(),
+          ver: user4.ver,
+          name: user4.name,
+          profile: { tel: '01-2345-6789' }
+        })
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(user4.ver + 1)
-      expect(res.profile).to.deep.equal({ tel: "01-2345-6789" })
+      expect(res.profile).to.deep.equal({ tel: '01-2345-6789' })
     })
     it('should update a user for the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
-      let user4 = await User.findOne({ name: "User 4" })
+      let user4 = await User.findOne({ name: 'User 4' })
       let res = await agent.put(`/users/${user4._id.toString()}/ver/${user4.ver}`)
-      .type('json').send({
-        _id: user4._id.toString(),
-        ver: user4.ver,
-        name: user4.name,
-        profile: { tel: "01-2345-6789" }
-      })
+        .type('json').send({
+          _id: user4._id.toString(),
+          ver: user4.ver,
+          name: user4.name,
+          profile: { tel: '01-2345-6789' }
+        })
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(user4.ver + 1)
-      expect(res.profile).to.deep.equal({ tel: "01-2345-6789" })
+      expect(res.profile).to.deep.equal({ tel: '01-2345-6789' })
     })
     it('should reject except managers.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -542,7 +542,7 @@ describe('Service', function() {
     it('should delete a user for a manager or the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsUser4()
-      let user4 = await User.findOne({ name: "User 4" })
+      let user4 = await User.findOne({ name: 'User 4' })
       const agent = await loginAsManager()
       let res = await agent.del(`/users/${user4._id.toString()}/ver/${user4.ver}`)
       expect(JSON.parse(res.text)).to.deep.equal({})
@@ -550,7 +550,7 @@ describe('Service', function() {
     it('should not delete with invalid ver.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsUser4()
-      let user4 = await User.findOne({ name: "User 4" })
+      let user4 = await User.findOne({ name: 'User 4' })
       const agent = await loginAsManager()
       let res = await agent.del(`/users/${user4._id.toString()}/ver/${user4.ver - 1}`)
       expect(JSON.parse(res.text)).to.deep.equal({
@@ -592,9 +592,9 @@ describe('Service', function() {
       let res = await agent.get('/groups')
       let list = JSON.parse(res.text)
       expect(list).to.have.length(3)
-      expect(list[0].name).to.equals("Admin")
-      expect(list[1].name).to.equals("Manager")
-      expect(list[2].name).to.equals("Top")
+      expect(list[0].name).to.equals('Admin')
+      expect(list[1].name).to.equals('Manager')
+      expect(list[2].name).to.equals('Top')
     })
     it('should reject except managers.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -618,7 +618,7 @@ describe('Service', function() {
     it('should return a group for a member.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
-      let manager = await Group.findOne({ name: "Manager" }).exec()
+      let manager = await Group.findOne({ name: 'Manager' }).exec()
       let res = await agent.get(`/groups/${manager._id.toString()}`)
       expect(JSON.parse(res.text)._id).to.equal(manager._id.toString())
     })
@@ -643,17 +643,17 @@ describe('Service', function() {
   describe('PUT /groups/:gid/ver/:ver', () => {
     it('should update a user for a manager.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      await Group.create({ name: "Group 4" })
-      let group4 = await Group.findOne({ name: "Group 4" })
-      let user1 = await User.findOne({ name: "User 1" })
+      await Group.create({ name: 'Group 4' })
+      let group4 = await Group.findOne({ name: 'Group 4' })
+      let user1 = await User.findOne({ name: 'User 1' })
       const agent = await loginAsManager()
       let res = await agent.put(`/groups/${group4._id.toString()}/ver/${group4.ver}`)
-      .type('json').send({
-        _id: group4._id.toString(),
-        ver: group4.ver,
-        name: group4.name,
-        uids: [user1._id.toString()]
-      })
+        .type('json').send({
+          _id: group4._id.toString(),
+          ver: group4.ver,
+          name: group4.name,
+          uids: [user1._id.toString()]
+        })
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(group4.ver + 1)
       expect(res.uids).to.have.members([user1._id.toString()])
@@ -689,16 +689,16 @@ describe('Service', function() {
   describe('DEL /groups/:gid/ver/:ver', () => {
     it('should delete a user for a manager or the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      await Group.create({ name: "Group 4" })
-      let group4 = await Group.findOne({ name: "Group 4" })
+      await Group.create({ name: 'Group 4' })
+      let group4 = await Group.findOne({ name: 'Group 4' })
       const agent = await loginAsManager()
       let res = await agent.del(`/groups/${group4._id.toString()}/ver/${group4.ver}`)
       expect(JSON.parse(res.text)).to.deep.equal({})
     })
     it('should not delete with invalid ver.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      await Group.create({ name: "Group 4" })
-      let group4 = await Group.findOne({ name: "Group 4" })
+      await Group.create({ name: 'Group 4' })
+      let group4 = await Group.findOne({ name: 'Group 4' })
       const agent = await loginAsManager()
       let res = await agent.del(`/groups/${group4._id.toString()}/ver/${group4.ver - 1}`)
       expect(JSON.parse(res.text)).to.deep.equal({
@@ -728,18 +728,18 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsManager()
       let res = await agent.post(`/groups/${srv.prim.manager}/users`)
-      .type('json').send({
-        name: "User 4",
-        profile: { tel: "01-2345-6789" }
-      })
+        .type('json').send({
+          name: 'User 4',
+          profile: { tel: '01-2345-6789' }
+        })
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(0)
-      expect(res.name).to.equal("User 4")
-      expect(res.profile).to.deep.equal({ tel: "01-2345-6789" })
+      expect(res.name).to.equal('User 4')
+      expect(res.profile).to.deep.equal({ tel: '01-2345-6789' })
       let manager = await Group.findById(srv.prim.manager)
-      let user1 = await User.findOne({ name: "User 1" })
-      let user3 = await User.findOne({ name: "User 3" })
-      let user4 = await User.findOne({ name: "User 4" })
+      let user1 = await User.findOne({ name: 'User 1' })
+      let user3 = await User.findOne({ name: 'User 3' })
+      let user4 = await User.findOne({ name: 'User 4' })
       expect(manager.uids).to.have.deep.members([
         user1._id.toString(),
         user3._id.toString(),
@@ -765,15 +765,15 @@ describe('Service', function() {
     })
     it('should reject invalid gid.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      const group5 = await Group.create({ name: "Group 5" })
+      const group5 = await Group.create({ name: 'Group 5' })
       const gid = group5._id.toString()
       await Group.delete(group5)
       const agent = await loginAsManager()
       let res = await agent.post(`/groups/${gid}/users`)
-      .type('json').send({
-        name: "User 4",
-        profile: { tel: "01-2345-6789" }
-      })
+        .type('json').send({
+          name: 'User 4',
+          profile: { tel: '01-2345-6789' }
+        })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'gid', error: 'reference' } ]
       })
@@ -784,12 +784,12 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsManager()
       const agent = await loginAsUser4()
-      let manager = await Group.findOne({ name: "Manager" }).exec()
+      let manager = await Group.findOne({ name: 'Manager' }).exec()
       let res = await agent.get(`/groups/${manager._id.toString()}/users`)
       let list = JSON.parse(res.text)
       expect(list).to.have.length(2)
-      expect(list[0].name).to.equal("User 1")
-      expect(list[1].name).to.equal("User 3")
+      expect(list[0].name).to.equal('User 1')
+      expect(list[1].name).to.equal('User 3')
     })
     it('should reject except members.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -800,7 +800,7 @@ describe('Service', function() {
     })
     it('should reject invalid gid.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      const group5 = await Group.create({ name: "Group 5" })
+      const group5 = await Group.create({ name: 'Group 5' })
       const gid = group5._id.toString()
       await Group.delete(group5)
       const agent = await loginAsManager()
@@ -835,14 +835,14 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsManager()
       let res = await agent.post(`/groups/${srv.prim.top}/groups`)
-      .type('json').send({
-        name: "Group 4",
-      })
+        .type('json').send({
+          name: 'Group 4',
+        })
       res = JSON.parse(res.text)
       expect(res.ver).to.equal(0)
-      expect(res.name).to.equal("Group 4")
+      expect(res.name).to.equal('Group 4')
       let top = await Group.findById(srv.prim.top)
-      let group4 = await Group.findOne({ name: "Group 4" })
+      let group4 = await Group.findOne({ name: 'Group 4' })
       expect(top.gids).to.have.deep.members([
         srv.prim.admin,
         srv.prim.manager,
@@ -868,14 +868,14 @@ describe('Service', function() {
     })
     it('should reject invalid gid.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      const group5 = await Group.create({ name: "Group 5" })
+      const group5 = await Group.create({ name: 'Group 5' })
       const gid = group5._id.toString()
       await Group.delete(group5)
       const agent = await loginAsManager()
       let res = await agent.post(`/groups/${gid}/groups`)
-      .type('json').send({
-        name: "Group 4",
-      })
+        .type('json').send({
+          name: 'Group 4',
+        })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'gid', error: 'reference' } ]
       })
@@ -885,12 +885,12 @@ describe('Service', function() {
     it('should return gids list of a group for a member.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
-      let top = await Group.findOne({ name: "Top" }).exec()
+      let top = await Group.findOne({ name: 'Top' }).exec()
       let res = await agent.get(`/groups/${top._id.toString()}/groups`)
       let list = JSON.parse(res.text)
       expect(list).to.have.length(2)
-      expect(list[0].name).to.equal("Admin")
-      expect(list[1].name).to.equal("Manager")
+      expect(list[0].name).to.equal('Admin')
+      expect(list[1].name).to.equal('Manager')
     })
     it('should reject except members.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
@@ -901,7 +901,7 @@ describe('Service', function() {
     })
     it('should reject invalid gid.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      const group5 = await Group.create({ name: "Group 5" })
+      const group5 = await Group.create({ name: 'Group 5' })
       const gid = group5._id.toString()
       await Group.delete(group5)
       const agent = await loginAsManager()
@@ -935,70 +935,69 @@ describe('Service', function() {
     it('should create a credential for a manager.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsManager()
-      const user4 = await User.create({ name: "User 4" })
+      const user4 = await User.create({ name: 'User 4' })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
-      .type('json').send({
-        uid: user4._id.toString(),
-        provider: "password",
-        authId: "user4id",
-        attr: { password: "user4pass" },
-      })
+        .type('json').send({
+          uid: user4._id.toString(),
+          provider: 'password',
+          authId: 'user4id',
+          attr: { password: 'user4pass' },
+        })
       let cred4 = JSON.parse(res.text)
       expect(cred4.ver).to.equal(0)
-      expect(cred4.authId).to.equal("user4id")
+      expect(cred4.authId).to.equal('user4id')
       expect(cred4.attr.password).is.null
     })
     it('should create a credential for the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
+      const user4 = await User.findOne({ name: 'User 4' })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
-      .type('json').send({
-        uid: user4._id.toString(),
-        provider: "password",
-        authId: "user4id",
-        attr: { password: "user4pass" },
-      })
+        .type('json').send({
+          uid: user4._id.toString(),
+          provider: 'password',
+          authId: 'user4id',
+          attr: { password: 'user4pass' },
+        })
       let cred4 = JSON.parse(res.text)
       expect(cred4.ver).to.equal(0)
-      expect(cred4.authId).to.equal("user4id")
+      expect(cred4.authId).to.equal('user4id')
       expect(cred4.attr.password).is.null
     })
     it('should reject except managers and the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
-      const user1 = await User.findOne({ name: "User 1" })
+      const user1 = await User.findOne({ name: 'User 1' })
 
       let res = await chai.request(api).post(`/users/${user1._id.toString()}/creds/password`)
-      .type('json').send({
-        uid: user1._id.toString(),
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
-      })
+        .type('json').send({
+          uid: user1._id.toString(),
+          provider: 'password',
+          authId: 'user1id',
+          attr: { password: 'user1pass' },
+        })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: '', error: 'signin' } ]
       })
 
       const agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
       res = await agent.post(`/users/${user1._id.toString()}/creds/password`)
-      .type('json').send({
-        uid: user1._id.toString(),
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
-      })
+        .type('json').send({
+          uid: user1._id.toString(),
+          provider: 'password',
+          authId: 'user1id',
+          attr: { password: 'user1pass' },
+        })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
       })
 
       res = await (await loginAsAdmin()).post(`/users/${user1._id.toString()}/creds/password`)
-      .type('json').send({
-        uid: user1._id.toString(),
-        provider: "password",
-        authId: "user1id",
-        attr: { password: "user1pass" },
-      })
+        .type('json').send({
+          uid: user1._id.toString(),
+          provider: 'password',
+          authId: 'user1id',
+          attr: { password: 'user1pass' },
+        })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
       })
@@ -1008,7 +1007,7 @@ describe('Service', function() {
     it('should return credential list for a manager or the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
+      const user4 = await User.findOne({ name: 'User 4' })
       let res = await agent.get(`/users/${user4._id.toString()}/creds`)
       let list = JSON.parse(res.text)
       expect(list).to.have.length(1)
@@ -1027,14 +1026,14 @@ describe('Service', function() {
     it('should reject except managers and the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsAdmin()
-      const user4 = await User.create({ name: "User 4" })
+      const user4 = await User.create({ name: 'User 4' })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
-      .type('json').send({
-        uid: user4._id.toString(),
-        provider: "password",
-        authId: "user4id",
-        attr: { password: "user4pass" },
-      })
+        .type('json').send({
+          uid: user4._id.toString(),
+          provider: 'password',
+          authId: 'user4id',
+          attr: { password: 'user4pass' },
+        })
       res = await agent.get(`/users/${user4._id.toString()}/creds`)
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
@@ -1043,9 +1042,9 @@ describe('Service', function() {
     it('should reject for invalid uid.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
+      const user4 = await User.findOne({ name: 'User 4' })
       const uid = user4._id.toString()
-      await User.findOneAndRemove({ name: "User 4" })
+      await User.findOneAndRemove({ name: 'User 4' })
       let res = await agent.get(`/users/${uid}/creds`)
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'uid', error: 'reference' } ]
@@ -1056,52 +1055,52 @@ describe('Service', function() {
     it('should update a credential for a manager or the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
+      const user4 = await User.findOne({ name: 'User 4' })
       let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
       let res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver,
-        uid: cred4.uid,
-        provider: cred4.provider,
-        authId: cred4.authId,
-        attr: { password: "dummy" },
-      })
+        .type('json').send({
+          _id: cred4._id.toString(),
+          ver: cred4.ver,
+          uid: cred4.uid,
+          provider: cred4.provider,
+          authId: cred4.authId,
+          attr: { password: 'dummy' },
+        })
       cred4 = JSON.parse(res.text)
       expect(cred4.ver).to.equal(1)
-      expect(cred4.authId).to.equal("user4id")
+      expect(cred4.authId).to.equal('user4id')
       expect(cred4.attr.password).is.null
 
       agent = await loginAsManager()
       res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/1`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver,
-        uid: cred4.uid,
-        provider: cred4.provider,
-        authId: cred4.authId,
-        attr: { password: "user4pass" },
-      })
+        .type('json').send({
+          _id: cred4._id.toString(),
+          ver: cred4.ver,
+          uid: cred4.uid,
+          provider: cred4.provider,
+          authId: cred4.authId,
+          attr: { password: 'user4pass' },
+        })
       cred4 = JSON.parse(res.text)
       expect(cred4.ver).to.equal(2)
-      expect(cred4.authId).to.equal("user4id")
+      expect(cred4.authId).to.equal('user4id')
       expect(cred4.attr.password).is.null
     })
     it('should reject except managers and the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsUser4()
       let agent = await loginAsAdmin()
-      const user4 = await User.findOne({ name: "User 4" })
+      const user4 = await User.findOne({ name: 'User 4' })
       let cred4 = await Cred.findOne({ uid: user4._id.toString(), provider: 'password' })
       let res = await agent.put(`/users/${user4._id.toString()}/creds/password/ver/0`)
-      .type('json').send({
-        _id: cred4._id.toString(),
-        ver: cred4.ver,
-        uid: cred4.uid,
-        provider: cred4.provider,
-        authId: cred4.authId,
-        attr: { password: "dummy" },
-      })
+        .type('json').send({
+          _id: cred4._id.toString(),
+          ver: cred4.ver,
+          uid: cred4.uid,
+          provider: cred4.provider,
+          authId: cred4.authId,
+          attr: { password: 'dummy' },
+        })
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
       })
@@ -1112,16 +1111,14 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsUser4()
       let agent = await loginAsManager()
-      const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
+      const user4 = await User.findOne({ name: 'User 4' })
       let res = await agent.delete(`/users/${user4._id.toString()}/creds/password/ver/0`)
       expect(JSON.parse(res.text)).to.deep.equal({})
     })
     it('should update a credential for a manager or the user.', async () => {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       let agent = await loginAsUser4()
-      const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
+      const user4 = await User.findOne({ name: 'User 4' })
       let res = await agent.delete(`/users/${user4._id.toString()}/creds/password/ver/0`)
       expect(JSON.parse(res.text)).to.deep.equal({})
     })
@@ -1129,8 +1126,7 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       await loginAsUser4()
       let agent = await loginAsAdmin()
-      const user4 = await User.findOne({ name: "User 4" })
-      let cred4 = await Cred.findOne({ uid: user4._id.toString(),provider: 'password' })
+      const user4 = await User.findOne({ name: 'User 4' })
       let res = await agent.delete(`/users/${user4._id.toString()}/creds/password/ver/0`)
       expect(JSON.parse(res.text)).to.deep.equal({
         errors: [ { path: 'manager|uid', error: 'priv' } ]
@@ -1141,71 +1137,71 @@ describe('Service', function() {
 
 function getSetupData() {
   return {
-    top: { name: "Top" },
-    admin: { name: "Admin" },
-    manager: { name: "Manager" },
-    user: { name: "User 1" },
+    top: { name: 'Top' },
+    admin: { name: 'Admin' },
+    manager: { name: 'Manager' },
+    user: { name: 'User 1' },
     cred: {
-      provider: "password",
-      authId: "user1id",
-      attr: { password: "user1pass" },
+      provider: 'password',
+      authId: 'user1id',
+      attr: { password: 'user1pass' },
     }
   }
 }
 
 async function loginAsAdmin() {
-  const user2 = await User.create({ name: "User 2" })
-  const manager = await Group.findOne({ name: "Admin" }).exec()
+  const user2 = await User.create({ name: 'User 2' })
+  const manager = await Group.findOne({ name: 'Admin' }).exec()
   manager.uids.push(user2._id.toString())
   await manager.save()
-  const cred2 = await Cred.create({
+  await Cred.create({
     uid: user2._id.toString(),
-    provider: "password",
-    authId: "user2id",
-    attr: { password: digestPassword(user2._id.toString(), "user2pass") }
+    provider: 'password',
+    authId: 'user2id',
+    attr: { password: digestPassword(user2._id.toString(), 'user2pass') }
   })
   const agent = chai.request.agent(api)
-  let ret = await agent.post('/sessions').type('json').send({
-    provider: "password",
-    authId: "user2id",
-    password: "user2pass",
+  await agent.post('/sessions').type('json').send({
+    provider: 'password',
+    authId: 'user2id',
+    password: 'user2pass',
   })
   return agent
 }
 
 async function loginAsManager() {
-  const user3 = await User.create({ name: "User 3" })
-  const manager = await Group.findOne({ name: "Manager" }).exec()
+  const user3 = await User.create({ name: 'User 3' })
+  const manager = await Group.findOne({ name: 'Manager' }).exec()
   manager.uids.push(user3._id.toString())
   await manager.save()
-  const cred3 = await Cred.create({
+  await Cred.create({
     uid: user3._id.toString(),
-    provider: "password",
-    authId: "user3id",
-    attr: { password: digestPassword(user3._id.toString(), "user3pass") }
+    provider: 'password',
+    authId: 'user3id',
+    attr: { password: digestPassword(user3._id.toString(), 'user3pass') }
   })
   const agent = chai.request.agent(api)
-  let ret = await agent.post('/sessions').type('json').send({
-    provider: "password",
-    authId: "user3id",
-    password: "user3pass",
+  await agent.post('/sessions').type('json').send({
+    provider: 'password',
+    authId: 'user3id',
+    password: 'user3pass',
   })
   return agent
 }
 
 async function loginAsUser4() {
-  const user4 = await User.create({ name: "User 4" })
-  const cred4 = await Cred.create({
+  const user4 = await User.create({ name: 'User 4' })
+  await Cred.create({
     uid: user4._id.toString(),
-    provider: "password",
-    authId: "user4id",
-    attr: { password: digestPassword(user4._id.toString(), "user4pass") }
+    provider: 'password',
+    authId: 'user4id',
+    attr: { password: digestPassword(user4._id.toString(), 'user4pass') }
   })
   const agent = chai.request.agent(api)
-  let ret = await agent.post('/sessions').type('json').send({
-    provider: "password",
-    authId: "user4id",
-    password: "user4pass",
+  await agent.post('/sessions').type('json').send({
+    provider: 'password',
+    authId: 'user4id',
+    password: 'user4pass',
   })
   return agent
 }

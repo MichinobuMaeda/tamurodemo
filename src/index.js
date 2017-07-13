@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /*  
  * Copyright (c) 2017, Michinobu Maeda 

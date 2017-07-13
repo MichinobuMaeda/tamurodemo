@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /*  
  * Copyright (c) 2017, Michinobu Maeda 
@@ -22,7 +22,7 @@ export default class Service {
    * @param {object} conf - configuration
    */
   constructor(conf) {
-    log.info(`Service#constructor()`)
+    log.info('Service#constructor()')
     this.prim = null
     this.conf = conf
     this.api = new Koa()
@@ -42,7 +42,7 @@ export default class Service {
       })
 
       .put('/setup', async (ctx) => {
-        log.info(`PUT /setup`)
+        log.info('PUT /setup')
         if (!this.prim) { this.prim = await Prim.findOne({}) }
         if (this.prim) {
           ctx.body = JSON.stringify({ errors: [ err.conflict('prim') ] })
@@ -60,7 +60,7 @@ export default class Service {
       })
 
       .post('/sessions', async (ctx) => {
-        log.info(`POST /sessions`)
+        log.info('POST /sessions')
         this.signOut(ctx)
         let ret = await this.authenticate(ctx.request.body)
         if (ret.errors) {
@@ -93,7 +93,7 @@ export default class Service {
 
       .put('/users/:uid/ver/:ver', this.authSelfOrManager, async (ctx) => {
         ctx.request.body._id = ctx.params.uid
-        ctx.request.body.ver = parseInt(ctx.params.ver)
+        ctx.request.body.ver = parseInt(ctx.params.ver, 10)
         ctx.body = JSON.stringify(await User.update(ctx.request.body))
       })
 
@@ -111,7 +111,7 @@ export default class Service {
 
       .put('/groups/:gid/ver/:ver', this.authManager, async (ctx) => {
         ctx.request.body._id = ctx.params.gid
-        ctx.request.body.ver = parseInt(ctx.params.ver)
+        ctx.request.body.ver = parseInt(ctx.params.ver, 10)
         ctx.body = JSON.stringify(await Group.update(ctx.request.body))
       })
 
@@ -164,11 +164,11 @@ export default class Service {
       .post('/users/:uid/creds/:provider', this.authSelfOrManager, async (ctx) => {
         ctx.request.body.uid = ctx.params.uid
         ctx.request.body.provider = ctx.params.provider
-        if (ctx.request.body.provider == prv.password && ctx.request.body.attr) {
+        if (ctx.request.body.provider === prv.password && ctx.request.body.attr) {
           ctx.request.body.attr.password = this.digestPassword(ctx.params.uid, ctx.request.body.attr.password)
         }
         let res = await Cred.create(ctx.request.body)
-        if (res.provider == prv.password && res.attr) {
+        if (res.provider === prv.password && res.attr) {
           res.attr.password = null
         }
         ctx.body = JSON.stringify(res)
@@ -181,7 +181,7 @@ export default class Service {
         }
         let res = await Cred.find({ uid: ctx.params.uid })
         ctx.body = JSON.stringify(res.map(cred => {
-          if (cred.provider == prv.password && cred.attr) {
+          if (cred.provider === prv.password && cred.attr) {
             cred.attr.password = null
           }
           return cred
@@ -191,12 +191,12 @@ export default class Service {
       .put('/users/:uid/creds/:provider/ver/:ver', this.authSelfOrManager, async (ctx) => {
         ctx.request.body.uid = ctx.params.uid
         ctx.request.body.provider = ctx.params.provider
-        ctx.request.body.ver = parseInt(ctx.params.ver)
-        if (ctx.request.body.provider == prv.password && ctx.request.body.attr) {
+        ctx.request.body.ver = parseInt(ctx.params.ver, 10)
+        if (ctx.request.body.provider === prv.password && ctx.request.body.attr) {
           ctx.request.body.attr.password = this.digestPassword(ctx.params.uid, ctx.request.body.attr.password)
         }
         let res = await Cred.update(ctx.request.body)
-        if (res.provider == prv.password && res.attr) {
+        if (res.provider === prv.password && res.attr) {
           res.attr.password = null
         }
         ctx.body = JSON.stringify(res)
@@ -224,10 +224,10 @@ export default class Service {
   }
 
   async init() {
-    log.info(`Service#init()`)
+    log.info('Service#init()')
     await mongoose.connect(this.conf.mongodb)
     this.prim = await Prim.findOne({})
-    await this.api.listen(this.conf.port);
+    await this.api.listen(this.conf.port)
   }
 
   async authenticate({ provider, authId, password }) {
@@ -237,8 +237,8 @@ export default class Service {
       return { errors: [err.auth('')] }
     }
     password = password ? this.digestPassword(cred.uid, password) : null
-    if (provider == prv.password) {
-      if (cred.authId != authId || !cred.attr || cred.attr.password != password) {
+    if (provider === prv.password) {
+      if (cred.authId !== authId || !cred.attr || cred.attr.password !== password) {
         log.info(`POST /session FAILED: provider:${provider}, authId:${authId} password:*********`)
         return { errors: [err.auth('')] }
       }
@@ -247,7 +247,7 @@ export default class Service {
       return { errors: [err.auth('')] }
     }
     log.info(`POST /session SUCCESS: uid:${cred.uid}`)
-    return await Session.create(cred)
+    return Session.create(cred)
   }
 
   async signOut(ctx) {
@@ -304,7 +304,7 @@ export default class Service {
     await manager.save()
     await user.save()
     await cred.save()
-    return await prim.save()
+    return prim.save()
   }
 
   appendNestedErrors(target, errors, path) {
@@ -352,7 +352,7 @@ export default class Service {
   async authSelfOrManager(ctx, next) {
     if (!ctx.session) {
       ctx.body = JSON.stringify({ errors: [ err.signin('') ] })
-    } else if ((!ctx.session.manager) && (ctx.params.uid != ctx.session.uid)) {
+    } else if ((!ctx.session.manager) && (ctx.params.uid !== ctx.session.uid)) {
       ctx.body = JSON.stringify({ errors: [ err.priv('manager|uid') ] })
     } else {
       await next()
