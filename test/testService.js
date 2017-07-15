@@ -34,12 +34,17 @@ const srv = new Service.default(conf)
 const api = `http://localhost:${conf.port}${conf.prefix}`
 
 describe('Service', function() {
-  before(() => {
-    return srv.init()
+  before(async () => {
+    await srv.init()
   })
-  beforeEach(() => {
+  beforeEach(async () => {
     srv.prim = null
-    return mongoose.connection.db.dropDatabase()
+    await User.remove({})
+    await Group.remove({})
+    await Prim.remove({})
+    await Cred.remove({})
+    await Session.remove({})
+    await Log.remove({})
   })
   afterEach(() => null)
   after(async () => {
@@ -952,6 +957,7 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const agent = await loginAsUser4()
       const user4 = await User.findOne({ name: 'User 4' })
+      await Cred.findOneAndRemove({ uid: user4._id.toString(), provider: 'password' })
       let res = await agent.post(`/users/${user4._id.toString()}/creds/password`)
         .type('json').send({
           uid: user4._id.toString(),
@@ -968,7 +974,8 @@ describe('Service', function() {
       await chai.request(api).put('/setup').type('json').send(getSetupData())
       const user1 = await User.findOne({ name: 'User 1' })
 
-      let res = await chai.request(api).post(`/users/${user1._id.toString()}/creds/password`)
+      let res = await chai.request(api)
+        .post(`/users/${user1._id.toString()}/creds/password`)
         .type('json').send({
           uid: user1._id.toString(),
           provider: 'password',
@@ -991,7 +998,8 @@ describe('Service', function() {
         errors: [ { path: 'manager|uid', error: 'priv' } ]
       })
 
-      res = await (await loginAsAdmin()).post(`/users/${user1._id.toString()}/creds/password`)
+      res = await (await loginAsAdmin())
+        .post(`/users/${user1._id.toString()}/creds/password`)
         .type('json').send({
           uid: user1._id.toString(),
           provider: 'password',

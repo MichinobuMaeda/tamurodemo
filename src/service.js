@@ -61,20 +61,21 @@ export default class Service {
 
       .post('/sessions', async (ctx) => {
         log.info('POST /sessions')
+        const cookieOption = { maxAge: this.conf.expires, signed: true }
         this.signOut(ctx)
         let ret = await this.authenticate(ctx.request.body)
         if (ret.errors) {
-          ctx.cookies.set('SID', '', { maxAge: this.conf.expires, signed: true })
+          ctx.cookies.set('SID', '', cookieOption)
           ctx.body = JSON.stringify(ret)
         } else {
-          ctx.cookies.set('SID', ret._id.toString(), { maxAge: this.conf.expires, signed: true })
+          ctx.cookies.set('SID', ret._id.toString(), cookieOption)
           log.info({ attr: ret.toJSON() })
           ctx.body = JSON.stringify(await Group.findById(this.prim.top))
         }
       })
 
       .get('/sessions', this.authAdmin, async (ctx) => {
-        ctx.body = JSON.stringify(await Session.find({}).sort({ createdAt: -1 }).exec())
+        ctx.body = JSON.stringify(await Session.find({}).sort({ createdAt: -1 }))
       })
 
       .del('/sessions', async (ctx) => {
@@ -84,7 +85,7 @@ export default class Service {
       })
 
       .get('/users', this.authManager, async (ctx) => {
-        ctx.body = JSON.stringify(await User.find({}).sort({ name: 1 }).exec())
+        ctx.body = JSON.stringify(await User.find({}).sort({ name: 1 }))
       })
 
       .get('/users/:uid', this.authMember, async (ctx) => {
@@ -98,11 +99,14 @@ export default class Service {
       })
 
       .del('/users/:uid/ver/:ver', this.authManager, async (ctx) => {
-        ctx.body = JSON.stringify(await User.delete({ _id: ctx.params.uid, ver: ctx.params.ver }))
+        ctx.body = JSON.stringify(await User.delete({
+          _id: ctx.params.uid,
+          ver: ctx.params.ver
+        }))
       })
 
       .get('/groups', this.authManager, async (ctx) => {
-        ctx.body = JSON.stringify(await Group.find({}).sort({ name: 1 }).exec())
+        ctx.body = JSON.stringify(await Group.find({}).sort({ name: 1 }))
       })
 
       .get('/groups/:gid', this.authMember, async (ctx) => {
@@ -116,7 +120,10 @@ export default class Service {
       })
 
       .del('/groups/:gid/ver/:ver', this.authManager, async (ctx) => {
-        ctx.body = JSON.stringify(await Group.delete({ _id: ctx.params.gid, ver: ctx.params.ver }))
+        ctx.body = JSON.stringify(await Group.delete({
+          _id: ctx.params.gid,
+          ver: ctx.params.ver
+        }))
       })
 
       .post('/groups/:gid/users', this.authManager, async (ctx) => {
@@ -165,7 +172,10 @@ export default class Service {
         ctx.request.body.uid = ctx.params.uid
         ctx.request.body.provider = ctx.params.provider
         if (ctx.request.body.provider === prv.password && ctx.request.body.attr) {
-          ctx.request.body.attr.password = this.digestPassword(ctx.params.uid, ctx.request.body.attr.password)
+          ctx.request.body.attr.password = this.digestPassword(
+            ctx.params.uid,
+            ctx.request.body.attr.password
+          )
         }
         let res = await Cred.create(ctx.request.body)
         if (res.provider === prv.password && res.attr) {
@@ -193,7 +203,10 @@ export default class Service {
         ctx.request.body.provider = ctx.params.provider
         ctx.request.body.ver = parseInt(ctx.params.ver, 10)
         if (ctx.request.body.provider === prv.password && ctx.request.body.attr) {
-          ctx.request.body.attr.password = this.digestPassword(ctx.params.uid, ctx.request.body.attr.password)
+          ctx.request.body.attr.password = this.digestPassword(
+            ctx.params.uid,
+            ctx.request.body.attr.password
+          )
         }
         let res = await Cred.update(ctx.request.body)
         if (res.provider === prv.password && res.attr) {
@@ -231,7 +244,7 @@ export default class Service {
   }
 
   async authenticate({ provider, authId, password }) {
-    let cred = await Cred.findOne({ provider: provider, authId: authId }).exec()
+    let cred = await Cred.findOne({ provider: provider, authId: authId })
     if (!cred) {
       log.info(`POST /session FAILED: provider:${provider}, authId:${authId}`)
       return { errors: [err.auth('')] }

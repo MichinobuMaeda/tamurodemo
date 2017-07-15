@@ -32,8 +32,8 @@ export const log = bunyan.createLogger({
 })
 
 const UserSchema = new Schema({
-  name: { type: String, required: true, unique: true },
-  profile: { type: Schema.Types.Mixed, default: {} },
+  name:     { type: String, required: true, unique: true },
+  profile:  { type: Schema.Types.Mixed, default: {} },
 }, {
   versionKey: 'ver',
   minimize: false,
@@ -44,10 +44,10 @@ UserSchema.statics.validate = async (
   dependency = true
 ) => {
   let errors = [
-    ...(isStringRequired(name) ? [] : [err.required('name')]),
-    ...((profile = buildObject(profile)) ? [] : [err.object('profile')]),
-    ...((!dependency || 0 === (await User.count({ name, _id: { $ne: _id } })))
-      ? [] : [err.unique('name')])
+    ...(!isStringRequired(name) ? [err.required('name')] : []),
+    ...(!(profile = buildObject(profile)) ? [err.object('profile')] : []),
+    ...((dependency && 0 !== (await User.count({ name, _id: { $ne: _id } })))
+      ? [err.unique('name')] : [])
   ]
   return errors.length ? { errors } : { name, profile }
 }
@@ -69,8 +69,19 @@ UserSchema.statics.update = async ({ _id, ver, name, profile }) => {
 }
 
 UserSchema.statics.delete = async ({ _id, ver }) => {
-  return (await User.findOneAndRemove({ _id, ver }))
-    ? {} : { errors: [err.match('ver')] }
+  ver = parseInt(ver, 10)
+  const ret = await User.findOneAndRemove({ _id, ver })
+  if (ret) {
+    const uid = _id.toString()
+    await Session.remove({ uid })
+    await Cred.remove({ uid })
+    await Promise.all((await Group.find({ uids: uid }))
+      .map(group => {
+        group.uids = group.uids.filter(id => id !== uid)
+        return group.save()
+      }))
+  } 
+  return ret ? {} : { errors: [err.match('ver')] }
 }
 
 export const User = mongoose.model('User', UserSchema)
@@ -90,17 +101,20 @@ GroupSchema.statics.validate = async (
   gids = buildArray(gids)
   uids = buildArray(uids)
   let errors = [
-    ...(isStringRequired(name) ? [] : [err.required('name')]),
-    ...(await gids.reduce(async (ret, cur, i) => isStringRequired(cur)
-      ? (0 < (await Group.count({ _id: cur }))
-        ? ret  : [...ret, err.reference(`gids.${i}`)])
-      : [...ret, err.required(`gids.${i}`)], [])),
-    ...(await uids.reduce(async (ret, cur, i) => isStringRequired(cur)
-      ? (0 < (await User.count({ _id: cur }))
-        ? ret : [...ret, err.reference(`uids.${i}`)])
-      : [...ret, err.required(`uids.${i}`)], [])),
-    ...(!dependency || 0 === (await Group.count({ name, _id: { $ne: _id } }))
-      ? [] : [err.unique('name')]),
+    ...(!isStringRequired(name) ? [err.required('name')] : []),
+    ...(await gids.reduce(async (ret, cur, i) => !isStringRequired(cur)
+      ? [...ret, err.required(`gids.${i}`)]
+      : (0 === (await Group.count({ _id: cur }))
+        ? [...ret, err.reference(`gids.${i}`)]
+        : ret), [])
+    ),
+    ...(await uids.reduce(async (ret, cur, i) => !isStringRequired(cur)
+      ? [...ret, err.required(`uids.${i}`)]
+      : (0 === (await User.count({ _id: cur }))
+        ? [...ret, err.reference(`uids.${i}`)]
+        : ret), [])),
+    ...(dependency && 0 !== (await Group.count({ name, _id: { $ne: _id } }))
+      ? [err.unique('name')] : []),
   ]
   return errors.length ? { errors } : { name, gids, uids }
 }
@@ -124,26 +138,34 @@ GroupSchema.statics.update = async function ({ _id, ver, name, gids, uids }) {
 
 GroupSchema.statics.delete = async function ({ _id, ver }) {
   ver = parseInt(ver, 10)
-  return (await Group.findOneAndRemove({ _id, ver }))
-    ? {} : { errors: [err.match('ver')] }
+  let ret = await Group.findOneAndRemove({ _id, ver })
+  if (ret) {
+    const gid = _id.toString()
+    await Promise.all((await Group.find({ gids: gid }))
+      .map(group => {
+        group.gids = group.gids.filter(id => id !== gid)
+        return group.save()
+      }))
+  } 
+  return ret ? {} : { errors: [err.match('ver')] }
 }
 
 export const Group = mongoose.model('Group', GroupSchema)
 
 const PrimSchema = new Schema({
-  key: { type: Number, required: true, default: 0, min: 0, max: 0 },
-  top: { type: String, required: true },
-  admin: { type: String, required: true },
-  manager: { type: String, required: true },
+  key:      { type: Number, required: true, default: 0, min: 0, max: 0 },
+  top:      { type: String, required: true },
+  admin:    { type: String, required: true },
+  manager:  { type: String, required: true },
 }, {
   versionKey: 'ver',
 })
 
 PrimSchema.statics.validate = function ({ top, admin, manager } = {}) {
   let errors = [
-    ...(isStringRequired(top) ? [] : [err.required('top')]),
-    ...(isStringRequired(admin) ? [] : [err.required('admin')]),
-    ...(isStringRequired(manager) ? [] : [err.required('manager')]),
+    ...(!isStringRequired(top) ? [err.required('top')] : []),
+    ...(!isStringRequired(admin) ? [err.required('admin')] : []),
+    ...(!isStringRequired(manager) ? [err.required('manager')] : []),
   ]
   return errors.length ? { errors: errors } : { top, admin, manager }
 }
@@ -151,10 +173,10 @@ PrimSchema.statics.validate = function ({ top, admin, manager } = {}) {
 export const Prim = mongoose.model('Prim', PrimSchema)
 
 const CredSchema = new Schema({
-  uid: { type: String, required: true },
+  uid:      { type: String, required: true },
   provider: { type: String, required: true },
-  authId: { type: String, required: true },
-  attr: Schema.Types.Mixed,
+  authId:   { type: String, required: true },
+  attr:     Schema.Types.Mixed,
 }, {
   versionKey: 'ver',
 })
@@ -168,22 +190,25 @@ CredSchema.statics.validate = async function (
   dependency = true
 ) {
   let errors = [
-    ...(isStringRequired(uid) ? [
-      ...(!dependency || (await User.count({ _id: uid })) ? [
-        ...(dependency && (await Cred.count({
+    ...(!isStringRequired(uid)
+      ? [err.required('uid')]
+      : dependency && !(await User.count({ _id: uid }))
+        ? [err.reference('uid')]
+        : dependency && (await Cred.count({
           provider: provider,
           authId: authId,
           uid: { $ne: uid }
-        })) ? [err.unique('authId')] : []),
-      ] : [err.reference('uid')]),
-    ] : [err.required('uid')]),
-    ...(isStringRequired(provider) ? [
-      ...(prv[provider] ? [
-        ...(provider === prv.password && attr &&  isStringRequired(attr.password)
-          ? [] : [err.required('attr.password')]),
-      ] : [err.provider('provider')]),
-    ] : [err.required('provider')]),
-    ...(isStringRequired(authId) ? [] : [err.required('authId')]),
+        }))
+          ? [err.unique('authId')]
+          : []),
+    ...(!isStringRequired(provider)
+      ? [err.required('provider')]
+      : !prv[provider]
+        ? [err.provider('provider')]
+        : (provider === prv.password && !attr || !isStringRequired(attr.password))
+          ? [err.required('attr.password')]
+          : []),
+    ...(!isStringRequired(authId) ? [err.required('authId')] : []),
   ]
   return errors.length ? { errors: errors } : { uid, provider, authId, attr }
 }
@@ -218,11 +243,11 @@ CredSchema.statics.delete = async function (obj) {
 export const Cred = mongoose.model('Cred', CredSchema)
 
 const SessionSchema = new Schema({
-  uid: { type: String, require: true },
+  uid:      { type: String, require: true },
   provider: { type: String, require: true },
-  gids: { type: Array, 'default': [] },
-  admin: { type: Boolean, 'default': false },
-  manager: { type: Boolean, 'default': false },
+  gids:     { type: Array, 'default': [] },
+  admin:    { type: Boolean, 'default': false },
+  manager:  { type: Boolean, 'default': false },
   createdAt: { type: Date, index: true },
 }, {
   versionKey: 'ver',
@@ -231,14 +256,16 @@ const SessionSchema = new Schema({
 
 SessionSchema.statics.validate = async function ({ uid, provider } = {}) {
   let errors = [
-    ...(isStringRequired(uid) ? [
-      ...((await User.count({ _id: uid })) ? [
-        ...((await Cred.count({ uid, provider })) ? [] : [err.reference('provider')]),
-      ] : [err.reference('uid')]),
-    ] : [err.string('uid')]),
-    ...(isStringRequired(provider) ? [] : [err.string('provider')]),
+    ...(!isStringRequired(uid) 
+      ? [err.string('uid')]
+      : !(await User.count({ _id: uid }))
+        ? [err.reference('uid')]
+        : !(await Cred.count({ uid, provider }))
+          ? [err.reference('provider')]
+          : []),
+    ...(!isStringRequired(provider) ? [err.string('provider')] : []),
   ]
-  let prim = await Prim.findOne({}).exec()
+  let prim = await Prim.findOne({})
   let gids = await getGroups(uid)
   return errors.length ? { errors: errors } : {
     uid: uid,
@@ -268,24 +295,24 @@ export async function getGroups(id) {
   if (!id) { return ret }
   let gids = []
   if (Object.prototype.toString.call(id) !== '[object Array]') {
-    gids = (await Group.find({ uids: id.toString() }).exec())
+    gids = (await Group.find({ uids: id.toString() }))
   } else {
     ret = ret.concat(id)
-    gids = await Group.find({ gids: { $in: id } }).exec()
+    gids = await Group.find({ gids: { $in: id } })
   }
   gids = gids.map(g => g._id.toString()).filter(v => ret.indexOf(v) < 0)
   return gids.length === 0 ? ret : getGroups(ret.concat(gids))
 }
 
 export const Log = mongoose.model('Log', new Schema({
-  name: String,
+  name:     String,
   hostname: String,
-  pid: Number,
-  level: Number,
-  msg: String,
-  attr: Schema.Types.Mixed,
-  time: { type: Date, index: true },
-  v: Number,
+  pid:      Number,
+  level:    Number,
+  msg:      String,
+  attr:     Schema.Types.Mixed,
+  time:     { type: Date, index: true },
+  v:        Number,
 }, {
   versionKey: 'ver',
 }))

@@ -23,8 +23,13 @@ describe('model', function() {
   before(async () => {
     await mongoose.connect(conf.mongodb)
   })
-  beforeEach(() => {
-    return mongoose.connection.db.dropDatabase()
+  beforeEach(async () => {
+    await User.remove({})
+    await Group.remove({})
+    await Prim.remove({})
+    await Cred.remove({})
+    await Session.remove({})
+    await Log.remove({})
   })
   afterEach(() => null)
   after(async () => {
@@ -810,15 +815,20 @@ describe('model', function() {
   })
   describe('#User.delete()', () => {
     it('should delete the user entity if not conflict.', async () => {
-      let ret = await User.create({
-        name: 'abc'
-      })
-      let user = await User.findById(ret._id)
-      expect(user._id.toString()).to.equal(ret._id.toString())
-      let error = await User.delete(user)
+      let { admin, manager, user1, cred1 } = await getTestPrimeObjects()
+      await Session.create(cred1)
+      expect(await Session.count({})).to.equal(1)
+      let error = await User.delete(user1)
       expect(error).to.deep.equal({})
-      user = await User.findById(ret._id)
-      expect(user).is.null
+      user1 = await User.findById(user1._id)
+      expect(user1).is.null
+      expect(await Session.count({})).to.equal(0)
+      cred1 = await Cred.findById(cred1._id)
+      expect(cred1).is.null
+      admin = await Group.findById(admin._id)
+      expect(admin.uids).to.have.length(0)
+      manager = await Group.findById(manager._id)
+      expect(manager.uids).to.have.length(0)
     })
     it('should not delete the user entity if conflict.', async () => {
       let ret = await User.create({
@@ -837,15 +847,13 @@ describe('model', function() {
   })
   describe('#Group.delete()', () => {
     it('should delete the group entity if not conflict.', async () => {
-      let ret = await Group.create({
-        name: 'abc'
-      })
-      let group = await Group.findById(ret._id)
-      expect(group._id.toString()).to.equal(ret._id.toString())
-      let error = await Group.delete(group)
+      let { top, admin, manager } = await getTestPrimeObjects()
+      let error = await Group.delete(manager)
       expect(error).to.deep.equal({})
-      group = await Group.findById(ret._id)
-      expect(group).is.null
+      manager = await Group.findById(manager._id)
+      expect(manager).is.null
+      top = await Group.findById(top._id)
+      expect(top.gids).to.have.members([ admin._id.toString() ])
     })
     it('should not delete the group entity if conflict.', async () => {
       let ret = await Group.create({
