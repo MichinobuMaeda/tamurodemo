@@ -10,7 +10,7 @@ import shortid from 'shortid'
 import client from 'rest'
 import cookie from 'cookie'
 
-import conf from '../conf'
+import conf from '../conf.sample'
 import Api from './api.js'
 import template from './template'
 const api = new Api(conf)
@@ -18,7 +18,6 @@ let _server
 
 const DebugLog = class {
   write(rec) {
-    let obj = JSON.parse(rec)
     console.info(rec)
   }
 }

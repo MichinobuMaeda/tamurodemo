@@ -2,6 +2,7 @@
 tmp
 lib
 .vscode
+conf.js
 
 # Logs
 logs
