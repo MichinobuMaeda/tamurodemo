@@ -6,7 +6,7 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import conf from '../conf.js'
-import Service from './service'
-const srv = new Service(conf)
-srv.init()
+import conf from '../conf'
+import Api from './api'
+const api = new Api(conf)
+api.init()

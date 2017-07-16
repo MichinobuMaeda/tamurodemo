@@ -3,7 +3,7 @@
         "es6": true,
         "browser": false,
         "node": true,
-        "mocha": true
+        "jest": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
@@ -21,7 +21,7 @@
         "eqeqeq": [ "error", "smart" ],
         "array-callback-return": [ "error" ],
         "block-scoped-var": [ "error" ],
-        "complexity": ["error", 10],
+        "complexity": ["error", 20],
         "curly": "error",
         "default-case": "error",
         "dot-location": [ "error", "property" ],

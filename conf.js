@@ -6,13 +6,11 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-const conf =  {
-  mongodb: 'mongodb://127.0.0.1:27017/tamuro_api',
+module.exports = {
+  mongoUri: 'mongodb://127.0.0.1:27017/tamuro_api',
   prefix: '/api',
   port: '3001',
   appKey: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   seed: '01234567890123456789012345678901234567890123456789',
-  expires: (10 * 24 * 60 * 60 * 1000),
+  expires: 10 * 24 * 60 * 60 * 1000,
 }
-
-module.exports = conf
