@@ -38,6 +38,22 @@ export default class Api {
       streams: [{ stream: new LogStream(this.logs) }]
     })
 
+    await this.users.createIndex({ name: 1 }, { unique: true })
+    await this.users.createIndex({ modifiedAt: 1 })
+
+    await this.groups.createIndex({ name: 1 }, { unique: true })
+    await this.groups.createIndex({ uids: 1 })
+    await this.groups.createIndex({ gids: 1 })
+    await this.groups.createIndex({ modifiedAt: 1 })
+
+    await this.creds.createIndex({ uid: 1, provider: 1 }, { unique: true })
+    await this.creds.createIndex({ provider: 1, authId: 1 }, { unique: true })
+    await this.creds.createIndex({ modifiedAt: 1 })
+
+    await this.sessions.createIndex({ createdAt: 1 })
+
+    await this.logs.createIndex({ createdAt: 1 })
+
     this.prim = null
     this.api = new Koa()
     this.api.keys = [this.conf.appKey]
