@@ -46,13 +46,15 @@ export default class Api {
     })
 
     this.users.validate = async (
-      { _id, ver, name, profile } = {},
+      { _id, ver, name, profile, createdAt, modifiedAt } = {},
       depends = true
     ) => {
       _id = _id ? _id : shortid.generate()
       ver = parseInt(ver, 10)
       ver = isNaN(ver) ? 0 : ver
       profile = profile ? profile : {}
+      createdAt = createdAt ? new Date(createdAt) : new Date()
+      modifiedAt = modifiedAt ? new Date(modifiedAt) : createdAt
       let errors = []
         .concat(!isStringFilled(name)
           ? [{ path: 'name', req: 'required' }]
@@ -62,11 +64,12 @@ export default class Api {
           !isObject(profile)
             ? [{ path: 'profile', req: 'object' }]
             : [])
-      return errors.length ? { errors } : { _id, ver, name, profile }
+      return errors.length ? { errors }
+        : { _id, ver, name, profile, createdAt, modifiedAt }
     }
 
     this.groups.validate = async (
-      { _id, ver, name, gids, uids } = {},
+      { _id, ver, name, gids, uids, createdAt, modifiedAt } = {},
       depends = true
     ) => {
       _id = _id ? _id : shortid.generate()
@@ -74,6 +77,8 @@ export default class Api {
       ver = isNaN(ver) ? 0 : ver
       gids = gids ? gids : []
       uids = uids ? uids : []
+      createdAt = createdAt ? new Date(createdAt) : new Date()
+      modifiedAt = modifiedAt ? new Date(modifiedAt) : createdAt
       let errors = []
         .concat(!isStringFilled(name)
           ? [{ path: 'name', req: 'required' }]
@@ -89,17 +94,20 @@ export default class Api {
           : (await uids.reduce(async (ret, uid) =>
             depends && 0 === (await this.users.count({ _id: uid }))
               ? [...ret, { path: 'uids', req: 'reference' }] : ret, [])))
-      return errors.length ? { errors } : { _id, ver, name, gids, uids }
+      return errors.length ? { errors }
+        : { _id, ver, name, gids, uids, createdAt, modifiedAt }
     }
 
     this.creds.validate = async (
-      { _id, ver, uid, provider, authId, password } = {},
+      { _id, ver, uid, provider, authId, password, createdAt, modifiedAt } = {},
       depends = true
     ) => {
       _id = _id ? _id : shortid.generate()
       ver = parseInt(ver, 10)
       ver = isNaN(ver) ? 0 : ver
       uid = uid ? uid.toString() : uid
+      createdAt = createdAt ? new Date(createdAt) : new Date()
+      modifiedAt = modifiedAt ? new Date(modifiedAt) : createdAt
       let errors = []
         .concat(!isStringFilled(uid)
           ? [{ path: 'uid', req: 'required' }]
@@ -115,7 +123,8 @@ export default class Api {
         .concat(provider === 'password' && !isStringFilled(password)
           ? [{ path: 'password', req: 'required' }]
           : [])
-      return errors.length ? { errors } : { _id, ver, uid, provider, authId, password }
+      return errors.length ? { errors }
+        : { _id, ver, uid, provider, authId, password, createdAt, modifiedAt }
     }
 
     // Resist routes ===========================================
@@ -164,8 +173,9 @@ export default class Api {
           })
           return
         }
+        let ts = new Date()
         let user = await this.users.validate({
-          name: name
+          name: name, createdAt: ts
         }, false)
         await this.users.save(user)
         let cred = await this.creds.validate({
@@ -173,21 +183,25 @@ export default class Api {
           provider: 'password',
           authId: authId,
           password: this.digestPassword(user._id, password),
+          createdAt: ts,
         }, false)
         await this.creds.save(cred)
         let groupA = await this.groups.validate({
           name: admin,
-          uids: [user._id]
+          uids: [user._id],
+          createdAt: ts,
         }, false)
         await this.groups.save(groupA)
         let groupM = await this.groups.validate({
           name: manager,
-          uids: [user._id]
+          uids: [user._id],
+          createdAt: ts,
         }, false)
         await this.groups.save(groupM)
         let groupT = await this.groups.validate({
           name: top,
-          gids: [groupA._id, groupM._id]
+          gids: [groupA._id, groupM._id],
+          createdAt: ts,
         }, false)
         await this.groups.save(groupT)
         let prim = {
@@ -196,6 +210,7 @@ export default class Api {
           top: groupT._id,
           admin: groupA._id,
           manager: groupM._id,
+          createdAt: ts,
         }
         await this.prims.save(prim)
         this.prim = prim
@@ -381,6 +396,7 @@ export default class Api {
           cred.password = this.digestPassword(cred.uid, cred.password)
         }
         ++ cred.ver
+        cred.modifiedAt = new Date()
         let ret = await this.creds.findOneAndUpdate({ uid, provider, ver }, cred)
         if (ret.value) {
           if (cred.password) { cred.password = '' }
@@ -522,6 +538,7 @@ export default class Api {
     ver = parseInt(ver, 10)
     obj._id = _id
     obj.ver = ver + 1
+    obj.modifiedAt = new Date()
     obj = await collection.validate(obj)
     if (obj.errors) { return obj }
     let ret = await collection.findOneAndUpdate({ _id, ver }, obj)

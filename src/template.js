@@ -21,28 +21,28 @@ export default class Template {
   </head>
   <body>
     <h1>Setup</h1>
-    <pre class="errors">${errors ? errors : ''}</pre>
-    <form method="POST" action="${path ? path : ''}">
+    <pre class="errors">${ errors || ''}</pre>
+    <form method="POST" action="${path || ''}">
       <table>
         <tr>
           <th>Title of this site:</th>
-          <td><input type="text" id="top" name="top" value="${top ? top : ''}"></td>
+          <td><input type="text" id="top" name="top" value="${top || ''}"></td>
         </tr>
         <tr>
           <th>Name of the system administrators group:</th>
-          <td><input type="text" id="admin" name="admin" value="${admin ? admin : ''}"></td>
+          <td><input type="text" id="admin" name="admin" value="${admin || ''}"></td>
         </tr>
         <tr>
           <th>Name of the account managers group:</th>
-          <td><input type="text" id="manager" name="manager" value="${manager ? manager : ''}"></td>
+          <td><input type="text" id="manager" name="manager" value="${manager || ''}"></td>
         </tr>
         <tr>
           <th>Your name:</th>
-          <td><input type="text" id="name" name="name" value="${name ? name : ''}"></td>
+          <td><input type="text" id="name" name="name" value="${name || ''}"></td>
         </tr>
         <tr>
           <th>Your ID:</th>
-          <td><input type="text" id="authId" name="authId" value="${authId ? authId : ''}"></td>
+          <td><input type="text" id="authId" name="authId" value="${authId || ''}"></td>
         </tr>
         <tr>
           <th>Your password:</th>

@@ -126,48 +126,72 @@ test('users.validate()', async () => {
     profile: {},
   }))._id).not.toBeNull()
   expect((await api.users.validate({
+    name: 'User 1',
+    profile: {},
+  })).createdAt).not.toBeNull()
+  expect((await api.users.validate({
+    name: 'User 1',
+    profile: {},
+  })).modifiedAt).not.toBeNull()
+  const ts = new Date()
+  expect((await api.users.validate({
     _id: user1id,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   }))).toEqual({
     _id: user1id,
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.users.validate({
     _id: user1id,
     ver: '1',
     name: 'User 1',
     profile: {},
+    createdAt: ts,
   }))).toEqual({
     _id: user1id,
     ver: 1,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   })
   await api.users.save({
     _id: user1id,
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.users.validate({
     _id: user1id,
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   }))).toEqual({
     _id: user1id,
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.users.validate({
     _id: user2id,
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   }))).toEqual({
     errors:[ { path: 'name', req: 'unique' } ]
   })
@@ -176,11 +200,14 @@ test('users.validate()', async () => {
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
   }, false))).toEqual({
     _id: user2id,
     ver: 0,
     name: 'User 1',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   })
 })
 
@@ -237,16 +264,31 @@ test('group.validate()', async () => {
     uids: [],
   }))._id).not.toBeNull()
   expect((await api.groups.validate({
+    name: 'Group 1',
+    gids: [],
+    uids: [],
+  })).createdAt).not.toBeNull()
+  expect((await api.groups.validate({
+    name: 'Group 1',
+    gids: [],
+    uids: [],
+  })).modifiedAt).not.toBeNull()
+  const ts = new Date()
+  expect((await api.groups.validate({
     _id: group1id,
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   }))).toEqual({
     _id: group1id,
     ver: 0,
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.groups.validate({
     _id: group1id,
@@ -254,12 +296,15 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
   }))).toEqual({
     _id: group1id,
     ver: 1,
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   await api.groups.save({
     _id: group1id,
@@ -267,6 +312,8 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.groups.validate({
     _id: group1id,
@@ -274,12 +321,16 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   }))).toEqual({
     _id: group1id,
     ver: 0,
     name: 'Group 1',
     gids: [],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.groups.validate({
     _id: group2id,
@@ -305,12 +356,15 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [group2id],
     uids: [],
+    createdAt: ts,
   }, false))).toEqual({
     _id: group1id,
     ver: 0,
     name: 'Group 1',
     gids: [group2id],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   await api.groups.save({
     _id: group2id,
@@ -325,12 +379,16 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [group2id],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   }))).toEqual({
     _id: group1id,
     ver: 0,
     name: 'Group 1',
     gids: [group2id],
     uids: [],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect((await api.groups.validate({
     _id: group1id,
@@ -347,12 +405,15 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [],
     uids: [user1id],
+    createdAt: ts,
   }, false))).toEqual({
     _id: group1id,
     ver: 0,
     name: 'Group 1',
     gids: [],
     uids: [user1id],
+    createdAt: ts,
+    modifiedAt: ts,
   })
   await api.users.save({
     _id: user1id,
@@ -366,12 +427,15 @@ test('group.validate()', async () => {
     name: 'Group 1',
     gids: [],
     uids: [user1id],
+    createdAt: ts,
   }))).toEqual({
     _id: group1id,
     ver: 0,
     name: 'Group 1',
     gids: [],
     uids: [user1id],
+    createdAt: ts,
+    modifiedAt: ts,
   })
 })
 
@@ -422,12 +486,29 @@ test('creds.validate()', async () => {
     authId: 'user1auth',
     password: 'user1pass',
   }))._id).not.toBeNull()
+  expect((await api.creds.validate({
+    ver: 0,
+    uid: user1id,
+    provider: 'password',
+    authId: 'user1auth',
+    password: 'user1pass',
+  })).createdAt).not.toBeNull()
+  expect((await api.creds.validate({
+    ver: 0,
+    uid: user1id,
+    provider: 'password',
+    authId: 'user1auth',
+    password: 'user1pass',
+  })).modifiedAt).not.toBeNull()
+  const ts = new Date()
   expect(await api.creds.validate({
     _id: cred1id,
     uid: user1id,
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
+    modifiedAt: ts,
   })).toEqual({
     _id: cred1id,
     ver: 0,
@@ -435,6 +516,8 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect(await api.creds.validate({
     _id: cred1id,
@@ -443,6 +526,7 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
   })).toEqual({
     _id: cred1id,
     ver: 1,
@@ -450,6 +534,8 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect(await api.creds.validate({
     _id: cred1id,
@@ -468,6 +554,7 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
   }, false)).toEqual({
     _id: cred1id,
     ver: 1,
@@ -475,6 +562,8 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
+    modifiedAt: ts,
   })
   await api.creds.save({
     _id: cred1id,
@@ -483,12 +572,16 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user1auth',
     password: 'user1pass',
+    createdAt: ts,
+    modifiedAt: ts,
   })
   await api.users.save({
     _id: user2id,
     ver: 0,
     name: 'User 2',
     profile: {},
+    createdAt: ts,
+    modifiedAt: ts,
   })
   expect(await api.creds.validate({
     _id: cred2id,
@@ -507,6 +600,7 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user2auth',
     password: 'user2pass',
+    createdAt: ts,
   })).toEqual({
     _id: cred2id,
     ver: 0,
@@ -514,6 +608,8 @@ test('creds.validate()', async () => {
     provider: 'password',
     authId: 'user2auth',
     password: 'user2pass',
+    createdAt: ts,
+    modifiedAt: ts,
   })
 })
 
@@ -826,7 +922,8 @@ test('PUT /users/:uid/ver/:ver', async () => {
 
   res = await put(`/users/${user4._id}/ver/${user4.ver}`, sid, user4)
   ++ user4.ver
-  expect(res.json).toEqual(user4)
+  user4.modifiedAt = new Date(res.json.modifiedAt)
+  expect(res.json).toEqual(normalize(user4))
 
   sid = await loginAsAdmin()
   res = await put(`/users/${user1._id}/ver/0`, sid, {})
@@ -836,7 +933,8 @@ test('PUT /users/:uid/ver/:ver', async () => {
   user4.profile = { test: 'Test2'}
   res = await put(`/users/${user4._id}/ver/${user4.ver}`, sid, user4)
   ++ user4.ver
-  expect(res.json).toEqual(user4)
+  user4.modifiedAt = new Date(res.json.modifiedAt)
+  expect(res.json).toEqual(normalize(user4))
 })
 
 test('DELETE /users/:uid/ver/:ver', async () => {
@@ -924,7 +1022,8 @@ test('PUT /groups/:gid/ver/:ver', async () => {
   group4.name = 'Group 5'
   res = await put(`/groups/${group4._id}/ver/${group4.ver}`, sid, group4)
   ++ group4.ver
-  expect(res.json).toEqual(group4)
+  group4.modifiedAt = new Date(res.json.modifiedAt)
+  expect(res.json).toEqual(normalize(group4))
 })
 
 test('DELETE /groups/:gid/ver/:ver', async () => {
@@ -974,7 +1073,7 @@ test('POST /groups/:gid/users', async () => {
 
   res = await post(`/groups/${manager._id}/users`, sid, { name: 'User 5' })
   let user5 = await api.users.findOne({ name: 'User 5' })
-  expect(res.json).toEqual(user5)
+  expect(res.json).toEqual(normalize(user5))
   manager = await api.groups.findOne({ _id: manager._id })
   expect(manager.uids).toContain(user5._id)
 })
@@ -1019,7 +1118,7 @@ test('POST /groups/:gid/groups', async () => {
 
   res = await post(`/groups/${top._id}/groups`, sid, { name: 'Group 5' })
   let group5 = await api.groups.findOne({ name: 'Group 5' })
-  expect(res.json).toEqual(group5)
+  expect(res.json).toEqual(normalize(group5))
   top = await api.groups.findOne({ _id: top._id })
   expect(top.gids).toContain(group5._id)
 })
@@ -1076,7 +1175,7 @@ test('POST /users/:uid/creds/:provider', async () => {
   cred5.authId = 'user5id'
   res = await post(`/users/${user5._id}/creds/password`, sid, cred5)
   cred5.password = ''
-  expect(res.json).toEqual(cred5)
+  expect(res.json).toEqual(normalize(cred5))
 })
 
 test('GET /users/:uid/creds/', async () => {
@@ -1095,12 +1194,12 @@ test('GET /users/:uid/creds/', async () => {
   res = await get(`/users/${cred4.uid}/creds`, sid)
   cred4.password = ''
   expect(res.json).toHaveLength(1)
-  expect(res.json[0]).toEqual(cred4)
+  expect(res.json[0]).toEqual(normalize(cred4))
 
   sid = await loginAsManager()
   res = await get(`/users/${cred4.uid}/creds`, sid)
   expect(res.json).toHaveLength(1)
-  expect(res.json[0]).toEqual(cred4)
+  expect(res.json[0]).toEqual(normalize(cred4))
 
   res = await get(`/users/${shortid.generate()}/creds`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'uid', req: 'reference' } ]})
@@ -1121,9 +1220,10 @@ test('PUT /users/:uid/creds/:provider/ver/:ver', async () => {
   let cred4 = await api.creds.findOne({ uid: user4._id, provider: 'password' })
   res = await put(`/users/${cred4.uid}/creds/password/ver/${cred4.ver}`, sid, cred4)
   ++ cred4.ver
+  cred4.modifiedAt = new Date(res.json.modifiedAt)
   let password = cred4.password
   cred4.password = ''
-  expect(res.json).toEqual(cred4)
+  expect(res.json).toEqual(normalize(cred4))
   cred4.password = password
 
   sid = await loginAsManager()
@@ -1138,9 +1238,10 @@ test('PUT /users/:uid/creds/:provider/ver/:ver', async () => {
 
   res = await put(`/users/${cred4.uid}/creds/password/ver/${cred4.ver}`, sid, cred4)
   ++ cred4.ver
+  cred4.modifiedAt = new Date(res.json.modifiedAt)
   password = cred4.password
   cred4.password = ''
-  expect(res.json).toEqual(cred4)
+  expect(res.json).toEqual(normalize(cred4))
   cred4.password = password
 })
 
@@ -1157,7 +1258,6 @@ test('DELETE /users/:uid/creds/:provider/ver/:ver', async () => {
   sid = await loginAsUser4()
   let user4 = await api.users.findOne({ name: 'User 4' })
   let cred4 = await api.creds.findOne({ uid: user4._id, provider: 'password' })
-  console.log(cred4)
   res = await del(`/users/${cred4.uid}/creds/password/ver/${cred4.ver + 1}`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
 
@@ -1182,14 +1282,14 @@ async function getTestPrimeObjects() {
     ].join('&'),
   })
 
-  let top = await api.groups.findOne({ name: 'Top' })
-  let admin = await api.groups.findOne({ name: 'Admin' })
-  let manager = await api.groups.findOne({ name: 'Manager' })
-  let user1 = await api.users.findOne({ name: 'User 1' })
-  let cred1 = await api.creds.findOne({
+  let top = normalize(await api.groups.findOne({ name: 'Top' }))
+  let admin = normalize(await api.groups.findOne({ name: 'Admin' }))
+  let manager = normalize(await api.groups.findOne({ name: 'Manager' }))
+  let user1 = normalize(await api.users.findOne({ name: 'User 1' }))
+  let cred1 = normalize(await api.creds.findOne({
     uid: user1._id,
     provider: 'password',
-  })
+  }))
   let prim = api.prim
   return { prim, top, admin, manager, user1, cred1 }
 }
@@ -1280,3 +1380,5 @@ async function loginAsUser4() {
   })
   return res.cookies[0]
 }
+
+function normalize(v)  { return JSON.parse(JSON.stringify(v)) }
