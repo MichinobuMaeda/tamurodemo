@@ -98,39 +98,39 @@ export default class Setup {
     return errors.length ? errors : null
   }
 
-  static async saveObjects(api, req) {
+  static async saveObjects(st, conf, req) {
     let { top, admin, manager, name, authId, password } = req
     let ts = new Date()
-    let user = await api.users.validate({
+    let user = await st.users.validate({
       name: name, createdAt: ts
     }, false)
-    await api.users.save(user)
-    let cred = await api.creds.validate({
+    await st.users.save(user)
+    let cred = await st.creds.validate({
       uid: user._id,
       provider: 'password',
       authId: authId,
-      password: digestPassword(user._id, password, api.conf.seed),
+      password: digestPassword(user._id, password, conf.seed),
       createdAt: ts,
     }, false)
-    await api.creds.save(cred)
-    let groupA = await api.groups.validate({
+    await st.creds.save(cred)
+    let groupA = await st.groups.validate({
       name: admin,
       uids: [user._id],
       createdAt: ts,
     }, false)
-    await api.groups.save(groupA)
-    let groupM = await api.groups.validate({
+    await st.groups.save(groupA)
+    let groupM = await st.groups.validate({
       name: manager,
       uids: [user._id],
       createdAt: ts,
     }, false)
-    await api.groups.save(groupM)
-    let groupT = await api.groups.validate({
+    await st.groups.save(groupM)
+    let groupT = await st.groups.validate({
       name: top,
       gids: [groupA._id, groupM._id],
       createdAt: ts,
     }, false)
-    await api.groups.save(groupT)
+    await st.groups.save(groupT)
     let prim = {
       _id: shortid.generate(),
       ver: 0,
@@ -139,7 +139,7 @@ export default class Setup {
       manager: groupM._id,
       createdAt: ts,
     }
-    await api.prims.save(prim)
+    await st.prims.save(prim)
     return prim
   }
 }

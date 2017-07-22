@@ -11,7 +11,7 @@ import client from 'rest'
 import cookie from 'cookie'
 
 import { digestPassword } from './helper'
-import Api from './api.js'
+import { api, st } from './api.js'
 import setup from './setup'
 
 const conf = {
@@ -23,7 +23,6 @@ const conf = {
   expires: 10 * 24 * 60 * 60 * 1000,
 }
 
-const api = new Api(conf)
 let srv = {}
 
 const DebugLog = class {
@@ -33,8 +32,8 @@ const DebugLog = class {
 }
 
 beforeAll(async () => {
-  srv = await api.init()
-  api.log.addStream({
+  srv = await api(conf)
+  st.log.addStream({
     name: 'test',
     stream: new DebugLog(),
     level: 'debug'
@@ -51,13 +50,13 @@ afterAll(async () => {
 })
 
 async function cleanupDb() {
-  await api.users.remove({})
-  await api.groups.remove({})
-  await api.prims.remove({})
-  await api.creds.remove({})
-  await api.sessions.remove({})
-  await api.logs.remove({})
-  api.prim = null
+  await st.users.remove({})
+  await st.groups.remove({})
+  await st.prims.remove({})
+  await st.creds.remove({})
+  await st.sessions.remove({})
+  await st.logs.remove({})
+  st.prim = null
 }
 
 test('setup.setupHtml', () => {
@@ -99,7 +98,7 @@ test('GET /setup', async () => {
       authId: '',
     }
   ))
-  api.prim = {}
+  st.prim = {}
   res = await client({
     method: 'GET',
     path: `http://localhost:${conf.port}${conf.prefix}/setup`,
@@ -109,7 +108,7 @@ test('GET /setup', async () => {
 })
 
 test('POST /setup', async () => {
-  let logCount = await api.logs.count({})
+  let logCount = await st.logs.count({})
   let res = await client({
     method: 'POST',
     path: `http://localhost:${conf.port}${conf.prefix}/setup`,
@@ -142,12 +141,12 @@ test('POST /setup', async () => {
     ].join('&'),
   })
   expect(res.status).toEqual({code: 302})
-  expect(await api.users.count({})).toEqual(1)
-  expect(await api.creds.count({})).toEqual(1)
-  expect(await api.groups.count({})).toEqual(3)
-  expect(await api.prims.count({})).toEqual(1)
-  let user = await api.users.findOne({ name: 'User 1' })
-  let cred = await api.creds.findOne({ authId: 'user1auth' })
+  expect(await st.users.count({})).toEqual(1)
+  expect(await st.creds.count({})).toEqual(1)
+  expect(await st.groups.count({})).toEqual(3)
+  expect(await st.prims.count({})).toEqual(1)
+  let user = await st.users.findOne({ name: 'User 1' })
+  let cred = await st.creds.findOne({ authId: 'user1auth' })
   expect(cred.password).toEqual(digestPassword(user._id.toString(), 'user1pass', conf.seed))
   
   res = await client({
@@ -156,7 +155,7 @@ test('POST /setup', async () => {
     entity: JSON.stringify({})
   })
   expect(res.status).toEqual({code: 404})
-  expect((await api.logs.count({})) - logCount).toEqual(2)
+  expect((await st.logs.count({})) - logCount).toEqual(2)
 })
 
 test('POST /sessions', async () => {
@@ -180,7 +179,7 @@ test('POST /sessions', async () => {
   expect(sid.SID).not.toBeNull()
   expect(sid['httponly,SID.sig']).not.toBeNull()
   expect(res.json).toEqual(top)
-  let sess = await api.sessions.findOne({ _id: sid.SID })
+  let sess = await st.sessions.findOne({ _id: sid.SID })
   expect(sess.uid).toEqual(user1._id)
   expect(sess.provider).toEqual('password')
   expect(sess.gids).toHaveLength(3)
@@ -201,7 +200,7 @@ test('POST /sessions', async () => {
     provider: 'dummy',
     authId: 'user1id',
   }
-  await api.creds.save(cred2)
+  await st.creds.save(cred2)
   res = await post('/sessions', sid, {
     provider: 'dummy',
     authId: 'user1id',
@@ -237,17 +236,17 @@ test('GET /sessions', async () => {
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
 
   let sid = await loginAsUser4()
-  let user4 = await api.users.findOne({ name: 'User 4' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
   res = await get('/sessions', sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'admin' } ]})
 
   sid = await loginAsManager()
-  let user3 = await api.users.findOne({ name: 'User 3' })
+  let user3 = await st.users.findOne({ name: 'User 3' })
   res = await get('/sessions', sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'admin' } ]})
 
   sid = await loginAsAdmin()
-  let user2 = await api.users.findOne({ name: 'User 2' })
+  let user2 = await st.users.findOne({ name: 'User 2' })
   res = await get('/sessions', sid)
   expect(res.json).toHaveLength(3)
   expect(res.json[0].uid).toEqual(user2._id)
@@ -262,7 +261,7 @@ test('DELETE /sessions', async () => {
   // after sign in
   let res = await get('/', sid)
   expect(res.json).toEqual(top)
-  expect(await api.sessions.count({})).toEqual(1)
+  expect(await st.sessions.count({})).toEqual(1)
 
   res = await del('/sessions', sid)
   expect(res.json).toEqual({ name: top.name })
@@ -270,7 +269,7 @@ test('DELETE /sessions', async () => {
   // after sign out
   res = await get('/', sid)
   expect(res.json).toEqual({ name: top.name })
-  expect(await api.sessions.count({})).toEqual(0)
+  expect(await st.sessions.count({})).toEqual(0)
 })
 
 test('Session timeout', async () => {
@@ -285,16 +284,16 @@ test('Session timeout', async () => {
   // before session timeout
   res = await get('/', sid)
   expect(res.json).toEqual(top)
-  expect(await api.sessions.count({})).toEqual(1)
+  expect(await st.sessions.count({})).toEqual(1)
 
-  let sess = await api.sessions.findOne({ uid: user1._id })
+  let sess = await st.sessions.findOne({ uid: user1._id })
   sess.createdAt = new Date(new Date(sess.createdAt).getTime() - conf.expires)
-  await api.sessions.findOneAndUpdate({ uid: user1._id }, sess)
+  await st.sessions.findOneAndUpdate({ uid: user1._id }, sess)
 
   // after session timeout
   res = await get('/', sid)
   expect(res.json).toEqual({ name: top.name })
-  expect(await api.sessions.count({})).toEqual(0)
+  expect(await st.sessions.count({})).toEqual(0)
 })
 
 test('GET /users', async () => {
@@ -314,10 +313,10 @@ test('GET /users', async () => {
   sid = await loginAsManager()
   res = await get('/users', sid)
   expect(res.json).toHaveLength(4)
-  let user1 = await api.users.findOne({ name: 'User 1' })
-  let user2 = await api.users.findOne({ name: 'User 2' })
-  let user3 = await api.users.findOne({ name: 'User 3' })
-  let user4 = await api.users.findOne({ name: 'User 4' })
+  let user1 = await st.users.findOne({ name: 'User 1' })
+  let user2 = await st.users.findOne({ name: 'User 2' })
+  let user3 = await st.users.findOne({ name: 'User 3' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
   expect(res.json[0]._id).toEqual(user1._id)
   expect(res.json[1]._id).toEqual(user2._id)
   expect(res.json[2]._id).toEqual(user3._id)
@@ -348,7 +347,7 @@ test('PUT /users/:uid/ver/:ver', async () => {
   res = await put(`/users/${user1._id}/ver/0`, sid, {})
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
-  let user4 = await api.users.findOne({ name: 'User 4' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
   user4.profiles = [{ test: 'Test1'}]
   res = await put(`/users/${user4._id}/ver/${user4.ver + 1}`, sid, user4)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
@@ -435,8 +434,8 @@ test('GET /groups/:gid', async () => {
 
 test('PUT /groups/:gid/ver/:ver', async () => {
   await getTestPrimeObjects()
-  let group4 = await api.groups.validate({ name: 'Group 4'})
-  await api.groups.save(group4)
+  let group4 = await st.groups.validate({ name: 'Group 4'})
+  await st.groups.save(group4)
 
   let res = await put(`/groups/${group4._id}/ver/0`, null, {})
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
@@ -466,8 +465,8 @@ test('PUT /groups/:gid/ver/:ver', async () => {
 
 test('DELETE /groups/:gid/ver/:ver', async () => {
   await getTestPrimeObjects()
-  let group4 = await api.groups.validate({ name: 'Group 4'})
-  await api.groups.save(group4)
+  let group4 = await st.groups.validate({ name: 'Group 4'})
+  await st.groups.save(group4)
 
   let res = await del(`/groups/${group4._id}/ver/0`, null)
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
@@ -510,9 +509,9 @@ test('POST /groups/:gid/users', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'name', req: 'required' } ]})
 
   res = await post(`/groups/${manager._id}/users`, sid, { name: 'User 5' })
-  let user5 = await api.users.findOne({ name: 'User 5' })
+  let user5 = await st.users.findOne({ name: 'User 5' })
   expect(res.json).toEqual(normalize(user5))
-  manager = await api.groups.findOne({ _id: manager._id })
+  manager = await st.groups.findOne({ _id: manager._id })
   expect(manager.uids).toContain(user5._id)
 })
 
@@ -555,9 +554,9 @@ test('POST /groups/:gid/groups', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'name', req: 'required' } ]})
 
   res = await post(`/groups/${top._id}/groups`, sid, { name: 'Group 5' })
-  let group5 = await api.groups.findOne({ name: 'Group 5' })
+  let group5 = await st.groups.findOne({ name: 'Group 5' })
   expect(res.json).toEqual(normalize(group5))
-  top = await api.groups.findOne({ _id: top._id })
+  top = await st.groups.findOne({ _id: top._id })
   expect(top.gids).toContain(group5._id)
 })
 
@@ -589,8 +588,8 @@ test('POST /users/:uid/provider/:provider', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
-  let user4 = await api.users.findOne({ name: 'User 4' })
-  let cred4 = await api.creds.findOne({ uid: user4._id, provider: 'password' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
+  let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
   res = await post(`/users/${cred4.uid}/provider/password`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'provider', req: 'unique' } ]})
 
@@ -598,9 +597,9 @@ test('POST /users/:uid/provider/:provider', async () => {
   res = await post(`/users/${shortid.generate()}/provider/password`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'uid', req: 'reference' } ]})
 
-  let user5 = await api.users.validate({ name: 'User 5' })
-  await api.users.save(user5)
-  let cred5 = await api.creds.validate({
+  let user5 = await st.users.validate({ name: 'User 5' })
+  await st.users.save(user5)
+  let cred5 = await st.creds.validate({
     uid: user5._id,
     provider: 'password',
     authId: 'user5id',
@@ -627,8 +626,8 @@ test('GET /users/:uid/provider/', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
-  let user4 = await api.users.findOne({ name: 'User 4' })
-  let cred4 = await api.creds.findOne({ uid: user4._id, provider: 'password' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
+  let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
   res = await get(`/users/${cred4.uid}/creds`, sid)
   cred4.password = ''
   expect(res.json).toHaveLength(1)
@@ -654,8 +653,8 @@ test('PUT /users/:uid/provider/:provider/ver/:ver', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
-  let user4 = await api.users.findOne({ name: 'User 4' })
-  let cred4 = await api.creds.findOne({ uid: user4._id, provider: 'password' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
+  let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
   res = await put(`/users/${cred4.uid}/provider/password/ver/${cred4.ver}`, sid, cred4)
   ++ cred4.ver
   cred4.modifiedAt = new Date(res.json.modifiedAt)
@@ -697,8 +696,8 @@ test('DELETE /users/:uid/provider/:provider/ver/:ver', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
-  let user4 = await api.users.findOne({ name: 'User 4' })
-  let cred4 = await api.creds.findOne({ uid: user4._id, provider: 'password' })
+  let user4 = await st.users.findOne({ name: 'User 4' })
+  let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
   res = await del(`/users/${cred4.uid}/provider/password/ver/${cred4.ver + 1}`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
 
@@ -723,15 +722,15 @@ async function getTestPrimeObjects() {
     ].join('&'),
   })
 
-  let top = normalize(await api.groups.findOne({ name: 'Top' }))
-  let admin = normalize(await api.groups.findOne({ name: 'Admin' }))
-  let manager = normalize(await api.groups.findOne({ name: 'Manager' }))
-  let user1 = normalize(await api.users.findOne({ name: 'User 1' }))
-  let cred1 = normalize(await api.creds.findOne({
+  let top = normalize(await st.groups.findOne({ name: 'Top' }))
+  let admin = normalize(await st.groups.findOne({ name: 'Admin' }))
+  let manager = normalize(await st.groups.findOne({ name: 'Manager' }))
+  let user1 = normalize(await st.users.findOne({ name: 'User 1' }))
+  let cred1 = normalize(await st.creds.findOne({
     uid: user1._id,
     provider: 'password',
   }))
-  let prim = api.prim
+  let prim = st.prim
   return { prim, top, admin, manager, user1, cred1 }
 }
 
@@ -761,19 +760,19 @@ async function request(method, path, sid, obj) {
 }
 
 async function loginAsAdmin() {
-  const user2 = await api.users.validate({ name: 'User 2' })
-  await api.users.save(user2)
-  const admin = await api.groups.findOne({ name: 'Admin' })
+  const user2 = await st.users.validate({ name: 'User 2' })
+  await st.users.save(user2)
+  const admin = await st.groups.findOne({ name: 'Admin' })
   admin.uids.push(user2._id.toString())
   ++ admin.ver
-  await api.groups.findOneAndUpdate({ name: 'Admin' }, admin)
-  const cred2 = await api.creds.validate({
+  await st.groups.findOneAndUpdate({ name: 'Admin' }, admin)
+  const cred2 = await st.creds.validate({
     uid: user2._id.toString(),
     provider: 'password',
     authId: 'user2id',
     password: digestPassword(user2._id.toString(), 'user2pass', conf.seed)
   })
-  await api.creds.save(cred2)
+  await st.creds.save(cred2)
   let res = await post('/sessions', null, {
     provider: 'password',
     authId: 'user2id',
@@ -783,19 +782,19 @@ async function loginAsAdmin() {
 }
 
 async function loginAsManager() {
-  const user3 = await api.users.validate({ name: 'User 3' })
-  await api.users.save(user3)
-  const manager = await api.groups.findOne({ name: 'Manager' })
+  const user3 = await st.users.validate({ name: 'User 3' })
+  await st.users.save(user3)
+  const manager = await st.groups.findOne({ name: 'Manager' })
   manager.uids.push(user3._id.toString())
   ++ manager.ver
-  await api.groups.findOneAndUpdate({ name: 'Manager' }, manager)
-  const cred3 = await api.creds.validate({
+  await st.groups.findOneAndUpdate({ name: 'Manager' }, manager)
+  const cred3 = await st.creds.validate({
     uid: user3._id.toString(),
     provider: 'password',
     authId: 'user3id',
     password: digestPassword(user3._id.toString(), 'user3pass', conf.seed)
   })
-  await api.creds.save(cred3)
+  await st.creds.save(cred3)
   let res = await post('/sessions', null, {
     provider: 'password',
     authId: 'user3id',
@@ -805,15 +804,15 @@ async function loginAsManager() {
 }
 
 async function loginAsUser4() {
-  const user4 = await api.users.validate({ name: 'User 4' })
-  await api.users.save(user4)
-  let cred4 = await api.creds.validate({
+  const user4 = await st.users.validate({ name: 'User 4' })
+  await st.users.save(user4)
+  let cred4 = await st.creds.validate({
     uid: user4._id.toString(),
     provider: 'password',
     authId: 'user4id',
     password: digestPassword(user4._id.toString(), 'user4pass', conf.seed)
   })
-  await api.creds.save(cred4)
+  await st.creds.save(cred4)
   let res = await post('/sessions', null, {
     provider: 'password',
     authId: 'user4id',

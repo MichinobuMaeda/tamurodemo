@@ -7,6 +7,6 @@
  */
 
 import conf from '../conf'
-import Api from './api'
-const api = new Api(conf)
-api.init()
+import { api } from './api.js'
+
+api(conf)
