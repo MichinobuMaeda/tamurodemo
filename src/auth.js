@@ -10,12 +10,6 @@ import shortid from 'shortid'
 import { digestPassword } from './helper'
 import err from './errors'
 
-export const sessions = async db => {
-  const collection = db.collection('sessions')
-  await collection.createIndex({ createdAt: 1 })
-  return collection
-}
-
 export const restoreSession = (st, conf) => async (ctx, next) => {
   let sid = ctx.cookies.get('SID', { signed: true })
   let sess = sid ? (await st.sessions.findOne({ _id: sid })) : null

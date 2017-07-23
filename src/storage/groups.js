@@ -7,8 +7,8 @@
  */
 
 import shortid from 'shortid'
-import { isStringFilled, isArray } from './helper'
-import err from './errors'
+import { isStringFilled, isArray } from '../helper'
+import err from '../errors'
 
 const collection = async (db) => {
   const groups = db.collection('groups')

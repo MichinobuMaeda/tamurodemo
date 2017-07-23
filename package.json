@@ -5,8 +5,9 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --ignore *.test.js --out-dir lib --source-maps",
-    "test": "npm run build; ./test/mongo-start.sh; jest src/*.test.js --coverage; ./test/mongo-stop.sh",
-    "start": "npm run build; ./test/mongo-start.sh; node lib/index.js; ./test/mongo-stop.sh"
+    "test": "npm run build; ./test/mongo-clear.sh; ./test/mongo-start.sh; jest src/*.test.js --coverage  --no-cache; ./test/mongo-stop.sh",
+    "start": "npm run build; ./test/mongo-clear.sh; ./test/mongo-start.sh; forever start lib/index.js",
+    "stop": "forever stop lib/index.js; ./test/mongo-stop.sh"
   },
   "author": "Michinobu Maeda",
   "license": "MIT",

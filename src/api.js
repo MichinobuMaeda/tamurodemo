@@ -14,27 +14,17 @@ import bodyParser from 'koa-bodyparser'
 import setup from './setup'
 import err from './errors'
 import { digestPassword } from './helper'
-import { logs, logger } from './logger'
-import users from './users'
-import groups from './groups'
-import creds from './credentials'
-import { sessions, signIn, signOut, restoreSession, reqPriv, PRIV } from './auth'
+import store from './storage'
+import { signIn, signOut, restoreSession, reqPriv, PRIV } from './auth'
 
-export const st = {}
+export let st = {}
 
 export const api = async conf => {
 
   // Storage Service =========================================
 
   const db = await MongoClient.connect(conf.mongoUri)
-  st.users = await users(db)
-  st.groups = await groups(db)
-  st.creds = await creds(db)
-  st.prims = db.collection('prims')
-  st.prim = await st.prims.findOne({})
-  st.sessions = await sessions(db)
-  st.logs = await logs(db)
-  st.log = logger(st.logs)
+  st = await store(db)
 
   // Routes ==================================================
 
