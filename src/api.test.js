@@ -7,7 +7,11 @@
  */
 
 import shortid from 'shortid'
-import client from 'rest'
+import rp from 'request-promise'
+const client = rp.defaults({
+  resolveWithFullResponse: true,
+  simple: false,
+})
 import cookie from 'cookie'
 
 import { digestPassword } from './helper'
@@ -85,10 +89,10 @@ test('setup.setupHtml', () => {
 test('GET /setup', async () => {
   let res = await client({
     method: 'GET',
-    path: `http://localhost:${conf.port}${conf.prefix}/setup`,
+    uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
   })
-  expect(res.status).toEqual({code: 200})
-  expect(res.entity).toEqual(setup.setupHtml(
+  expect(res.statusCode).toEqual(200)
+  expect(res.body).toEqual(setup.setupHtml(
     `${conf.prefix}/setup`, '',
     {
       top: '',
@@ -101,36 +105,36 @@ test('GET /setup', async () => {
   st.prim = {}
   res = await client({
     method: 'GET',
-    path: `http://localhost:${conf.port}${conf.prefix}/setup`,
+    uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
   })
-  expect(res.status).toEqual({code: 200})
-  expect(res.entity).toEqual(setup.completeHtml())
+  expect(res.statusCode).toEqual(200)
+  expect(res.body).toEqual(setup.completeHtml())
 })
 
 test('POST /setup', async () => {
   let logCount = await st.logs.count({})
   let res = await client({
     method: 'POST',
-    path: `http://localhost:${conf.port}${conf.prefix}/setup`,
+    uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    entity: [
+    body: [
       'confirm=dummy',
     ].join('&'),
   })
-  expect(res.status).toEqual({code: 200})
-  expect(res.entity.match('Required: Title')).not.toBeNull()
-  expect(res.entity.match('Required: Admin')).not.toBeNull()
-  expect(res.entity.match('Required: Manager')).not.toBeNull()
-  expect(res.entity.match('Required: Your name')).not.toBeNull()
-  expect(res.entity.match('Required: Your ID')).not.toBeNull()
-  expect(res.entity.match('Required: Your password')).not.toBeNull()
-  expect(res.entity.match('Required: Type')).not.toBeNull()
+  expect(res.statusCode).toEqual(200)
+  expect(res.body.match('Required: Title')).not.toBeNull()
+  expect(res.body.match('Required: Admin')).not.toBeNull()
+  expect(res.body.match('Required: Manager')).not.toBeNull()
+  expect(res.body.match('Required: Your name')).not.toBeNull()
+  expect(res.body.match('Required: Your ID')).not.toBeNull()
+  expect(res.body.match('Required: Your password')).not.toBeNull()
+  expect(res.body.match('Required: Type')).not.toBeNull()
 
   res = await client({
     method: 'POST',
-    path: `http://localhost:${conf.port}${conf.prefix}/setup`,
+    uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    entity: [
+    body: [
       'top=Top',
       'admin=Admin',
       'manager=Manager',
@@ -140,7 +144,7 @@ test('POST /setup', async () => {
       'confirm=user1pass',
     ].join('&'),
   })
-  expect(res.status).toEqual({code: 302})
+  expect(res.statusCode).toEqual(302)
   expect(await st.users.count({})).toEqual(1)
   expect(await st.creds.count({})).toEqual(1)
   expect(await st.groups.count({})).toEqual(3)
@@ -151,24 +155,24 @@ test('POST /setup', async () => {
   
   res = await client({
     method: 'POST',
-    path: `http://localhost:${conf.port}${conf.prefix}/setup`,
-    entity: JSON.stringify({})
+    uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
+    body: '{}',
   })
-  expect(res.status).toEqual({code: 404})
+  expect(res.statusCode).toEqual(404)
   expect((await st.logs.count({})) - logCount).toEqual(2)
 })
 
 test('POST /sessions', async () => {
   // before setup
   let res = await get('/', null)
-  expect(JSON.parse(res.entity)).toEqual({})
+  expect(res.json).toEqual({})
 
   // setup
   let { top, admin, manager, user1 } = await getTestPrimeObjects()
 
   // before sign in
   res = await get('/', null)
-  expect(JSON.parse(res.entity)).toEqual({ name: 'Top' })
+  expect(res.json).toEqual({ name: 'Top' })
 
   res = await post('/sessions', null, {
     provider: 'password',
@@ -709,9 +713,9 @@ test('DELETE /users/:uid/provider/:provider/ver/:ver', async () => {
 async function getTestPrimeObjects() {
   await client({
     method: 'POST',
-    path: `http://localhost:${conf.port}${conf.prefix}/setup`,
+    uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    entity: [
+    body: [
       'top=Top',
       'admin=Admin',
       'manager=Manager',
@@ -746,15 +750,15 @@ async function request(method, path, sid, obj) {
   }
   let req = {
     method,
-    path: `http://localhost:${conf.port}${conf.prefix}${path}`,
+    uri: `http://localhost:${conf.port}${conf.prefix}${path}`,
     headers,
   }
-  if (obj) { req.entity = JSON.stringify(obj) }
+  if (obj) { req.body = JSON.stringify(obj) }
   let res = await client(req)
-  if (res.headers['Content-Type'] && res.headers['Content-Type'].match('application/json')) {
-    res.json = JSON.parse(res.entity)
+  if (res.headers['content-type'] && res.headers['content-type'].match('application/json')) {
+    res.json = JSON.parse(res.body)
   }
-  let cookies = res.headers['Set-Cookie']
+  let cookies = res.headers['set-cookie']
   if (cookies && cookies.length) { res.cookies = cookies.map(c => cookie.parse(c)) }
   return res
 }
