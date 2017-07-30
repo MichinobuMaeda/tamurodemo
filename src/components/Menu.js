@@ -12,9 +12,13 @@ import FontIcon from 'material-ui/FontIcon'
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
+import { PRIV } from '../actions/constants'
+import { nameOfPrivilege } from './formatter'
+
 const Menu = ({
-  title, primary,
-  onHomePageSelected, onHelpPageSelected, onSignOut
+  title, prim, priv, sess, page,
+  onHomePageSelected, onHelpPageSelected, onSignOut, onHelpPageClosed,
+  onPrivManagerSelected, onPrivAdminSelected, onPrivUserSelected
 }) => (
   <div>
     <AppBar
@@ -27,28 +31,69 @@ const Menu = ({
         </IconButton>
       }
       iconElementRight={
-        primary
-          ? <IconMenu
-              iconButtonElement={
-                <IconButton>
-                  <FontIcon className="material-icons">menu</FontIcon>
-                </IconButton>
-              }
-              targetOrigin={{horizontal: 'right', vertical: 'top'}}
-              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-            >
-              <MenuItem primaryText="ヘルプ"
+        prim
+          ? page.history[page.curr].name === 'help'
+            ? <IconButton
+                onTouchTap={onHelpPageClosed}
+              >
+                <FontIcon className="material-icons">highlight_off</FontIcon>
+              </IconButton>
+            : <IconMenu
+                iconButtonElement={
+                  <IconButton>
+                    <FontIcon className="material-icons">menu</FontIcon>
+                  </IconButton>
+                }
+                targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+              >
+                <MenuItem
+                  primaryText="ヘルプ"
+                  onTouchTap={onHelpPageSelected}
+                />
+                <MenuItem
+                  primaryText="ログアウト"
+                  onTouchTap={onSignOut}
+                />
+                {
+                  sess.manager
+                    ? <MenuItem
+                        primaryText={nameOfPrivilege[PRIV.MANAGER]}
+                        onTouchTap={onPrivManagerSelected}
+                        disabled={priv === PRIV.MANAGER}
+                      />
+                    : ''
+                }
+                {
+                  sess.admin
+                    ? <MenuItem
+                        primaryText={nameOfPrivilege[PRIV.ADMIN]}
+                        onTouchTap={onPrivAdminSelected}
+                        disabled={priv === PRIV.ADMIN}
+                      />
+                    : ''
+                }
+                {
+                  (sess.manager || sess.admin)
+                    ? <MenuItem
+                        primaryText={nameOfPrivilege[PRIV.USER]}
+                        onTouchTap={onPrivUserSelected}
+                        disabled={priv === PRIV.USER}
+                      />
+                    : ''
+                }
+              </IconMenu>
+          : page.history[page.curr].name === 'help'
+            ?<IconButton
+                onTouchTap={onHelpPageClosed}
+              >
+                <FontIcon className="material-icons">highlight_off</FontIcon>
+              </IconButton>
+            : <IconButton
                 onTouchTap={onHelpPageSelected}
-              />
-              <MenuItem primaryText="ログアウト"
-                onTouchTap={onSignOut}
-              />
-            </IconMenu>
-          : <IconButton
-              onTouchTap={onHelpPageSelected}
-            >
-              <FontIcon className="material-icons">help</FontIcon>
-            </IconButton>
+              >
+                <FontIcon className="material-icons">help</FontIcon>
+              </IconButton>
       }
     />
   </div>

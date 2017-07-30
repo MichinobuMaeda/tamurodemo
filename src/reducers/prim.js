@@ -6,13 +6,15 @@
 
 import { A } from '../actions/constants'
 
-const title = (state = null, action) => {
+const prim = (state = null, action) => {
   switch (action.type) {
-    case A.SET_TITLE:
-      return action.title
+    case A.SET_PRIM:
+      return action.prim
+    case A.RESET_PRIM:
+      return null
     default:
       return state
   }
 }
 
-export default title
+export default prim

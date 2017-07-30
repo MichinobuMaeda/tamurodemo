@@ -5,6 +5,9 @@
   "author": "Michinobu Maeda",
   "license": "MIT",
   "scripts": {
+    "api-start": "cd ..; cd api; gulp start",
+    "api-setup": "node test/setup.js",
+    "api-stop": "cd ..; cd api; gulp stop",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -12,12 +15,19 @@
   },
   "dependencies": {
     "material-ui": "^0.18.6",
+    "moment": "^2.18.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
     "react-scripts": "1.0.10",
     "react-tap-event-plugin": "^2.0.1",
-    "redux": "^3.7.2"
-  }
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
+  },
+  "proxy": "http://localhost:3001"
 }

@@ -8,38 +8,28 @@ import React from 'react'
 
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
 
-const Entrance = ({privilege, onPrivilegeChanged, onSingIn}) => (
-  <div>
+const Entrance = ({auth, onAuthIdChanged, onPasswordChanged, onSingInWithPassword}) => (
+  <div style={{"text-align": "center"}}>
     <TextField
       hintText="ユーザーID"
       floatingLabelText="ユーザーID"
+      value={auth.authId}
+      onChange={onAuthIdChanged}
     /><br/>
     <TextField
       hintText="パスワード"
       floatingLabelText="パスワード"
+      value={auth.password}
       type="password"
+      onChange={onPasswordChanged}
     /><br/>
-    <SelectField
-      hintText="権限"
-      floatingLabelText="権限"
-      value={privilege}
-      onChange={onPrivilegeChanged}
-      errorText={!privilege && '必ず選択してください。'}
-    >
-      <MenuItem value={"user"} primaryText="一般" />
-      <MenuItem value={"manager"} primaryText="管理者" />
-      <MenuItem value={"admin"} primaryText="システム担当者" />
-    </SelectField><br/>
     <RaisedButton
       label="IDとパスワードでログイン"
       primary={true}
-      disabled={!privilege}
-      onTouchTap={onSingIn}
+      disabled={!auth.authId || !auth.password}
+      onTouchTap={onSingInWithPassword}
     />
-    <p>サンプルなのでユーザーIDとパスワードは入れなくていいです。権限だけ選択してください。</p>
   </div>
 )
 

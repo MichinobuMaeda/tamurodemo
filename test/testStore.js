@@ -6,7 +6,7 @@
 
 const testStore = {
   title: 'サンプル 2',
-  primary: {
+  prim: {
     top: 'G0001',
     admin: 'G0002',
     manager: 'G0003',

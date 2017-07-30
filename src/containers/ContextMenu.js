@@ -6,13 +6,17 @@
 
 import { connect } from 'react-redux'
 
-import { setPage, resetPage, doSingOut } from '../actions'
+import { setPage, resetPage, doSingOut, setPrivilege, restorePage } from '../actions'
 import Menu from '../components/Menu'
+import { PRIV } from '../actions/constants'
 
 const mapStateToProps = state => {
   return {
     title: state.title,
-    primary: state.primary,
+    prim: state.prim,
+    priv: state.priv,
+    sess: state.sess,
+    page: state.page,
   }
 }
 
@@ -20,7 +24,11 @@ const mapDispatchToProps = dispatch => {
   return {
     onHomePageSelected: () => dispatch(resetPage()),
     onHelpPageSelected: () => dispatch(setPage('help')),
-    onSignOut: () => doSingOut(dispatch),
+    onHelpPageClosed: () => dispatch(restorePage()),
+    onSignOut: () => dispatch(doSingOut()),
+    onPrivManagerSelected: (event) => dispatch(setPrivilege(PRIV.MANAGER)),
+    onPrivAdminSelected: (event) => dispatch(setPrivilege(PRIV.ADMIN)),
+    onPrivUserSelected: (event) => dispatch(setPrivilege(PRIV.USER)),
   }
 }
 

@@ -6,16 +6,30 @@
 
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
-import tamuroApp from './reducers'
-import App from './components/App'
+import thunk from 'redux-thunk'
 
-let store = createStore(tamuroApp)
+import reducers from './reducers'
+import { setStatus } from './actions'
+import App from './containers/App'
 
-render(
+fetch('/api/', { credentials: 'same-origin' })
+.then(res => res.json())
+.then(json => ({
+  store: createStore(
+    reducers,
+    applyMiddleware(thunk),
+  ),
+  json,
+}))
+.then(res => {
+  setStatus(res.store.dispatch, res.json)
+  return res.store
+})
+.then(store => render(
   <Provider store={store}>
     <App />
   </Provider>,
   document.getElementById('root')
-)
+))

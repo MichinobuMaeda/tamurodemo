@@ -6,19 +6,18 @@
 
 import { connect } from 'react-redux'
 
-import { setPrivilege } from '../actions'
 import Top from '../components/Top'
 
 const mapStateToProps = state => {
   return {
-    privilege: state.privilege,
+    prim: state.prim,
+    sess: state.sess,
+    priv: state.priv,
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    onPrivilegeChanged: (event, index, value) => dispatch(setPrivilege(value)),
-  }
+  return {}
 }
 
 const VisibleTop = connect(

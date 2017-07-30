@@ -6,19 +6,20 @@
 
 import { connect } from 'react-redux'
 
-import { setPrivilege, doSingIn } from '../actions'
+import { doSingInWithPassword, setAuthId, setPassword } from '../actions'
 import Entrance from '../components/Entrance'
 
 const mapStateToProps = state => {
   return {
-    privilege: state.privilege,
+    auth: state.auth,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPrivilegeChanged: (event, index, value) => dispatch(setPrivilege(value)),
-    onSingIn: () => doSingIn(dispatch),
+    onSingInWithPassword: () => dispatch(doSingInWithPassword()),
+    onAuthIdChanged: (event) => dispatch(setAuthId(event.target.value)),
+    onPasswordChanged: (event) => dispatch(setPassword(event.target.value)),
   }
 }
 

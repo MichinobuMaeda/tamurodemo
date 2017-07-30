@@ -13,22 +13,25 @@ import muiTheme from '../muiTheme'
 import ContextMenu from '../containers/ContextMenu'
 import ContextHelp from '../containers/ContextHelp'
 import ContextEntrance from '../containers/ContextEntrance'
+import VisibleError from '../containers/VisibleError'
 import VisibleTop from '../containers/VisibleTop'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-let App = ({page, primary}) => (
+let App = ({page, prim, error}) => (
   <MuiThemeProvider muiTheme={muiTheme}>
     <div>
       <ContextMenu />
       <div style={{margin: 16}}>
       {
-        page.name === 'help'
+        page.history[page.curr].name === 'help'
           ? <ContextHelp />
-          : !primary
-            ? <ContextEntrance />
-            : <VisibleTop />
+          : page.history[page.curr].name === 'error'
+            ? <VisibleError />
+            : !prim
+              ? <ContextEntrance />
+              : <VisibleTop />
       }
       </div>
     </div>
@@ -38,7 +41,8 @@ let App = ({page, primary}) => (
 const mapStateToProps = state => {
   return {
     page: state.page,
-    primary: state.primary,
+    prim: state.prim,
+    error: state.error,
   }
 }
 

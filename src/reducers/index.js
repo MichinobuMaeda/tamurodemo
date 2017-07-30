@@ -8,14 +8,20 @@ import { combineReducers } from 'redux'
 
 import title from './title'
 import page from './page'
-import privilege from './privilege'
-import primary from './primary'
+import sess from './sess'
+import priv from './priv'
+import prim from './prim'
+import auth from './auth'
+import error from './error'
 
 const tamuroApp = combineReducers({
   title,
   page,
-  privilege,
-  primary,
+  sess,
+  priv,
+  prim,
+  auth,
+  error,
 })
 
 export default tamuroApp

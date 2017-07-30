@@ -5,15 +5,16 @@
  */
 
 import React from 'react'
+import FontIcon from 'material-ui/FontIcon'
 
-const Help = ({primary}) => (
+const Help = ({prim}) => (
   <div>
     {
-      primary
+      prim
         ? <p>ログインしている場合のヘルプページです。</p>
         : <p>ログインしていない場合のヘルプページです。</p>
     }
-    <p>左上のホームボタンで戻ってください。</p>
+    <p>右上の <FontIcon className="material-icons">highlight_off</FontIcon> で戻ってください。</p>
   </div>
 )
 

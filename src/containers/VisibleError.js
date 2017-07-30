@@ -6,21 +6,24 @@
 
 import { connect } from 'react-redux'
 
-import Help from '../components/Help'
+import { hideError } from '../actions'
+import Error from '../components/Error'
 
 const mapStateToProps = state => {
   return {
-    prim: state.prim,
+    error: state.error,
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    onErrorConfirm: () => hideError(dispatch),
+  }
 }
 
-const ContextHelp = connect(
+const VisibleError = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Help)
+)(Error)
 
-export default ContextHelp;
+export default VisibleError;
