@@ -6,6 +6,7 @@
  * See LICENSE file in the project root for full license information.  
  */
 
+import querystring from 'querystring'
 import shortid from 'shortid'
 import rp from 'request-promise'
 const client = rp.defaults({
@@ -117,9 +118,7 @@ test('POST /setup', async () => {
     method: 'POST',
     uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: [
-      'confirm=dummy',
-    ].join('&'),
+    body: querystring.stringify({ confirm: 'dummy' })
   })
   expect(res.statusCode).toEqual(200)
   expect(res.body.match('Required: Title')).not.toBeNull()
@@ -134,15 +133,15 @@ test('POST /setup', async () => {
     method: 'POST',
     uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: [
-      'top=Top',
-      'admin=Admin',
-      'manager=Manager',
-      'name=User+1',
-      'authId=user1auth',
-      'password=user1pass',
-      'confirm=user1pass',
-    ].join('&'),
+    body: querystring.stringify({
+      top: 'Top',
+      admin: 'Admin',
+      manager: 'Manager',
+      name: 'User 1',
+      authId: 'user1auth',
+      password: 'user1pass',
+      confirm: 'user1pass',
+    })
   })
   expect(res.statusCode).toEqual(302)
   expect(await st.users.count({})).toEqual(1)
@@ -172,7 +171,7 @@ test('POST /sessions', async () => {
 
   // before sign in
   res = await get('/', null)
-  expect(res.json).toEqual({ name: 'Top' })
+  expect(res.json).toEqual({ title: 'Top', prim: null, sess: {} })
 
   res = await post('/sessions', null, {
     provider: 'password',
@@ -182,7 +181,9 @@ test('POST /sessions', async () => {
   let sid = res.cookies[0]
   expect(sid.SID).not.toBeNull()
   expect(sid['httponly,SID.sig']).not.toBeNull()
-  expect(res.json).toEqual(top)
+  expect(res.json.title).toEqual(top.name)
+  expect(res.json.prim).toEqual(normalize(st.prim))
+  expect(res.json.sess).not.toEqual({})
   let sess = await st.sessions.findOne({ _id: sid.SID })
   expect(sess.uid).toEqual(user1._id)
   expect(sess.provider).toEqual('password')
@@ -195,7 +196,9 @@ test('POST /sessions', async () => {
 
   // after sign in
   res = await get('/', sid)
-  expect(res.json).toEqual(top)
+  expect(res.json.title).toEqual(top.name)
+  expect(res.json.prim).toEqual(normalize(st.prim))
+  expect(res.json.sess).not.toEqual({})
 
   let cred2 = {
     _id: shortid.generate(),
@@ -264,15 +267,17 @@ test('DELETE /sessions', async () => {
 
   // after sign in
   let res = await get('/', sid)
-  expect(res.json).toEqual(top)
+  expect(res.json.title).toEqual(top.name)
+  expect(res.json.prim).toEqual(normalize(st.prim))
+  expect(res.json.sess).not.toEqual({})
   expect(await st.sessions.count({})).toEqual(1)
 
   res = await del('/sessions', sid)
-  expect(res.json).toEqual({ name: top.name })
+  expect(res.json).toEqual({ title: top.name, prim: null, sess: {} })
 
   // after sign out
   res = await get('/', sid)
-  expect(res.json).toEqual({ name: top.name })
+  expect(res.json).toEqual({ title: top.name, prim: null, sess: {} })
   expect(await st.sessions.count({})).toEqual(0)
 })
 
@@ -287,7 +292,9 @@ test('Session timeout', async () => {
 
   // before session timeout
   res = await get('/', sid)
-  expect(res.json).toEqual(top)
+  expect(res.json.title).toEqual(top.name)
+  expect(res.json.prim).toEqual(normalize(st.prim))
+  expect(res.json.sess).not.toEqual({})
   expect(await st.sessions.count({})).toEqual(1)
 
   let sess = await st.sessions.findOne({ uid: user1._id })
@@ -296,7 +303,7 @@ test('Session timeout', async () => {
 
   // after session timeout
   res = await get('/', sid)
-  expect(res.json).toEqual({ name: top.name })
+  expect(res.json).toEqual({ title: top.name, prim: null, sess: {} })
   expect(await st.sessions.count({})).toEqual(0)
 })
 
@@ -715,15 +722,15 @@ async function getTestPrimeObjects() {
     method: 'POST',
     uri: `http://localhost:${conf.port}${conf.prefix}/setup`,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: [
-      'top=Top',
-      'admin=Admin',
-      'manager=Manager',
-      'name=User+1',
-      'authId=user1id',
-      'password=user1pass',
-      'confirm=user1pass',
-    ].join('&'),
+    body: querystring.stringify({
+      top: 'Top',
+      admin: 'Admin',
+      manager: 'Manager',
+      name: 'User 1',
+      authId: 'user1id',
+      password: 'user1pass',
+      confirm: 'user1pass',
+    })
   })
 
   let top = normalize(await st.groups.findOne({ name: 'Top' }))

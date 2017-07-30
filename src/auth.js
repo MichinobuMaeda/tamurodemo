@@ -55,6 +55,7 @@ export const signIn = (st, conf) => async (ctx, next) => {
   await st.sessions.save(sess)
   st.log.info({ method: 'POST', path: '/sessions', SID: sess._id })
   ctx.cookies.set('SID', sess._id, { maxAge: conf.expires, signed: true })
+  ctx.session = sess
   await next()
 }
 

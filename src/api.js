@@ -35,7 +35,7 @@ export const api = async conf => {
           ctx.response.body = {}
           return
         }
-        ctx.response.body = await getTop(ctx.session)
+        ctx.response.body = await getPrime(ctx.session)
       })
 
     .get('/setup',
@@ -69,7 +69,7 @@ export const api = async conf => {
 
     .post('/sessions',
       signOut(st), signIn(st, conf), async ctx => {
-        ctx.response.body = await getTop(true)
+        ctx.response.body = await getPrime(ctx.session)
       })
 
     .get('/sessions',
@@ -79,7 +79,7 @@ export const api = async conf => {
 
     .del('/sessions',
       signOut(st), async ctx => {
-        ctx.response.body = (await getTop(false))
+        ctx.response.body = (await getPrime())
       })
 
     .get('/users',
@@ -245,9 +245,14 @@ const updateDoc = async (collection, { _id, ver }, obj) => {
     : { errors: [ err.latest('ver') ]}
 }
 
-const getTop = async (isSession) => {
+const getPrime = async (sess) => {
+  let { _id, uid, provider, gids, admin, manager, createdAt } = sess ? sess : {}
   const top = await st.groups.findOne({ _id: st.prim.top })
-  return isSession ? top : { name: top.name }
+  return {
+    title: top.name,
+    prim: (_id ? st.prim : null),
+    sess: { uid, provider, gids, admin, manager, createdAt },
+  }
 }
 
 // Middleware ===================================================
