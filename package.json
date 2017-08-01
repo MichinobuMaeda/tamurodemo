@@ -8,6 +8,7 @@
     "api-start": "cd ..; cd api; gulp start",
     "api-setup": "node test/setup.js",
     "api-stop": "cd ..; cd api; gulp stop",
+    "api-demo": "mongo test/postData.js; node test/touch.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -26,8 +27,10 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "mongodb": "^2.2.30",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "shortid": "^2.2.8"
   },
   "proxy": "http://localhost:3001"
 }

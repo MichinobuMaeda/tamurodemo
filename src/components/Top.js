@@ -21,7 +21,7 @@ const Top = ({priv, sess, prim, onPrivilegeChanged}) => (
     <h2>右上のメニュー</h2>
     <div>
       <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
-       label="ヘルプ"/>
+      label="ヘルプ"/>
       : ログインしている場合のヘルプページ。</div>
     <div>
       <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
@@ -75,8 +75,7 @@ const Top = ({priv, sess, prim, onPrivilegeChanged}) => (
         </TableRow>
       </TableBody>
     </Table>
-
-  </div>
+    </div>
 )
 
 export default Top;

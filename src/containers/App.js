@@ -15,24 +15,31 @@ import ContextHelp from '../containers/ContextHelp'
 import ContextEntrance from '../containers/ContextEntrance'
 import VisibleError from '../containers/VisibleError'
 import VisibleTop from '../containers/VisibleTop'
+import LinearProgress from 'material-ui/LinearProgress';
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-let App = ({page, prim, error}) => (
+let App = ({page, prim, error, wait}) => (
   <MuiThemeProvider muiTheme={muiTheme}>
     <div>
       <ContextMenu />
       <div style={{margin: 16}}>
-      {
-        page.history[page.curr].name === 'help'
-          ? <ContextHelp />
-          : page.history[page.curr].name === 'error'
-            ? <VisibleError />
-            : !prim
-              ? <ContextEntrance />
-              : <VisibleTop />
-      }
+        <div style={{display: wait ? "block" : "none", "text-align": "center"}}>
+          <h2>お待ちください</h2>    
+          <LinearProgress mode="indeterminate" />
+        </div>
+        <div style={{display: wait ? "none" : "block"}}>
+          {
+            page.history[page.curr].name === 'help'
+              ? <ContextHelp />
+              : page.history[page.curr].name === 'error'
+                ? <VisibleError />
+                : !prim
+                  ? <ContextEntrance />
+                  : <VisibleTop />
+          }
+        </div>
       </div>
     </div>
   </MuiThemeProvider>
@@ -43,6 +50,7 @@ const mapStateToProps = state => {
     page: state.page,
     prim: state.prim,
     error: state.error,
+    wait: state.wait,
   }
 }
 

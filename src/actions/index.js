@@ -87,6 +87,14 @@ export const resetError = () => ({
   type: A.RESET_ERROR
 })
 
+export const setWait = () => ({
+  type: A.SET_WAIT
+})
+
+export const resetWait = () => ({
+  type: A.RESET_WAIT
+})
+
 export const showError = (dispatch, error) => {
   dispatch(setError(error))
   dispatch(setPage('error'))
@@ -118,6 +126,7 @@ export const setStatus = (dispatch, json) => {
 }
 
 export const doSingInWithPassword = () => (dispatch, getState) => {
+  dispatch(setWait())
   dispatch(setProvider(PROVIDER.PASSWORD))
   return fetch('/api/sessions', {
     method: 'POST',
@@ -129,6 +138,7 @@ export const doSingInWithPassword = () => (dispatch, getState) => {
   })
   .then(res => res.json())
   .then(json => setStatus(dispatch, json))
+  .then(json => dispatch(resetWait()))
 }
 
 export const doSingOut = () => dispatch => {

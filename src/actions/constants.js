@@ -31,6 +31,9 @@ export const A = {
 
   SET_ERROR: 'SET_ERROR',
   RESET_ERROR: 'RESET_ERROR',
+
+  SET_WAIT: 'SET_WAIT',
+  RESET_WAIT: 'RESET_WAIT',
 }
 
 export const PRIV = {

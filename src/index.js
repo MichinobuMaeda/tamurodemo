@@ -11,25 +11,22 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 
 import reducers from './reducers'
-import { setStatus } from './actions'
+import { setStatus, resetWait } from './actions'
 import App from './containers/App'
 
-fetch('/api/', { credentials: 'same-origin' })
-.then(res => res.json())
-.then(json => ({
-  store: createStore(
-    reducers,
-    applyMiddleware(thunk),
-  ),
-  json,
-}))
-.then(res => {
-  setStatus(res.store.dispatch, res.json)
-  return res.store
-})
-.then(store => render(
+let store = createStore(
+  reducers,
+  applyMiddleware(thunk),
+)
+
+render(
   <Provider store={store}>
     <App />
   </Provider>,
   document.getElementById('root')
-))
+)
+
+fetch('/api/', { credentials: 'same-origin' })
+.then(res => res.json())
+.then(json => setStatus(store.dispatch, json))
+.then(() => store.dispatch(resetWait()))
