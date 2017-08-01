@@ -36,46 +36,42 @@ mkdirIfNotExist(dbPath)
 gulp.task('test', () => {
   runSequence(
     'mongo-start',
-    'mongo-clean',
     'build',
     'jest',
-    'mongo-clean',
     'mongo-stop',
   )
 })
 
-gulp.task('start', cb => {
+gulp.task('start', () => {
   runSequence(
     'mongo-start',
-    'mongo-clean',
     'build',
     'forever-start',
   )
 })
 
-gulp.task('stop', cb => {
+gulp.task('stop', () => {
   runSequence(
     'forever-stop',
-    'mongo-clean',
     'mongo-stop',
   )
 })
 
 gulp.task('build', () => {
   return gulp.src(['src/**/*.js','!src/**/*.test.js'])
-  .pipe(sourcemaps.init())
-  .pipe(babel())
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest('lib'))
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('lib'))
 })
 
 gulp.task('jest', () => {
   process.env.NODE_ENV = 'test'
   return gulp.src('src')
-  .pipe(jest({
-    coverage: true,
-    cache: false,
-  }))
+    .pipe(jest({
+      coverage: true,
+      cache: false,
+    }))
 })
 
 const runCommand = command => {
@@ -93,7 +89,7 @@ gulp.task('mongo-start', runCommand(
 ))
 
 gulp.task('mongo-stop', runCommand(
-  `mongo admin --eval "db.shutdownServer();"`
+  'mongo admin --eval "db.shutdownServer();"'
 ))
 
 const cleanScript = [
