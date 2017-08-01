@@ -46,7 +46,7 @@ const Top = ({priv, sess, prim, onPrivilegeChanged}) => (
     <Table>
       <TableBody displayRowCheckbox={false}>
         <TableRow>
-          <TableRowColumn style={{ width: 160 }}>ユーザID</TableRowColumn>
+          <TableRowColumn>ユーザID</TableRowColumn>
           <TableRowColumn>{`"${sess.uid}"`}</TableRowColumn>
         </TableRow>
         <TableRow>
