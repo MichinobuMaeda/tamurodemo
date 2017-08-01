@@ -39,7 +39,10 @@ export const api = async conf => {
       })
 
     .get('/setup',
-      ctx => {
+      async ctx => {
+        if (!st.prim) {
+          st.prim = await st.prims.findOne({})
+        }
         ctx.response.body = st.prim
           ? setup.completeHtml()
           : setup.setupHtml(ctx.request.path)
