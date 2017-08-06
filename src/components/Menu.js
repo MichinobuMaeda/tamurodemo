@@ -12,13 +12,14 @@ import FontIcon from 'material-ui/FontIcon'
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
-import { PRIV } from '../actions/constants'
-import { nameOfPrivilege } from './formatter'
+import { PRIV, PAGE } from '../constants'
+import { nameOfPrivilege, getCurrentPage } from '../helper'
 
 const Menu = ({
   title, prim, priv, sess, page,
   onHomePageSelected, onHelpPageSelected, onSignOut, onHelpPageClosed,
-  onPrivManagerSelected, onPrivAdminSelected, onPrivUserSelected
+  onPrivManagerSelected, onPrivAdminSelected, onPrivUserSelected,
+  onLogsSelected, onSessionsSelected
 }) => (
   <div>
     <AppBar
@@ -32,7 +33,7 @@ const Menu = ({
       }
       iconElementRight={
         prim
-          ? page.history[page.curr].name === 'help'
+          ? getCurrentPage(page).name === PAGE.HELP
             ? <IconButton
                 onTouchTap={onHelpPageClosed}
               >
@@ -82,8 +83,24 @@ const Menu = ({
                       />
                     : ''
                 }
+                {
+                  sess.admin
+                    ? <MenuItem
+                        primaryText={"ログ"}
+                        onTouchTap={onLogsSelected}
+                      />
+                    : ''
+                }
+                {
+                  sess.admin
+                    ? <MenuItem
+                        primaryText={"セッション"}
+                        onTouchTap={onSessionsSelected}
+                      />
+                    : ''
+                }
               </IconMenu>
-          : page.history[page.curr].name === 'help'
+          : getCurrentPage(page).name === PAGE.HELP
             ?<IconButton
                 onTouchTap={onHelpPageClosed}
               >

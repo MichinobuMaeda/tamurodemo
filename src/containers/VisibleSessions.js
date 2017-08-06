@@ -6,24 +6,25 @@
 
 import { connect } from 'react-redux'
 
-import User from '../components/User'
-import { getCurrentPage } from '../helper'
+import Sessions from '../components/Sessions'
+import { showSessions } from '../actions'
 
 const mapStateToProps = state => {
-  let { page, users } = state 
-  let user = users.reduce((ret, u) => u._id === getCurrentPage(page).id ? u : ret, null)
+  let { sessions } = state 
   return {
-    user,
+    sessions,
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {} 
+  return {
+    onRefreshSessions: (event) => dispatch(showSessions),
+  } 
 }
 
-const VisibleUser = connect(
+const VisibleSessions = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(User)
+)(Sessions)
 
-export default VisibleUser;
+export default VisibleSessions;

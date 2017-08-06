@@ -6,7 +6,7 @@
 
 import Moment from 'moment'
 
-import { PRIV, PROVIDER, ERR } from '../actions/constants'
+import { PRIV, PROVIDER, ERR } from './constants'
 
 Moment.locale('ja', { weekdaysMin: ['日', '月', '火', '水', '木', '金', '土']})
 
@@ -55,3 +55,5 @@ export const sortedGroups = (prim, groups) => {
 }
 
 export const paperStyle = { margin: 8, padding: 8 }
+
+export const getCurrentPage = page => page.history[page.curr]

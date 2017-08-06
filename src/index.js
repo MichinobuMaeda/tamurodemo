@@ -12,7 +12,7 @@ import thunk from 'redux-thunk'
 
 import reducers from './reducers'
 import { setStatus, resetWait } from './actions'
-import App from './containers/App'
+import ContextApp from './containers/ContextApp'
 
 let store = createStore(
   reducers,
@@ -21,7 +21,7 @@ let store = createStore(
 
 render(
   <Provider store={store}>
-    <App />
+    <ContextApp />
   </Provider>,
   document.getElementById('root')
 )

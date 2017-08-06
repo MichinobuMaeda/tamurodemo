@@ -6,13 +6,15 @@
 
 import { A } from '../constants'
 
-const title = (state = null, action) => {
+const sessions = (state = [], action) => {
   switch (action.type) {
-    case A.SET_TITLE:
-      return action.title
+    case A.SET_SESSIONS:
+      return action.sessions
+    case A.RESET_SESSIONS:
+      return []
     default:
       return state
   }
 }
 
-export default title
+export default sessions

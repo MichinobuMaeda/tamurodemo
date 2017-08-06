@@ -6,24 +6,26 @@
 
 import { connect } from 'react-redux'
 
-import User from '../components/User'
-import { getCurrentPage } from '../helper'
+import Logs from '../components/Logs'
+import { showLogs, getMoreLogs } from '../actions'
 
 const mapStateToProps = state => {
-  let { page, users } = state 
-  let user = users.reduce((ret, u) => u._id === getCurrentPage(page).id ? u : ret, null)
+  let { logs } = state 
   return {
-    user,
+    logs,
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {} 
+  return {
+    onRefreshLogs: (event) => dispatch(showLogs),
+    onGetMoreLogs: (event) => dispatch(getMoreLogs),
+  } 
 }
 
-const VisibleUser = connect(
+const VisibleLogs = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(User)
+)(Logs)
 
-export default VisibleUser;
+export default VisibleLogs;

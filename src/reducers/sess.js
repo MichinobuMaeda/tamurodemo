@@ -4,7 +4,7 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { A } from '../actions/constants'
+import { A } from '../constants'
 
 const sess = (state = {}, action) => {
   switch (action.type) {

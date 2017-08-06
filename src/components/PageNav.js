@@ -10,7 +10,8 @@ import IconButton from 'material-ui/IconButton'
 import FontIcon from 'material-ui/FontIcon'
 import { teal600 } from 'material-ui/styles/colors'
 
-import { sortedGroups } from './formatter'
+import { sortedGroups, getCurrentPage } from '../helper'
+import { PAGE } from '../constants'
 
 const PageNav = ({ prim, page, groups, onGroupSelected, onPageBack, onPageForward }) => (
   <div>
@@ -31,7 +32,7 @@ const PageNav = ({ prim, page, groups, onGroupSelected, onPageBack, onPageForwar
     <div>
       {
         sortedGroups(prim, groups)
-          .filter(g => -1 < (page.history[page.curr].name === 'user' ? g.uids : g.gids).indexOf(page.history[page.curr].id))
+          .filter(g => -1 < (getCurrentPage(page).name === PAGE.USER ? g.uids : g.gids).indexOf(getCurrentPage(page).id))
           .map(g => <FlatButton
             label={g.name}
             icon={<FontIcon className="material-icons" color={teal600}>group</FontIcon>}

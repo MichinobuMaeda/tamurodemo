@@ -4,9 +4,9 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { A } from '../actions/constants'
+import { A, PAGE } from '../constants'
 
-const homePage = { name: 'top' }
+const homePage = { name: PAGE.TOP }
 
 const page = (state = { history: [homePage], curr: 0 }, action) => {
   let { history, curr } = state
@@ -18,11 +18,7 @@ const page = (state = { history: [homePage], curr: 0 }, action) => {
       }
       return { history, curr }
     case A.RESET_PAGE:
-      if (history[curr].name !== homePage.name || history[curr].id !== homePage.id) {
-        history = [...history, homePage]
-        curr = history.length - 1
-      }
-      return { history, curr }
+      return { history: [homePage], curr: 0 }
     case A.BACK_PAGE:
       if (0 < curr) {
         --curr

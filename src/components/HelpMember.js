@@ -8,8 +8,8 @@ import React from 'react'
 import FontIcon from 'material-ui/FontIcon'
 import Paper from 'material-ui/Paper'
 
-import { nameOfPrivilege, paperStyle } from './formatter'
-import { PRIV } from '../actions/constants'
+import { nameOfPrivilege, paperStyle } from '../helper'
+import { PRIV } from '../constants'
 
 const HelpMember = () => (
   <div>
@@ -38,6 +38,14 @@ const HelpMember = () => (
       <di>
         <dt>{nameOfPrivilege[PRIV.USER]}</dt>
         <dd>{nameOfPrivilege[PRIV.USER]}の表示モードに戻す。</dd>
+      </di>
+      <di>
+        <dt>ログ</dt>
+        <dd>{nameOfPrivilege[PRIV.ADMIN]}の権限がある場合だけ表示する。</dd>
+      </di>
+      <di>
+        <dt>セッション</dt>
+        <dd>{nameOfPrivilege[PRIV.ADMIN]}の権限がある場合だけ表示する。</dd>
       </di>
     </Paper>
   </div>

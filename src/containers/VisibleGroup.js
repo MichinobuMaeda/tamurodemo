@@ -7,11 +7,13 @@
 import { connect } from 'react-redux'
 
 import { showGroup, setPage } from '../actions'
+import { PAGE } from '../constants'
+import { getCurrentPage } from '../helper'
 import Group from '../components/Group'
 
 const mapStateToProps = state => {
   let { prim, page, groups, users } = state 
-  let group = groups.reduce((ret, g) => g._id === page.history[page.curr].id ? g : ret, null)
+  let group = groups.reduce((ret, g) => g._id === getCurrentPage(page).id ? g : ret, null)
   return {
     prim,
     group,
@@ -23,7 +25,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onGroupSelected: id => () => dispatch(showGroup(id)),
-    onUserSelected: id => () => dispatch(setPage('user', id)),
+    onUserSelected: id => () => dispatch(setPage(PAGE.USER, id)),
   } 
 }
 

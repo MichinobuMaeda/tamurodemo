@@ -44,12 +44,18 @@ export const A = {
 
   SET_USERS: 'SET_USERS',
   RESET_USERS: 'RESET_USERS',
+
+  SET_LOGS: 'SET_LOGS',
+  RESET_LOGS: 'RESET_LOGS',
+
+  SET_SESSIONS: 'SET_SESSIONS',
+  RESET_SESSIONS: 'RESET_SESSIONS',
 }
 
 export const PRIV = {
-  USER: 'PRIV_USER',
-  MANAGER: 'PRIV_MANAGER',
-  ADMIN: 'PRIV_ADMIN',
+  USER: 'PRIV.USER',
+  MANAGER: 'PRIV.MANAGER',
+  ADMIN: 'PRIV.ADMIN',
 }
 
 export const PROVIDER = {
@@ -69,4 +75,14 @@ export const ERR = {
   ADMIN: 'admin',
   MANAGER: 'manager',
   MANAGER_OR_SELF: 'managerOrSelf',
+}
+
+export const PAGE = {
+  TOP: 'PAGE.TOP',
+  HELP: 'PAGE.HELP',
+  ERROR: 'PAGE.ERROR',
+  GROUP: 'PAGE.GROUP',
+  USER: 'PAGE.USER',
+  LOGS: 'PAGE.LOGS',
+  SESSIONS: 'PAGE.SESSIONS',
 }

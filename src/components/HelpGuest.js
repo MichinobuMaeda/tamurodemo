@@ -8,7 +8,7 @@ import React from 'react'
 import FontIcon from 'material-ui/FontIcon'
 import Paper from 'material-ui/Paper'
 
-import { paperStyle } from './formatter'
+import { paperStyle } from '../helper'
 
 const HelpGuest = () => (
   <div>

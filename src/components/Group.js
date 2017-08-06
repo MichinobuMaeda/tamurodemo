@@ -11,7 +11,7 @@ import Paper from 'material-ui/Paper'
 import { teal600 } from 'material-ui/styles/colors'
 
 import ContextPageNav from '../containers/ContextPageNav'
-import { populateGids, sortedGroups, sortByName, paperStyle } from './formatter'
+import { populateGids, sortedGroups, sortByName, paperStyle } from '../helper'
 
 const Group = ({ prim, group, groups, users, onGroupSelected, onUserSelected }) => (
   <div>

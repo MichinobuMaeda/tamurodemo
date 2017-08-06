@@ -4,7 +4,7 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { A, PROVIDER } from './constants'
+import { A, PROVIDER, PAGE } from '../constants'
 
 export const setTitle = (title) => ({
   type: A.SET_TITLE,
@@ -117,9 +117,27 @@ export const resetUsers = () => ({
   type: A.RESET_USERS,
 })
 
+export const setLogs = (logs) => ({
+  type: A.SET_LOGS,
+  logs,
+})
+
+export const resetLogs = () => ({
+  type: A.RESET_LOGS,
+})
+
+export const setSessions = (sessions) => ({
+  type: A.SET_SESSIONS,
+  sessions,
+})
+
+export const resetSessions = () => ({
+  type: A.RESET_SESSIONS,
+})
+
 export const showError = (dispatch, error) => {
   dispatch(setError(error))
-  dispatch(setPage('error'))
+  dispatch(setPage(PAGE.ERROR))
 }
 
 export const hideError = (dispatch) => {
@@ -143,6 +161,7 @@ export const setStatus = async (dispatch, json) => {
     dispatch(resetProvider())
     dispatch(resetGroups())
     dispatch(resetUsers())
+    dispatch(resetLogs())
   }
   dispatch(resetPrivilege())
   if (!json.errors) {
@@ -197,6 +216,41 @@ export const populateGroupUsers = async (dispatch, gid, groups, users) => {
 export const showGroup = gid => async (dispatch, getState) => {
   dispatch(setWait())
   await populateGroupUsers(dispatch, gid, getState().groups, getState().users)
-  dispatch(setPage('group', gid))
+  dispatch(setPage(PAGE.GROUP, gid))
+  dispatch(resetWait())
+}
+
+export const showLogs = async (dispatch) => {
+  const time = new Date().getTime()
+  dispatch(setWait())
+    let res = await fetch(`/api/logs/${time - 60 * 60 * 1000}/to/${time}`, {
+      credentials: 'same-origin',
+    })
+    let json = await res.json()
+    dispatch(setLogs(json))
+  dispatch(setPage(PAGE.LOGS))
+  dispatch(resetWait())
+}
+
+export const getMoreLogs = async (dispatch, getState) => {
+  const time = getState().logs.f + 1000
+  dispatch(setWait())
+    let res = await fetch(`/api/logs/${time - 60 * 61 * 1000}/to/${time}`, {
+      credentials: 'same-origin',
+    })
+    let json = await res.json()
+    dispatch(setLogs(json))
+  dispatch(setPage(PAGE.LOGS))
+  dispatch(resetWait())
+}
+
+export const showSessions = async (dispatch) => {
+  dispatch(setWait())
+    let res = await fetch(`/api/sessions`, {
+      credentials: 'same-origin',
+    })
+    let json = await res.json()
+    dispatch(setSessions(json))
+  dispatch(setPage(PAGE.SESSIONS))
   dispatch(resetWait())
 }

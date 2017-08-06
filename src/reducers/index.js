@@ -16,6 +16,8 @@ import error from './error'
 import wait from './wait'
 import groups from './groups'
 import users from './users'
+import logs from './logs'
+import sessions from './sessions'
 
 const tamuroApp = combineReducers({
   title,
@@ -28,6 +30,8 @@ const tamuroApp = combineReducers({
   wait,
   groups,
   users,
+  logs,
+  sessions,
 })
 
 export default tamuroApp

@@ -4,7 +4,7 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { A , PRIV } from '../actions/constants'
+import { A , PRIV } from '../constants'
 
 const defaultPriv = PRIV.USER
 
