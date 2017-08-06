@@ -21,7 +21,7 @@ const store = async db => {
     logs: db.collection('logs'),
   }
   await st.sessions.createIndex({ createdAt: 1 })
-  await st.logs.createIndex({ createdAt: 1 })
+  await st.logs.createIndex({ time: -1 })
   st.log = logger(st.logs)
   st.prim = await st.prims.findOne({})
   return st

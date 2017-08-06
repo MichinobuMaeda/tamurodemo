@@ -30,19 +30,18 @@ const conf = {
 
 let srv = {}
 
-const DebugLog = class {
-  write(rec) {
-    console.info(rec)
-  }
-}
-
 beforeAll(async () => {
   srv = await api(conf)
-  st.log.addStream({
-    name: 'test',
-    stream: new DebugLog(),
-    level: 'debug'
-  })
+  // const DebugLog = class {
+  //   write(rec) {
+  //     console.info(rec)
+  //   }
+  // }
+  // st.log.addStream({
+  //   name: 'test',
+  //   stream: new DebugLog(),
+  //   level: 'debug'
+  // })
 })
 beforeEach(async () => {
   await cleanupDb()
@@ -676,6 +675,25 @@ test('DELETE /users/:uid/provider/:provider/ver/:ver', async () => {
   sid = await loginAsManager()
   res = await del(`/users/${cred4.uid}/provider/password/ver/${cred4.ver}`, sid)
   expect(res.json).toEqual({})
+})
+
+test('GET /logs/:f/to/:t', async () => {
+  const cnt = 10
+  const time = new Date().getTime()
+  await Array.apply(null, {length: cnt}).map(Number.call, Number)
+    .map(i => st.logs.save({ seq: i, time: (time - i) }))
+  await getTestPrimeObjects()
+  let sid = await loginAsAdmin()
+  const latest = new Date().getTime()
+  let res = await get(`/logs/${time - 1}/to/${latest}`, sid)
+  expect(res.json.logs[res.json.cnt - cnt].seq).toEqual(0)
+  res = await get(`/logs/${time - cnt}/to/${latest}`, sid)
+  expect(res.json.logs[res.json.cnt - 1].seq).toEqual(cnt - 1)
+  res = await get(`/logs/${time - cnt}/to/${time}`, sid)
+  expect(res.json.logs[0].seq).toEqual(0)
+  expect(res.json.logs[cnt - 1].seq).toEqual(cnt - 1)
+  expect(res.json.f).toEqual(time - cnt)
+  expect(res.json.t).toEqual(time)
 })
 
 async function getTestPrimeObjects() {

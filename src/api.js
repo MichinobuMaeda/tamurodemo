@@ -212,6 +212,21 @@ export const api = async conf => {
           ? {} : { errors: [ err.latest('ver') ]}
       })
 
+    .get('/logs/:f/to/:t',
+      reqPriv(PRIV.ADMIN), async ctx => {
+        let f = parseInt(ctx.params.f, 10)
+        let t = parseInt(ctx.params.t, 10)
+        let cnt = await st.logs.count({})
+        let logs = await st.logs.find({
+          $and: [
+            { time: { $lte: t } },
+            { time: { $gte: f } },
+          ]
+        })
+          .sort({ time: -1 }).toArray()
+        ctx.response.body = { f, t, cnt, logs }
+      })
+
   // HTTP Service ============================================
 
   let koa = new Koa()

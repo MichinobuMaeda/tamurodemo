@@ -10,7 +10,11 @@ import bunyan from 'bunyan'
 
 class LogStream {
   constructor(collection) {this.collection = collection }
-  write(rec) { this.collection.save(JSON.parse(rec)) }
+  write(rec) {
+    let log = JSON.parse(rec)
+    log.time = new Date(log.time).getTime()
+    this.collection.save(log)
+  }
 }
 
 const logger = (collection) => {
