@@ -13,7 +13,7 @@ const page = (state = { history: [homePage], curr: 0 }, action) => {
   switch (action.type) {
     case A.SET_PAGE:
       if (history[curr].name !== action.page.name || history[curr].id !== action.page.id) {
-        history = [...history, action.page]
+        history = [...(history.filter((e, i) => i <= curr)), action.page]
         curr = history.length - 1
       }
       return { history, curr }
@@ -23,10 +23,14 @@ const page = (state = { history: [homePage], curr: 0 }, action) => {
         curr = history.length - 1
       }
       return { history, curr }
-    case A.RESTORE_PAGE:
+    case A.BACK_PAGE:
       if (0 < curr) {
-        history = history.filter((e, i) => i < history.length - 1)
-        curr = history.length - 1
+        --curr
+      }
+      return { history, curr }
+    case A.FORWARD_PAGE:
+      if (curr < history.length - 1) {
+        ++curr
       }
       return { history, curr }
     default:

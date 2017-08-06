@@ -6,25 +6,29 @@
 
 import { connect } from 'react-redux'
 
-import { showGroup } from '../actions'
-import Top from '../components/Top'
+import { showGroup, backPage, forwardPage } from '../actions'
+import PageNav from '../components/PageNav'
 
 const mapStateToProps = state => {
+  let { prim, page, groups } = state 
   return {
-    prim: state.prim,
-    groups: state.groups,
+    prim,
+    page,
+    groups,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     onGroupSelected: id => () => dispatch(showGroup(id)),
-  }
+    onPageBack: () => dispatch(backPage()),
+    onPageForward: () => dispatch(forwardPage()),
+  } 
 }
 
-const VisibleTop = connect(
+const ContextPageNav = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Top)
+)(PageNav)
 
-export default VisibleTop;
+export default ContextPageNav;

@@ -11,23 +11,24 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import muiTheme from '../muiTheme'
 
 import ContextMenu from '../containers/ContextMenu'
+import Progress from '../components/Progress';
 import ContextHelp from '../containers/ContextHelp'
 import ContextEntrance from '../containers/ContextEntrance'
 import VisibleError from '../containers/VisibleError'
 import VisibleTop from '../containers/VisibleTop'
-import LinearProgress from 'material-ui/LinearProgress';
+import VisibleGroup from '../containers/VisibleGroup'
+import VisibleUser from '../containers/VisibleUser'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-let App = ({page, prim, error, wait}) => (
+let App = ({ page, prim, error, wait }) => (
   <MuiThemeProvider muiTheme={muiTheme}>
     <div>
       <ContextMenu />
-      <div style={{margin: 16}}>
-        <div style={{display: wait ? "block" : "none", "text-align": "center"}}>
-          <h2>お待ちください</h2>    
-          <LinearProgress mode="indeterminate" />
+      <div>
+        <div style={{display: wait ? "block" : "none"}}>
+          <Progress />
         </div>
         <div style={{display: wait ? "none" : "block"}}>
           {
@@ -37,7 +38,11 @@ let App = ({page, prim, error, wait}) => (
                 ? <VisibleError />
                 : !prim
                   ? <ContextEntrance />
-                  : <VisibleTop />
+                  : page.history[page.curr].name === 'group'
+                    ? <VisibleGroup />
+                    : page.history[page.curr].name === 'user'
+                      ? <VisibleUser />
+                      : <VisibleTop />
           }
         </div>
       </div>

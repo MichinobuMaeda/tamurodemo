@@ -5,10 +5,11 @@
   "author": "Michinobu Maeda",
   "license": "MIT",
   "scripts": {
-    "api-start": "cd ..; cd api; gulp start",
+    "api-start": "cd ../tamuro.api; npm run start",
     "api-setup": "node test/setup.js",
-    "api-stop": "cd ..; cd api; gulp stop",
+    "api-stop": "cd ../tamuro.api; npm run stop",
     "api-demo": "mongo test/postData.js; node test/touch.js",
+    "api-start-demo": "npm run api-start; npm run api-demo; npm run build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

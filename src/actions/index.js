@@ -20,8 +20,12 @@ export const resetPage = () => ({
   type: A.RESET_PAGE,
 })
 
-export const restorePage = () => ({
-  type: A.RESTORE_PAGE,
+export const backPage = () => ({
+  type: A.BACK_PAGE,
+})
+
+export const forwardPage = () => ({
+  type: A.FORWARD_PAGE,
 })
 
 export const setSession = sess => ({
@@ -75,7 +79,7 @@ export const setPassword = password => ({
 })
 
 export const resetPassword = () => ({
-  type: A.RESET_PASSWORD
+  type: A.RESET_PASSWORD,
 })
 
 export const setError = error => ({
@@ -84,15 +88,33 @@ export const setError = error => ({
 })
 
 export const resetError = () => ({
-  type: A.RESET_ERROR
+  type: A.RESET_ERROR,
 })
 
 export const setWait = () => ({
-  type: A.SET_WAIT
+  type: A.SET_WAIT,
 })
 
 export const resetWait = () => ({
-  type: A.RESET_WAIT
+  type: A.RESET_WAIT,
+})
+
+export const setGroups = (groups) => ({
+  type: A.SET_GROUPS,
+  groups,
+})
+
+export const resetGroups = () => ({
+  type: A.RESET_GROUPS,
+})
+
+export const setUsers = (users) => ({
+  type: A.SET_USERS,
+  users,
+})
+
+export const resetUsers = () => ({
+  type: A.RESET_USERS,
 })
 
 export const showError = (dispatch, error) => {
@@ -102,18 +124,25 @@ export const showError = (dispatch, error) => {
 
 export const hideError = (dispatch) => {
   dispatch(resetError())
-  dispatch(restorePage())
+  dispatch(backPage())
 }
 
-export const setStatus = (dispatch, json) => {
+export const setStatus = async (dispatch, json) => {
   dispatch(resetPassword())
   if (json.prim) {
     dispatch(setSession(json.sess))
     dispatch(setPrimary(json.prim))
+    let res = await fetch('/api/groups', {
+      credentials: 'same-origin',
+    })
+    let groups = await res.json()
+    dispatch(setGroups(groups))
   } else {
     dispatch(resetSession())
     dispatch(resetPrimary())
     dispatch(resetProvider())
+    dispatch(resetGroups())
+    dispatch(resetUsers())
   }
   dispatch(resetPrivilege())
   if (!json.errors) {
@@ -125,10 +154,10 @@ export const setStatus = (dispatch, json) => {
   }
 }
 
-export const doSingInWithPassword = () => (dispatch, getState) => {
+export const doSingInWithPassword = () => async (dispatch, getState) => {
   dispatch(setWait())
   dispatch(setProvider(PROVIDER.PASSWORD))
-  return fetch('/api/sessions', {
+  let res = await fetch('/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -136,16 +165,38 @@ export const doSingInWithPassword = () => (dispatch, getState) => {
     body: JSON.stringify(getState().auth),
     credentials: 'same-origin',
   })
-  .then(res => res.json())
-  .then(json => setStatus(dispatch, json))
-  .then(json => dispatch(resetWait()))
+  let json = await res.json()
+  setStatus(dispatch, json)
+  dispatch(resetWait())
 }
 
-export const doSingOut = () => dispatch => {
-  return fetch('/api/sessions', {
+export const doSingOut = () => async dispatch => {
+  let res = await fetch('/api/sessions', {
     method: 'DELETE',
     credentials: 'same-origin',
   })
-  .then(res => res.json())
-  .then(json => setStatus(dispatch, json))
+  let json = await res.json()
+  setStatus(dispatch, json)
+}
+export const isUserPopulated = (users, uid) => users.reduce(
+  (filled, u) => u._id === uid || filled, false)
+export const isAllUsersPopulated = (users, uids) => uids.reduce(
+  (ret, cur) => isUserPopulated(users, cur) && ret, true)
+
+export const populateGroupUsers = async (dispatch, gid, groups, users) => {
+  let group = groups.reduce((ret, cur) => cur._id === gid ? cur : ret, null)
+  if (!isAllUsersPopulated(users, group.uids)) {
+    let res = await fetch(`/api/groups/${gid}/users`, {
+      credentials: 'same-origin',
+    })
+    let json = await res.json()
+    dispatch(setUsers(json))
+  }
+}
+
+export const showGroup = gid => async (dispatch, getState) => {
+  dispatch(setWait())
+  await populateGroupUsers(dispatch, gid, getState().groups, getState().users)
+  dispatch(setPage('group', gid))
+  dispatch(resetWait())
 }

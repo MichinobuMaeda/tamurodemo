@@ -7,9 +7,18 @@
 import React from 'react'
 
 import LinearProgress from 'material-ui/LinearProgress';
+import FontIcon from 'material-ui/FontIcon'
 
 const Progress = () => (
-  <LinearProgress mode="indeterminate" />
+  <div style={{"text-align": "center"}}>
+    <h2>お待ちください</h2>    
+    <LinearProgress mode="indeterminate" />
+    <p>
+      いつまでたっても表示が変わらない場合は、ページを更新するか、左上の
+      <FontIcon className="material-icons">home</FontIcon>
+      でトップページに戻ってみてください。
+    </p>
+  </div>
 );
 
 export default Progress;

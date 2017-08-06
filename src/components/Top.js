@@ -5,77 +5,30 @@
  */
 
 import React from 'react'
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table'
-import FlatButton from 'material-ui/FlatButton'
-import { toJaDateTime, nameOfProvider, nameOfPrivilege } from './formatter'
+import { List, ListItem } from 'material-ui/List'
+import FontIcon from 'material-ui/FontIcon'
+import Paper from 'material-ui/Paper'
+import { teal600 } from 'material-ui/styles/colors'
 
-import { PRIV } from '../actions/constants'
+import ContextPageNav from '../containers/ContextPageNav'
+import { sortedGroups, paperStyle } from './formatter'
 
-const Top = ({priv, sess, prim, onPrivilegeChanged}) => (
+const Top = ({ prim, groups, onGroupSelected }) => (
   <div>
-    <h2>右上のメニュー</h2>
-    <div>
-      <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
-      label="ヘルプ"/>
-      : ログインしている場合のヘルプページ。</div>
-    <div>
-      <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
-        label="ログアウト"/>
-      : ログアウトして権限やデータを消去。</div>
-    <div>
-      <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
-        label={nameOfPrivilege[PRIV.MANAGER]}/>
-      : {nameOfPrivilege[PRIV.MANAGER]}の表示モードにする。権限がある場合だけ表示する。
-    </div>
-    <div>
-      <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
-        label={nameOfPrivilege[PRIV.ADMIN]}/>
-      : {nameOfPrivilege[PRIV.ADMIN]}の表示モードにする。権限がある場合だけ表示する。
-    </div>
-    <div>
-      <FlatButton disableTouchRipple={true} primary={true} style={{"text-align": "left"}}
-        label={nameOfPrivilege[PRIV.USER]}/>
-      : {nameOfPrivilege[PRIV.USER]}の表示モードに戻す。
-    </div>
-    <h2>ログインと権限の情報</h2>
-    <Table>
-      <TableBody displayRowCheckbox={false}>
-        <TableRow>
-          <TableRowColumn>ユーザID</TableRowColumn>
-          <TableRowColumn>{`"${sess.uid}"`}</TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn>ログイン日時</TableRowColumn>
-          <TableRowColumn>{toJaDateTime(sess.createdAt)}</TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn>ログイン方法</TableRowColumn>
-          <TableRowColumn>{nameOfProvider[sess.provider]}</TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn>所属グループのID</TableRowColumn>
-          <TableRowColumn>{sess.gids ? sess.gids.map(gid => `"${gid}"`).join(', ') : ''}</TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn>表示モード</TableRowColumn>
-          <TableRowColumn>{nameOfPrivilege[priv]}</TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn>{nameOfPrivilege[PRIV.MANAGER]}の権限</TableRowColumn>
-          <TableRowColumn>{sess.manager ? '有り' : '無し'}</TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn>{nameOfPrivilege[PRIV.ADMIN]}の権限</TableRowColumn>
-          <TableRowColumn>{sess.admin ? '有り' : '無し'}</TableRowColumn>
-        </TableRow>
-      </TableBody>
-    </Table>
-    </div>
+    <ContextPageNav />
+    <Paper style={paperStyle} zDepth={1}>
+      権限によって表示されるメニューが異なります。詳しくは右上のメニューの「ヘルプ」を見てください。
+    </Paper>
+    <List>
+      {
+        sortedGroups(prim, groups).map(g => <ListItem
+          primaryText={g.name}
+          leftIcon={<FontIcon className="material-icons" color={teal600}>group</FontIcon>}
+          onTouchTap={onGroupSelected(g._id)}
+        />)
+      }
+    </List>
+  </div>
 )
 
 export default Top;

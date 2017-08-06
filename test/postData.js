@@ -24,7 +24,7 @@ db.prims.insertOne(
 db.groups.insertMany([
   {
     _id: 'B1lHc7Fi8b',
-    name: 'サンプル 3',
+    name: 'サンプル 4',
     gids: [
       'ry-SqmKsUW',
       'SJzBqmFjIZ',

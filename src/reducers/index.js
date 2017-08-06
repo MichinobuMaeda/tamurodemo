@@ -14,6 +14,8 @@ import prim from './prim'
 import auth from './auth'
 import error from './error'
 import wait from './wait'
+import groups from './groups'
+import users from './users'
 
 const tamuroApp = combineReducers({
   title,
@@ -24,6 +26,8 @@ const tamuroApp = combineReducers({
   auth,
   error,
   wait,
+  groups,
+  users,
 })
 
 export default tamuroApp

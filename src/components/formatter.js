@@ -34,3 +34,24 @@ errorMessage[''][ERR.AUTH] = '認証エラーです。ID・パスワードなど
 errorMessage['authId'][ERR.REFERENCE] = '認証エラーです。ID・パスワードなどが間違っていないか確認してください。'
 errorMessage['uid'][ERR.REFERENCE] = `ユーザIDが不正です。バグの可能性が高いので、${nameOfPrivilege[PRIV.ADMIN]}に連絡してください。`
 errorMessage['gid'][ERR.REFERENCE] = `グループIDが不正です。バグの可能性が高いので、${nameOfPrivilege[PRIV.ADMIN]}}に連絡してください。`
+
+export const populateGids = (gids, groups) => {
+  return gids.map(gid => groups.reduce((ret, cur) => cur._id === gid ? cur : ret ,null))
+}
+
+export const sortByName = list => {
+  return list.map(item => item.name).sort()
+    .reduce((ret, name) => ret.concat(list.filter(item => item.name === name)), [])
+}
+
+export const sortedGroups = (prim, groups) => {
+  return [
+    ...(sortByName(groups.filter(
+      g => g._id !== prim.top && g._id !== prim.admin && g._id !== prim.manager
+    ))),
+    ...(groups.filter(g => g._id === prim.manager)),
+    ...(groups.filter(g => g._id === prim.admin)),
+  ]
+}
+
+export const paperStyle = { margin: 8, padding: 8 }

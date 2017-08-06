@@ -6,25 +6,23 @@
 
 import { connect } from 'react-redux'
 
-import { showGroup } from '../actions'
-import Top from '../components/Top'
+import User from '../components/User'
 
 const mapStateToProps = state => {
+  let { page, users } = state 
+  let user = users.reduce((ret, u) => u._id === page.history[page.curr].id ? u : ret, null)
   return {
-    prim: state.prim,
-    groups: state.groups,
+    user,
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    onGroupSelected: id => () => dispatch(showGroup(id)),
-  }
+  return {} 
 }
 
-const VisibleTop = connect(
+const VisibleUser = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Top)
+)(User)
 
-export default VisibleTop;
+export default VisibleUser;
