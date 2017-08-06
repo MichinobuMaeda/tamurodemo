@@ -415,32 +415,10 @@ test('GET /groups', async () => {
 
   let sid = await loginAsUser4()
   res = await get('/groups', sid)
-  expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'manager' } ]})
-
-  sid = await loginAsAdmin()
-  res = await get('/groups', sid)
-  expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'manager' } ]})
-
-  sid = await loginAsManager()
-  res = await get('/groups', sid)
   expect(res.json).toHaveLength(3)
   expect(res.json[0]._id).toEqual(admin._id)
   expect(res.json[1]._id).toEqual(manager._id)
   expect(res.json[2]._id).toEqual(top._id)
-})
-
-test('GET /groups/:gid', async () => {
-  let { top } = await getTestPrimeObjects()
-
-  let res = await get('/groups/dummy', null)
-  expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
-
-  let sid = await loginAsUser4()
-  res = await get(`/groups/${shortid.generate()}`, sid)
-  expect(res.json).toEqual({ errors: [ { path: 'gid', req: 'reference' } ]})
-
-  res = await get(`/groups/${top._id}`, sid)
-  expect(res.json).toEqual(top)
 })
 
 test('PUT /groups/:gid/ver/:ver', async () => {
@@ -569,23 +547,6 @@ test('POST /groups/:gid/groups', async () => {
   expect(res.json).toEqual(normalize(group5))
   top = await st.groups.findOne({ _id: top._id })
   expect(top.gids).toContain(group5._id)
-})
-
-test('GET /groups/:gid/groups', async () => {
-  let { top } = await getTestPrimeObjects()
-  await loginAsManager()
-
-  let res = await get(`/groups/${top._id}/groups`, null, {})
-  expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
-
-  let sid = await loginAsUser4()
-  res = await get(`/groups/${shortid.generate()}/groups`, sid)
-  expect(res.json).toEqual({ errors: [ { path: 'gid', req: 'reference' } ]})
-
-  res = await get(`/groups/${top._id}/groups`, sid)
-  expect(res.json).toHaveLength(2)
-  expect(res.json[0].name).toEqual('Admin')
-  expect(res.json[1].name).toEqual('Manager')
 })
 
 test('POST /users/:uid/provider/:provider', async () => {

@@ -112,13 +112,8 @@ export const api = async conf => {
       })
 
     .get('/groups',
-      reqPriv(PRIV.MANAGER), async ctx => {
+      reqPriv(PRIV.MEMBER), async ctx => {
         ctx.response.body = await st.groups.find({}).sort({ name: 1 }).toArray()
-      })
-
-    .get('/groups/:gid',
-      reqPriv(PRIV.MEMBER), getBaseDoc(st.groups, 'gid'), ctx => {
-        ctx.response.body = ctx.base
       })
 
     .put('/groups/:gid/ver/:ver',
@@ -159,12 +154,6 @@ export const api = async conf => {
         await st.groups.findOneAndUpdate({ _id: ctx.base._id }, ctx.base)
         await st.groups.save(group)
         ctx.response.body = await st.groups.findOne({ _id: group._id })
-      })
-
-    .get('/groups/:gid/groups',
-      reqPriv(PRIV.MEMBER), getBaseDoc(st.groups, 'gid'), async ctx => {
-        ctx.response.body = await st.groups.find(
-          { _id: { $in: ctx.base.gids } }).sort({ name: 1 }).toArray()
       })
 
     .post('/users/:uid/provider/:provider',

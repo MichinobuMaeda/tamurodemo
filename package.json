@@ -7,7 +7,7 @@
     "mongo-start": "mongod --fork --dbpath tmp/db --logpath tmp/db/mongod.log",
     "mongo-stop": "mongo admin --eval \"db.shutdownServer();\"",
     "mongo-clean": "mongo tamuro_api --eval \"db.users.remove({}); db.groups.remove({}); db.prims.remove({}); db.creds.remove({}); db.sessions.remove({}); db.logs.remove({});\"",
-    "forever-start": "forever start --uid \"tamuro.api.test\" lib",
+    "forever-start": "forever start --append --uid \"tamuro.api.test\" lib",
     "forever-stop": "forever stop \"tamuro.api.test\"",
     "build": "babel src --out-dir lib --ignore *.test.js --source-maps",
     "test": "npm run build; npm run mongo-start; jest --coverage; npm run mongo-stop",
