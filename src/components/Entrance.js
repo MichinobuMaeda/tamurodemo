@@ -37,6 +37,18 @@ const Entrance = ({ auth, onAuthIdChanged, onPasswordChanged, onSingInWithPasswo
       />
     </Paper>
     <p>テスト用のユーザIDは右上の <FontIcon className="material-icons">help</FontIcon> に記載しています。</p>
+    <div style={{ "font-family": "monospace" }}>
+      <p>
+        <a href="https://github.com/MichinobuMaeda/tamuro.api">
+          https://github.com/MichinobuMaeda/tamuro.api
+        </a>
+      </p>
+      <p>
+        <a href="https://github.com/MichinobuMaeda/tamuro.ui">
+          https://github.com/MichinobuMaeda/tamuro.ui
+        </a>
+      </p>
+    </div>
   </div>
 )
 
