@@ -10,10 +10,14 @@ import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
 import FontIcon from 'material-ui/FontIcon'
 import Paper from 'material-ui/Paper'
+import { grey50, red800 } from 'material-ui/styles/colors';
 
 import { paperStyle } from '../helper'
 
-const Entrance = ({ auth, onAuthIdChanged, onPasswordChanged, onSingInWithPassword }) => (
+const Entrance = ({
+  auth, onAuthIdChanged, onPasswordChanged, onSingInWithPassword,
+  onSingInWithGoogle
+}) => (
   <div style={{"text-align": "center"}}>
     <Paper style={paperStyle} zDepth={1}>
       <TextField
@@ -28,15 +32,27 @@ const Entrance = ({ auth, onAuthIdChanged, onPasswordChanged, onSingInWithPasswo
         value={auth.password}
         type="password"
         onChange={onPasswordChanged}
-      /><br/>
-      <RaisedButton
-        label="IDとパスワードでログイン"
-        primary={true}
-        disabled={!auth.authId || !auth.password}
-        onTouchTap={onSingInWithPassword}
       />
+      <p>
+        <RaisedButton
+          label="IDとパスワードでログイン"
+          primary={true}
+          disabled={!auth.authId || !auth.password}
+          onTouchTap={onSingInWithPassword}
+        />
+      </p>
+      <p>テスト用のユーザIDは右上の <FontIcon className="material-icons">help</FontIcon> に記載しています。</p>
     </Paper>
-    <p>テスト用のユーザIDは右上の <FontIcon className="material-icons">help</FontIcon> に記載しています。</p>
+    <Paper style={paperStyle} zDepth={1}>
+      <p>
+        <RaisedButton
+          label="Googleでログイン"
+          backgroundColor={red800}
+          labelColor={grey50}
+          onTouchTap={onSingInWithGoogle}
+        />
+      </p>
+    </Paper>
     <div style={{ "font-family": "monospace" }}>
       <p>
         <a href="https://github.com/MichinobuMaeda/tamuro.api">

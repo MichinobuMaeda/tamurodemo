@@ -4,7 +4,11 @@
  * See LICENSE file in the project root for full license information.  
  */
 
+import Scroll from 'react-scroll'
+
 import { A, PROVIDER, PAGE } from '../constants'
+
+const scroll = Scroll.animateScroll
 
 export const setTitle = (title) => ({
   type: A.SET_TITLE,
@@ -53,15 +57,6 @@ export const setPrimary = prim => ({
 
 export const resetPrimary = () => ({
   type: A.RESET_PRIM,
-})
-
-export const setProvider = provider => ({
-  type: A.SET_PROVIDER,
-  provider,
-})
-
-export const resetProvider = () => ({
-  type: A.RESET_PROVIDER,
 })
 
 export const setAuthId = authId => ({
@@ -117,6 +112,35 @@ export const resetUsers = () => ({
   type: A.RESET_USERS,
 })
 
+export const setCred = (cred) => ({
+  type: A.SET_CRED,
+  cred,
+})
+
+export const setCredAuthId = (authId) => ({
+  type: A.SET_CRED_AUTH_ID,
+  authId,
+})
+
+export const setCredPassword = (password) => ({
+  type: A.SET_CRED_PASSWORD,
+  password,
+})
+
+export const resetCred = (provider) => ({
+  type: A.RESET_CRED,
+  provider,
+})
+
+export const setCreds = (creds) => ({
+  type: A.SET_CREDS,
+  creds,
+})
+
+export const resetCreds = () => ({
+  type: A.RESET_CREDS,
+})
+
 export const setLogs = (logs) => ({
   type: A.SET_LOGS,
   logs,
@@ -133,6 +157,15 @@ export const setSessions = (sessions) => ({
 
 export const resetSessions = () => ({
   type: A.RESET_SESSIONS,
+})
+
+export const openDialog = (dialog) => ({
+  type: A.OPEN_DIALOG,
+  dialog,
+})
+
+export const closeDialog = () => ({
+  type: A.CLOSE_DIALOG,
 })
 
 export const showError = (dispatch, error) => {
@@ -158,12 +191,10 @@ export const setStatus = async (dispatch, json) => {
   } else {
     dispatch(resetSession())
     dispatch(resetPrimary())
-    dispatch(resetProvider())
     dispatch(resetGroups())
     dispatch(resetUsers())
     dispatch(resetLogs())
   }
-  dispatch(resetPrivilege())
   if (!json.errors) {
     dispatch(setTitle(json.title))
     dispatch(resetAuthId())
@@ -175,18 +206,42 @@ export const setStatus = async (dispatch, json) => {
 
 export const doSingInWithPassword = () => async (dispatch, getState) => {
   dispatch(setWait())
-  dispatch(setProvider(PROVIDER.PASSWORD))
   let res = await fetch('/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(getState().auth),
+    body: JSON.stringify({
+      ...(getState().auth),
+      provider: PROVIDER.PASSWORD,
+    }),
     credentials: 'same-origin',
   })
   let json = await res.json()
   setStatus(dispatch, json)
   dispatch(resetWait())
+}
+
+export const doSingInWithGoogle = (googleUser) => async (dispatch, getState) => {
+  dispatch(setWait())
+  let res = await fetch('/api/sessions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      provider: PROVIDER.GOOGLE,
+      authId: googleUser.getAuthResponse().id_token,
+    }),
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  setStatus(dispatch, json)
+  dispatch(resetWait())
+}
+
+export const failureSingInWithGoogle = () => async (dispatch) => {
+  setStatus(dispatch, { errors: [ { path: 'oauth2', req: PROVIDER.GOOGLE } ] })
 }
 
 export const doSingOut = () => async dispatch => {
@@ -220,14 +275,128 @@ export const showGroup = gid => async (dispatch, getState) => {
   dispatch(resetWait())
 }
 
+export const showProviders = uid => async (dispatch, getState) => {
+  dispatch(setWait())
+  let res = await fetch(`/api/users/${uid}/providers`, {
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  dispatch(setCreds(json))
+  dispatch(setPage(PAGE.CREDENTIAL, uid))
+  dispatch(resetWait())
+}
+
+export const committedAuthIdPassword = async (dispatch, getState) => {
+  dispatch(setWait())
+  let cred = getState().creds.reduce((ret, cur) => cur.provider === PROVIDER.PASSWORD ? cur : ret, null)
+  let res = cred._id
+    ? await fetch(`/api/users/${cred.uid}/providers/${PROVIDER.PASSWORD}/ver/${cred.ver}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cred),
+        credentials: 'same-origin',
+      })
+    : await fetch(`/api/users/${getState().sess.uid}/providers/${PROVIDER.PASSWORD}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...cred, uid: getState().sess.uid }),
+        credentials: 'same-origin',
+      })
+  let json = await res.json()
+  if (json.errors) {
+    showError(dispatch, json.errors)
+  } else {
+    dispatch(setCred(json))
+    dispatch(setPage(PAGE.TOP))
+  }
+  dispatch(resetWait())
+}
+
+export const disabledPassword = async (dispatch, getState) => {
+  dispatch(setWait())
+  let cred = getState().creds.reduce((ret, cur) => cur.provider === PROVIDER.PASSWORD ? cur : ret, null)
+  let res = await fetch(`/api/users/${cred.uid}/providers/${cred.provider}/ver/${cred.ver}`, {
+    method: 'DELETE',
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  if (json.errors) {
+    showError(dispatch, json.errors)
+  } else {
+    dispatch(resetCred(PROVIDER.PASSWORD))
+    dispatch(setPage(PAGE.TOP))
+  }
+  dispatch(resetWait())
+}
+
+export const connectGoogle = (googleUser) => async (dispatch, getState) => {
+  dispatch(setWait())
+  let cred = getState().creds.reduce((ret, cur) => cur.provider === PROVIDER.GOOGLE ? cur : ret, null)
+  cred = cred
+    ? {
+        ...cred,
+        authId: googleUser.getAuthResponse().id_token,
+      }
+    : {
+        provider: PROVIDER.GOOGLE,
+        authId: googleUser.getAuthResponse().id_token,
+      }
+  let res = cred._id
+    ? await fetch(`/api/users/${cred.uid}/providers/${PROVIDER.GOOGLE}/ver/${cred.ver}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cred),
+        credentials: 'same-origin',
+      })
+    : await fetch(`/api/users/${getState().sess.uid}/providers/${PROVIDER.GOOGLE}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...cred, uid: getState().sess.uid }),
+        credentials: 'same-origin',
+      })
+  let json = await res.json()
+  if (json.errors) {
+    showError(dispatch, json.errors)
+  } else {
+    dispatch(setCred(json))
+    dispatch(setPage(PAGE.TOP))
+  }
+  dispatch(resetWait())
+}
+
+export const disconnectGoogle = async (dispatch, getState) => {
+  dispatch(setWait())
+  let cred = getState().creds.reduce((ret, cur) => cur.provider === PROVIDER.GOOGLE ? cur : ret, null)
+  let res = await fetch(`/api/users/${cred.uid}/providers/${PROVIDER.GOOGLE}/ver/${cred.ver}`, {
+    method: 'DELETE',
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  if (json.errors) {
+    showError(dispatch, json.errors)
+  } else {
+    dispatch(resetCred(PROVIDER.GOOGLE))
+    dispatch(setPage(PAGE.TOP))
+  }
+  dispatch(resetWait())
+}
+
 export const showLogs = async (dispatch) => {
   const time = new Date().getTime()
   dispatch(setWait())
-    let res = await fetch(`/api/logs/${time - 60 * 60 * 1000}/to/${time}`, {
-      credentials: 'same-origin',
-    })
-    let json = await res.json()
-    dispatch(setLogs(json))
+  let res = await fetch(`/api/logs/${time - 60 * 60 * 1000}/to/${time}`, {
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  dispatch(setLogs(json))
   dispatch(setPage(PAGE.LOGS))
   dispatch(resetWait())
 }
@@ -235,22 +404,27 @@ export const showLogs = async (dispatch) => {
 export const getMoreLogs = async (dispatch, getState) => {
   const time = getState().logs.f + 1000
   dispatch(setWait())
-    let res = await fetch(`/api/logs/${time - 60 * 61 * 1000}/to/${time}`, {
-      credentials: 'same-origin',
-    })
-    let json = await res.json()
-    dispatch(setLogs(json))
+  let res = await fetch(`/api/logs/${time - 60 * 61 * 1000}/to/${time}`, {
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  dispatch(setLogs(json))
   dispatch(setPage(PAGE.LOGS))
   dispatch(resetWait())
+  scroll.scrollToBottom({
+    duration: 0,
+    delay: 0,
+    smooth: false,
+  })
 }
 
 export const showSessions = async (dispatch) => {
   dispatch(setWait())
-    let res = await fetch(`/api/sessions`, {
-      credentials: 'same-origin',
-    })
-    let json = await res.json()
-    dispatch(setSessions(json))
+  let res = await fetch(`/api/sessions`, {
+    credentials: 'same-origin',
+  })
+  let json = await res.json()
+  dispatch(setSessions(json))
   dispatch(setPage(PAGE.SESSIONS))
   dispatch(resetWait())
 }

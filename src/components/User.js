@@ -16,8 +16,29 @@ const User = ({ user }) => (
     <ContextPageNav />
     <Paper style={paperStyle} zDepth={1}>
       <h2><FontIcon className="material-icons">person</FontIcon> { user.name }</h2>
+      { user.desc && user.desc.split(/\n|\r/).map(line => <p>{ line }</p>) }
     </Paper>
-    <p style={{ "text-align": "center", margin: 32 }}><FontIcon className="material-icons">build</FontIcon> レイアウト検討中</p>
+    {
+      user.profiles && user.profiles.map(profile =>
+        <Paper style={paperStyle} zDepth={1}>
+          <h3>{ profile.title }</h3>
+          <div>
+            { profile.zip && `〒${profile.zip.v}` }
+          </div>
+          <div>
+            { profile.country && profile.country.v !== "日本" && `${profile.country.v} ` }
+            { profile.state && `${profile.state.v} ` }
+            { profile.city && `${profile.city.v} ` }
+            { profile.street && `${profile.street.v} ` }
+            { profile.bldg && profile.bldg.v }
+          </div>
+          { profile.tel && <div>Tel: { profile.tel.v }</div> }
+          { profile.fax && <div>Fax: { profile.fax.v }</div> }
+          { profile.email && <div>E-mail: { profile.email.v }</div> }
+          { profile.name && <div>{ profile.name.v }</div> }
+        </Paper>
+      )
+    }
   </div>
 )
 

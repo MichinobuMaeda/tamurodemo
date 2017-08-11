@@ -7,20 +7,15 @@
 import { A } from '../constants'
 
 const auth = (state = {}, action) => {
-  let {provider, authId, password} = state
   switch (action.type) {
-    case A.SET_PROVIDER:
-      return {provider: action.provider, authId, password}
-    case A.RESET_PROVIDER:
-      return {provider: null, authId, password}
     case A.SET_AUTH_ID:
-      return {provider, authId: action.authId, password}
+      return { ...state, authId: action.authId }
     case A.RESET_AUTH_ID:
-      return {provider, authId: null, password}
+      return { ...state, authId: null }
     case A.SET_PASSWORD:
-      return {provider, authId, password: action.password}
+      return { ...state, password: action.password }
     case A.RESET_PASSWORD:
-      return {provider, authId, password: null}
+      return { ...state, password: null }
     default:
       return state
   }

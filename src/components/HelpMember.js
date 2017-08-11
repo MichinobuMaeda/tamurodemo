@@ -41,11 +41,11 @@ const HelpMember = () => (
       </di>
       <di>
         <dt>ログ</dt>
-        <dd>{nameOfPrivilege[PRIV.ADMIN]}の権限がある場合だけ表示する。</dd>
+        <dd>{nameOfPrivilege[PRIV.ADMIN]}の表示モードのときだけ表示する。</dd>
       </di>
       <di>
         <dt>セッション</dt>
-        <dd>{nameOfPrivilege[PRIV.ADMIN]}の権限がある場合だけ表示する。</dd>
+        <dd>{nameOfPrivilege[PRIV.ADMIN]}の表示モードのときだけ表示する。</dd>
       </di>
     </Paper>
   </div>

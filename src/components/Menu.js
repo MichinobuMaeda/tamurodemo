@@ -16,10 +16,10 @@ import { PRIV, PAGE } from '../constants'
 import { nameOfPrivilege, getCurrentPage } from '../helper'
 
 const Menu = ({
-  title, prim, priv, sess, page,
+  title, prim, sess, page,
   onHomePageSelected, onHelpPageSelected, onSignOut, onHelpPageClosed,
   onPrivManagerSelected, onPrivAdminSelected, onPrivUserSelected,
-  onLogsSelected, onSessionsSelected
+  onLogsSelected, onSessionsSelected, onProviderPageSelected
 }) => (
   <div>
     <AppBar
@@ -56,12 +56,16 @@ const Menu = ({
                   primaryText="ログアウト"
                   onTouchTap={onSignOut}
                 />
+                <MenuItem
+                  primaryText="ログイン方法"
+                  onTouchTap={onProviderPageSelected(sess.uid)}
+                />
                 {
                   sess.manager
                     ? <MenuItem
                         primaryText={nameOfPrivilege[PRIV.MANAGER]}
                         onTouchTap={onPrivManagerSelected}
-                        disabled={priv === PRIV.MANAGER}
+                        disabled={sess.priv === PRIV.MANAGER}
                       />
                     : ''
                 }
@@ -70,7 +74,7 @@ const Menu = ({
                     ? <MenuItem
                         primaryText={nameOfPrivilege[PRIV.ADMIN]}
                         onTouchTap={onPrivAdminSelected}
-                        disabled={priv === PRIV.ADMIN}
+                        disabled={sess.priv === PRIV.ADMIN}
                       />
                     : ''
                 }
@@ -79,12 +83,12 @@ const Menu = ({
                     ? <MenuItem
                         primaryText={nameOfPrivilege[PRIV.USER]}
                         onTouchTap={onPrivUserSelected}
-                        disabled={priv === PRIV.USER}
+                        disabled={sess.priv === PRIV.USER}
                       />
                     : ''
                 }
                 {
-                  sess.admin
+                  sess.admin && sess.priv === PRIV.ADMIN
                     ? <MenuItem
                         primaryText={"ログ"}
                         onTouchTap={onLogsSelected}
@@ -92,7 +96,7 @@ const Menu = ({
                     : ''
                 }
                 {
-                  sess.admin
+                  sess.admin && sess.priv === PRIV.ADMIN
                     ? <MenuItem
                         primaryText={"セッション"}
                         onTouchTap={onSessionsSelected}

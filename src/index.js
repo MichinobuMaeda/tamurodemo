@@ -12,6 +12,7 @@ import thunk from 'redux-thunk'
 
 import reducers from './reducers'
 import { setStatus, resetWait } from './actions'
+import { initGoogleApi } from './actions/google'
 import ContextApp from './containers/ContextApp'
 
 let store = createStore(
@@ -25,6 +26,8 @@ render(
   </Provider>,
   document.getElementById('root')
 )
+
+initGoogleApi()
 
 fetch('/api/', { credentials: 'same-origin' })
 .then(res => res.json())

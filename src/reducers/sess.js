@@ -4,14 +4,20 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { A } from '../constants'
+import { A, PRIV } from '../constants'
 
-const sess = (state = {}, action) => {
+const defaultPriv = PRIV.USER
+
+const sess = (state = { priv: defaultPriv }, action) => {
   switch (action.type) {
     case A.SET_SESS:
-      return action.sess
+      return { ...action.sess, priv: defaultPriv }
     case A.RESET_SESS:
-      return {}
+      return { priv: defaultPriv }
+    case A.SET_PRIV:
+      return { ...state, priv: action.priv }
+    case A.RESET_PRIV:
+      return { ...state, priv: defaultPriv }
     default:
       return state
   }

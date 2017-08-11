@@ -33,7 +33,7 @@ const Logs = ({ logs, onRefreshLogs, onGetMoreLogs }) => (
       {logs.logs.map(log => 
         <div>{`${new Date(log.time).toISOString()}:${log.level}:${
             Object.keys(log).reduce((ret, cur) => 0 > excludes.indexOf(cur) && log[cur]
-              ? ret.concat(`${cur}:${log[cur]}`) : ret, []).join(", ")
+              ? ret.concat(`${cur}:${JSON.stringify(log[cur])}`) : ret, []).join(", ")
           }`}</div>
       )}
     </div>

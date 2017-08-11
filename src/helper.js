@@ -15,8 +15,8 @@ export const toJaDate = iso => Moment(iso).format('YYYY年M月D日(dd)')
 
 export const nameOfProvider = {}
 nameOfProvider[PROVIDER.PASSWORD] = 'パスワード認証'
-nameOfProvider[PROVIDER.Google] = 'Google'
-nameOfProvider[PROVIDER.Facebook] = 'Facebook'
+nameOfProvider[PROVIDER.GOOGLE] = 'Google'
+nameOfProvider[PROVIDER.FACEBOOK] = 'Facebook'
 
 export const nameOfPrivilege = {}
 nameOfPrivilege[PRIV.USER] = '一般ユーザ'
@@ -27,13 +27,19 @@ export const errorMessage = {
   '': {},
   uid: {},
   gid: {},
+  ver: {},
   authId: {},
+  oauth2: {}
 }
 errorMessage[''][ERR.SIGNIN] = 'ログインが必要です。'
 errorMessage[''][ERR.AUTH] = '認証エラーです。ID・パスワードなど間違っていないかが確認してください。'
-errorMessage['authId'][ERR.REFERENCE] = '認証エラーです。ID・パスワードなどが間違っていないか確認してください。'
+errorMessage['oauth2'][PROVIDER.GOOGLE] = `${nameOfProvider[PROVIDER.GOOGLE]}の認証エラーです。`
+errorMessage['oauth2'][PROVIDER.FACEBOOK] = `${nameOfProvider[PROVIDER.FACEBOOK]}の認証エラーです。`
+errorMessage['oauth2'][ERR.REFERENCE] = `認証情報が取得できませんでした。`
+errorMessage['authId'][ERR.REFERENCE] = '認証情報が登録されていません。'
 errorMessage['uid'][ERR.REFERENCE] = `ユーザIDが不正です。バグの可能性が高いので、${nameOfPrivilege[PRIV.ADMIN]}に連絡してください。`
 errorMessage['gid'][ERR.REFERENCE] = `グループIDが不正です。バグの可能性が高いので、${nameOfPrivilege[PRIV.ADMIN]}}に連絡してください。`
+errorMessage['ver'][ERR.LATEST] = '編集前の情報が最新ではありませんでした。もう一度やり直してください。'
 
 export const populateGids = (gids, groups) => {
   return gids.map(gid => groups.reduce((ret, cur) => cur._id === gid ? cur : ret ,null))

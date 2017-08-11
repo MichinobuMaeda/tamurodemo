@@ -13,6 +13,7 @@ import VisibleError from './VisibleError'
 import VisibleTop from './VisibleTop'
 import VisibleGroup from './VisibleGroup'
 import VisibleUser from './VisibleUser'
+import VisibleCredential from './VisibleCredential'
 import VisibleLogs from './VisibleLogs'
 import VisibleSessions from './VisibleSessions'
 import { getCurrentPage } from '../helper'
@@ -24,6 +25,8 @@ const mainPage = (prim, name) => {
       return ContextHelp
     case PAGE.ERROR:
       return VisibleError
+    case PAGE.CREDENTIAL:
+      return prim ? VisibleCredential : ContextEntrance
     case PAGE.GROUP:
       return prim ? VisibleGroup : ContextEntrance
     case PAGE.USER:

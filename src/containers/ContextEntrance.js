@@ -6,7 +6,11 @@
 
 import { connect } from 'react-redux'
 
-import { doSingInWithPassword, setAuthId, setPassword } from '../actions'
+import {
+  setAuthId, setPassword, doSingInWithPassword,
+  doSingInWithGoogle, failureSingInWithGoogle,
+} from '../actions'
+import { signInWithGoogle } from '../actions/google'
 import Entrance from '../components/Entrance'
 
 const mapStateToProps = state => {
@@ -17,9 +21,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSingInWithPassword: () => dispatch(doSingInWithPassword()),
     onAuthIdChanged: (event) => dispatch(setAuthId(event.target.value)),
     onPasswordChanged: (event) => dispatch(setPassword(event.target.value)),
+    onSingInWithPassword: () => dispatch(doSingInWithPassword()),
+    onSingInWithGoogle: () => dispatch(signInWithGoogle(
+      dispatch, doSingInWithGoogle, failureSingInWithGoogle
+    )),
   }
 }
 
