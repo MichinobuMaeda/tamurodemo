@@ -14,7 +14,10 @@ const Error = ({error, onErrorConfirm}) => (
   <div style={{"text-align": "center"}}>
     {
       error.map(err => 
-        <p>{ errorMessage[err.path][err.req] }</p>
+        <div>
+          <p>{ errorMessage[err.path][err.req] }</p>
+          <p>{ err.e && JSON.stringify(err.e) }</p>
+        </div>
       )
     }
     <RaisedButton

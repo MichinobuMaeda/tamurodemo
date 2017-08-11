@@ -21,9 +21,9 @@ export const initGoogleApi = () => {
 export const signInWithGoogle = (dispatch, onSuccess, onFailure) => async () => {
   try {
     const auth2 = window.gapi.auth2.getAuthInstance()
-    let res = await auth2.signIn({})
+    let res = await auth2.signIn()
     dispatch(onSuccess(res))
   } catch (e) {
-    dispatch(onFailure())
+    dispatch(onFailure(e))
   }
 }

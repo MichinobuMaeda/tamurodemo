@@ -240,8 +240,8 @@ export const doSingInWithGoogle = (googleUser) => async (dispatch, getState) => 
   dispatch(resetWait())
 }
 
-export const failureSingInWithGoogle = () => async (dispatch) => {
-  setStatus(dispatch, { errors: [ { path: 'oauth2', req: PROVIDER.GOOGLE } ] })
+export const failureSingInWithGoogle = (e) => async (dispatch) => {
+  setStatus(dispatch, { errors: [ { path: 'oauth2', req: PROVIDER.GOOGLE, e } ] })
 }
 
 export const doSingOut = () => async dispatch => {
