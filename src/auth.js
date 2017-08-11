@@ -7,8 +7,11 @@
  */
 
 import shortid from 'shortid'
+import GoogleAuth from 'google-auth-library'
 import { digestPassword } from './helper'
 import err from './errors'
+
+const googleAuth = new GoogleAuth()
 
 export const restoreSession = (st, conf) => async (ctx, next) => {
   let sid = ctx.cookies.get('SID', { signed: true })
@@ -23,17 +26,32 @@ export const restoreSession = (st, conf) => async (ctx, next) => {
 
 export const signIn = (st, conf) => async (ctx, next) => {
   let { provider, authId, password } = ctx.request.body
-  let cred = await st.creds.findOne({ provider: provider, authId: authId })
-  if (!cred) {
-    st.log.info({ function: 'authenticate', result: 'NG', provider, authId })
-    ctx.response.body = { errors: [ err.reference('authId') ]}
-    return
-  }
+  let cred = null
   if (provider === 'password') {
+    cred = await st.creds.findOne({ provider, authId })
+    if (!cred) {
+      st.log.info({ function: 'authenticate', result: 'NG', provider, authId })
+      ctx.response.body = { errors: [ err.reference('authId') ]}
+      return
+    }
     password = password ? digestPassword(cred.uid, password, conf.seed) : null
     if (cred.authId !== authId || cred.password !== password) {
       st.log.info({ function: 'authenticate', result: 'NG', provider, authId })
       ctx.response.body = { errors: [ err.auth() ] }
+      return
+    }
+  } else if (provider === 'google') {
+    try {
+      authId = await getGoogleUser(conf, authId)
+      cred = await st.creds.findOne({ provider, authId })
+      if (!cred) {
+        st.log.info({ function: 'authenticate', result: 'NG', provider, authId })
+        ctx.response.body = { errors: [ err.reference('authId') ]}
+        return
+      }
+    } catch(e) {
+      st.log.info({ function: 'authenticate', result: 'NG', provider, authId, e: JSON.stringify(e) })
+      ctx.response.body = { errors: [ err.reference('oauth2') ]}
       return
     }
   } else {
@@ -93,3 +111,16 @@ export const reqPriv = priv => async (ctx, next) => {
     }
   }
 }
+
+export const getGoogleUser = (conf, token) => new Promise((resolve, reject) => {
+  new googleAuth.OAuth2(conf.google, '', '').verifyIdToken(
+    token,
+    conf.google,
+    function(e, login) {
+      if (!login) { reject(e) }
+      let payload = login.getPayload()
+      if (!payload) { reject(e) }
+      if (!payload['sub']) { reject(e) }
+      resolve(payload['sub'])
+    })
+})

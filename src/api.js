@@ -15,7 +15,7 @@ import setup from './setup'
 import err from './errors'
 import { digestPassword } from './helper'
 import store from './storage'
-import { signIn, signOut, restoreSession, reqPriv, PRIV } from './auth'
+import { signIn, signOut, getGoogleUser, restoreSession, reqPriv, PRIV } from './auth'
 
 export let st = {}
 
@@ -156,7 +156,7 @@ export const api = async conf => {
         ctx.response.body = await st.groups.findOne({ _id: group._id })
       })
 
-    .post('/users/:uid/provider/:provider',
+    .post('/users/:uid/providers/:provider',
       reqPriv(PRIV.MANAGER_OR_SELF), referDoc(st.users, 'uid'), validate(st.creds), async ctx => {
         let { uid, provider } = ctx.params
         if (await st.creds.count({ uid, provider })) {
@@ -169,12 +169,26 @@ export const api = async conf => {
         if (cred.password) {
           cred.password = digestPassword(cred.uid, cred.password, conf.seed)
         }
+        if (cred.provider === 'google') {
+          try {
+            cred.authId = await getGoogleUser(conf, cred.authId)
+          } catch (e) {
+            st.log.info({ function: 'authenticate', result: 'NG', provider, authId: cred.authId, e: JSON.stringify(e) })
+            ctx.response.body = { errors: [ err.reference('oauth2') ]}
+            return
+          }
+        }
         await st.creds.save(cred)
         if (cred.password) { cred.password = '' }
         ctx.response.body = cred
+        st.log.info({
+          method: ctx.request.method,
+          path: ctx.request.path,
+          response: ctx.response.body
+        })
       })
 
-    .get('/users/:uid/creds',
+    .get('/users/:uid/providers',
       reqPriv(PRIV.MANAGER_OR_SELF), referDoc(st.users, 'uid'), async ctx => {
         ctx.response.body = (await st.creds.find(
           { uid: ctx.params.uid }).sort({ provider: 1 }).toArray()).map(cred => {
@@ -183,7 +197,7 @@ export const api = async conf => {
         })
       })
 
-    .put('/users/:uid/provider/:provider/ver/:ver',
+    .put('/users/:uid/providers/:provider/ver/:ver',
       reqPriv(PRIV.MANAGER_OR_SELF), referDoc(st.users, 'uid'), validate(st.creds), async ctx => {
         let { uid, provider, ver } = ctx.params
         ver = parseInt(ver, 10)
@@ -195,6 +209,15 @@ export const api = async conf => {
         if (cred.password) {
           cred.password = digestPassword(cred.uid, cred.password, conf.seed)
         }
+        if (cred.provider === 'google') {
+          try {
+            cred.authId = await getGoogleUser(conf, cred.authId)
+          } catch (e) {
+            st.log.info({ function: 'authenticate', result: 'NG', provider, authId: cred.authId, e: JSON.stringify(e) })
+            ctx.response.body = { errors: [ err.reference('oauth2') ]}
+            return
+          }
+        }
         let ret = await st.creds.findOneAndUpdate({ _id: cred._id, uid, provider, ver }, cred)
         if (ret.value) {
           if (cred.password) { cred.password = '' }
@@ -202,14 +225,24 @@ export const api = async conf => {
         } else {
           ctx.response.body = { errors: [ err.latest('ver') ]}
         }
+        st.log.info({
+          method: ctx.request.method,
+          path: ctx.request.path,
+          response: ctx.response.body
+        })
       })
 
-    .del('/users/:uid/provider/:provider/ver/:ver',
+    .del('/users/:uid/providers/:provider/ver/:ver',
       reqPriv(PRIV.MANAGER_OR_SELF), referDoc(st.users, 'uid'), async ctx => {
         let { uid, provider, ver } = ctx.params
         ver = parseInt(ver, 10)
         ctx.response.body = (await st.creds.findOneAndDelete({ uid, provider, ver })).value
           ? {} : { errors: [ err.latest('ver') ]}
+        st.log.info({
+          method: ctx.request.method,
+          path: ctx.request.path,
+          response: ctx.response.body
+        })
       })
 
     .get('/logs/:f/to/:t',

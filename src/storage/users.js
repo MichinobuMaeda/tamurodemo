@@ -17,7 +17,7 @@ const collection = async (db) => {
   await users.createIndex({ modifiedAt: 1 })
 
   users.validate = async (
-    { _id, ver, name, profiles, createdAt, modifiedAt } = {},
+    { _id, ver, name, desc, profiles, createdAt, modifiedAt } = {},
     depends = true
   ) => {
     _id = _id || shortid.generate()
@@ -36,7 +36,7 @@ const collection = async (db) => {
           ? [ err.array('profiles') ]
           : [])
     return errors.length ? { errors }
-      : { _id, ver, name, profiles, createdAt, modifiedAt }
+      : { _id, ver, name, desc, profiles, createdAt, modifiedAt }
   }
 
   return users

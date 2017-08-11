@@ -7,7 +7,7 @@
  */
 
 import shortid from 'shortid'
-import { isStringFilled, isArray } from '../helper'
+import { isString, isStringFilled, isArray } from '../helper'
 import err from '../errors'
 
 const collection = async (db) => {
@@ -19,7 +19,7 @@ const collection = async (db) => {
   await groups.createIndex({ modifiedAt: 1 })
 
   groups.validate = async (
-    { _id, ver, name, gids, uids, createdAt, modifiedAt } = {},
+    { _id, ver, name, desc, gids, uids, createdAt, modifiedAt } = {},
     depends = true
   ) => {
     _id = _id || shortid.generate()
@@ -45,7 +45,7 @@ const collection = async (db) => {
           depends && 0 === (await db.collection('users').count({ _id: uid }))
             ? [ ...ret, err.reference('uids') ] : ret, [])))
     return errors.length ? { errors }
-      : { _id, ver, name, gids, uids, createdAt, modifiedAt }
+      : { _id, ver, name, desc, gids, uids, createdAt, modifiedAt }
   }
 
   groups.getAncestors = async id => {

@@ -445,6 +445,7 @@ test('PUT /groups/:gid/ver/:ver', async () => {
   expect(res.json).toEqual({ errors: [ { path: 'name', req: 'unique' } ]})
 
   group4.name = 'Group 5'
+  group4.desc = 'description'
   res = await put(`/groups/${group4._id}/ver/${group4.ver}`, sid, group4)
   ++ group4.ver
   group4.modifiedAt = new Date(res.json.modifiedAt)
@@ -548,24 +549,24 @@ test('POST /groups/:gid/groups', async () => {
   expect(top.gids).toContain(group5._id)
 })
 
-test('POST /users/:uid/provider/:provider', async () => {
+test('POST /users/:uid/providers/:provider', async () => {
   let { user1 } = await getTestPrimeObjects()
 
-  let res = await post(`/users/${user1._id}/provider/password`, null, {})
+  let res = await post(`/users/${user1._id}/providers/password`, null, {})
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
 
   let sid = await loginAsAdmin()
-  res = await post(`/users/${user1._id}/provider/password`, sid, {})
+  res = await post(`/users/${user1._id}/providers/password`, sid, {})
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
   let user4 = await st.users.findOne({ name: 'User 4' })
   let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
-  res = await post(`/users/${cred4.uid}/provider/password`, sid, cred4)
+  res = await post(`/users/${cred4.uid}/providers/password`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'provider', req: 'unique' } ]})
 
   sid = await loginAsManager()
-  res = await post(`/users/${shortid.generate()}/provider/password`, sid, cred4)
+  res = await post(`/users/${shortid.generate()}/providers/password`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'uid', req: 'reference' } ]})
 
   let user5 = await st.users.validate({ name: 'User 5' })
@@ -577,56 +578,56 @@ test('POST /users/:uid/provider/:provider', async () => {
     password: 'user5pass',
   })
   cred5.authId = ''
-  res = await post(`/users/${user5._id}/provider/password`, sid, cred5)
+  res = await post(`/users/${user5._id}/providers/password`, sid, cred5)
   expect(res.json).toEqual({ errors: [ { path: 'authId', req: 'required' } ]})
 
   cred5.authId = 'user5id'
-  res = await post(`/users/${user5._id}/provider/password`, sid, cred5)
+  res = await post(`/users/${user5._id}/providers/password`, sid, cred5)
   cred5.password = ''
   expect(res.json).toEqual(normalize(cred5))
 })
 
-test('GET /users/:uid/provider/', async () => {
+test('GET /users/:uid/providers', async () => {
   let { user1 } = await getTestPrimeObjects()
 
-  let res = await get(`/users/${user1._id}/creds`, null)
+  let res = await get(`/users/${user1._id}/providers`, null)
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
 
   let sid = await loginAsAdmin()
-  res = await get(`/users/${user1._id}/creds`, sid)
+  res = await get(`/users/${user1._id}/providers`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
   let user4 = await st.users.findOne({ name: 'User 4' })
   let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
-  res = await get(`/users/${cred4.uid}/creds`, sid)
+  res = await get(`/users/${cred4.uid}/providers`, sid)
   cred4.password = ''
   expect(res.json).toHaveLength(1)
   expect(res.json[0]).toEqual(normalize(cred4))
 
   sid = await loginAsManager()
-  res = await get(`/users/${cred4.uid}/creds`, sid)
+  res = await get(`/users/${cred4.uid}/providers`, sid)
   expect(res.json).toHaveLength(1)
   expect(res.json[0]).toEqual(normalize(cred4))
 
-  res = await get(`/users/${shortid.generate()}/creds`, sid)
+  res = await get(`/users/${shortid.generate()}/providers`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'uid', req: 'reference' } ]})
 })
 
-test('PUT /users/:uid/provider/:provider/ver/:ver', async () => {
+test('PUT /users/:uid/providers/:provider/ver/:ver', async () => {
   let { user1 } = await getTestPrimeObjects()
 
-  let res = await put(`/users/${user1._id}/provider/password/ver/0`, null, {})
+  let res = await put(`/users/${user1._id}/providers/password/ver/0`, null, {})
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
 
   let sid = await loginAsAdmin()
-  res = await put(`/users/${user1._id}/provider/password/ver/0`, sid, {})
+  res = await put(`/users/${user1._id}/providers/password/ver/0`, sid, {})
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
   let user4 = await st.users.findOne({ name: 'User 4' })
   let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
-  res = await put(`/users/${cred4.uid}/provider/password/ver/${cred4.ver}`, sid, cred4)
+  res = await put(`/users/${cred4.uid}/providers/password/ver/${cred4.ver}`, sid, cred4)
   ++ cred4.ver
   cred4.modifiedAt = new Date(res.json.modifiedAt)
   let password = cred4.password
@@ -635,19 +636,19 @@ test('PUT /users/:uid/provider/:provider/ver/:ver', async () => {
   cred4.password = password
 
   sid = await loginAsManager()
-  res = await put(`/users/${cred4.uid}/provider/password/ver/${cred4.ver + 1}`, sid, cred4)
+  res = await put(`/users/${cred4.uid}/providers/password/ver/${cred4.ver + 1}`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
 
-  res = await put(`/users/${shortid.generate()}/provider/password/ver/${cred4.ver}`, sid, cred4)
+  res = await put(`/users/${shortid.generate()}/providers/password/ver/${cred4.ver}`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'uid', req: 'reference' } ]})
 
   let authId = cred4.authId
   cred4.authId = 'user1id'
-  res = await put(`/users/${cred4.uid}/provider/password/ver/${cred4.ver}`, sid, cred4)
+  res = await put(`/users/${cred4.uid}/providers/password/ver/${cred4.ver}`, sid, cred4)
   expect(res.json).toEqual({ errors: [ { path: 'authId', req: 'unique' } ]})
   cred4.authId = authId
 
-  res = await put(`/users/${cred4.uid}/provider/password/ver/${cred4.ver}`, sid, cred4)
+  res = await put(`/users/${cred4.uid}/providers/password/ver/${cred4.ver}`, sid, cred4)
   ++ cred4.ver
   cred4.modifiedAt = new Date(res.json.modifiedAt)
   password = cred4.password
@@ -656,24 +657,24 @@ test('PUT /users/:uid/provider/:provider/ver/:ver', async () => {
   cred4.password = password
 })
 
-test('DELETE /users/:uid/provider/:provider/ver/:ver', async () => {
+test('DELETE /users/:uid/providers/:provider/ver/:ver', async () => {
   let { user1 } = await getTestPrimeObjects()
 
-  let res = await del(`/users/${user1._id}/provider/password/ver/0`, null)
+  let res = await del(`/users/${user1._id}/providers/password/ver/0`, null)
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
 
   let sid = await loginAsAdmin()
-  res = await del(`/users/${user1._id}/provider/password/ver/0`, sid)
+  res = await del(`/users/${user1._id}/providers/password/ver/0`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'managerOrSelf' } ]})
 
   sid = await loginAsUser4()
   let user4 = await st.users.findOne({ name: 'User 4' })
   let cred4 = await st.creds.findOne({ uid: user4._id, provider: 'password' })
-  res = await del(`/users/${cred4.uid}/provider/password/ver/${cred4.ver + 1}`, sid)
+  res = await del(`/users/${cred4.uid}/providers/password/ver/${cred4.ver + 1}`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
 
   sid = await loginAsManager()
-  res = await del(`/users/${cred4.uid}/provider/password/ver/${cred4.ver}`, sid)
+  res = await del(`/users/${cred4.uid}/providers/password/ver/${cred4.ver}`, sid)
   expect(res.json).toEqual({})
 })
 
