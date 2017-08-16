@@ -385,25 +385,43 @@ test('PUT /users/:uid/ver/:ver', async () => {
 })
 
 test('DELETE /users/:uid/ver/:ver', async () => {
-  let { user1 } = await getTestPrimeObjects()
+  let { user1, admin, manager } = await getTestPrimeObjects()
 
   let res = await del(`/users/${user1._id}/ver/0`, null)
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
-
+  expect((await st.groups.findOne({ _id: admin._id })).uids).toEqual(expect.arrayContaining([user1._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).uids).toEqual(expect.arrayContaining([user1._id]))
+  
   let sid = await loginAsUser4()
   res = await del(`/users/${user1._id}/ver/0`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'manager' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).uids)
+    .toEqual(expect.arrayContaining([user1._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).uids)
+    .toEqual(expect.arrayContaining([user1._id]))
 
   sid = await loginAsAdmin()
   res = await del(`/users/${user1._id}/ver/0`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'manager' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).uids)
+    .toEqual(expect.arrayContaining([user1._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).uids)
+    .toEqual(expect.arrayContaining([user1._id]))
 
   sid = await loginAsManager()
   res = await del(`/users/${user1._id}/ver/${user1.ver + 1}`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).uids)
+    .toEqual(expect.arrayContaining([user1._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).uids)
+    .toEqual(expect.arrayContaining([user1._id]))
 
   res = await del(`/users/${user1._id}/ver/${user1.ver}`, sid)
   expect(res.json).toEqual({})
+  expect((await st.groups.findOne({ _id: admin._id })).uids)
+    .not.toEqual(expect.arrayContaining([user1._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).uids)
+    .not.toEqual(expect.arrayContaining([user1._id]))
 })
 
 test('GET /groups', async () => {
@@ -453,27 +471,49 @@ test('PUT /groups/:gid/ver/:ver', async () => {
 })
 
 test('DELETE /groups/:gid/ver/:ver', async () => {
-  await getTestPrimeObjects()
+  let { admin, manager } = await getTestPrimeObjects()
   let group4 = await st.groups.validate({ name: 'Group 4'})
   await st.groups.save(group4)
-
+  st.groups.findOneAndUpdate({ _id: admin._id }, { $addToSet: { gids: group4._id }})
+  st.groups.findOneAndUpdate({ _id: manager._id }, { $addToSet: { gids: group4._id }})
+  
   let res = await del(`/groups/${group4._id}/ver/0`, null)
   expect(res.json).toEqual({ errors: [ { path: '', req: 'signin' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
 
   let sid = await loginAsUser4()
   res = await del(`/groups/${group4._id}/ver/0`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'manager' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
 
   sid = await loginAsAdmin()
   res = await del(`/groups/${group4._id}/ver/0`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'priv', req: 'manager' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
 
   sid = await loginAsManager()
   res = await del(`/groups/${group4._id}/ver/${group4.ver + 1}`, sid)
   expect(res.json).toEqual({ errors: [ { path: 'ver', req: 'latest' } ]})
+  expect((await st.groups.findOne({ _id: admin._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).gids)
+    .toEqual(expect.arrayContaining([group4._id]))
 
   res = await del(`/groups/${group4._id}/ver/${group4.ver}`, sid)
   expect(res.json).toEqual({})
+  expect((await st.groups.findOne({ _id: admin._id })).gids)
+    .not.toEqual(expect.arrayContaining([group4._id]))
+  expect((await st.groups.findOne({ _id: manager._id })).gids)
+    .not.toEqual(expect.arrayContaining([group4._id]))
 })
 
 test('POST /groups/:gid/users', async () => {

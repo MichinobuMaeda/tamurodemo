@@ -23,6 +23,8 @@ const collection = async (db) => {
     _id = _id || shortid.generate()
     ver = parseInt(ver, 10)
     ver = isNaN(ver) ? 0 : ver
+    name = name && name.trim()
+    desc = desc && desc.trim()
     profiles = profiles || []
     createdAt = createdAt ? new Date(createdAt) : new Date()
     modifiedAt = modifiedAt ? new Date(modifiedAt) : createdAt

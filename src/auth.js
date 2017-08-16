@@ -124,3 +124,20 @@ export const getGoogleUser = (conf, token) => new Promise((resolve, reject) => {
       resolve(payload['sub'])
     })
 })
+
+export const hasPrivilege = (p, gids) =>
+  p.reduce((ret, cur) => gids && -1 < gids.indexOf(cur) || ret, false)
+
+export const authenticatedUser = (user, sess) => {
+  let { _id, ver, name, desc, profiles, createdAt, modifiedAt } = user
+  let { uid, gids, manager } = sess
+  return {
+    _id, ver, name, desc, createdAt, modifiedAt,
+    profiles : (profiles || [])
+      .filter(prof => prof && prof.title && (manager || _id === uid || hasPrivilege(prof.title.p, gids)))
+      .map(prof => Object.keys(prof)
+        .filter(key => manager || _id === uid || hasPrivilege((prof[key] && prof[key].p), gids))
+        .reduce((ret, cur) => { ret[cur] = prof[cur]; return ret }, {})
+      )
+  }
+}

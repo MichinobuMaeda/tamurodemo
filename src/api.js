@@ -15,7 +15,10 @@ import setup from './setup'
 import err from './errors'
 import { digestPassword } from './helper'
 import store from './storage'
-import { signIn, signOut, getGoogleUser, restoreSession, reqPriv, PRIV } from './auth'
+import {
+  PRIV, signIn, signOut, getGoogleUser,
+  restoreSession, reqPriv, authenticatedUser
+} from './auth'
 
 export let st = {}
 
@@ -92,7 +95,7 @@ export const api = async conf => {
 
     .get('/users/:uid',
       reqPriv(PRIV.MEMBER), getBaseDoc(st.users, 'uid'), ctx => {
-        ctx.response.body = ctx.base
+        ctx.response.body = authenticatedUser(ctx.base, ctx.session)
       })
 
     .put('/users/:uid/ver/:ver',
@@ -109,6 +112,13 @@ export const api = async conf => {
           _id: ctx.params.uid,
           ver: parseInt(ctx.params.ver, 10)
         })).value ? {} : { errors: [ err.latest('ver') ]}
+        if (!ctx.response.body.errors) {
+          await st.groups.update({ uids: { $in: [ctx.params.uid] } }, {
+            $pull: { uids: ctx.params.uid },
+            $inc: { ver: 1 },
+            $currentDate: { modifiedAt: { $type: 'timestamp' } },
+          }, { multi: true })
+        }
       })
 
     .get('/groups',
@@ -130,6 +140,13 @@ export const api = async conf => {
           _id: ctx.params.gid,
           ver: parseInt(ctx.params.ver, 10)
         })).value ? {} : { errors: [ err.latest('ver') ]}
+        if (!ctx.response.body.errors) {
+          await st.groups.update({ gids: { $in: [ctx.params.gid] } }, {
+            $pull: { gids: ctx.params.gid },
+            $inc: { ver: 1 },
+            $currentDate: { modifiedAt: { $type: 'timestamp' } },
+          }, { multi: true })
+        }
       })
 
     .post('/groups/:gid/users',
@@ -143,8 +160,9 @@ export const api = async conf => {
 
     .get('/groups/:gid/users',
       reqPriv(PRIV.MEMBER), getBaseDoc(st.groups, 'gid'), async ctx => {
-        ctx.response.body = await st.users.find(
-          { _id: { $in: ctx.base.uids } }).sort({ name: 1 }).toArray()
+        ctx.response.body = (await st.users.find(
+          { _id: { $in: ctx.base.uids } }).sort({ name: 1 }).toArray())
+          .map(user => authenticatedUser(user, ctx.session))
       })
 
     .post('/groups/:gid/groups',
