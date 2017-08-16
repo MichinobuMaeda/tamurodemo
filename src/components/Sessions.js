@@ -25,7 +25,7 @@ const Sessions = ({ sessions, onRefreshSessions }) => (
       </IconButton>
       <h2><FontIcon className="material-icons">search</FontIcon> セッション</h2>
     </Paper>
-    <pre style={{ margin: 8 }}>{ JSON.stringify(sessions, null, 4) }</pre>
+    <pre style={{ margin: "8px" }}>{ JSON.stringify(sessions, null, 4) }</pre>
   </div>
 )
 

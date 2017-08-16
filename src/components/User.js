@@ -16,12 +16,12 @@ const User = ({ user }) => (
     <ContextPageNav />
     <Paper style={paperStyle} zDepth={1}>
       <h2><FontIcon className="material-icons">person</FontIcon> { user.name }</h2>
-      { user.desc && user.desc.split(/\n|\r/).map(line => <p>{ line }</p>) }
+      { user.desc && user.desc.split(/\n|\r/).map(line => <div>{ line }</div>) }
     </Paper>
     {
       user.profiles && user.profiles.map(profile =>
         <Paper style={paperStyle} zDepth={1}>
-          <h3>{ profile.title }</h3>
+          <h3>{ profile.title.v }</h3>
           <div>
             { profile.zip && `〒${profile.zip.v}` }
           </div>

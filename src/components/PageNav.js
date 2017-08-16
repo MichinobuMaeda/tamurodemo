@@ -13,7 +13,9 @@ import { teal600 } from 'material-ui/styles/colors'
 import { sortedGroups, getCurrentPage } from '../helper'
 import { PAGE } from '../constants'
 
-const PageNav = ({ prim, page, groups, onGroupSelected, onPageBack, onPageForward }) => (
+const PageNav = ({
+  prim, page, groups, onGroupSelected, onPageBack, onPageForward
+}) => (
   <div>
     <div style={{float: "right"}}>
       <IconButton
@@ -32,12 +34,18 @@ const PageNav = ({ prim, page, groups, onGroupSelected, onPageBack, onPageForwar
     <div>
       {
         sortedGroups(prim, groups)
-          .filter(g => -1 < (getCurrentPage(page).name === PAGE.USER ? g.uids : g.gids).indexOf(getCurrentPage(page).id))
-          .map(g => <FlatButton
-            label={g.name}
-            icon={<FontIcon className="material-icons" color={teal600}>group</FontIcon>}
-            onTouchTap={onGroupSelected(g._id)}
-          />)
+          .filter(g => -1 < (
+            getCurrentPage(page).name === PAGE.USER ? g.uids : g.gids
+          ).indexOf(getCurrentPage(page).id))
+          .map(g =>
+            <FlatButton
+              label={g.name}
+              icon={
+                <FontIcon className="material-icons" color={teal600}>group</FontIcon>
+              }
+              onTouchTap={onGroupSelected(g._id)}
+            />
+          )
       }
     </div>
     <div style={{clear: "both"}} />

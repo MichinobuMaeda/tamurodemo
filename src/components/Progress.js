@@ -10,7 +10,7 @@ import LinearProgress from 'material-ui/LinearProgress';
 import FontIcon from 'material-ui/FontIcon'
 
 const Progress = () => (
-  <div style={{"text-align": "center"}}>
+  <div style={{textAlign: "center"}}>
     <h2>お待ちください</h2>    
     <LinearProgress mode="indeterminate" />
     <p>

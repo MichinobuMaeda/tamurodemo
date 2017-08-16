@@ -6,15 +6,15 @@
 
 import { A } from '../constants'
 
-const dialog = (state = { open: false }, action) => {
+const alert = (state = { open: false }, action) => {
   switch (action.type) {
-    case A.OPEN_DIALOG:
-      return { ...action.dialog, open: true }
-    case A.CLOSE_DIALOG:
+    case A.OPEN_ALERT:
+      return { ...action.alert, open: true }
+    case A.CLOSE_ALERT:
       return { open: false }
     default:
       return state
   }
 }
 
-export default dialog
+export default alert

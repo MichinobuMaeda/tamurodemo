@@ -8,6 +8,11 @@ import { A } from '../constants'
 
 const groups = (state = [], action) => {
   switch (action.type) {
+    case A.SET_GROUP:
+      return [
+        ...(state.filter(g => g._id !== action.group._id)),
+        action.group,
+      ]
     case A.SET_GROUPS:
       return action.groups
     case A.RESET_GROUPS:

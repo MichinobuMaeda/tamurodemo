@@ -29,7 +29,7 @@ const Logs = ({ logs, onRefreshLogs, onGetMoreLogs }) => (
       <div>{ `${new Date(logs.f).toLocaleString()} -> ${new Date(logs.t).toLocaleString()}` }</div>
       <div>{ `[ get: ${logs.logs.length} / all: ${logs.cnt} ]` }</div>
     </Paper>
-    <div style={{ margin: 8, "font-family": "monospace", clear: "both"}}>
+    <div style={{ margin: "8px", fontFamily: "monospace", clear: "both"}}>
       {logs.logs.map(log => 
         <div>{`${new Date(log.time).toISOString()}:${log.level}:${
             Object.keys(log).reduce((ret, cur) => 0 > excludes.indexOf(cur) && log[cur]

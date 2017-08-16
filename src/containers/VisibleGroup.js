@@ -6,14 +6,15 @@
 
 import { connect } from 'react-redux'
 
-import { showGroup, setPage } from '../actions'
+import { setPage } from '../actions/view'
+import { showGroup } from '../actions/groups'
 import { PAGE } from '../constants'
-import { getCurrentPage } from '../helper'
+import { getCurrentPage, findOneById } from '../helper'
 import Group from '../components/Group'
 
 const mapStateToProps = state => {
   let { prim, page, groups, users } = state 
-  let group = groups.reduce((ret, g) => g._id === getCurrentPage(page).id ? g : ret, null)
+  let group = findOneById(groups, getCurrentPage(page).id)
   return {
     prim,
     group,

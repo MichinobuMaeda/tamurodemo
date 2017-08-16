@@ -7,7 +7,7 @@
 import { connect } from 'react-redux'
 
 import Sessions from '../components/Sessions'
-import { showSessions } from '../actions'
+import { showSessions } from '../actions/sessions'
 
 const mapStateToProps = state => {
   let { sessions } = state 

@@ -6,12 +6,15 @@
 
 import { connect } from 'react-redux'
 
-import { showGroup } from '../actions'
+import { showGroup } from '../actions/groups'
 import Top from '../components/Top'
+import { findOneById } from '../helper'
 
 const mapStateToProps = state => {
+  let group = findOneById(state.groups, state.prim.top)
   return {
     prim: state.prim,
+    group,
     groups: state.groups,
   }
 }

@@ -6,24 +6,24 @@
 
 import { connect } from 'react-redux'
 
-import { hideError } from '../actions/error'
-import Error from '../components/Error'
+import { closeAlert } from '../actions/view'
+import AlertDialog from '../components/AlertDialog'
 
 const mapStateToProps = state => {
   return {
-    error: state.error,
+    alert: state.alert,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onErrorConfirm: () => hideError(dispatch),
+    onDialogClose: () => dispatch(closeAlert()),
   }
 }
 
-const VisibleError = connect(
+const ContextAlertDialog = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Error)
+)(AlertDialog)
 
-export default VisibleError;
+export default ContextAlertDialog;

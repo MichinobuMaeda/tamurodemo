@@ -7,43 +7,12 @@
 import { connect } from 'react-redux'
 
 import App from '../components/App'
-import ContextHelp from './ContextHelp'
-import ContextEntrance from './ContextEntrance'
-import VisibleError from './VisibleError'
-import VisibleTop from './VisibleTop'
-import VisibleGroup from './VisibleGroup'
-import VisibleUser from './VisibleUser'
-import VisibleCredential from './VisibleCredential'
-import VisibleLogs from './VisibleLogs'
-import VisibleSessions from './VisibleSessions'
-import { getCurrentPage } from '../helper'
-import { PAGE } from '../constants'
-
-const mainPage = (prim, name) => {
-  switch (name) {
-    case PAGE.HELP:
-      return ContextHelp
-    case PAGE.ERROR:
-      return VisibleError
-    case PAGE.CREDENTIAL:
-      return prim ? VisibleCredential : ContextEntrance
-    case PAGE.GROUP:
-      return prim ? VisibleGroup : ContextEntrance
-    case PAGE.USER:
-      return prim ? VisibleUser : ContextEntrance
-    case PAGE.LOGS:
-      return prim ? VisibleLogs : ContextEntrance
-    case PAGE.SESSIONS:
-      return prim ? VisibleSessions : ContextEntrance
-    default:
-      return prim ? VisibleTop : ContextEntrance
-  }
-}
 
 const mapStateToProps = state => {
   return {
+    prim: state.prim,
+    page: state.page,
     wait: state.wait,
-    MainPage: mainPage(state.prim, getCurrentPage(state.page).name)
   }
 }
 

@@ -6,7 +6,8 @@
 
 import { connect } from 'react-redux'
 
-import { showGroup, backPage, forwardPage } from '../actions'
+import { backPage, forwardPage } from '../actions/view'
+import { showGroup } from '../actions/groups'
 import PageNav from '../components/PageNav'
 
 const mapStateToProps = state => {

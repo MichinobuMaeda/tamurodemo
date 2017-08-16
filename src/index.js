@@ -11,8 +11,10 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 
 import reducers from './reducers'
-import { setStatus, resetWait } from './actions'
+import { apiGetStatus } from './actions/apis'
+import { setStatus } from './actions/auth'
 import { initGoogleApi } from './actions/google'
+import { resetWait } from './actions/view'
 import ContextApp from './containers/ContextApp'
 
 let store = createStore(
@@ -29,7 +31,6 @@ render(
 
 initGoogleApi()
 
-fetch('/api/', { credentials: 'same-origin' })
-.then(res => res.json())
+apiGetStatus()
 .then(json => setStatus(store.dispatch, json))
 .then(() => store.dispatch(resetWait()))

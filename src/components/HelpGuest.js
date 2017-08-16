@@ -13,7 +13,9 @@ import { paperStyle } from '../helper'
 const HelpGuest = () => (
   <div>
     <Paper style={paperStyle} zDepth={1}>
-      ログインしていない場合のヘルプページです。右上の <FontIcon className="material-icons">highlight_off</FontIcon> で戻ってください。
+      ログインしていない場合のヘルプページです。右上の <FontIcon
+          className="material-icons" style={{ "verticalAlign": "bottom" }}
+        >highlight_off</FontIcon> で戻ってください。
     </Paper>
     <Paper style={paperStyle} zDepth={1}>
       <h2>テスト用のユーザID / パスワード / 権限</h2>

@@ -14,8 +14,9 @@ import { PRIV } from '../constants'
 const HelpMember = () => (
   <div>
     <Paper style={paperStyle} zDepth={1}>
-      ログインしている場合のヘルプページです。
-      右上の <FontIcon className="material-icons">highlight_off</FontIcon> で戻ってください。
+      ログインしている場合のヘルプページです。右上の <FontIcon
+        className="material-icons" style={{ "verticalAlign": "bottom" }}
+      >highlight_off</FontIcon> で戻ってください。
     </Paper>
     <Paper style={paperStyle} zDepth={1}>
       <h2>メニュー項目</h2>

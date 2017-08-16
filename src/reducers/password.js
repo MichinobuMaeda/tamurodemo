@@ -6,7 +6,7 @@
 
 import { A } from '../constants'
 
-const auth = (state = {}, action) => {
+const password = (state = {}, action) => {
   switch (action.type) {
     case A.SET_AUTH_ID:
       return { ...state, authId: action.authId }
@@ -21,4 +21,4 @@ const auth = (state = {}, action) => {
   }
 }
 
-export default auth
+export default password

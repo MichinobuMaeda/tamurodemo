@@ -11,19 +11,22 @@ import Paper from 'material-ui/Paper'
 import { teal600 } from 'material-ui/styles/colors'
 
 import ContextPageNav from '../containers/ContextPageNav'
-import { sortedGroups, paperStyle } from '../helper'
+import { sortedGroups, paperStyle, populateGids } from '../helper'
 
-const Top = ({ prim, groups, onGroupSelected }) => (
+const Top = ({ prim, group, groups, onGroupSelected }) => (
   <div>
     <ContextPageNav />
     <Paper style={paperStyle} zDepth={1}>
-      権限によって表示されるメニューが異なります。詳しくは右上のメニューの「ヘルプ」を見てください。
+      { group && group.desc && group.desc.split(/\n|\r/).map(line => <p>{ line }</p>) }
     </Paper>
     <List>
       {
-        sortedGroups(prim, groups).map(g => <ListItem
+        group && sortedGroups(prim, populateGids(group.gids, groups)).map(g =>
+        <ListItem
           primaryText={g.name}
-          leftIcon={<FontIcon className="material-icons" color={teal600}>group</FontIcon>}
+          leftIcon={
+            <FontIcon className="material-icons" color={teal600}>group</FontIcon>
+          }
           onTouchTap={onGroupSelected(g._id)}
         />)
       }

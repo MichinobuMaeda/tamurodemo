@@ -11,6 +11,7 @@ import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon'
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
+import Divider from 'material-ui/Divider'
 
 import { PRIV, PAGE } from '../constants'
 import { nameOfPrivilege, getCurrentPage } from '../helper'
@@ -19,7 +20,8 @@ const Menu = ({
   title, prim, sess, page,
   onHomePageSelected, onHelpPageSelected, onSignOut, onHelpPageClosed,
   onPrivManagerSelected, onPrivAdminSelected, onPrivUserSelected,
-  onLogsSelected, onSessionsSelected, onProviderPageSelected
+  onLogsSelected, onSessionsSelected, onProviderPageSelected,
+  onAddGroup, onEditGroup, onAddUser, onEditUser
 }) => (
   <div>
     <AppBar
@@ -60,52 +62,92 @@ const Menu = ({
                   primaryText="ログイン方法"
                   onTouchTap={onProviderPageSelected(sess.uid)}
                 />
+                <Divider />
                 {
-                  sess.manager
-                    ? <MenuItem
-                        primaryText={nameOfPrivilege[PRIV.MANAGER]}
-                        onTouchTap={onPrivManagerSelected}
-                        disabled={sess.priv === PRIV.MANAGER}
-                      />
-                    : ''
+                  sess.manager &&
+                  <MenuItem
+                    primaryText={nameOfPrivilege[PRIV.MANAGER]}
+                    onTouchTap={onPrivManagerSelected}
+                    disabled={sess.priv === PRIV.MANAGER}
+                  />
                 }
                 {
-                  sess.admin
-                    ? <MenuItem
-                        primaryText={nameOfPrivilege[PRIV.ADMIN]}
-                        onTouchTap={onPrivAdminSelected}
-                        disabled={sess.priv === PRIV.ADMIN}
-                      />
-                    : ''
+                  sess.admin &&
+                  <MenuItem
+                    primaryText={nameOfPrivilege[PRIV.ADMIN]}
+                    onTouchTap={onPrivAdminSelected}
+                    disabled={sess.priv === PRIV.ADMIN}
+                  />
                 }
                 {
-                  (sess.manager || sess.admin)
-                    ? <MenuItem
-                        primaryText={nameOfPrivilege[PRIV.USER]}
-                        onTouchTap={onPrivUserSelected}
-                        disabled={sess.priv === PRIV.USER}
-                      />
-                    : ''
+                  (sess.manager || sess.admin) &&
+                  <MenuItem
+                    primaryText={nameOfPrivilege[PRIV.USER]}
+                    onTouchTap={onPrivUserSelected}
+                    disabled={sess.priv === PRIV.USER}
+                  />
+                }
+                <Divider />
+                {
+                  (
+                    getCurrentPage(page).name === PAGE.GROUP ||
+                    getCurrentPage(page).name === PAGE.TOP
+                  ) && 
+                  sess.manager && sess.priv === PRIV.MANAGER &&
+                  <MenuItem
+                    primaryText={"編集"}
+                    onTouchTap={onEditGroup(getCurrentPage(page).id)}
+                  />
                 }
                 {
-                  sess.admin && sess.priv === PRIV.ADMIN
-                    ? <MenuItem
-                        primaryText={"ログ"}
-                        onTouchTap={onLogsSelected}
-                      />
-                    : ''
+                  getCurrentPage(page).name === PAGE.USER &&
+                  (
+                    (sess.manager && sess.priv === PRIV.MANAGER) ||
+                    sess.uid === getCurrentPage(page).id
+                  ) &&
+                  <MenuItem
+                    primaryText={"編集"}
+                    onTouchTap={onEditUser(getCurrentPage(page).id)}
+                  />
                 }
                 {
-                  sess.admin && sess.priv === PRIV.ADMIN
-                    ? <MenuItem
-                        primaryText={"セッション"}
-                        onTouchTap={onSessionsSelected}
-                      />
-                    : ''
+                  (
+                    getCurrentPage(page).name === PAGE.GROUP ||
+                    getCurrentPage(page).name === PAGE.TOP
+                  ) &&
+                  sess.manager && sess.priv === PRIV.MANAGER &&
+                  <MenuItem
+                    primaryText={"グループ追加"}
+                    onTouchTap={onAddGroup(getCurrentPage(page).id)}
+                  />
+                }
+                {
+                  (
+                    getCurrentPage(page).name === PAGE.GROUP
+                  ) &&
+                  sess.manager && sess.priv === PRIV.MANAGER &&
+                  <MenuItem
+                    primaryText={"ユーザー追加"}
+                    onTouchTap={onAddUser(getCurrentPage(page).id)}
+                  />
+                }
+                {
+                  sess.admin && sess.priv === PRIV.ADMIN &&
+                  <MenuItem
+                    primaryText={"ログ"}
+                    onTouchTap={onLogsSelected}
+                  />
+                }
+                {
+                  sess.admin && sess.priv === PRIV.ADMIN &&
+                  <MenuItem
+                    primaryText={"セッション"}
+                    onTouchTap={onSessionsSelected}
+                  />
                 }
               </IconMenu>
           : getCurrentPage(page).name === PAGE.HELP
-            ?<IconButton
+            ? <IconButton
                 onTouchTap={onHelpPageClosed}
               >
                 <FontIcon className="material-icons">highlight_off</FontIcon>

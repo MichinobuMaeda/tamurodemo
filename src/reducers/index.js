@@ -10,30 +10,36 @@ import title from './title'
 import page from './page'
 import sess from './sess'
 import prim from './prim'
-import auth from './auth'
+import password from './password'
 import error from './error'
 import wait from './wait'
 import groups from './groups'
 import users from './users'
 import creds from './creds'
+import editedGroup from './editedGroup'
+import editedUser from './editedUser'
 import logs from './logs'
 import sessions from './sessions'
-import dialog from './dialog'
+import alert from './alert'
+import permission from './permission'
 
 const tamuroApp = combineReducers({
   title,
   page,
   sess,
   prim,
-  auth,
+  password,
   error,
   wait,
   groups,
   users,
   creds,
+  editedGroup,
+  editedUser,
   logs,
   sessions,
-  dialog,
+  alert,
+  permission,
 })
 
 export default tamuroApp

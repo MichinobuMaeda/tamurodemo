@@ -18,6 +18,7 @@ const Group = ({ prim, group, groups, users, onGroupSelected, onUserSelected }) 
     <ContextPageNav />
     <Paper style={paperStyle} zDepth={1}>
       <h2><FontIcon className="material-icons">group</FontIcon> { group.name }</h2>
+      { group.desc && group.desc.split(/\n|\r/).map(line => <p>{ line }</p>) }
     </Paper>
     {
       sortedGroups(prim, populateGids(group.gids, groups))

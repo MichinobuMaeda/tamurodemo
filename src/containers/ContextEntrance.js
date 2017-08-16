@@ -8,14 +8,15 @@ import { connect } from 'react-redux'
 
 import {
   setAuthId, setPassword, doSingInWithPassword,
-  doSingInWithGoogle, failureSingInWithGoogle,
-} from '../actions'
-import { signInWithGoogle } from '../actions/google'
+} from '../actions/password'
+import {
+  signInWithGoogle, doSingInWithGoogle, failureSingInWithGoogle
+} from '../actions/google'
 import Entrance from '../components/Entrance'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
+    password: state.password,
   }
 }
 

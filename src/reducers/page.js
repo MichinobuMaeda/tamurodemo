@@ -23,6 +23,9 @@ const page = (state = { history: [homePage], curr: 0 }, action) => {
       if (0 < curr) {
         --curr
       }
+      if (action.eraseForward) {
+        history = history.filter((e, i) => i <= curr)
+      }
       return { history, curr }
     case A.FORWARD_PAGE:
       if (curr < history.length - 1) {

@@ -11,7 +11,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import { errorMessage } from '../helper'
 
 const Error = ({error, onErrorConfirm}) => (
-  <div style={{"text-align": "center"}}>
+  <div style={{textAlign: "center"}}>
     {
       error.map(err => 
         <div>

@@ -7,7 +7,7 @@
 import { connect } from 'react-redux'
 
 import Logs from '../components/Logs'
-import { showLogs, getMoreLogs } from '../actions'
+import { showLogs, getMoreLogs } from '../actions/logs'
 
 const mapStateToProps = state => {
   let { logs } = state 

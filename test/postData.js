@@ -27,6 +27,7 @@ db.groups.insertMany([
     _id: 'B1lHc7Fi8b',
     ver: 0,
     name: 'サンプル 4',
+    desc: '権限によって表示されるメニューが異なります。詳しくは右上のメニューの「ヘルプ」を見てください。',
     gids: [
       'ry-SqmKsUW',
       'SJzBqmFjIZ',
@@ -72,8 +73,7 @@ db.users.insertMany([
     desc: '本名：芥川龍之介\n本人は芥川賞はもらってません。',
     profiles: [
       {
-        p: ['B1lHc7Fi8b'],
-        title: '自宅',
+        title: { v: '自宅', p: ['B1lHc7Fi8b'] },
         zip: { v: '123-4567', p: ['B1lHc7Fi8b'] },
         country: { v: '日本', p: ['B1lHc7Fi8b'] },
         state: { v: '東京都', p: ['B1lHc7Fi8b'] },
@@ -85,8 +85,7 @@ db.users.insertMany([
         name: { v: '芥川龍之介', p: ['B1lHc7Fi8b'] },
       },
       {
-        p: ['B1lHc7Fi8b'],
-        title: '職場',
+        title: { v: '職場', p: ['B1lHc7Fi8b'] },
         zip: { v: '001-0001', p: ['B1lHc7Fi8b'] },
         country: { v: '日本', p: ['B1lHc7Fi8b'] },
         state: { v: '東京都', p: ['B1lHc7Fi8b'] },
@@ -99,8 +98,7 @@ db.users.insertMany([
         name: { v: '芥川龍之介', p: ['B1lHc7Fi8b'] },
       },
       {
-        p: [],
-        title: '実家',
+        title: { v: '実家', p: [] },
         zip: { v: '790-1234', p: [] },
         country: { v: '日本', p: [] },
         state: { v: '愛媛県', p: [] },

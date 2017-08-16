@@ -9,20 +9,21 @@ import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
 import FontIcon from 'material-ui/FontIcon'
 import Paper from 'material-ui/Paper'
-import Dialog from 'material-ui/Dialog'
 
 import ContextPageNav from '../containers/ContextPageNav'
+import ContextAlertDialog from '../containers/ContextAlertDialog'
 import { grey50, red800 } from 'material-ui/styles/colors';
 import { paperStyle } from '../helper'
 
 const Credential = ({
-  password, google, dialog,
+  password, google, alert,
   onCredAuthIdChanged, onCredPasswordChanged, onCommitAuthIdPassword,
   onDisabledPassword, onSingInWithPassword, onDisconnectGoogle, onConnectGoogle,
   onDialogClose,
 }) => (
   <div>
     <ContextPageNav />
+    <ContextAlertDialog />
     <Paper style={paperStyle} zDepth={1}>
       <h2><FontIcon className="material-icons">settings</FontIcon> ログイン方法</h2>
     </Paper>
@@ -83,24 +84,6 @@ const Credential = ({
         </p>
       }
     </Paper>
-    <Dialog
-      actions={[
-        <RaisedButton
-          label="中止"
-          onTouchTap={onDialogClose}
-        />,
-        <RaisedButton
-          label="実行"
-          primary={true}
-          onTouchTap={dialog.action}
-        />
-      ]}
-      modal={false}
-      open={dialog.open}
-      onRequestClose={onDialogClose}
-    >
-      {dialog.message}
-    </Dialog>
   </div>
 )
 

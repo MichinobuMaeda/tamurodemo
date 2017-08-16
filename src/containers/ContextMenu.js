@@ -6,10 +6,13 @@
 
 import { connect } from 'react-redux'
 
-import {
-  setPage, doSingOut, setPrivilege, backPage,
-  showLogs, showSessions, resetPage, resetUsers, showProviders
-} from '../actions'
+import { setPage, backPage } from '../actions/view'
+import { doSingOut, onPrivilegeSelected } from '../actions/auth'
+import { editNewGroup, editGroup } from '../actions/groups'
+import { editNewUser, editUser } from '../actions/users'
+import { showLogs } from '../actions/logs'
+import { showSessions } from '../actions/sessions'
+import { showCredentials } from '../actions/creds'
 import Menu from '../components/Menu'
 import { PRIV, PAGE } from '../constants'
 
@@ -26,7 +29,7 @@ const mapDispatchToProps = dispatch => {
   return {
     onHomePageSelected: () => dispatch(setPage(PAGE.TOP)),
     onHelpPageSelected: () => dispatch(setPage(PAGE.HELP)),
-    onProviderPageSelected: (uid) => () => dispatch(showProviders(uid)),
+    onProviderPageSelected: (uid) => () => dispatch(showCredentials(uid)),
     onHelpPageClosed: () => dispatch(backPage()),
     onSignOut: () => dispatch(doSingOut()),
     onPrivManagerSelected: (event) => onPrivilegeSelected(dispatch, PRIV.MANAGER),
@@ -34,13 +37,11 @@ const mapDispatchToProps = dispatch => {
     onPrivUserSelected: (event) => onPrivilegeSelected(dispatch, PRIV.USER),
     onLogsSelected: (event) => dispatch(showLogs),
     onSessionsSelected: (event) => dispatch(showSessions),
+    onAddGroup: (gid) => () => dispatch(editNewGroup(gid)),
+    onEditGroup: (gid) => () => dispatch(editGroup(gid)),
+    onAddUser: (gid) => () => dispatch(editNewUser(gid)),
+    onEditUser: (uid) => () => dispatch(editUser(uid)),
   }
-}
-
-const onPrivilegeSelected = (dispatch, priv) => {
-  dispatch(resetPage())
-  dispatch(resetUsers())
-  dispatch(setPrivilege(priv))
 }
 
 const ContextMenu = connect(
