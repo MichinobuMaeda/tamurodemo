@@ -4,13 +4,8 @@ The address book API for closed communities
 
 ## Status
 
-alpha
-
-## TODO
-
- * Signin with Facebook, Google, etc.
- * Control read privilege for users profiles.
+beta
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

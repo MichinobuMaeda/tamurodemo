@@ -1,37 +1,36 @@
 {
   "name": "tamuro.api",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "mongo-start": "mongod --fork --dbpath tmp/db --logpath tmp/db/mongod.log",
-    "mongo-stop": "mongo admin --eval \"db.shutdownServer();\"",
-    "mongo-clean": "mongo tamuro_api --eval \"db.users.remove({}); db.groups.remove({}); db.prims.remove({}); db.creds.remove({}); db.sessions.remove({}); db.logs.remove({});\"",
     "forever-start": "forever start --append --uid \"tamuro.api.test\" lib",
     "forever-stop": "forever stop \"tamuro.api.test\"",
-    "build": "babel src --out-dir lib --ignore *.test.js --source-maps",
-    "test": "npm run build; npm run mongo-start; jest --coverage; npm run mongo-stop",
-    "start": "npm run build; npm run mongo-start; npm run forever-start",
-    "stop": "npm run forever-stop; npm run mongo-stop"
+    "build": "babel src --out-dir lib --ignore __tests__ --source-maps",
+    "test": "npm run build; jest --coverage --no-cache --runInBand",
+    "start": "npm run build; npm run forever-start",
+    "stop": "npm run forever-stop",
+    "setup": "npm run build; node lib/setup.js"
   },
   "author": "Michinobu Maeda",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-jest": "^20.0.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
-    "cookie": "^0.3.1",
     "eslint": "^4.2.0",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "superagent": "^3.6.0",
+    "superagent-prefix": "^0.0.2"
   },
   "dependencies": {
-    "bunyan": "^1.8.10",
-    "google-auth-library": "^0.10.0",
+    "continuation-local-storage": "^3.2.0",
+    "google-auth-library": "^0.11.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
-    "koa-router": "^7.2.1",
-    "mongodb": "^2.2.30",
+    "pg": "^7.1.2",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.5.0",
     "shortid": "^2.2.8"
   }
 }
