@@ -5,33 +5,44 @@
  */
 
 import React from 'react'
-import { List, ListItem } from 'material-ui/List'
-import FontIcon from 'material-ui/FontIcon'
+import PropTypes from 'prop-types'
 import Paper from 'material-ui/Paper'
-import { teal600 } from 'material-ui/styles/colors'
+import {List, ListItem} from 'material-ui/List'
+import ActionHome from 'material-ui/svg-icons/action/home'
+import SocialGroup from 'material-ui/svg-icons/social/group'
 
-import ContextPageNav from '../containers/ContextPageNav'
-import { sortedGroups, paperStyle, populateGids } from '../helper'
+import {PAPER_STYLE, ICONS, ICON_STYLE_H1} from '../constants'
+import ActionIcon from './ActionIcon'
 
-const Top = ({ prim, group, groups, onGroupSelected }) => (
+const Top = ({status, onClickTitleEdit, onClickGroup}) => (
   <div>
-    <ContextPageNav />
-    <Paper style={paperStyle} zDepth={1}>
-      { group && group.desc && group.desc.split(/\n|\r/).map(line => <p>{ line }</p>) }
+    <Paper
+      style={PAPER_STYLE}
+      zDepth={1}
+    >
+      <div style={{float: 'right'}}>{
+        status.editMode && status.session && status.session.isAdmin &&
+        <ActionIcon
+          iconName={ICONS.EDIT}
+          onTouchTap={onClickTitleEdit}
+        />
+      }</div>
+      <h1><ActionHome style={ICON_STYLE_H1} /> {status.title.val}</h1>
     </Paper>
     <List>
-      {
-        group && sortedGroups(prim, populateGids(group.gids, groups)).map(g =>
-        <ListItem
-          primaryText={g.name}
-          leftIcon={
-            <FontIcon className="material-icons" color={teal600}>group</FontIcon>
-          }
-          onTouchTap={onGroupSelected(g._id)}
-        />)
-      }
+      <ListItem
+        primaryText={status.top.name}
+        leftIcon={<SocialGroup />}
+        onClick={onClickGroup(status.top._id)}
+      />
     </List>
   </div>
 )
 
-export default Top;
+Top.propTypes = {
+  status: PropTypes.object,
+  onClickTitleEdit: PropTypes.func,
+  onClickGroup: PropTypes.func,
+}
+
+export default Top

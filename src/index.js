@@ -5,32 +5,28 @@
  */
 
 import React from 'react'
-import { render } from 'react-dom'
-import { createStore, applyMiddleware } from 'redux'
-import { Provider } from 'react-redux'
+import {render} from 'react-dom'
+import {createStore, applyMiddleware} from 'redux'
+import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 
 import reducers from './reducers'
-import { apiGetStatus } from './actions/apis'
-import { setStatus } from './actions/auth'
-import { initGoogleApi } from './actions/google'
-import { resetWait } from './actions/view'
-import ContextApp from './containers/ContextApp'
+import AppContainer from './containers/AppContainer'
+import {init} from './actions/status'
+import {setScrollTop} from './actions/status'
 
 let store = createStore(
   reducers,
   applyMiddleware(thunk),
 )
 
-render(
+window.addEventListener('scroll', () => store.dispatch(
+  setScrollTop(document.documentElement.scrollTop)
+))
+
+init(store).then(() => render(
   <Provider store={store}>
-    <ContextApp />
+    <AppContainer />
   </Provider>,
   document.getElementById('root')
-)
-
-initGoogleApi()
-
-apiGetStatus()
-.then(json => setStatus(store.dispatch, json))
-.then(() => store.dispatch(resetWait()))
+))

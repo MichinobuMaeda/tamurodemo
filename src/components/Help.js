@@ -5,18 +5,38 @@
  */
 
 import React from 'react'
+import PropTypes from 'prop-types'
+import Paper from 'material-ui/Paper'
+import ReactMarkdown from 'react-markdown'
 
-import HelpGuest from './HelpGuest'
-import HelpMember from './HelpMember'
+import {PAPER_STYLE, ICONS} from '../constants'
+import ActionIcon from './ActionIcon'
 
-const Help = ({prim}) => (
+const Help = ({helps, status, onClickHelpEditor}) => (
   <div>
     {
-      !prim
-        ? <HelpGuest />
-        : <HelpMember />
+      helps.map(h => (
+        <Paper style={PAPER_STYLE} zDepth={1} key={h.pid}>
+          <div style={{float: 'right'}}>{
+            status.editMode && status.session && status.session.isAdmin &&
+              <ActionIcon
+                iconName={ICONS.EDIT}
+                edited={h.edited} 
+                onTouchTap={onClickHelpEditor(h.pid)}
+              />
+          }</div>
+          <ReactMarkdown source={h.val}/>
+        </Paper>
+      ))
     }
   </div>
 )
 
-export default Help;
+Help.propTypes = {
+  helps: PropTypes.array,
+  status: PropTypes.object,
+  onClickHelpEditor: PropTypes.func,
+  onPageBack: PropTypes.func,
+}
+
+export default Help

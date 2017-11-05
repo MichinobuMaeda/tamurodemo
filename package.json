@@ -1,38 +1,37 @@
 {
   "name": "tamuro.ui",
   "version": "0.1.0",
-  "description": "",
-  "author": "Michinobu Maeda",
-  "license": "MIT",
-  "scripts": {
-    "api-start": "cd ../tamuro.api; npm run start",
-    "api-setup": "node test/setup.js",
-    "api-stop": "cd ../tamuro.api; npm run stop",
-    "api-demo": "mongo test/postData.js; node test/touch.js",
-    "api-start-demo": "npm run api-start; npm run api-demo; npm run build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
+  "private": true,
   "dependencies": {
-    "material-ui": "^0.18.6",
-    "moment": "^2.18.1",
-    "prop-types": "^15.5.10",
+    "material-ui": "^0.19.2",
+    "prop-types": "^15.6.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-redux": "^5.0.5",
-    "react-scripts": "1.0.10",
-    "react-scroll": "^1.5.4",
+    "react-markdown": "^2.5.0",
+    "react-redux": "^5.0.6",
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
-    "mongodb": "^2.2.30",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1",
-    "shortid": "^2.2.8"
+    "babel-jest": "^21.2.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "eslint": "^4.8.0",
+    "eslint-plugin-react": "^7.4.0",
+    "jest": "^21.2.1",
+    "react-scripts": "1.0.13"
+  },
+  "scripts": {
+    "api-start": "cd ../tamuro.api; npm run start",
+    "api-setup": "export NODE_ENV=development; cd ../tamuro.api; npm run setup",
+    "api-stop": "cd ../tamuro.api; npm run stop",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "jest": "jest --coverage --no-cache --runInBand"
   },
   "proxy": "http://localhost:3001"
 }

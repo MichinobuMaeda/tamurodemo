@@ -5,28 +5,56 @@
  */
 
 import React from 'react'
-
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon'
+import PropTypes from 'prop-types'
 import Paper from 'material-ui/Paper'
+import ActionAssignment from 'material-ui/svg-icons/action/assignment'
 
-import ContextPageNav from '../containers/ContextPageNav'
-import { paperStyle } from '../helper'
+import {PAPER_STYLE, ICON_STYLE_H1, ICONS} from '../constants'
+import {STR} from '../preferences'
+import ConfirmDialogContainer from '../containers/ConfirmDialogContainer'
+import ActionIcon from './ActionIcon'
 
-const Sessions = ({ sessions, onRefreshSessions }) => (
+const Sessions = ({sessions, onClickUpdate, onClickHistory, onClickDelete}) =>
   <div>
-    <ContextPageNav />
-    <Paper style={paperStyle} zDepth={1}>
-      <IconButton
-        onTouchTap={onRefreshSessions}
-        style={{ float: "right" }}
-      >
-        <FontIcon className="material-icons">refresh</FontIcon>
-      </IconButton>
-      <h2><FontIcon className="material-icons">search</FontIcon> セッション</h2>
+    <div style={{float: 'right'}} >
+      <ActionIcon
+        iconName={ICONS.UPDATE}
+        onTouchTap={onClickUpdate}
+      />
+    </div>
+    <Paper
+      style={PAPER_STYLE} zDepth={1}>
+      <h1><ActionAssignment style={ICON_STYLE_H1} /> {STR.SESSIONS}</h1>
     </Paper>
-    <pre style={{ margin: "8px" }}>{ JSON.stringify(sessions, null, 4) }</pre>
+    {
+      sessions && sessions.map(sess =>
+        <div key={sess._id} style={{clear: 'both'}}>
+          <div style={{float: 'left'}} >
+            <ActionIcon
+              iconName={ICONS.DELETE}
+              onTouchTap={onClickDelete(sess._id)}
+            />
+          </div>
+          <pre style={{marginLeft: 48}}>
+            {JSON.stringify(sess, null, 2)}
+          </pre>
+        </div>
+      )
+    }
+    <div style={{float: 'right'}} >
+      <ActionIcon
+        iconName={ICONS.HISTORY}
+        onTouchTap={onClickHistory}
+      />
+    </div>
+    <ConfirmDialogContainer />
   </div>
-)
 
-export default Sessions;
+Sessions.propTypes = {
+  sessions: PropTypes.array,
+  onClickUpdate: PropTypes.func,
+  onClickHistory: PropTypes.func,
+  onClickDelete: PropTypes.func,
+}
+
+export default Sessions

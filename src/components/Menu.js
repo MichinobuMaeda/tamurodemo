@@ -5,161 +5,215 @@
  */
 
 import React from 'react'
-
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon'
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
+import PropTypes from 'prop-types'
+import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar'
+import IconButton from 'material-ui/IconButton'
+import IconMenu from 'material-ui/IconMenu'
+import MenuItem from 'material-ui/MenuItem'
 import Divider from 'material-ui/Divider'
+import {teal600} from 'material-ui/styles/colors'
+import ActionAccountBox from 'material-ui/svg-icons/action/account-box'
+import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle'
+import ActionAssignment from 'material-ui/svg-icons/action/assignment'
+import ActionBuild from 'material-ui/svg-icons/action/build'
+import ActionList from 'material-ui/svg-icons/action/list'
+import ActionPowerSettingsNew from 'material-ui/svg-icons/action/power-settings-new'
+import ActionSupervisorAccount from 'material-ui/svg-icons/action/supervisor-account'
+import ActionVerifiedUser from 'material-ui/svg-icons/action/verified-user'
+import SocialPersonOutline from 'material-ui/svg-icons/social/person-outline'
 
-import { PRIV, PAGE } from '../constants'
-import { nameOfPrivilege, getCurrentPage } from '../helper'
+import {
+  PAGE, ICON_STYLE, ICON_BUTTON_STYLE, ICONS
+} from '../constants'
+import {STR, BG_COLOR} from '../preferences'
+import {isBackPage, isForwardPage, currentPage} from '../actions/pages'
+import ActionIcon from './ActionIcon'
+
+const isTopPage = pages => -1 < [
+  PAGE.TOP, PAGE.GOODBYE, PAGE.GUEST, PAGE.WELCOME,
+].indexOf(currentPage(pages).name)
 
 const Menu = ({
-  title, prim, sess, page,
-  onHomePageSelected, onHelpPageSelected, onSignOut, onHelpPageClosed,
-  onPrivManagerSelected, onPrivAdminSelected, onPrivUserSelected,
-  onLogsSelected, onSessionsSelected, onProviderPageSelected,
-  onAddGroup, onEditGroup, onAddUser, onEditUser
+  status, pages, editable, removable, traversable, atEditorPage,
+  onClickHome, onClickPageBack, onClickPageForward, onClickHelp,
+  onClickSignInMethod, onClickProfile, onClickEditMode, onClickDelete,
+  onClickRevokeManager, onClickRevokeAdmin,
+  onClickSignOut, onClickInvitees, onClickSessions, onClickLogs, onClickDebug
 }) => (
-  <div>
-    <AppBar
-      title={title}
-      iconElementLeft={
-        <IconButton
-          onTouchTap={onHomePageSelected}
+  <Toolbar
+    style={{
+      background: teal600,
+      position: 'fixed',
+      width: '100%',
+      maxWidth: 1024,
+      top: status.scroll.menuOffset,
+    }}
+  >
+    <ToolbarGroup firstChild={true}>
+      <ActionIcon
+        iconName={ICONS.HOME}
+        onTouchTap={!isTopPage(pages) && !atEditorPage && onClickHome}
+        disabled={atEditorPage}
+        reverse={!isTopPage(pages)}
+      />
+      {
+        editable &&
+        <ActionIcon
+          iconName={ICONS.EDIT}
+          onTouchTap={onClickEditMode(!status.editMode)}
+          reverse={!status.editMode}
+        />
+      }
+      {
+        status.editMode && removable &&
+        <ActionIcon
+          iconName={ICONS.DELETE}
+          onTouchTap={onClickDelete(currentPage(pages))}
+          reverse={true}
+        />
+      }
+    </ToolbarGroup>
+    <ToolbarGroup lastChild={true}>
+      {
+        process.env.NODE_ENV === 'development' &&
+        <ActionIcon
+          iconName={ICONS.DEBUG}
+          onTouchTap={currentPage(pages).name === PAGE.DEBUG ? onClickPageBack : onClickDebug}
+          reverse={currentPage(pages).name !== PAGE.DEBUG}
+        />
+      }
+      <ActionIcon
+        iconName={ICONS.GO_BACK}
+        onTouchTap={isBackPage(pages) && traversable && onClickPageBack}
+        disabled={!isBackPage(pages) || !traversable}
+        reverse={true}
+      />
+      <ActionIcon
+        iconName={ICONS.GO_FORWARD}
+        onTouchTap={isForwardPage(pages) && traversable && onClickPageForward}
+        disabled={!isForwardPage(pages) || !traversable}
+        reverse={true}
+      />
+      <ActionIcon
+        iconName={ICONS.HELP}
+        onTouchTap={
+          !atEditorPage && (
+            currentPage(pages).name === PAGE.HELP ? onClickPageBack : onClickHelp
+          )
+        }
+        disabled={atEditorPage}
+        reverse={currentPage(pages).name !== PAGE.HELP}
+      />
+      {
+        status.session && status.session.uid &&
+        <IconMenu
+          iconButtonElement={
+            <IconButton
+              iconStyle={ICON_STYLE}
+              style={ICON_BUTTON_STYLE}
+            >
+              <ActionAccountBox color={BG_COLOR} />
+            </IconButton>
+          }
+          targetOrigin={{horizontal: 'right', vertical: 'top'}}
+          anchorOrigin={{horizontal: 'right', vertical: 'top'}}
         >
-          <FontIcon className="material-icons">home</FontIcon>
-        </IconButton>
+          {
+            <MenuItem
+              leftIcon={<ActionVerifiedUser />}
+              primaryText={STR.SIGN_IN_METHOD}
+              onTouchTap={!atEditorPage && onClickSignInMethod(status.session.uid)}
+              disabled={atEditorPage}
+            />
+          }
+          {
+            <MenuItem
+              leftIcon={<ActionAccountCircle />}
+              primaryText={STR.PROFILE}
+              onTouchTap={!atEditorPage && onClickProfile(status.session.uid)}
+              disabled={atEditorPage}
+            />
+          }
+          {
+            status.session && status.session.isManager && 
+            <MenuItem
+              leftIcon={<ActionSupervisorAccount />}
+              primaryText={STR.REVOKE_MANGER}
+              onTouchTap={onClickRevokeManager}
+            />
+          }
+          {
+            status.session && status.session.isAdmin &&
+            <MenuItem
+              leftIcon={<ActionBuild />}
+              primaryText={STR.REVOKE_ADMIN}
+              onTouchTap={onClickRevokeAdmin}
+            />
+          }
+          {
+            status.session && status.session.uid && 
+            <MenuItem
+              leftIcon={<ActionPowerSettingsNew />}
+              primaryText={STR.SIGN_OUT}
+              onTouchTap={onClickSignOut}
+            />
+          }
+          {
+            status.session && status.session.isAdmin &&
+            <Divider />
+          }
+          {
+            status.session && status.session.isAdmin &&
+            <MenuItem
+              leftIcon={<SocialPersonOutline />}
+              primaryText={STR.INVITEE}
+              onTouchTap={onClickInvitees}
+            />
+          }
+          {
+            status.session && status.session.isAdmin &&
+            <MenuItem
+              leftIcon={<ActionAssignment />}
+              primaryText={STR.SESSIONS}
+              onTouchTap={onClickSessions}
+            />
+          }
+          {
+            status.session && status.session.isAdmin &&
+            <MenuItem
+              leftIcon={<ActionList />}
+              primaryText={STR.LOGS}
+              onTouchTap={onClickLogs}
+            />
+          }
+        </IconMenu>
       }
-      iconElementRight={
-        prim
-          ? getCurrentPage(page).name === PAGE.HELP
-            ? <IconButton
-                onTouchTap={onHelpPageClosed}
-              >
-                <FontIcon className="material-icons">highlight_off</FontIcon>
-              </IconButton>
-            : <IconMenu
-                iconButtonElement={
-                  <IconButton>
-                    <FontIcon className="material-icons">menu</FontIcon>
-                  </IconButton>
-                }
-                targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-              >
-                <MenuItem
-                  primaryText="ヘルプ"
-                  onTouchTap={onHelpPageSelected}
-                />
-                <MenuItem
-                  primaryText="ログアウト"
-                  onTouchTap={onSignOut}
-                />
-                <MenuItem
-                  primaryText="ログイン方法"
-                  onTouchTap={onProviderPageSelected(sess.uid)}
-                />
-                <Divider />
-                {
-                  sess.manager &&
-                  <MenuItem
-                    primaryText={nameOfPrivilege[PRIV.MANAGER]}
-                    onTouchTap={onPrivManagerSelected}
-                    disabled={sess.priv === PRIV.MANAGER}
-                  />
-                }
-                {
-                  sess.admin &&
-                  <MenuItem
-                    primaryText={nameOfPrivilege[PRIV.ADMIN]}
-                    onTouchTap={onPrivAdminSelected}
-                    disabled={sess.priv === PRIV.ADMIN}
-                  />
-                }
-                {
-                  (sess.manager || sess.admin) &&
-                  <MenuItem
-                    primaryText={nameOfPrivilege[PRIV.USER]}
-                    onTouchTap={onPrivUserSelected}
-                    disabled={sess.priv === PRIV.USER}
-                  />
-                }
-                <Divider />
-                {
-                  (
-                    getCurrentPage(page).name === PAGE.GROUP ||
-                    getCurrentPage(page).name === PAGE.TOP
-                  ) && 
-                  sess.manager && sess.priv === PRIV.MANAGER &&
-                  <MenuItem
-                    primaryText={"編集"}
-                    onTouchTap={onEditGroup(getCurrentPage(page).id)}
-                  />
-                }
-                {
-                  getCurrentPage(page).name === PAGE.USER &&
-                  (
-                    (sess.manager && sess.priv === PRIV.MANAGER) ||
-                    sess.uid === getCurrentPage(page).id
-                  ) &&
-                  <MenuItem
-                    primaryText={"編集"}
-                    onTouchTap={onEditUser(getCurrentPage(page).id)}
-                  />
-                }
-                {
-                  (
-                    getCurrentPage(page).name === PAGE.GROUP ||
-                    getCurrentPage(page).name === PAGE.TOP
-                  ) &&
-                  sess.manager && sess.priv === PRIV.MANAGER &&
-                  <MenuItem
-                    primaryText={"グループ追加"}
-                    onTouchTap={onAddGroup(getCurrentPage(page).id)}
-                  />
-                }
-                {
-                  (
-                    getCurrentPage(page).name === PAGE.GROUP
-                  ) &&
-                  sess.manager && sess.priv === PRIV.MANAGER &&
-                  <MenuItem
-                    primaryText={"ユーザー追加"}
-                    onTouchTap={onAddUser(getCurrentPage(page).id)}
-                  />
-                }
-                {
-                  sess.admin && sess.priv === PRIV.ADMIN &&
-                  <MenuItem
-                    primaryText={"ログ"}
-                    onTouchTap={onLogsSelected}
-                  />
-                }
-                {
-                  sess.admin && sess.priv === PRIV.ADMIN &&
-                  <MenuItem
-                    primaryText={"セッション"}
-                    onTouchTap={onSessionsSelected}
-                  />
-                }
-              </IconMenu>
-          : getCurrentPage(page).name === PAGE.HELP
-            ? <IconButton
-                onTouchTap={onHelpPageClosed}
-              >
-                <FontIcon className="material-icons">highlight_off</FontIcon>
-              </IconButton>
-            : <IconButton
-                onTouchTap={onHelpPageSelected}
-              >
-                <FontIcon className="material-icons">help</FontIcon>
-              </IconButton>
-      }
-    />
-  </div>
+    </ToolbarGroup>
+  </Toolbar>
 )
 
-export default Menu;
+Menu.propTypes = {
+  status: PropTypes.object,
+  pages: PropTypes.object,
+  editable: PropTypes.bool,
+  removable: PropTypes.bool,
+  atEditorPage: PropTypes.bool,
+  traversable: PropTypes.bool,
+  onClickHome: PropTypes.func,
+  onClickPageBack: PropTypes.func,
+  onClickPageForward: PropTypes.func,
+  onClickHelp: PropTypes.func,
+  onClickSignInMethod: PropTypes.func,
+  onClickProfile: PropTypes.func,
+  onClickEditMode: PropTypes.func,
+  onClickDelete: PropTypes.func,
+  onClickRevokeManager: PropTypes.func,
+  onClickRevokeAdmin: PropTypes.func, 
+  onClickSignOut: PropTypes.func,
+  onClickInvitees: PropTypes.func,
+  onClickSessions: PropTypes.func,
+  onClickLogs: PropTypes.func,
+  onClickDebug: PropTypes.func,
+}
+
+export default Menu

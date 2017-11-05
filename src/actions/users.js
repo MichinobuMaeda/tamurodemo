@@ -4,168 +4,312 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { A, PAGE, ERR } from '../constants'
+import {A, PAGE, PROVIDER, NEW_USER_ID} from '../constants'
+import {STR} from '../preferences'
 import {
-  apiPostGroupsUser, apiPutUser, apiDeleteUser, apiPutGroup
-} from './apis'
-import { setWait, resetWait, setPage, backPage } from './view'
-import { syncGroups } from './groups'
-import { showError } from './error'
-import { findOneById, isEditedUser, getOriginalUser } from '../helper'
+  getGroup, setOwners, setMembers, deleteUserCert,
+  getUsers, getUser, deleteUser, createMember, updateUser,
+  createUserCert, updateUserCert, deleteMySession
+} from './api'
+import {setEditMode, resetContent} from './status'
+import {setPage, backPage, currentPage} from './pages'
+import {CONFIRM_ACTION, setConfirmation} from './confirmation'
+import {gotoErrorPage} from './errors'
+import {
+  addGroupListOwner, addGroupListMember,
+  removeGroupListOwner, removeGroupListMember,
+  setGroupListOwner, setGroupListMember,
+  gotoGroup, selectGroup,
+} from './groups'
 
-export const setUser = (user) => ({
+export const setUsers = users => ({
+  type: A.SET_USERS,
+  users,
+})
+
+export const setUser = user => ({
   type: A.SET_USER,
   user,
 })
 
-export const removeUser = (uid) => ({
-  type: A.DELETE_USER,
+export const setUserName = (uid, name) => ({
+  type: A.SET_USER_NAME,
   uid,
+  name,
 })
 
-export const setUsers = (users) => ({
-  type: A.SET_USERS,
-  users,
+export const setUserDesc = (uid, desc) => ({
+  type: A.SET_USER_DESC,
+  uid,
+  desc,
+})
+
+export const setUserListGroup = (uid, groups) => ({
+  type: A.SET_USER_LIST_GROUP,
+  uid,
+  groups,
+})
+
+export const addUserListGroup = (uid, group) => ({
+  type: A.ADD_USER_LIST_GROUP,
+  uid,
+  group,
+})
+
+export const removeUserListGroup = (uid, group) => ({
+  type: A.REMOVE_USER_LIST_GROUP,
+  uid,
+  group,
+})
+
+export const removeUser = uid => ({
+  type: A.REMOVE_USER,
+  uid,
 })
 
 export const resetUsers = () => ({
   type: A.RESET_USERS,
 })
 
-export const setFormUser = (user) => ({
-  type: A.SET_FORM_USER,
-  user,
-})
-
-export const updateFormUser = (key, value) => ({
-  type: A.UPDATE_FORM_USER,
-  key,
-  value,
-})
-
-export const updateFormUserParent = (uid, checked) => ({
-  type: A.UPDATE_FORM_USER_PARENT,
+export const setCertId = (uid, id) => ({
+  type: A.SET_CERT_ID,
   uid,
-  checked,
+  id,
 })
 
-export const addFormUserProfile = (profile) => ({
-  type: A.ADD_FORM_USER_PROFILE,
-  profile,
+export const setCertPassword = (uid, password) => ({
+  type: A.SET_CERT_PASSWORD,
+  uid,
+  password,
 })
 
-export const updateFormUserProfileField = (index, key, v) => ({
-  type: A.UPDATE_FORM_USER_PROFILE_FIELD,
-  index,
-  key,
-  v,
+export const setCertConfirm = (uid, confirm) => ({
+  type: A.SET_CERT_CONFIRM,
+  uid,
+  confirm,
 })
 
-export const updateFormUserProfilePriv = (index, key, p) => ({
-  type: A.UPDATE_FORM_USER_PROFILE_PRIV,
-  index,
-  key,
-  p,
-})
+export const selectUser = (users, uid) => users.reduce(
+  (ret, cur) => cur._id === uid ? cur : ret, {}
+)
 
-export const deleteFormUserProfile = (index) => ({
-  type: A.DELETE_FORM_USER_PROFILE,
-  index,
-})
+export const selectCert = (certs, provider, initial={}) =>
+  certs.reduce((ret, cur) => cur.provider === provider ? cur : ret, initial)
 
-export const resetFormUser = () => ({
-  type: A.RESET_FORM_USER,
-})
-
-export const editNewUser = gid => async (dispatch, getState) => {
-  dispatch(setWait())
-  await syncGroups(dispatch)
-  let parent = findOneById(getState().groups, gid)
-  if (parent) {
-    dispatch(setFormUser({ parent, name: '', desc: '' }))
-    dispatch(setPage(PAGE.FORM_USER, null))
-  } else {
-    showError(dispatch, [{ path: 'gid', req: ERR.REFERENCE }])
-  }
-  dispatch(resetWait())
-}
-
-export const editUser = uid => async (dispatch, getState) => {
-  dispatch(setWait())
-  await syncGroups(dispatch)
-  let user = getOriginalUser(getState().users, getState().groups, uid)
-  if (user._id) {
-    dispatch(setFormUser(user))
-    dispatch(setPage(PAGE.FORM_USER, user._id))
-  } else {
-    showError(dispatch, [{ path: 'uid', req: ERR.REFERENCE }])
-  }
-  dispatch(resetWait())
-}
-
-export const commitEditedUser = async (dispatch, getState) => {
-  dispatch(setWait())
-  let edited = getState().editedUser
-  edited.parent
-    ? commitAddUser(dispatch, getState, edited)
-    : commitUpdateUser(dispatch, getState, getOriginalUser(getState().users, getState().groups, edited._id), edited)
-  dispatch(resetWait())
-}
-
-export const commitAddUser = async (dispatch, getState, edited) => {
-  let res = await apiPostGroupsUser(edited.parent._id, edited)
+export const gotoUser = uid => async dispatch => {
+  const res = await getUser(uid)
   if (res.errors) {
-    showError(dispatch, res.errors)
+    dispatch(gotoErrorPage(res.errors))
   } else {
-    await syncGroups(dispatch)
     dispatch(setUser(res))
-    dispatch(setPage(PAGE.USER, res._id))
+    dispatch(setPage(PAGE.USER, uid))
   }
 }
 
-export const commitUpdateUser = async (dispatch, getState, user, edited) => {
-  if (isEditedUser(user, edited)) {
-    let res = await apiPutUser(edited)
-    if (res.errors) {
-      showError(dispatch, res.errors)
-      return
+export const editNewUser = group => dispatch => {
+  dispatch(setUser({
+    _id: NEW_USER_ID,
+    name: '',
+    desc: '',
+    profiles: [],
+    groups: [group],
+    ownedGroups: [],
+    signin: [],
+  }))
+  dispatch(setPage(PAGE.USER_EDITOR, NEW_USER_ID))
+}
+
+export const commitEditedUser = uid => async (dispatch, getState) => {
+  const user = selectUser(getState().users, uid)
+  const res = uid === NEW_USER_ID
+    ? await createMember(user.groups[0]._id, user)
+    : await updateUser(user)
+  if (res.errors) {
+    dispatch(gotoErrorPage(res.errors))
+  } else {
+    dispatch(setEditMode(false))
+    dispatch(backPage(true))
+    if (uid === NEW_USER_ID) {
+      dispatch(removeUser(NEW_USER_ID))
+      await dispatch(gotoGroup(user.groups[0]._id))
     } else {
       dispatch(setUser(res))
+      dispatch(setPage(PAGE.USER, res._id))
     }
   }
-  await Promise.all(
-    edited.parents.filter(gid => 0 > user.parents.indexOf(gid))
-    .map(gid => {
-      let parent = findOneById(getState().groups, gid, {})
-      return apiPutGroup({ ...parent, uids: parent.uids.concat(edited._id) })
-    })
-  )
-  await Promise.all(
-    user.parents.filter(gid => 0 > edited.parents.indexOf(gid))
-    .map(gid => {
-      let parent = findOneById(getState().groups, gid, {})
-      return apiPutGroup({ ...parent, uids: parent.uids.filter(uid => uid !== edited._id) })
-    })
-  )
-  await syncGroups(dispatch)
-  dispatch(backPage())
 }
 
-export const cancelEditUser = dispatch => {
-  dispatch(resetFormUser())
+export const discardEditedUser = uid => async (dispatch, getState) => {
+  dispatch(setEditMode(false))
+  const user = selectUser(getState().users, uid)
   dispatch(backPage(true))
+  if (uid === NEW_USER_ID) {
+    dispatch(removeUser(NEW_USER_ID))
+  } else if (user.edited) {
+    await dispatch(gotoUser(uid))
+  }
 }
 
-export const commitRemoveUser = async (dispatch, getState) => {
-  dispatch(setWait())
-  let user = getState().editedUser
-  let res = await apiDeleteUser(user)
-  if (res.errors) {
-    showError(dispatch, res.errors)
-  } else {
-    await syncGroups(dispatch)
-    dispatch(removeUser(user._id))
-    dispatch(setPage(PAGE.TOP))
+export const gotoUserListEditor = (page) => async dispatch => {
+  dispatch(setUsers(await getUsers()))
+  dispatch(setPage(page.name, page.id))
+}
+
+export const toggleUserList = (page, user, checked) => dispatch => {
+  switch (page.name) {
+  case PAGE.GROUP_EDITOR_OWNER:
+    checked
+      ? dispatch(addGroupListOwner(page.id, user))
+      : dispatch(removeGroupListOwner(page.id, user))
+    break
+  case PAGE.GROUP_EDITOR_MEMBER:
+    checked
+      ? dispatch(addGroupListMember(page.id, user))
+      : dispatch(removeGroupListMember(page.id, user))
+    break
+  default:
+    break
   }
-  dispatch(resetWait())
+}
+
+export const commitUserList = page => async (dispatch, getState) => {
+  const group = selectGroup(getState().groups, page.id)
+  switch (page.name) {
+  case PAGE.GROUP_EDITOR_OWNER: {
+    const res = await setOwners(group)
+    if (res.errors) {
+      dispatch(gotoErrorPage(res.errors))
+    } else {
+      dispatch(setGroupListOwner(page.id, res.owners))
+      await dispatch(resetContent())
+      await dispatch(gotoGroup(page.id))
+    }
+    break
+  }
+  case PAGE.GROUP_EDITOR_MEMBER: {
+    const res = await setMembers(group)
+    if (res.errors) {
+      dispatch(gotoErrorPage(res.errors))
+    } else {
+      dispatch(setGroupListMember(page.id, res.users))
+      await dispatch(resetContent())
+      await dispatch(gotoGroup(page.id))
+    }
+    break
+  }
+  default:
+    break
+  }
+}
+
+export const discardUserList = page => async dispatch => {
+  dispatch(setEditMode(false))
+  const res = await getGroup(page.id)
+  if (res.errors) {
+    dispatch(backPage(true))
+    dispatch(gotoErrorPage(res.errors))
+  } else {
+    switch (page.name) {
+    case PAGE.GROUP_EDITOR_OWNER: {
+      dispatch(setGroupListOwner(page.id, res.owners))
+      break
+    }
+    case PAGE.GROUP_EDITOR_MEMBER: {
+      dispatch(setGroupListMember(page.id, res.users))
+      break
+    }
+    default:
+      break
+    }
+    dispatch(backPage(true))
+  }
+}
+
+export const confirmDeleteUser = uid => (dispatch, getState) => {
+  const {users} = getState()
+  const user = selectUser(users, uid)
+  dispatch(setConfirmation({
+    open: true,
+    title: user.name,
+    message: STR.CONFIRM_DELETE,
+    action: CONFIRM_ACTION.DELETE_USER,
+    id: uid,
+  }))
+}
+
+export const commitDeleteUser = uid => async (dispatch, getState) => {
+  const {status, users} = getState()
+  const user = selectUser(users, uid)
+  dispatch(setConfirmation({}))
+  dispatch(setEditMode(false))
+  const res = await deleteUser(user)
+  if (res.errors) {
+    dispatch(gotoErrorPage(res.errors))
+  } else {
+    await dispatch(resetContent())
+    await dispatch(gotoGroup(status.top._id))
+  }
+}
+
+export const setProviderPassword = uid => async (dispatch, getState) => {
+  const {users, pages} = getState()
+  const user = users.reduce((ret, cur) => cur._id === uid ? cur : ret, null)
+  let cert = selectCert(user.certs, PROVIDER.PASSWORD, null)
+  let res = cert.ver
+    ? await updateUserCert({...cert, uid})
+    : await createUserCert({...cert, uid})
+  if (res.errors) {
+    dispatch(gotoErrorPage(res.errors))
+  } else if (currentPage(pages).name === PAGE.WELCOME) {
+    await deleteMySession()
+    await dispatch(resetContent())
+  } else {
+    let res = await getUser(uid)
+    if (res.errors) {
+      dispatch(gotoErrorPage(res.errors))
+    } else {
+      dispatch(gotoUser(uid))
+    }
+  }
+}
+
+export const gotoSignInMethod = uid => async dispatch => {
+  const res = await getUser(uid)
+  if (res.errors) {
+    dispatch(gotoErrorPage(res.errors))
+  } else {
+    dispatch(setUser(res))
+    dispatch(setPage(PAGE.USER_CERT_EDITOR, uid))
+  }
+}
+
+export const confirmDeletePassword = uid => (dispatch, getState) => {
+  const {users} = getState()
+  const user = selectUser(users, uid)
+  dispatch(setConfirmation({
+    open: true,
+    title: user.name,
+    message: STR.CONFIRM_DELETE_PASSWORD,
+    action: CONFIRM_ACTION.DELETE_PASSWORD,
+    id: uid,
+  }))
+}
+
+export const commitDeletePassword = uid => async (dispatch, getState) => {
+  const {users} = getState()
+  const user = selectUser(users, uid)
+  const cert = selectCert(user.certs, PROVIDER.PASSWORD)
+  dispatch(setConfirmation({}))
+  dispatch(setEditMode(false))
+  const res = await deleteUserCert(uid, cert)
+  if (res.errors) {
+    dispatch(gotoErrorPage(res.errors))
+  } else {
+    dispatch(gotoUser(uid))
+  }
+}
+
+export const discardEditedUserCert = uid => async dispatch => {
+  dispatch(backPage(true))
+  await dispatch(gotoUser(uid))
 }

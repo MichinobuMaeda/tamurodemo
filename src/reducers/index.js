@@ -4,42 +4,32 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import { combineReducers } from 'redux'
+import {combineReducers} from 'redux'
 
-import title from './title'
-import page from './page'
-import sess from './sess'
-import prim from './prim'
-import password from './password'
-import error from './error'
-import wait from './wait'
+import status from './status'
+import pages from './pages'
 import groups from './groups'
 import users from './users'
-import creds from './creds'
-import editedGroup from './editedGroup'
-import editedUser from './editedUser'
-import logs from './logs'
+import signin from './signin'
+import errors from './errors'
+import helps from './helps'
+import confirmation from './confirmation'
+import invitees from './invitees'
 import sessions from './sessions'
-import alert from './alert'
-import permission from './permission'
+import logs from './logs'
 
 const tamuroApp = combineReducers({
-  title,
-  page,
-  sess,
-  prim,
-  password,
-  error,
-  wait,
+  status,
+  pages,
   groups,
   users,
-  creds,
-  editedGroup,
-  editedUser,
-  logs,
+  signin,
+  errors,
+  helps,
+  confirmation,
+  invitees,
   sessions,
-  alert,
-  permission,
+  logs,
 })
 
 export default tamuroApp

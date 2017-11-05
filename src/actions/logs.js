@@ -4,42 +4,51 @@
  * See LICENSE file in the project root for full license information.  
  */
 
-import Scroll from 'react-scroll'
+import {A, PAGE, ADMIN_GET_LOGS_TIME_SPAN} from '../constants'
+import {setPage, currentPage} from './pages'
+import {gotoErrorPage} from './errors'
+import {getLogs} from './api'
 
-import { A, PAGE } from '../constants'
-import { apiGetLogs } from './apis'
-import { setWait, resetWait, setPage } from './view'
-
-const scroll = Scroll.animateScroll
-
-export const setLogs = (logs) => ({
+export const setLogs = logs => ({
   type: A.SET_LOGS,
   logs,
 })
 
-export const resetLogs = () => ({
-  type: A.RESET_LOGS,
+export const appendLogs = logs => ({
+  type: A.APPEND_LOGS,
+  logs,
 })
 
-export const showLogs = async (dispatch) => {
-  const time = new Date().getTime()
-  dispatch(setWait())
-  let res = await apiGetLogs(time - 60 * 60 * 1000, time)
-  dispatch(setLogs(res))
-  dispatch(setPage(PAGE.LOGS))
-  dispatch(resetWait())
+export const getFromTo = (logs, append)  => {
+  const to = append && logs && logs.length
+    ? new Date(logs[logs.length - 1].createdAt).getTime() + 1000
+    : new Date().getTime()
+  const from = !append && logs && logs.length
+    ? new Date(logs[0].createdAt).getTime() - 1000
+    : to - ADMIN_GET_LOGS_TIME_SPAN
+  return {
+    from: new Date(from).toISOString(),
+    to: new Date(to).toISOString(),
+  }
 }
 
-export const getMoreLogs = async (dispatch, getState) => {
-  const time = getState().logs.f + 1000
-  dispatch(setWait())
-  let res = await apiGetLogs(time - 60 * 61 * 1000, time)
-  dispatch(setLogs(res))
-  dispatch(setPage(PAGE.LOGS))
-  dispatch(resetWait())
-  scroll.scrollToBottom({
-    duration: 0,
-    delay: 0,
-    smooth: false,
-  })
+const updateLogs = append => async (dispatch, getState) => {
+  const {logs, pages} = getState()
+  const res = await getLogs(getFromTo(logs, append))
+  if (res.errors) {
+    dispatch(gotoErrorPage(res.errors))
+  } else {
+    dispatch(append ? appendLogs(res) : setLogs(res))
+    if (currentPage(pages).name !== PAGE.LOGS) {
+      dispatch(setPage(PAGE.LOGS))
+    }
+  }
+}
+
+export const showNewLogs = () => async dispatch => {
+  await dispatch(updateLogs(false))
+}
+
+export const showOldLogs = () => async dispatch => {
+  await dispatch(updateLogs(true))
 }
