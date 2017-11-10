@@ -84,15 +84,15 @@ test('getUser', async () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        p: ['gid001'],
-        item1: {v: 'Item 1', p: ['gid001']},
-        item2: {v: 'Item 2', p: []},
+        tag: 'Profile 1',
+        pids: ['gid001'],
+        item1: {val: 'Item 1', pids: ['gid001']},
+        item2: {val: 'Item 2', pids: []},
       },
       {
-        title: 'Profile 1',
-        p: [],
-        item1: {v: 'Item 1', p: []},
+        tag: 'Profile 1',
+        pids: [],
+        item1: {val: 'Item 1', pids: []},
       },
     ],
   })
@@ -128,8 +128,8 @@ test('getUser', async () => {
       certs: [],
       profiles: [
         {
-          title: 'Profile 1',
-          item1: {v: 'Item 1'},
+          tag: 'Profile 1',
+          item1: {val: 'Item 1'},
         },
       ],
     })
@@ -281,16 +281,16 @@ test('filterUser', () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        p: ['gid001', 'gid002'],
-        item1: {v: 'Item 1', p: ['gid001', 'gid002']},
-        item2: {v: 'Item 2', p: ['gid002']},
-        item3: {v: 'Item 3', p: []},
+        tag: 'Profile 1',
+        pids: ['gid001', 'gid002'],
+        item1: {val: 'Item 1', pids: ['gid001', 'gid002']},
+        item2: {val: 'Item 2', pids: ['gid002']},
+        item3: {val: 'Item 3', pids: []},
       },
       {
-        title: 'Profile 2',
-        p: [],
-        item1: {v: 'item 1', p: []},
+        tag: 'Profile 2',
+        pids: [],
+        item1: {val: 'item 1', pids: []},
       },
     ],
   },
@@ -303,16 +303,16 @@ test('filterUser', () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        p: ['gid001', 'gid002'],
-        item1: {v: 'Item 1', p: ['gid001', 'gid002']},
-        item2: {v: 'Item 2', p: ['gid002']},
-        item3: {v: 'Item 3', p: []},
+        tag: 'Profile 1',
+        pids: ['gid001', 'gid002'],
+        item1: {val: 'Item 1', pids: ['gid001', 'gid002']},
+        item2: {val: 'Item 2', pids: ['gid002']},
+        item3: {val: 'Item 3', pids: []},
       },
       {
-        title: 'Profile 2',
-        p: [],
-        item1: {v: 'item 1', p: []},
+        tag: 'Profile 2',
+        pids: [],
+        item1: {val: 'item 1', pids: []},
       },
     ],
   })
@@ -321,16 +321,16 @@ test('filterUser', () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        p: ['gid001', 'gid002'],
-        item1: {v: 'Item 1', p: ['gid001', 'gid002']},
-        item2: {v: 'Item 2', p: ['gid002']},
-        item3: {v: 'Item 3', p: []},
+        tag: 'Profile 1',
+        pids: ['gid001', 'gid002'],
+        item1: {val: 'Item 1', pids: ['gid001', 'gid002']},
+        item2: {val: 'Item 2', pids: ['gid002']},
+        item3: {val: 'Item 3', pids: []},
       },
       {
-        title: 'Profile 2',
-        p: [],
-        item1: {v: 'item 1', p: []},
+        tag: 'Profile 2',
+        pids: [],
+        item1: {val: 'item 1', pids: []},
       },
     ],
   },
@@ -343,16 +343,16 @@ test('filterUser', () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        p: ['gid001', 'gid002'],
-        item1: {v: 'Item 1', p: ['gid001', 'gid002']},
-        item2: {v: 'Item 2', p: ['gid002']},
-        item3: {v: 'Item 3', p: []},
+        tag: 'Profile 1',
+        pids: ['gid001', 'gid002'],
+        item1: {val: 'Item 1', pids: ['gid001', 'gid002']},
+        item2: {val: 'Item 2', pids: ['gid002']},
+        item3: {val: 'Item 3', pids: []},
       },
       {
-        title: 'Profile 2',
-        p: [],
-        item1: {v: 'item 1', p: []},
+        tag: 'Profile 2',
+        pids: [],
+        item1: {val: 'item 1', pids: []},
       },
     ],
   })
@@ -361,16 +361,16 @@ test('filterUser', () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        p: ['gid001', 'gid002'],
-        item1: {v: 'Item 1', p: ['gid001', 'gid002']},
-        item2: {v: 'Item 2', p: ['gid002']},
-        item3: {v: 'Item 3', p: []},
+        tag: 'Profile 1',
+        pids: ['gid001', 'gid002'],
+        item1: {val: 'Item 1', pids: ['gid001', 'gid002']},
+        item2: {val: 'Item 2', pids: ['gid002']},
+        item3: {val: 'Item 3', pids: []},
       },
       {
-        title: 'Profile 2',
-        p: [],
-        item1: {v: 'item 1', p: []},
+        tag: 'Profile 2',
+        pids: [],
+        item1: {val: 'item 1', pids: []},
       },
     ],
   },
@@ -383,8 +383,8 @@ test('filterUser', () => {
     desc: 'Description 1',
     profiles: [
       {
-        title: 'Profile 1',
-        item1: {v: 'Item 1'},
+        tag: 'Profile 1',
+        item1: {val: 'Item 1'},
       },
     ],
   })

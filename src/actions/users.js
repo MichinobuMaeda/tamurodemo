@@ -72,8 +72,8 @@ export const setGroupsOfUser = async ctx => {
   return getUserWithDepends(user)
 }
 
-const hasPrivilege = (p, gids) =>
-  !p || p.reduce((ret, cur) => gids && -1 < gids.indexOf(cur) || ret, false)
+const hasPrivilege = (pids, gids) =>
+  !pids || pids.reduce((ret, cur) => gids && -1 < gids.indexOf(cur) || ret, false)
 
 export const filterUser = (user, sess) => {
   let {_id, profiles, ...others} = user
@@ -81,13 +81,13 @@ export const filterUser = (user, sess) => {
   return isManager || _id === uid ? user : {
     _id,
     profiles: profiles
-      .filter(prof => hasPrivilege(prof.p, gids))
+      .filter(prof => hasPrivilege(prof.pids, gids))
       .map(prof => ({
-        title: prof.title,
+        tag: prof.tag,
         ...(
           Object.keys(prof)
-            .filter(key => key !== 'title' && key !== 'p' && hasPrivilege(prof[key].p, gids))
-            .reduce((ret, cur) => {ret[cur] = {v: prof[cur].v}; return ret}, {})
+            .filter(key => 0 > ['tag', 'pids'].indexOf(key) && hasPrivilege(prof[key].pids, gids))
+            .reduce((ret, cur) => {ret[cur] = {val: prof[cur].val}; return ret}, {})
         )
       })),
     ...others,
