@@ -37,7 +37,7 @@ export const updateUser = async ctx => {
   let [hit, updated] = await User.update({
     name, desc, profiles, ver: ver + 1
   }, {
-    fields: ['name', 'role', 'desc', 'ver'],
+    fields: ['name', 'desc', 'profiles', 'ver'],
     where: {_id: uid, ver},
     returning: true,
   })

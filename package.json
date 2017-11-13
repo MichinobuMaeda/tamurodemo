@@ -8,6 +8,7 @@
     "forever-stop": "forever stop \"tamuro.api.test\"",
     "build": "babel src --out-dir lib --ignore __tests__ --source-maps",
     "test": "npm run build; jest --coverage --no-cache --runInBand",
+    "test-start": "export NODE_ENV=development; npm run build; npm run forever-start; npm run setup",
     "start": "npm run build; npm run forever-start",
     "stop": "npm run forever-stop",
     "setup": "npm run build; node lib/setup.js"
