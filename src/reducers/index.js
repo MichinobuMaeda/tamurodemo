@@ -14,6 +14,7 @@ import signin from './signin'
 import errors from './errors'
 import helps from './helps'
 import confirmation from './confirmation'
+import profileSelection from './profileSelection'
 import invitees from './invitees'
 import sessions from './sessions'
 import logs from './logs'
@@ -27,6 +28,7 @@ const tamuroApp = combineReducers({
   errors,
   helps,
   confirmation,
+  profileSelection,
   invitees,
   sessions,
   logs,

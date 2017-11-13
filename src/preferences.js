@@ -62,6 +62,7 @@ export const STR = {
   USER: 'ユーザ',
   USER_NAME_HINT: 'ユーザ名（必須）',
   USER_DESC: 'ユーザの説明',
+  USER_PROFILE: 'ユーザ情報',
   INVITEE: '招待対象',
   SESSIONS: 'セッション',
   LOGS: 'ログ',
@@ -70,6 +71,7 @@ export const STR = {
   EDIT_SIGN_IN_METHOD: 'ログイン方法の編集',
   DELETE_PASSWORD: 'IDとパスワードを使わない',
   CONFIRM_DELETE_PASSWORD: '本当にIDとパスワードを削除しますか？',
+  CONFIRM_DELETE_PROFILE: '削除しますか？',
 }
 
 export const welcomeTitle = user => {
@@ -152,3 +154,155 @@ export const validatePassword = password =>
       !password.match(/^([0-9]+|[A-Z]+|[a-z]+)$/)
     )
   )
+
+export const PROFILE_ITEM_TYPE = {
+  SINGLE_LINE: 'SINGLE_LINE',
+  MULTI_LINE: 'MULTI_LINE',
+  ZIP: 'ZIP',
+  EMAIL: 'EMAIL',
+  TEL: 'TEL',
+}
+
+export const PROFILE_ITEM_KEY = {
+  COUNTRY: 'country',
+  ZIP: 'zip',
+  STATE: 'state',
+  CITY: 'city',
+  STREET: 'street',
+  BUILDING: 'building',
+  TITLE: 'title',
+  NAME: 'name',
+  MOB: 'mob',
+  TEL: 'tel',
+  FAX: 'fax',
+  EMAIL: 'email',
+  NOTE: 'note',
+}
+
+export const profileItems = [
+  {
+    key: PROFILE_ITEM_KEY.COUNTRY,
+    name: '国',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '日本',
+  },
+  {
+    key: PROFILE_ITEM_KEY.ZIP,
+    name: '郵便番号',
+    type: PROFILE_ITEM_TYPE.ZIP,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.STATE,
+    name: '都道府県/州/省',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.CITY,
+    name: '市区町村',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.STREET,
+    name: '番地',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.BUILDING,
+    name: '建物号室',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.TITLE,
+    name: '肩書き/気付',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.NAME,
+    name: '氏名',
+    type: PROFILE_ITEM_TYPE.SINGLE_LINE,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.MOB,
+    name: '携帯',
+    type: PROFILE_ITEM_TYPE.TEL,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.TEL,
+    name: 'Tel',
+    type: PROFILE_ITEM_TYPE.TEL,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.FAX,
+    name: 'Fax',
+    type: PROFILE_ITEM_TYPE.TEL,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.EMAIL,
+    name: 'E-mail',
+    type: PROFILE_ITEM_TYPE.EMAIL,
+    default: '',
+  },
+  {
+    key: PROFILE_ITEM_KEY.NOTE,
+    name: '備考',
+    type: PROFILE_ITEM_TYPE.MULTI_LINE,
+    default: '',
+  },
+]
+
+export const PROFILE_ITEM_SET = {
+  FULL: [
+    PROFILE_ITEM_KEY.COUNTRY,
+    PROFILE_ITEM_KEY.ZIP,
+    PROFILE_ITEM_KEY.STATE,
+    PROFILE_ITEM_KEY.CITY,
+    PROFILE_ITEM_KEY.STREET,
+    PROFILE_ITEM_KEY.BUILDING,
+    PROFILE_ITEM_KEY.TITLE,
+    PROFILE_ITEM_KEY.NAME,
+    PROFILE_ITEM_KEY.MOB,
+    PROFILE_ITEM_KEY.TEL,
+    PROFILE_ITEM_KEY.FAX,
+    PROFILE_ITEM_KEY.EMAIL,
+    PROFILE_ITEM_KEY.NOTE,
+  ],
+  CONTACT: [
+    PROFILE_ITEM_KEY.MOB,
+    PROFILE_ITEM_KEY.TEL,
+    PROFILE_ITEM_KEY.EMAIL,
+    PROFILE_ITEM_KEY.NOTE,
+  ],
+}
+
+export const profileTemplates = [
+  {
+    tag: '自宅',
+    itemSet: PROFILE_ITEM_SET.FULL,
+    desc: '自宅の住所、電話番号など',
+  },
+  {
+    tag: '実家',
+    itemSet: PROFILE_ITEM_SET.FULL,
+    desc: '実家の住所、電話番号など',
+  },
+  {
+    tag: '職場',
+    itemSet: PROFILE_ITEM_SET.FULL,
+    desc: '職場の住所、電話番号など',
+  },
+  {
+    tag: '連絡先',
+    itemSet: PROFILE_ITEM_SET.CONTACT,
+    desc: '自宅や職場以外の連絡先',
+  },
+]

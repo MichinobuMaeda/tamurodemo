@@ -46,6 +46,8 @@ export const A = {
   SET_CERT_ID: 'SET_CERT_ID',
   SET_CERT_PASSWORD: 'SET_CERT_PASSWORD',
   SET_CERT_CONFIRM: 'SET_CERT_CONFIRM',
+  SET_PROFILE: 'SET_PROFILE',
+  REMOVE_PROFILE: 'REMOVE_PROFILE',
 
   SET_SIGN_IN_ID: 'SET_SIGN_IN_ID',
   SET_SIGN_IN_PASSWORD: 'SET_SIGN_IN_PASSWORD',
@@ -53,6 +55,8 @@ export const A = {
   RESET_SIGN_IN_CERTS: 'RESET_SIGN_IN_CERTS',
 
   SET_CONFIRMATION: 'SET_CONFIRMATION',
+
+  SET_PROFILE_SELECTION: 'SET_PROFILE_SELECTION',
   
   SET_HELP_ALL: 'SET_HELP_ALL',
   SET_HELP_MD: 'SET_HELP_MD',
@@ -116,6 +120,12 @@ export const ICON_STYLE_H1 = {
   height: 32,
   width: 32,
   verticalAlign: 'text-top',
+}
+
+export const ICON_STYLE_H3 = {
+  height: 24,
+  width: 24,
+  verticalAlign: 'text-bottom',
 }
 
 export const ICON_BUTTON_STYLE = {

@@ -11,7 +11,6 @@ import ActionAssignment from 'material-ui/svg-icons/action/assignment'
 
 import {PAPER_STYLE, ICON_STYLE_H1, ICONS} from '../constants'
 import {STR} from '../preferences'
-import ConfirmDialogContainer from '../containers/ConfirmDialogContainer'
 import ActionIcon from './ActionIcon'
 
 const Sessions = ({sessions, onClickUpdate, onClickHistory, onClickDelete}) =>
@@ -47,7 +46,6 @@ const Sessions = ({sessions, onClickUpdate, onClickHistory, onClickDelete}) =>
         onTouchTap={onClickHistory}
       />
     </div>
-    <ConfirmDialogContainer />
   </div>
 
 Sessions.propTypes = {

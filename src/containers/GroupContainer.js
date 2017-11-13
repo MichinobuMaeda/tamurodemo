@@ -12,7 +12,7 @@ import {setPage, currentPage} from '../actions/pages'
 import {
   gotoGroup, gotoGroupListEditor, editNewGroup, selectGroup
 } from '../actions/groups'
-import {gotoUser, editNewUser} from '../actions/users'
+import {gotoUser, editNewUser, gotoUserListEditor} from '../actions/users'
 import Group from '../components/Group'
 
 const mapStateToProps = ({status, groups, pages}) => {
@@ -28,6 +28,7 @@ const mapDispatchToProps = dispatch => {
     onClickNewGroup: group => () => dispatch(editNewGroup(group)),
     onClickNewUser: group => () => dispatch(editNewUser(group)),
     onClickEditGroupList: (name, id) => () => dispatch(gotoGroupListEditor({name, id})),
+    onClickEditUserList: (name, id) => () => dispatch(gotoUserListEditor({name, id})),
     onClickGroup: gid => () => dispatch(gotoGroup(gid)),
     onClickUser: uid => () => dispatch(gotoUser(uid)),
     onClickReset: () => dispatch(resetContent()),

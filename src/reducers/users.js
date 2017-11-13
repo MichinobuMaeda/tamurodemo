@@ -146,6 +146,32 @@ const users = (state = [], action) => {
         }
       )),
     ]
+  case A.SET_PROFILE:
+    return [
+      ...state.map(u => u._id === action.uid
+        ? {
+          ...u,
+          edited: true,
+          profiles: action.i < 0
+            ? u.profiles.concat(action.profile)
+            : u.profiles.map((p, i) => i === action.i ? action.profile : p)
+        }
+        : u
+      ),
+    ]
+  case A.REMOVE_PROFILE:
+    return [
+      ...state.filter(u => u._id !== action.uid),
+      ...state.filter(u => u._id === action.uid).map(u => (
+        {
+          ...u,
+          edited: true,
+          profiles: [
+            ...u.profiles.filter((p, i) => i !== action.i),
+          ],
+        }
+      )),
+    ]
   default:
     return state
   }

@@ -11,6 +11,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import {muiTheme} from '../preferences'
 import MenuContainer from '../containers/MenuContainer'
+import ConfirmDialogContainer from '../containers/ConfirmDialogContainer'
+import SelectProfileDialogContainer from '../containers/SelectProfileDialogContainer'
 
 injectTapEventPlugin()
 
@@ -20,6 +22,8 @@ const App = ({Main}) => (
       <MenuContainer/>
       <div style={{height: 64}}></div>
       <Main/>
+      <ConfirmDialogContainer />
+      <SelectProfileDialogContainer />
     </div>
   </MuiThemeProvider>
 )

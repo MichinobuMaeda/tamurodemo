@@ -89,6 +89,19 @@ export const setCertConfirm = (uid, confirm) => ({
   confirm,
 })
 
+export const setProfile = (uid, profile, i = -1) => ({
+  type: A.SET_PROFILE,
+  uid,
+  profile,
+  i,
+})
+
+export const removeProfile = (uid, i) => ({
+  type: A.REMOVE_PROFILE,
+  uid,
+  i,
+})
+
 export const selectUser = (users, uid) => users.reduce(
   (ret, cur) => cur._id === uid ? cur : ret, {}
 )
@@ -312,4 +325,19 @@ export const commitDeletePassword = uid => async (dispatch, getState) => {
 export const discardEditedUserCert = uid => async dispatch => {
   dispatch(backPage(true))
   await dispatch(gotoUser(uid))
+}
+
+export const confirmDeleteProfile = ({uid, index, profile}) => dispatch => {
+  dispatch(setConfirmation({
+    open: true,
+    title: profile.tag,
+    message: STR.CONFIRM_DELETE_PROFILE,
+    action: CONFIRM_ACTION.DELETE_PROFILE,
+    id: {uid, index},
+  }))
+}
+
+export const commitDeleteProfile = ({uid, index}) => dispatch => {
+  dispatch(removeProfile(uid, index))
+  dispatch(setConfirmation({}))
 }

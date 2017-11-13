@@ -19,13 +19,13 @@ import {
   ICONS, ICON_STYLE_H1
 } from '../constants'
 import {STR, THEME_COLOR1} from '../preferences'
-import ConfirmDialogContainer from '../containers/ConfirmDialogContainer'
 import ActionIcon from './ActionIcon'
 import {groupList} from '../actions/groups'
 
 const Group = ({
   status, group, onClickGroup, onClickUser, onClickReset,
-  onClickEditGroup, onClickEditGroupList, onClickNewGroup, onClickNewUser,
+  onClickEditGroup, onClickEditGroupList, onClickEditUserList,
+  onClickNewGroup, onClickNewUser,
 }) => group
   ? <div>
     {
@@ -150,7 +150,7 @@ const Group = ({
               />
               <ActionIcon
                 iconName={ICONS.EDIT}
-                onTouchTap={onClickEditGroupList(PAGE.GROUP_EDITOR_MEMBER, group._id)}
+                onTouchTap={onClickEditUserList(PAGE.GROUP_EDITOR_MEMBER, group._id)}
               />
             </div>
             <h3 style={{color: THEME_COLOR1}}>{STR.MEMBER}</h3>
@@ -170,7 +170,6 @@ const Group = ({
           : ''
       }
     </div>
-    <ConfirmDialogContainer />
   </div>
   : <Paper style={{...PAPER_STYLE, textAlign: 'center'}} zDepth={1}>
     <p>{STR.GROUP_HAS_BEEN_DELETED}</p>
@@ -189,6 +188,7 @@ Group.propTypes = {
   onClickEditGroup: PropTypes.func,
   onClickDeleteGroup: PropTypes.func,
   onClickEditGroupList: PropTypes.func,
+  onClickEditUserList: PropTypes.func,
   onClickNewGroup: PropTypes.func,
   onClickNewUser: PropTypes.func,
   onClickGroup: PropTypes.func,

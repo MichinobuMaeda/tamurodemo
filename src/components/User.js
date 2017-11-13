@@ -8,6 +8,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Paper from 'material-ui/Paper'
 import Chip from 'material-ui/Chip'
+import Divider from 'material-ui/Divider'
+import CommunicationContacts from 'material-ui/svg-icons/communication/contacts'
 import SocialGroup from 'material-ui/svg-icons/social/group'
 import SocialPerson from 'material-ui/svg-icons/social/person'
 import Avatar from 'material-ui/Avatar'
@@ -15,10 +17,9 @@ import RaisedButton from 'material-ui/RaisedButton'
 
 import {
   PAGE, NEW_USER_ID, PAPER_STYLE, BUTTON_STYLE, CHIP_STYLE, WRAPPER_STYLE,
-  ICONS, ICON_STYLE_H1
+  ICONS, ICON_STYLE_H1, ICON_STYLE_H3
 } from '../constants'
-import {STR, THEME_COLOR1} from '../preferences'
-import ConfirmDialogContainer from '../containers/ConfirmDialogContainer'
+import {STR, THEME_COLOR1, profileItems} from '../preferences'
 import ActionIcon from './ActionIcon'
 import {groupList} from '../actions/groups'
 
@@ -60,6 +61,20 @@ const User = ({
           : ''
       }
     </div>
+    {
+      status.session && (
+        status.session.isManager || status.session.uid === user._id
+      ) && status.editMode &&
+      <div style={{...PAPER_STYLE, clear: 'both'}}>
+        <div style={{float: 'right'}}>
+          <ActionIcon
+            iconName={ICONS.EDIT}
+            onTouchTap={onClickSignInMethod(user._id)}
+          />
+        </div>
+        <h3 style={{color: THEME_COLOR1}}>{STR.EDIT_SIGN_IN_METHOD}</h3>
+      </div>
+    }
     <Paper
       style={{...PAPER_STYLE, clear: 'both'}} zDepth={1}>
       {
@@ -77,20 +92,16 @@ const User = ({
       {user.desc && user.desc.split('\n').map((d, i) => (<p key={i}>{d}</p>))}
     </Paper>
     {
-      status.session && (
-        status.session.isManager || status.session.uid === user._id
-      ) && status.editMode &&
-      <div style={PAPER_STYLE}>
-        <div style={{float: 'right'}} >
-          <ActionIcon
-            iconName={ICONS.EDIT}
-            onTouchTap={onClickSignInMethod(user._id)}
-          />
-        </div>
-        <h3 style={{color: THEME_COLOR1}}>{STR.EDIT_SIGN_IN_METHOD}</h3>
-      </div>
+      user.profiles && user.profiles.map(p =>
+        <Paper key={p.tag} style={PAPER_STYLE} zDepth={1}>
+          <h3><CommunicationContacts style={ICON_STYLE_H3}/> {p.tag}</h3>
+          <Divider />
+          {
+            profileItems.map(i => p[i.key] && p[i.key].val && <div>{p[i.key].val}</div>)
+          }
+        </Paper>
+      )
     }
-    <ConfirmDialogContainer />
   </div>
   : <Paper style={{...PAPER_STYLE, textAlign: 'center'}} zDepth={1}>
     <p>{STR.USER_HAS_BEEN_DELETED}</p>

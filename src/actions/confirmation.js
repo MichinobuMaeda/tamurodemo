@@ -8,7 +8,8 @@ import {A} from '../constants'
 import {confirmDeleteGroup, commitDeleteGroup} from './groups'
 import {
   confirmDeleteUser, commitDeleteUser,
-  confirmDeletePassword, commitDeletePassword
+  confirmDeletePassword, commitDeletePassword,
+  confirmDeleteProfile, commitDeleteProfile,
 } from './users'
 import {confirmDeleteSession, commitDeleteSession} from './sessions'
 
@@ -22,6 +23,7 @@ export const CONFIRM_ACTION = {
   DELETE_USER: 'DELETE_USER',
   DELETE_SESSION: 'DELETE_SESSION',
   DELETE_PASSWORD: 'DELETE_PASSWORD',
+  DELETE_PROFILE: 'DELETE_PROFILE',
 }
 
 export const requestConfirm = (action, id) => {
@@ -30,6 +32,7 @@ export const requestConfirm = (action, id) => {
   case CONFIRM_ACTION.DELETE_USER: return confirmDeleteUser(id)
   case CONFIRM_ACTION.DELETE_SESSION: return confirmDeleteSession(id)
   case CONFIRM_ACTION.DELETE_PASSWORD: return confirmDeletePassword(id)
+  case CONFIRM_ACTION.DELETE_PROFILE: return confirmDeleteProfile(id)
   default: return
   }
 }
@@ -40,6 +43,7 @@ export const doConfirmedAction = ({action, id}) =>  {
   case CONFIRM_ACTION.DELETE_USER: return commitDeleteUser(id)
   case CONFIRM_ACTION.DELETE_SESSION: return commitDeleteSession(id)
   case CONFIRM_ACTION.DELETE_PASSWORD: return commitDeletePassword(id)
+  case CONFIRM_ACTION.DELETE_PROFILE: return commitDeleteProfile(id)
   default: return null
   }
 }

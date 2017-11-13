@@ -13,7 +13,6 @@ import RaisedButton from 'material-ui/RaisedButton'
 import {PAPER_STYLE, BUTTON_STYLE} from '../constants'
 import {validatePassword} from '../preferences'
 import {STR} from '../preferences'
-import ConfirmDialogContainer from '../containers/ConfirmDialogContainer'
 
 const CertEditor = ({
   page, password,
@@ -75,7 +74,6 @@ const CertEditor = ({
         </p>
       }
     </Paper>
-    <ConfirmDialogContainer />
   </div>
 )
 
