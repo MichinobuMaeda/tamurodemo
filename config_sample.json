@@ -1,0 +1,60 @@
+{
+    "instances": {
+        "test": {
+            "path_prefix": "/test/api",
+            "app_url": "http://localhost/test"
+        }
+    },
+    "flask": {
+        "DEBUG": true,
+        "TESTING": true,
+        "SECRET_KEY": "01234567890123456789012345678901234567890123456789"
+    },
+    "auth": {
+        "seed": "01234567890123456789012345678901234567890123456789"
+    },
+    "database": {
+        "minconn": 5,
+        "maxconn": 10,
+        "dsn": {
+            "dbname": "test",
+            "user": "username",
+            "password": "password",
+            "host": "localhost",
+            "port": 5432
+        }
+    },
+    "logging": {
+        "version": 1,
+        "disable_existing_loggers": true,
+        "formatters": {
+            "simple": {
+                "class": "logging.Formatter",
+                "format": "%(message)s"
+            },
+            "default": {
+                "class": "logging.Formatter",
+                "format": "%(asctime)s %(levelname)-8s %(message)s"
+            }
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+                "level": "DEBUG"
+            },
+            "file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": "./tmp/tamuro.log",
+                "formatter": "default",
+                "level": "INFO",
+                "maxBytes": 1048576,
+                "backupCount": 9
+            }
+        },
+        "root": {
+            "level": "INFO",
+            "handlers": ["file"]
+        }
+    }
+}
