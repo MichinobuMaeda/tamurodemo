@@ -1,3 +1,8 @@
+/admin/keys/*.json
+/tmp
+.nyc_output
+coverage
+
 .quasar
 .DS_Store
 .thumbs.db

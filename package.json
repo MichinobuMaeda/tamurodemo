@@ -1,6 +1,6 @@
 {
   "name": "tamuro",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "The address book app for closed communities",
   "productName": "tamuro",
   "cordovaId": "org.cordova.quasar.app",
@@ -8,10 +8,14 @@
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "nyc ava"
   },
-  "dependencies": {},
+  "dependencies": {
+    "firebase": "^5.1.0",
+    "nyc": "^12.0.2"
+  },
   "devDependencies": {
+    "ava": "1.0.0-beta.6",
     "babel-eslint": "^8.2.1",
     "eslint": "^4.18.2",
     "eslint-config-standard": "^11.0.0",
@@ -22,6 +26,8 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.3.0",
+    "firebase-admin": "^5.12.1",
+    "json-stable-stringify": "^1.0.1",
     "quasar-cli": "^0.16.0"
   },
   "engines": {
@@ -33,5 +39,14 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 10"
-  ]
+  ],
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  }
 }
