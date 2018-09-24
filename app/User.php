@@ -67,7 +67,7 @@ class User extends Authenticatable
      * @return boolean
      */
     public function isSysAdmin() {
-        return !!count($this->groupsManaging()->whereHas('roles', function ($query) {
+        return !!count($this->groups()->whereHas('roles', function ($query) {
             $query->where('name', 'sysadmin');
         })->get());
     }

@@ -79,8 +79,8 @@ class ModelsTest extends TestCase
         // Test relationships.
 
         $role1 = $group1->roles()->save(new GroupRole(['name' => 'primary']));
-        $role2 = $group1->roles()->save(new GroupRole(['name' => 'sysadmin']));
-        $role3 = $group2->roles()->save(new GroupRole(['name' => 'Role 3']));
+        $role2 = $group1->roles()->save(new GroupRole(['name' => 'Role 2']));
+        $role3 = $group2->roles()->save(new GroupRole(['name' => 'sysadmin']));
 
         $group1->load('roles');
         $group2->load('roles');
@@ -92,7 +92,7 @@ class ModelsTest extends TestCase
 
         $names = [$group1->roles[0]->name, $group1->roles[1]->name];
         sort($names);
-        $this->assertEquals([$role1->name, $role2->name], $names);
+        $this->assertEquals([$role2->name, $role1->name], $names);
         $this->assertEquals($role3->name, $group2->roles[0]->name);
 
         $group1->subGroups()->attach($group2);
