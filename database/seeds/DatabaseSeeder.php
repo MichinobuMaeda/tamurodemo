@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
 
         // for local test.
         if (App::environment('local')) {
+            $this->call(LocalSeeder::class);
         }
     }
 }

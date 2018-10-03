@@ -1,0 +1,16 @@
+{
+  "Login": "ログイン",
+  "Logout": "ログアウト",
+  "E-Mail Address": "メールアドレス",
+  "Password": "パスワード",
+  "Remember Me": "ログインしたままにする。",
+  "Forgot Your Password?": "パスワードを忘れた場合...",
+  "Reset Password": "パスワードを設定する",
+  "Send Password Reset Link": "パスワード設定のURLを送信する",
+  "Reset Password Notification": "パスワード設定",
+  "Hello!": "こんにちは",
+  "Regards,": "よろしくお願いいたします。",
+  "You are receiving this email because we received a password reset request for your account.": "あなたのアカウントのパスワード設定のためのURLをお送りします。",
+  "If you did not request a password reset, no further action is required.": "あなたがパスワードの設定の依頼をした覚えがない場合は、何もしなくてもかまいません。このままご放念ください。",
+  "If you’re having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser: [:actionURL](:actionURL)": "\":actionText\" をクリックしてもうまくいかない場合は、WEBブラウザで次のURLを開いてください: [:actionURL](:actionURL)"
+}

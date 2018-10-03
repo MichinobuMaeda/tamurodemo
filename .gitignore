@@ -1,6 +1,7 @@
 # Tamuro
 /storage/tamuro.sqlite
 /coverage
+/tmp
 
 # Laravel
 /node_modules
