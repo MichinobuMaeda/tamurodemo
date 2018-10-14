@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Services\AuthHelperService;
 use App\User;
 use App\Group;
 
@@ -14,26 +15,26 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        $ah = new AuthHelperService();
+
         // Create the primary user.
         $user = User::create([
             'name'      => 'Primary user',
             'email'     => env('APP_PRIMARY_USER_EMAIL'),
-            'password'  => Hash::make(env('APP_PRIMARY_USER_PASSWORD')),
+            'password'  => Hash::make($ah->generateCredential('01')),
             'timezone'  => env('APP_DEFAULT_TIMEZONE', 'UTC'),
         ]);
 
-        // The primary user is a system administrator.
-        foreach (Group::whereHas('roles', function ($query) {
-            $query->where('name', 'sysadmin');
-        })->get() as $group) {
-            $user->groups()->attach($group);
-        }
-
         // The primary user is a manager of the primary group.
-        foreach (Group::whereHas('roles', function ($query) {
+        $pri = Group::whereHas('roles', function ($query) {
             $query->where('name', 'primary');
-        })->get() as $group) {
-            $user->groupsManaging()->attach($group);
-        }
+        })->orderBy('id', 'asc')->first();
+        $user->groupsManaging()->attach($pri);
+
+        // The primary user is a system administrator.
+        $adm = Group::whereHas('roles', function ($query) {
+            $query->where('name', 'sysadmin');
+        })->orderBy('id', 'asc')->first();
+        $user->groups()->attach($adm);
     }
 }

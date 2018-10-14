@@ -24,6 +24,7 @@ class ViewHelperService
      * @return Datetime
      */
     public function setTimezone($val) {
+        if (!$val) { return $val; }
         $ret = clone $val;
         $user = Auth::user();
         $ret->setTimezone(new DateTimeZone(
@@ -42,6 +43,7 @@ class ViewHelperService
      * @return Datetime
      */
     public function formatDate($val) {
+        if (!$val) { return $val; }
         $ret = $this->setTimezone($val);
         return $ret->format(env('APP_DATE_FORMAT', 'Y-m-d'));
     }
@@ -54,6 +56,7 @@ class ViewHelperService
      * @return Datetime
      */
     public function formatTime($val) {
+        if (!$val) { return $val; }
         $ret = $this->setTimezone($val);
         return $ret->format(env('APP_TIME_FORMAT', 'H:i:s'));
     }
@@ -66,6 +69,7 @@ class ViewHelperService
      * @return Datetime
      */
     public function formatDateTime($val) {
+        if (!$val) { return $val; }
         $ret = $this->setTimezone($val);
         return $ret->format(env('APP_DATE_TIME_FORMAT', 'Y-m-d H:i:s'));
     }
@@ -78,6 +82,7 @@ class ViewHelperService
      * @return Datetime
      */
     public function formatTimestamp($val) {
+        if (!$val) { return $val; }
         $ret = $this->setTimezone($val);
         return $ret->format(env('APP_TIMESTAMP_FORMAT', 'Y-m-d H:i:s'));
     }

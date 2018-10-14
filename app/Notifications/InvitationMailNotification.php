@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Mail;
 
-class MailResetPasswordNotification extends Notification
+class InvitationMailNotification extends Notification
 {
     use Queueable;
 
@@ -43,16 +43,17 @@ class MailResetPasswordNotification extends Notification
     public function toMail($notifiable)
     {
         $mail = (new MailMessage)
-            ->subject(config('app.name').' '.Lang::getFromJson('Reset Password Notification'))
-            ->line(Lang::getFromJson('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::getFromJson('Reset Password'), url(config('app.url').route('password.reset', $this->token, false)))
-            ->line(Lang::getFromJson('If you did not request a password reset, no further action is required.'))
+            ->subject(config('app.name').' '.Lang::getFromJson('Set Password Notification'))
+            ->line(Lang::getFromJson('Please set the password for your E-mail address.'))
+            ->action(Lang::getFromJson('Set Password'), url(config('app.url').route('password.reset', $this->token, false)))
+            ->line(Lang::getFromJson('If you have any questions, please contact us.'))
+            ->line(env('MAIL_FROM_ADDRESS'))
             ->line('')
             ->line(Lang::getFromJson('Regards,'));
         $mail->viewData = [
-            'greeting' => Lang::getFromJson('Hello!'),
+            'greeting' => Lang::getFromJson('Hello!').' '.$notifiable->name.Lang::getFromJson('-san'),
             'salutation' => config('app.name'),
         ];
         return $mail;
-      }
+    }
 }

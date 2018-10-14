@@ -7,12 +7,23 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Tests\Unit\UnitTestHelper;
 use App\Services\ViewHelperService;
 use App\User;
 
 class ViewHelperServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * Set up for each test.
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->helper = new UnitTestHelper($this);
+        $this->helper->prepareGroupsAndUsers();
+    }
 
     /**
      * The test of method setTimezone().
@@ -22,20 +33,14 @@ class ViewHelperServiceTest extends TestCase
     public function testSetTimezone()
     {
         $vh = new ViewHelperService();
+        $this->assertNull($vh->setTimezone(null));
         $val = new DateTime();
         $this->assertEquals(
             env('APP_DEFAULT_TIMEZONE'),
             $vh->setTimezone($val)->getTimeZone()->getName()
         );
 
-        $user1 = User::create([
-            'name'      => 'username1',
-            'email'     => 'abc@def.ghi',
-            'password'  => 'password1',
-            'timezone'  => null
-        ]);
-
-        Auth::login($user1);
+        Auth::login($this->user01);
         $ret = $vh->setTimezone($val);
         $this->assertEquals(
             env('APP_DEFAULT_TIMEZONE'),
@@ -43,14 +48,7 @@ class ViewHelperServiceTest extends TestCase
         );
         Auth::logout();
 
-        $user2 = User::create([
-            'name'      => 'username2',
-            'email'     => 'rst@uvw.xyz',
-            'password'  => 'password2',
-            'timezone'  => 'Europe/London'
-        ]);
-
-        Auth::login($user2);
+        Auth::login($this->user03);
         $this->assertEquals(
             'Europe/London',
             $vh->setTimezone($val)->getTimeZone()->getName()
@@ -66,6 +64,7 @@ class ViewHelperServiceTest extends TestCase
     public function testFormatDate()
     {
         $vh = new ViewHelperService();
+        $this->assertNull($vh->formatDate(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
             $vh->setTimezone($val)->format(env('APP_DATE_FORMAT')),
@@ -81,6 +80,7 @@ class ViewHelperServiceTest extends TestCase
     public function testFormatTime()
     {
         $vh = new ViewHelperService();
+        $this->assertNull($vh->formatTime(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
             $vh->setTimezone($val)->format(env('APP_TIME_FORMAT')),
@@ -96,6 +96,7 @@ class ViewHelperServiceTest extends TestCase
     public function testFormatDateTime()
     {
         $vh = new ViewHelperService();
+        $this->assertNull($vh->formatDateTime(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
             $vh->setTimezone($val)->format(env('APP_DATE_TIME_FORMAT')),
@@ -111,6 +112,7 @@ class ViewHelperServiceTest extends TestCase
     public function testFormatTimestamp()
     {
         $vh = new ViewHelperService();
+        $this->assertNull($vh->formatTimestamp(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
             $vh->setTimezone($val)->format(env('APP_TIMESTAMP_FORMAT')),

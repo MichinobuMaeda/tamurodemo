@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Group;
@@ -19,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'timezone', 'sysadmin',
+        'name', 'email', 'password', 'timezone',
     ];
 
     /**
@@ -30,6 +29,20 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Get the attributes that should be converted to dates.
+     *
+     * @return array
+     */
+    public function getDates()
+    {
+        return array(
+            'last_login_at',
+            'created_at',
+            'updated_at'
+        );
+    }
 
     /**
      * Get groups the user belongs to.
