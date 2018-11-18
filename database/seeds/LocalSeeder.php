@@ -3,7 +3,6 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-use App\Services\AuthHelperService;
 use App\User;
 use App\Group;
 
@@ -29,8 +28,6 @@ class LocalSeeder extends Seeder
         // +---group02
         //         user02
         //         user07
-
-        $as = new AuthHelperService();
 
         $pri = Group::whereHas('roles', function ($query) {
             $query->where('name', 'primary');
@@ -93,7 +90,7 @@ class LocalSeeder extends Seeder
 
         $user06 = User::create([
             'name'      => 'User 06',
-            'email'     => '|'.$as->generateCredential('06'),
+            'email'     => '|'.uniqid(),
             'password'  => Hash::make('Password06'),
             'timezone'  => null,
         ]);
@@ -101,14 +98,14 @@ class LocalSeeder extends Seeder
         $user07 = User::create([
             'name'      => 'User 07',
             'email'     => 'user07@abc.def',
-            'password'  => Hash::make($as->generateCredential('07')),
+            'password'  => Hash::make(uniqid()),
             'timezone'  => null,
         ]);
 
         $user08 = User::create([
             'name'      => 'User 08',
-            'email'     => '|'.$as->generateCredential('08'),
-            'password'  => Hash::make($as->generateCredential('08')),
+            'email'     => '|'.uniqid(),
+            'password'  => Hash::make(uniqid()),
             'timezone'  => null,
         ]);
 

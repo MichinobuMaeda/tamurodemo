@@ -2,6 +2,7 @@
 /storage/tamuro.sqlite
 /coverage
 /tmp
+/docs/tmp
 
 # Laravel
 /node_modules

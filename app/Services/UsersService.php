@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\InvitationMailNotification;
 use App\User;
-use App\PasswordReset;
 
 class UsersService
 {
@@ -18,7 +17,7 @@ class UsersService
      */
     public function __construct()
     {
-        $this->ah = new AuthHelperService();
+        //
     }
 
     /**
@@ -39,26 +38,5 @@ class UsersService
             ->where('group_managers.user_id', '=', $user->id)
             ->orderBy($orderBy, $orderDir)
             ->get();
-    }
-
-    /**
-     * @param App\User $user
-     * @param string $provider
-     * @return App\User
-     */
-    public function invite($user, $provider)
-    {
-        $token = $this->ah->generateCredential($user->id);
-        PasswordReset::where('email', $user->email)->delete();
-        PasswordReset::create([
-            'email' => $user->email,
-            'token' => Hash::make($token),
-            'created_at' => (new DateTime())->modify(
-                '+'.env('APP_INVITATION_EXPIRE', '1440').' minutes'
-            )
-        ]);
-        if ($provider == 'email') {
-            $user->notify(new InvitationMailNotification($token));
-        }
     }
 }

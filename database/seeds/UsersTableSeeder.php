@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Services\AuthHelperService;
 use App\User;
 use App\Group;
 
@@ -15,13 +14,11 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $ah = new AuthHelperService();
-
         // Create the primary user.
         $user = User::create([
             'name'      => 'Primary user',
             'email'     => env('APP_PRIMARY_USER_EMAIL'),
-            'password'  => Hash::make($ah->generateCredential('01')),
+            'password'  => Hash::make(uniqid()),
             'timezone'  => env('APP_DEFAULT_TIMEZONE', 'UTC'),
         ]);
 

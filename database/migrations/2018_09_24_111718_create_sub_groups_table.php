@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class GroupManagerTable extends Migration
+class CreateSubGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class GroupManagerTable extends Migration
      */
     public function up()
     {
-        Schema::create('group_managers', function (Blueprint $table) {
+        Schema::create('sub_groups', function (Blueprint $table) {
             $table->integer('group_id');
-            $table->integer('user_id');
-            $table->primary(['group_id', 'user_id']);
+            $table->integer('sub_group_id');
+            $table->primary(['group_id', 'sub_group_id']);
             $table->timestamps();
             $table->foreign('group_id')
                 ->references('id')->on('groups')
                 ->onDelete('cascade');
-            $table->foreign('user_id')
-                ->references('id')->on('users')
+            $table->foreign('sub_group_id')
+                ->references('id')->on('groups')
                 ->onDelete('cascade');
         });
     }
@@ -34,6 +34,6 @@ class GroupManagerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('group_managers');
+        Schema::dropIfExists('sub_groups');
     }
 }

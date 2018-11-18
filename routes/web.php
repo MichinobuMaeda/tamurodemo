@@ -28,6 +28,18 @@ Route::post(
   'UsersController@invite'
 )->name('users.invite')->middleware('can:users.invite,user');
 Route::get(
-  '/users/{user}/invite/{provider}',
-  'UsersController@showInvitation'
-)->name('users.showInvitation')->middleware('can:users.invite,user');
+  '/users/{user}/invite/{sendBy}',
+  'UsersController@showInvited'
+)->name('users.showInvited')->middleware('can:users.invite,user');
+Route::get(
+  '/users/{user}/invitations/{token}',
+  'AuthenticationController@viewInvitation'
+)->name('users.invitations');
+Route::post(
+  '/users/{user}/invitations',
+  'AuthenticationController@register'
+)->name('users.replyInvitation');
+Route::post(
+  '/oAuthLogin',
+  'AuthenticationController@oAuthLogin'
+)->name('oAuthLogin');

@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use DateTime;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use App\Services\AuthHelperService;
 use App\User;
 use App\Group;
 use App\GroupRole;
@@ -46,8 +45,6 @@ class UnitTestHelper
         //         user07
 
         DB::transaction(function () {
-
-            $as = new AuthHelperService();
 
             // Create the primary group which is the super-group of all groups.
             $this->test->pri = Group::create([
@@ -127,7 +124,7 @@ class UnitTestHelper
 
             $this->test->user06 = User::create([
                 'name'      => 'User 06',
-                'email'     => '|'.$as->generateCredential('06'),
+                'email'     => '|'.uniqid(),
                 'password'  => Hash::make('Password06'),
                 'timezone'  => null,
             ]);
@@ -135,14 +132,14 @@ class UnitTestHelper
             $this->test->user07 = User::create([
                 'name'      => 'User 07',
                 'email'     => 'user07@abc.def',
-                'password'  => Hash::make($as->generateCredential('07')),
+                'password'  => Hash::make(uniqid()),
                 'timezone'  => null,
             ]);
 
             $this->test->user08 = User::create([
                 'name'      => 'User 08',
-                'email'     => '|'.$as->generateCredential('08'),
-                'password'  => Hash::make($as->generateCredential('08')),
+                'email'     => '|'.uniqid(),
+                'password'  => Hash::make(uniqid()),
                 'timezone'  => null,
             ]);
 

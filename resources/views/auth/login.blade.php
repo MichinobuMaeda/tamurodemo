@@ -1,3 +1,6 @@
+@php
+  $login = true
+@endphp
 @extends('layouts.app')
 
 @section('content')
@@ -52,14 +55,26 @@
             </div>
 
             <div class="form-group row mb-0">
-              <div class="col-md-8 offset-md-4">
-                <button type="submit" class="btn btn-primary">
-                  {{ __('Login') }}
-                </button>
-
-                <a class="btn btn-link" href="{{ route('password.request') }}">
-                  {{ __('Forgot Your Password?') }}
-                </a>
+              <div class="col-md-8 offset-md-2">
+                <p>
+                  <button type="submit" class="btn btn-email">
+                    {{ __('E-mail address and password') }}
+                  </button>
+                  <a class="btn btn-link" href="{{ route('password.request') }}">
+                    {{ __('Forgot Your Password?') }}
+                  </a>
+                </p>
+                <p>
+                  <div id="googleSignInWrapper">
+                    <div id="googleButton" class="btn btn-google">
+                      <span class="icon"></span>
+                      <span class="buttonText">{{ __('Login with Google') }}</span>
+                    </div>
+                  </div>
+                </p>
+                <p id="googleStatus"></p>
+                  <script>startGoogleApp();</script>
+                </p>
               </div>
             </div>
           </form>

@@ -18,9 +18,9 @@ class InvitationMailNotification extends Notification
      *
      * @return void
      */
-    public function __construct($token)
+    public function __construct($user)
     {
-        $this->token = $token;
+        $this->user = $user;
     }
 
     /**
@@ -43,9 +43,9 @@ class InvitationMailNotification extends Notification
     public function toMail($notifiable)
     {
         $mail = (new MailMessage)
-            ->subject(config('app.name').' '.Lang::getFromJson('Set Password Notification'))
-            ->line(Lang::getFromJson('Please set the password for your E-mail address.'))
-            ->action(Lang::getFromJson('Set Password'), url(config('app.url').route('password.reset', $this->token, false)))
+            ->subject(config('app.name').' '.Lang::getFromJson('Setup login method'))
+            ->line(Lang::getFromJson('Please setup your login method.'))
+            ->action(Lang::getFromJson('Setup login method'), url(config('app.url').route('users.invitations', [ 'user' => $notifiable->id, 'token' => $notifiable->invitation_token ], false)))
             ->line(Lang::getFromJson('If you have any questions, please contact us.'))
             ->line(env('MAIL_FROM_ADDRESS'))
             ->line('')

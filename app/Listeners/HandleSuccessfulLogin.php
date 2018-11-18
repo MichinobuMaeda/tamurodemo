@@ -7,25 +7,28 @@ use Illuminate\Auth\Events\Login;
 
 class HandleSuccessfulLogin
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
+  /**
+   * Create the event listener.
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+      //
+  }
 
-    /**
-     * Handle the event.
-     *
-     * @param  Login  $event
-     * @return void
-     */
-    public function handle(Login $event)
-    {
-      $event->user->last_login_at = new DateTime();
+  /**
+   * Handle the event.
+   *
+   * @param  Login  $event
+   * @return void
+   */
+  public function handle(Login $event)
+  {
+    if ($event->user->invitation_token || $event->user->invited_at) {
+      $event->user->invitation_token = null;
+      $event->user->invited_at = null;
       $event->user->save();
     }
+  }
 }

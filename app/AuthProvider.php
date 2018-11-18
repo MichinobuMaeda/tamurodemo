@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class GroupRole extends Model
+class AuthProvider extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,9 +12,8 @@ class GroupRole extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
+        'user_id',
+        'provider',
+        'secret',
     ];
-
-    protected $primaryKey = ['name', 'group_id'];
-    public $incrementing = false;
 }

@@ -68,11 +68,11 @@ class RouteUsersTest extends TestCase
         $response = $this->post(route('users.invite', [
             'user' => $this->user00->id,
         ]), [
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('users.showInvitation', [
+        $response->assertRedirect(route('users.showInvited', [
             'user' => $this->user00->id,
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]));
 
         Auth::login($this->user01);
@@ -80,17 +80,17 @@ class RouteUsersTest extends TestCase
         $response = $this->post(route('users.invite', [
             'user' => $this->user04->id,
         ]), [
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('users.showInvitation', [
+        $response->assertRedirect(route('users.showInvited', [
             'user' => $this->user04->id,
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]));
 
         $response = $this->post(route('users.invite', [
             'user' => $this->user08->id,
         ]), [
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]);
         $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
@@ -99,47 +99,47 @@ class RouteUsersTest extends TestCase
         $response = $this->post(route('users.invite', [
             'user' => $this->user00->id,
         ]), [
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]);
         $response->assertRedirect(route('login'));
     }
 
     /**
-     * The test of method showInvitation().
+     * The test of method showInvited().
      *
      * @return void
      */
-    public function testShowInvitation()
+    public function testShowInvited()
     {
         Auth::login($this->user00);
 
-        $response = $this->get(route('users.showInvitation', [
+        $response = $this->get(route('users.showInvited', [
             'user' => $this->user00->id,
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]));
-        $response->assertViewIs('users_invite_email');
+        $response->assertViewIs('users_invite');
         $response->assertViewHas('user', User::where('name', 'Primary user')->first());
 
         Auth::login($this->user01);
 
-        $response = $this->get(route('users.showInvitation', [
+        $response = $this->get(route('users.showInvited', [
             'user' => $this->user04->id,
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]));
-        $response->assertViewIs('users_invite_email');
+        $response->assertViewIs('users_invite');
         $response->assertViewHas('user', User::where('name', 'user 04')->first());
 
-        $response = $this->get(route('users.showInvitation', [
+        $response = $this->get(route('users.showInvited', [
             'user' => $this->user08->id,
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]));
         $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
         Auth::logout();
 
-        $response = $this->get(route('users.showInvitation', [
+        $response = $this->get(route('users.showInvited', [
             'user' => $this->user00->id,
-            'provider' => 'email',
+            'sendBy' => 'email',
         ]));
         $response->assertRedirect(route('login'));
     }

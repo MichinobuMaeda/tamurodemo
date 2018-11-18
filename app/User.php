@@ -38,7 +38,7 @@ class User extends Authenticatable
     public function getDates()
     {
         return array(
-            'last_login_at',
+            'invited_at',
             'created_at',
             'updated_at'
         );
