@@ -28,6 +28,10 @@ class HandleSuccessfulLogin
     if ($event->user->invitation_token || $event->user->invited_at) {
       $event->user->invitation_token = null;
       $event->user->invited_at = null;
+      $event->user->entered_at = new DateTime();
+      $event->user->save();
+    } else if (!$event->user->entered_at) {
+      $event->user->entered_at = new DateTime();
       $event->user->save();
     }
   }

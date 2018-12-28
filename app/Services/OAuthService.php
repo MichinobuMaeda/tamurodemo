@@ -10,7 +10,7 @@ use App\Notifications\InvitationMailNotification;
 use App\User;
 use App\AuthProvider;
 
-class AuthenticationService
+class OAuthService
 {
     /**
      * Create a new service instance.
@@ -19,23 +19,13 @@ class AuthenticationService
      */
     public function __construct()
     {
-        //
-    }
-
-    /**
-     * @param App\User $user
-     * @param string $sendBy
-     * @return App\User
-     */
-    public function invite($user, $sendBy)
-    {
-        $token = hash('sha512', env('APP_KEY').((new DateTime())->format('Y-m-dTH:i:s.u')).$user->id);
-        $user->invitation_token = $token;
-        $user->invited_at = new DateTime();
-        $user->save();
-        if ($sendBy == 'email') {
-            $user->notify(new InvitationMailNotification($user));
-        }
+        $this->providers = [
+            'google' => function ($id_token) {
+                $client = new \Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+                $payload = $client->verifyIdToken($id_token);
+                return $payload ? $payload['sub'] : null;
+            },
+        ];
     }
 
     /**
@@ -43,10 +33,9 @@ class AuthenticationService
      * @param string $token
      * @param string $provider_name
      * @param string $provider_token
-     * @param array $providers
      * @return boolean
      */
-    public function register($user, $token, $provider_name, $provider_token, $providers)
+    public function register($user, $token, $provider_name, $provider_token)
     {
         if ((!$user) || (!$token) || (!$provider_name)) {
             return false;
@@ -73,7 +62,7 @@ class AuthenticationService
             ]));
             return false;
         }            
-        $secret = $providers[$provider_name]($provider_token);
+        $secret = $this->providers[$provider_name]($provider_token);
         Log::info(json_encode([
             'service' => get_class($this).'#reply',
             'result' => !!$secret,
@@ -99,12 +88,12 @@ class AuthenticationService
      * @param string $provider_token
      * @return boolean
      */
-    public function loginWithOAuthProvider($provider_name, $provider_token, $providers)
+    public function login($provider_name, $provider_token)
     {
         if ((!$provider_name) || (!$provider_token)) {
             return false;
         }
-        $secret = $providers[$provider_name]($provider_token);
+        $secret = $this->providers[$provider_name]($provider_token);
         Log::info(json_encode([
             'service' => get_class($this).'#loginWithOAuthProvider',
             'result' => !!$secret,

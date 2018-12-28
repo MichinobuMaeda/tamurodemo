@@ -36,6 +36,12 @@
                   </a>
                 </th>
                 <th>
+                  <a href="{{ route('users.list.orderBy', ['orderBy' => 'entered_at', 'orderDir' => ($orderBy =='entered_at' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
+                    <i class="fas fa-sort"></i>
+                    {{ __('Entrance') }}
+                  </a>
+                </th>
+                <th>
                 </th>
               </tr>
             </thead>
@@ -55,13 +61,16 @@
                 </td>
                 <td>
                   @if (($user->invited_at))
-                  <a href="{{ route('users.showInvited', ['user'=>$user->id, 'sendBy' => 'message']) }}">
+                  <a href="{{ route('get.invitation', ['user'=>$user->id, 'sendBy' => 'message']) }}">
                     {{ $vh->formatTimestamp($user->invited_at) }}
                   </a>
                   @endif
                 </td>
                 <td>
-                  <form id="{{ $user->id }}" method="POST" action="{{ route('users.invite', ['user'=>$user->id]) }}"> 
+                  {{ $vh->formatTimestamp($user->entered_at) }}
+                </td>
+                <td>
+                  <form id="{{ $user->id }}" method="POST" action="{{ route('post.invitation', ['user'=>$user->id]) }}"> 
                     @csrf
                     <button type="submit" name="sendBy" value="message" class='btn btn-sm' style='background-color:transparent;'>
                       <i class="far fa-comment"></i>

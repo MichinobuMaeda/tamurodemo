@@ -78,7 +78,7 @@ class AuthenticationTest extends TestCase
         $mock1->shouldReceive('verifyIdToken')->andReturn(['sub' => 'secret1']);
 
         $response = $this->post(
-            route('users.replyInvitation', [
+            route('post.registration', [
                 'user' => $user->id,
             ]), [
                 'token' => 'token1',
@@ -92,7 +92,7 @@ class AuthenticationTest extends TestCase
         $mock2->shouldReceive('verifyIdToken')->andReturn(['sub' => null]);
 
         $response = $this->post(
-            route('users.replyInvitation', [
+            route('post.registration', [
                 'user' => $user->id,
             ]), [
                 'token' => 'token1',

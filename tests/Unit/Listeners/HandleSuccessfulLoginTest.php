@@ -34,6 +34,7 @@ class HandleSuccessfulLoginTest extends TestCase
         $user->refresh();
         $this->assertNull($user->invitation_token);
         $this->assertNull($user->invited_at);
+        $this->assertNotNull($user->entered_at);
         Auth::logout();
 
         $user->invitation_token = 'a';
@@ -42,6 +43,7 @@ class HandleSuccessfulLoginTest extends TestCase
         $user->refresh();
         $this->assertNull($user->invitation_token);
         $this->assertNull($user->invited_at);
+        $this->assertNotNull($user->entered_at);
         Auth::logout();
 
         $user->invited_at = new DateTime();
@@ -50,6 +52,7 @@ class HandleSuccessfulLoginTest extends TestCase
         $user->refresh();
         $this->assertNull($user->invitation_token);
         $this->assertNull($user->invited_at);
+        $this->assertNotNull($user->entered_at);
         Auth::logout();
     }
 }

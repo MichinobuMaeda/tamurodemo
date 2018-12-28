@@ -13,7 +13,10 @@
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index')->name('home');
+Route::get(
+  '/',
+  'HomeController@index'
+)->name('home');
 
 Route::get(
   '/users',
@@ -23,23 +26,25 @@ Route::get(
   '/users/orderBy/{orderBy}/orderDir/{orderDir}',
   'UsersController@list'
 )->name('users.list.orderBy')->middleware('can:users.list');
+
 Route::post(
-  '/users/{user}/invite',
-  'UsersController@invite'
-)->name('users.invite')->middleware('can:users.invite,user');
+  '/invitations/{user}',
+  'InvitationController@invite'
+)->name('post.invitation')->middleware('can:users.invite,user');
 Route::get(
-  '/users/{user}/invite/{sendBy}',
-  'UsersController@showInvited'
-)->name('users.showInvited')->middleware('can:users.invite,user');
+  '/invitations/{user}/{sendBy}',
+  'InvitationController@show'
+)->name('get.invitation')->middleware('can:users.invite,user');
 Route::get(
-  '/users/{user}/invitations/{token}',
-  'AuthenticationController@viewInvitation'
+  '/registrations/{user}/{token}',
+  'RegistrationController@viewInvitation'
 )->name('users.invitations');
 Route::post(
-  '/users/{user}/invitations',
-  'AuthenticationController@register'
-)->name('users.replyInvitation');
+  '/registrations/{user}',
+  'RegistrationController@register'
+)->name('post.registration');
+
 Route::post(
   '/oAuthLogin',
-  'AuthenticationController@oAuthLogin'
+  'OAuthLoginController@login'
 )->name('oAuthLogin');

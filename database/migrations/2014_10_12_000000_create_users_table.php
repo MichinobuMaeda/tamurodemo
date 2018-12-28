@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('timezone')->nullable();
             $table->string('invitation_token')->nullable()->index();
             $table->timestamp('invited_at')->nullable();
+            $table->timestamp('entered_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->index('name');

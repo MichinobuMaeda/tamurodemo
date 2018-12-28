@@ -9,10 +9,10 @@ use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tests\Unit\UnitTestHelper;
-use App\Services\AuthenticationService;
+use App\Services\OAuthService;
 use App\AuthProvider;
 
-class AuthenticationServiceTest extends TestCase
+class OAuthServiceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -27,31 +27,15 @@ class AuthenticationServiceTest extends TestCase
     }
 
     /**
-     * The test of method invite().
-     *
-     * @return void
-     */
-    public function testInvite()
-    {
-        $is = new AuthenticationService();
-
-        $this->assertNull($this->user01->invitation_token);
-        $is->invite($this->user01, 'email');
-
-        $this->user01->refresh();
-        $this->assertNotNull($this->user01->invitation_token);
-    }
-
-    /**
-     * The test of method invite().
+     * The test of method register().
      *
      * @return void
      */
     public function testRegister()
     {
-        $is = new AuthenticationService();
+        $rs = new OAuthService();
         $user = $this->user01;
-        $providers = [
+        $rs->providers = [
             'provider1' => function ($id_token) { return 'secret1'; },
             'provider2' => function ($id_token) { return null; },
         ];
@@ -60,33 +44,33 @@ class AuthenticationServiceTest extends TestCase
         $user->invited_at = (new DateTime())->modify(
             '-'.(env('APP_INVITATION_EXPIRE', 60) - 1).' minutes'
         );
-        $this->assertTrue($is->register($user, 'token1', 'provider1', 'return1', $providers));
+        $this->assertTrue($rs->register($user, 'token1', 'provider1', 'return1'));
 
         $user->invitation_token = 'token1';
         $user->invited_at = (new DateTime())->modify(
             '-'.(env('APP_INVITATION_EXPIRE', 60) - 1).' minutes'
         );
-        $this->assertFalse($is->register($user, 'token1', 'provider2', 'return1', $providers));
-        $this->assertFalse($is->register(null, 'token1', 'provider1', 'return1', $providers));
-        $this->assertFalse($is->register($user, null, 'provider1', 'return1', $providers));
-        $this->assertFalse($is->register($user, 'token1', null, 'return1', $providers));
-        $this->assertFalse($is->register($user, 'dummy', 'provider1', 'return1', $providers));
+        $this->assertFalse($rs->register($user, 'token1', 'provider2', 'return1'));
+        $this->assertFalse($rs->register(null, 'token1', 'provider1', 'return1'));
+        $this->assertFalse($rs->register($user, null, 'provider1', 'return1'));
+        $this->assertFalse($rs->register($user, 'token1', null, 'return1'));
+        $this->assertFalse($rs->register($user, 'dummy', 'provider1', 'return1'));
         $user->invited_at = (new DateTime())->modify(
             '-'.(env('APP_INVITATION_EXPIRE', 60) + 1).' minutes'
         );
-        $this->assertFalse($is->register($user, 'token1', 'provider1', 'return1', $providers));
+        $this->assertFalse($rs->register($user, 'token1', 'provider1', 'return1'));
     }
 
     /**
-     * The test of method invite().
+     * The test of method loginWithOAuthProvider().
      *
      * @return void
      */
-    public function testLoginWithOAuthProvider()
+    public function testLogin()
     {
-        $is = new AuthenticationService();
+        $rs = new OAuthService();
         $user = $this->user01;
-        $providers = [
+        $rs->providers = [
             'provider1' => function ($id_token) { return 'secret1'; },
             'provider2' => function ($id_token) { return null; },
             'provider3' => function ($id_token) { return 'dummy'; },
@@ -105,10 +89,10 @@ class AuthenticationServiceTest extends TestCase
         ]);
         $ap3->save();
 
-        $this->assertFalse($is->loginWithOAuthProvider(null, 'return1', $providers));
-        $this->assertFalse($is->loginWithOAuthProvider('provider1', null, $providers));
-        $this->assertFalse($is->loginWithOAuthProvider('provider2', 'return1', $providers));
-        $this->assertFalse($is->loginWithOAuthProvider('provider3', 'return3', $providers));
-        $this->assertTrue($is->loginWithOAuthProvider('provider1', 'return1', $providers));
+        $this->assertFalse($rs->login(null, 'return1'));
+        $this->assertFalse($rs->login('provider1', null));
+        $this->assertFalse($rs->login('provider2', 'return1'));
+        $this->assertFalse($rs->login('provider3', 'return3'));
+        $this->assertTrue($rs->login('provider1', 'return1'));
     }
 }

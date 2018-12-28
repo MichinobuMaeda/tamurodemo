@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\UsersService;
-use App\Services\AuthenticationService;
 use App\User;
 
 class UsersController extends Controller
@@ -15,11 +14,10 @@ class UsersController extends Controller
      *
      * @return void
      */
-    public function __construct(UsersService $us, AuthenticationService $is)
+    public function __construct(UsersService $us)
     {
         $this->middleware('auth');
         $this->us = $us;
-        $this->is = $is;
     }
 
     /**
@@ -45,39 +43,6 @@ class UsersController extends Controller
             'users' => $this->us->list($orderBy, $orderDir),
             'orderBy' => $orderBy,
             'orderDir' => $orderDir,
-        ]);
-    }
-
-    /**
-     * Invite user.
-     *
-     * @param Request $request
-     * @param App\User $user
-     * @return \Illuminate\Http\Response
-     */
-    public function invite(Request $request, $user)
-    {
-        $sendBy= $request->input('sendBy');
-        $this->is->invite($user, $sendBy);
-        return redirect()->route('users.showInvited', [
-            'user' => $user->id,
-            'sendBy' => $sendBy
-        ]);
-    }
-
-    /**
-     * Show invited.
-     *
-     * @param Request $request
-     * @param App\User $user
-     * @param string $sendBy
-     * @return \Illuminate\Http\Response
-     */
-    public function showInvited(Request $request, $user, $sendBy)
-    {
-        return view('users_invite', [
-            'user' => $user,
-            'sendBy' => $sendBy,
         ]);
     }
 }

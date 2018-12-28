@@ -90,7 +90,7 @@ class LocalSeeder extends Seeder
 
         $user06 = User::create([
             'name'      => 'User 06',
-            'email'     => '|'.uniqid(),
+            'email'     => '|'.$this->unique(),
             'password'  => Hash::make('Password06'),
             'timezone'  => null,
         ]);
@@ -98,14 +98,14 @@ class LocalSeeder extends Seeder
         $user07 = User::create([
             'name'      => 'User 07',
             'email'     => 'user07@abc.def',
-            'password'  => Hash::make(uniqid()),
+            'password'  => Hash::make($this->unique()),
             'timezone'  => null,
         ]);
 
         $user08 = User::create([
             'name'      => 'User 08',
-            'email'     => '|'.uniqid(),
-            'password'  => Hash::make(uniqid()),
+            'email'     => '|'.$this->unique(),
+            'password'  => Hash::make($this->unique()),
             'timezone'  => null,
         ]);
 
@@ -124,5 +124,10 @@ class LocalSeeder extends Seeder
         $user06->groupsManaging()->attach($pri);
         $user01->groupsManaging()->attach($group01);
         $user03->groupsManaging()->attach($group03);
+    }
+
+    private function unique()
+    {
+        return hash('sha256', env('APP_KEY').(new DateTime())->format('Y-m-d\TH:i:s.u'));
     }
 }

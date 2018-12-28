@@ -65,29 +65,29 @@ class RouteUsersTest extends TestCase
     {
         Auth::login($this->user00);
 
-        $response = $this->post(route('users.invite', [
+        $response = $this->post(route('post.invitation', [
             'user' => $this->user00->id,
         ]), [
             'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('users.showInvited', [
+        $response->assertRedirect(route('get.invitation', [
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
 
         Auth::login($this->user01);
 
-        $response = $this->post(route('users.invite', [
+        $response = $this->post(route('post.invitation', [
             'user' => $this->user04->id,
         ]), [
             'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('users.showInvited', [
+        $response->assertRedirect(route('get.invitation', [
             'user' => $this->user04->id,
             'sendBy' => 'email',
         ]));
 
-        $response = $this->post(route('users.invite', [
+        $response = $this->post(route('post.invitation', [
             'user' => $this->user08->id,
         ]), [
             'sendBy' => 'email',
@@ -96,7 +96,7 @@ class RouteUsersTest extends TestCase
 
         Auth::logout();
 
-        $response = $this->post(route('users.invite', [
+        $response = $this->post(route('post.invitation', [
             'user' => $this->user00->id,
         ]), [
             'sendBy' => 'email',
@@ -113,7 +113,7 @@ class RouteUsersTest extends TestCase
     {
         Auth::login($this->user00);
 
-        $response = $this->get(route('users.showInvited', [
+        $response = $this->get(route('get.invitation', [
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
@@ -122,14 +122,14 @@ class RouteUsersTest extends TestCase
 
         Auth::login($this->user01);
 
-        $response = $this->get(route('users.showInvited', [
+        $response = $this->get(route('get.invitation', [
             'user' => $this->user04->id,
             'sendBy' => 'email',
         ]));
         $response->assertViewIs('users_invite');
         $response->assertViewHas('user', User::where('name', 'user 04')->first());
 
-        $response = $this->get(route('users.showInvited', [
+        $response = $this->get(route('get.invitation', [
             'user' => $this->user08->id,
             'sendBy' => 'email',
         ]));
@@ -137,7 +137,7 @@ class RouteUsersTest extends TestCase
 
         Auth::logout();
 
-        $response = $this->get(route('users.showInvited', [
+        $response = $this->get(route('get.invitation', [
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));

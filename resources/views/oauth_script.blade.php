@@ -16,7 +16,7 @@
           var id_token = googleUser.getAuthResponse().id_token;
           var xhr = new XMLHttpRequest();
         @if (isset($invited))
-          xhr.open('POST', '{{ route("users.replyInvitation", ["user" => $user->id]) }}');
+          xhr.open('POST', '{{ route("post.registration", ["user" => $user->id]) }}');
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
           xhr.onload = function() {

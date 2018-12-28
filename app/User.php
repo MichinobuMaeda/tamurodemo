@@ -39,6 +39,7 @@ class User extends Authenticatable
     {
         return array(
             'invited_at',
+            'entered_at',
             'created_at',
             'updated_at'
         );
