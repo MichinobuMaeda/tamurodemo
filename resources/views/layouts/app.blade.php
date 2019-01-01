@@ -26,6 +26,7 @@
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
+@include('script_facebook')
   <script>
     if (googleArea) { initGoogleClient(); }
   </script>

@@ -30,12 +30,12 @@
           </p>
           <p>{{ __('Login with ...') }}</p>
           <p id="facebookArea" style="display: none;">
-            <button type="button" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('login_facebook') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-facebook"></i>
               </span>
               {{ __('Facebook') }}
-            </button>
+            </a>
           </p>
 <!-- TODO:
           <p>

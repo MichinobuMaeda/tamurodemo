@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 use DateTime;
+use Facebook\Facebook;
 use Illuminate\Support\Facades\Auth;
 use Tests\Unit\UnitTestHelper;
 use App\User;
@@ -73,19 +74,19 @@ class AuthenticationTest extends TestCase
     }
 
     /**
-     * Test register.
+     * Test register: google (ok).
      *
      * @return void
      */
-    public function testRegister()
+    public function testRegister1()
     {
         $user = $this->user01;
         $user->invitation_token = 'token1';
         $user->invited_at = new DateTime();
         $user->save();
 
-        $mock1 = \Mockery::mock('overload:'.\Google_Client::class);
-        $mock1->shouldReceive('verifyIdToken')->andReturn(['sub' => 'secret1']);
+        $mock = \Mockery::mock('overload:'.\Google_Client::class);
+        $mock->shouldReceive('verifyIdToken')->andReturn(['sub' => 'secret1']);
 
         $response = $this->post(
             route('post.registration', [
@@ -97,21 +98,103 @@ class AuthenticationTest extends TestCase
             ]
         );
         $response->assertSeeText('ok');
+    }
 
-        $mock2 = \Mockery::mock('overload:'.\Google_Client::class);
-        $mock2->shouldReceive('verifyIdToken')->andReturn(['sub' => null]);
+    /**
+     * Test register: google (ng).
+     *
+     * @return void
+     */
+    public function testRegister2()
+    {
+        $user = $this->user01;
+        $user->invitation_token = 'token2';
+        $user->invited_at = new DateTime();
+        $user->save();
+
+        $mock = \Mockery::mock('overload:'.\Google_Client::class);
+        $mock->shouldReceive('verifyIdToken')->andReturn(null);
 
         $response = $this->post(
             route('post.registration', [
                 'user' => $user->id,
             ]), [
-                'token' => 'token1',
+                'token' => 'token2',
                 'provider_name' => 'google',
-                'provider_token' => 'return1',
+                'provider_token' => 'return2',
             ]
         );
         $response->assertSeeText('ng');
+    }
 
+    /**
+     * Test register: facebook (ok).
+     *
+     * @return void
+     */
+    public function testRegister3()
+    {
+        $user = $this->user01;
+        $user->invitation_token = 'token3';
+        $user->invited_at = new DateTime();
+        $user->save();
+
+        $mock = \Mockery::mock('overload:'.Facebook::class);
+        $mock->shouldReceive('get')->andReturn(new class {
+            public function getGraphUser() {
+                return new class {
+                    public function getId() {
+                        return 'secret3';
+                    }
+                };
+            }
+        });
+
+        $response = $this->post(
+            route('post.registration', [
+                'user' => $user->id,
+            ]), [
+                'token' => 'token3',
+                'provider_name' => 'facebook',
+                'provider_token' => 'return3',
+            ]
+        );
+        $response->assertSeeText('ok');
+    }
+
+    /**
+     * Test register: facebook (ng).
+     *
+     * @return void
+     */
+    public function testRegister4()
+    {
+        $user = $this->user01;
+        $user->invitation_token = 'token4';
+        $user->invited_at = new DateTime();
+        $user->save();
+
+        $mock = \Mockery::mock('overload:'.Facebook::class);
+        $mock->shouldReceive('get')->andReturn(new class {
+            public function getGraphUser() {
+                return new class {
+                    public function getId() {
+                        Throw new \Exception('test');
+                    }
+                };
+            }
+        });
+
+        $response = $this->post(
+            route('post.registration', [
+                'user' => $user->id,
+            ]), [
+                'token' => 'token4',
+                'provider_name' => 'facebook',
+                'provider_token' => 'return4',
+            ]
+        );
+        $response->assertSeeText('ng');
     }
 
     /**

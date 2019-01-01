@@ -50,6 +50,11 @@ Route::view(
   'login_google'
 )->name('login_google')->middleware('guest');
 
+Route::view(
+  '/login/facebook',
+  'login_facebook'
+)->name('login_facebook')->middleware('guest');
+
 Route::get(
   '/',
   'HomeController@index'

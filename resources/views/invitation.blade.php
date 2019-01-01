@@ -31,12 +31,12 @@
             @endcomponent
           @endif
           <p id="facebookArea" style="display: none;">
-            <button type="button" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'facebook' ]) }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-facebook"></i>
               </span>
               {{ __('Facebook') }}
-            </button>
+            </a>
           </p>
           <p id="googleArea" style="display: none;">
             <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'google' ]) }}" class="btn btn-outline-dark btn-block text-left">

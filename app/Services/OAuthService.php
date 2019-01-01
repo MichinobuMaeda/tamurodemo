@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use DateTime;
+use Facebook\Facebook;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -25,6 +26,26 @@ class OAuthService
                 $payload = $client->verifyIdToken($id_token);
                 return $payload ? $payload['sub'] : null;
             },
+            'facebook' => function ($access_token) {
+                try {
+                    $fb = new Facebook([
+                        'app_id' => env('FACEBOOK_APP_ID'),
+                        'app_secret' => env('FACEBOOK_APP_SECRET'),
+                        'default_graph_version' => 'v2.10',
+                    ]);
+                    $response = $fb->get('/me', $access_token);
+                    $me = $response->getGraphUser();
+                    return $me->getId();
+                } catch (\Exception $e) {
+                    Log::warning(json_encode([
+                        'service' => get_class($this).'#__construct',
+                        'result' => null,
+                        'provider' => 'facebook',
+                        'message' => $e->getMessage(),
+                    ]));
+                    return null;
+                }
+            },
         ];
     }
 
@@ -42,7 +63,7 @@ class OAuthService
         }
         if ($user->invitation_token != $token) {
             Log::info(json_encode([
-                'service' => get_class($this).'::reply',
+                'service' => get_class($this).'#register',
                 'result' => false,
                 'user_id' => $user->id,
                 'token' => $token,
@@ -54,17 +75,17 @@ class OAuthService
             '-'.env('APP_INVITATION_EXPIRE', 60).' minutes'
         )) {
             Log::info(json_encode([
-                'service' => get_class($this).'::register',
+                'service' => get_class($this).'#register',
                 'result' => false,
                 'user_id' => $user->id,
                 'token' => $token,
                 'message' => 'token expired',
             ]));
             return false;
-        }            
+        }
         $secret = $this->providers[$provider_name]($provider_token);
         Log::info(json_encode([
-            'service' => get_class($this).'#reply',
+            'service' => get_class($this).'#register',
             'result' => !!$secret,
             'user_id' => $user->id,
             'token' => $token,
@@ -95,7 +116,7 @@ class OAuthService
         }
         $secret = $this->providers[$provider_name]($provider_token);
         Log::info(json_encode([
-            'service' => get_class($this).'#loginWithOAuthProvider',
+            'service' => get_class($this).'#login',
             'result' => !!$secret,
             'provider_name' => $provider_name,
             'provider_token' => substr($provider_token, 0, 10).'...',
@@ -107,7 +128,7 @@ class OAuthService
         $ap = AuthProvider::where('secret', '=', $hashed)->first();
         if (!$ap) {
             Log::info(json_encode([
-                'service' => get_class($this).'#loginWithOAuthProvider',
+                'service' => get_class($this).'#login',
                 'result' => 'Unknown user',
                 'provider_name' => $provider_name,
                 'provider_token' => substr($provider_token, 0, 10).'...',
