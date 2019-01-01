@@ -5,6 +5,9 @@ namespace App\Services;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
+
+use App\Message;
 
 class ViewHelperService
 {
@@ -85,5 +88,17 @@ class ViewHelperService
         if (!$val) { return $val; }
         $ret = $this->setTimezone($val);
         return $ret->format(env('APP_TIMESTAMP_FORMAT', 'Y-m-d H:i:s'));
+    }
+
+    /**
+     * Get the message of the key.
+     * 
+     * @param string $key
+     * @return string
+     */
+    public function message($key) {
+        $message = Message::where('key', $key)
+            ->where('locale', Lang::getLocale())->first();
+        return $message ? $message->message : $key;
     }
 }

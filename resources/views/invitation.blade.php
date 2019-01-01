@@ -1,6 +1,3 @@
-@php
-  $invited = true
-@endphp
 @extends('layouts.app')
 @inject('vh', 'App\Services\ViewHelperService')
 @section('content')
@@ -12,31 +9,50 @@
 
         <div class="card-body">
           <h3>{{ __('Hello!') }} {{ $user->name }} {{ __('-san') }}</h3>
-          <p>{{ __('Please setup your login method.') }}</p>
+          @component('multi_line_message')
+            Please select your favorite login method.
+          @endcomponent
           @if ($user->email)
           <p>
-            <a class="btn btn-email" href="{{ route('password.request') }}">
-              {{ __('E-mail address and password') }}
+            <a href="{{ route('password.request') }}" class="btn btn-outline-dark btn-block text-left">
+              <span style="font-size: 1.2em; margin: 0 1em 0 0;">
+                <i class="far fa-envelope"></i>
+              </span>
+              {{ __('E-mail and password') }}
             </a>
           </p>
           <p>{{ __('Please confirm your E-mail address') }}: {{ $user->email }}</p>
-          <p>{{ __('If you want to use another E-mail address, please ask the system administrator to set up the mail address.') }}</p>
+            @component('multi_line_message')
+              If you want to use another E-mail address, please contact your administrator. 
+            @endcomponent
           @else
-          <p>{{ __('If you want to login with E-mail and password, please ask the system administrator to set up the mail address.') }}</p>
+            @component('multi_line_message')
+              If you want to login with E-mail address, please contact your administrator.
+            @endcomponent
           @endif
-          <p>
-            <div id="googleSignInWrapper">
-              <div id="googleButton" class="btn btn-google">
-                <span class="icon"></span>
-                <span class="buttonText">{{ __('Login with Google') }}</span>
-              </div>
-            </div>
-            <p id="googleStatus"></p>
-            <script>startGoogleApp();</script>
+          <p id="facebookArea" style="display: none;">
+            <button type="button" class="btn btn-outline-dark btn-block text-left">
+              <span style="font-size: 1.2em; margin: 0 1em 0 0;">
+                <i class="fab fa-facebook"></i>
+              </span>
+              {{ __('Facebook') }}
+            </button>
+          </p>
+          <p id="googleArea" style="display: none;">
+            <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'google' ]) }}" class="btn btn-outline-dark btn-block text-left">
+              <span style="font-size: 1.2em; margin: 0 1em 0 0;">
+                <i class="fab fa-google"></i>
+              </span>
+              {{ __('Google') }}
+            </a>
           </p>
         </div>
       </div>
     </div>
   </div>
 </div>
+<script>
+  document.getElementById("facebookArea").style.display = facebookArea ? "block" : "none";
+  document.getElementById("googleArea").style.display = googleArea ? "block" : "none";
+</script>
 @endsection

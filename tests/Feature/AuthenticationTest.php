@@ -49,6 +49,16 @@ class AuthenticationTest extends TestCase
         ]));
         $response->assertViewIs('invitation');
 
+        $user->invitation_token = 'token1';
+        $user->invited_at = new DateTime();
+        $user->save();
+        $response = $this->get(route('users.invitations', [
+            'user' => $user->id,
+            'token' => 'token1',
+            'provider_name' => 'google',
+        ]));
+        $response->assertViewIs('login_google');
+
         $response = $this->get(route('users.invitations', [
             'user' => 0,
             'token' => 'token1',

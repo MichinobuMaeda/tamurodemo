@@ -47,13 +47,13 @@ class RouteUsersTest extends TestCase
         Auth::logout();
 
         $response = $this->get(route('users.list'));
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('login_select'));
 
         $response = $this->get(route('users.list.orderBy', [
             'orderBy' => 'email',
             'orderDir' => 'desc'
         ]));
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('login_select'));
     }
 
     /**
@@ -101,7 +101,7 @@ class RouteUsersTest extends TestCase
         ]), [
             'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('login_select'));
     }
 
     /**
@@ -141,6 +141,6 @@ class RouteUsersTest extends TestCase
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('login_select'));
     }
 }

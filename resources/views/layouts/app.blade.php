@@ -11,11 +11,11 @@
 
   <!-- Scripts -->
   <script src="{{ asset('js/app.js') }}" defer></script>
-  @if (isset($login))
-    @include('oauth_script', [ 'user' => null, 'token' => null])
-  @elseif (isset($invited))
-    @include('oauth_script', [ 'user' => $user, 'token' => $token, $invited => true ])
-  @endif
+  <script>
+    var googleArea = null;
+    var facebookArea = null;
+  </script>
+  @include('script_google')
 
   <!-- Fonts -->
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -24,13 +24,15 @@
 
   <!-- Styles -->
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-  @includeWhen(isset($login) || isset($invited), 'oauth_style')
 </head>
 <body>
+  <script>
+    if (googleArea) { initGoogleClient(); }
+  </script>
   <div id="app">
     <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
       <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">
+        <a class="navbar-brand" href="{{ route('home') }}">
           {{ config('app.name', 'Tamuro') }}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -48,7 +50,7 @@
             <!-- Authentication Links -->
             @guest
               <li class="nav-item">
-                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                <a class="nav-link" href="{{ route('login_select') }}">{{ __('Login') }}</a>
               </li>
             @else
               <li class="nav-item dropdown">
@@ -59,7 +61,8 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="{{ route('logout') }}"
                      onclick="event.preventDefault();
-                           document.getElementById('logout-form').submit();">
+                           document.getElementById('logout-form').submit();
+                           if (googleArea) { googleAuth2.signOut(); }">
                     {{ __('Logout') }}
                   </a>
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

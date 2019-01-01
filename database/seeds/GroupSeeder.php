@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Group;
 use App\GroupRole;
 
-class GroupsTableSeeder extends Seeder
+class GroupSeeder extends Seeder
 {
     /**
      * Run the database seeds.

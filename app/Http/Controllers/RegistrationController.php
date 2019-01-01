@@ -26,15 +26,23 @@ class RegistrationController extends Controller
      * @param Request $request
      * @param App\User $user
      * @param String $token
+     * @param String $provider_name ( optional )
      * @return \Illuminate\Http\Response
      */
-    public function viewInvitation(Request $request, $user, $token)
+    public function viewInvitation(Request $request, $user, $token, $provider_name = null)
     {
         if ($user && ($user->invitation_token == $token)) {
-            return view('invitation', [
-                'user' => $user,
-                'token' => $token,
-            ]);
+            if ($provider_name ) {
+                return view('login_'.$provider_name, [
+                    'user' => $user,
+                    'token' => $token,
+                ]);
+            } else {
+                return view('invitation', [
+                    'user' => $user,
+                    'token' => $token,
+                ]);
+            }
         } else {
             return redirect()->route('home');
         }

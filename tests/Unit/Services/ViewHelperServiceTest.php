@@ -7,9 +7,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Tests\Unit\UnitTestHelper;
 use App\Services\ViewHelperService;
 use App\User;
+use App\Message;
 
 class ViewHelperServiceTest extends TestCase
 {
@@ -117,6 +119,43 @@ class ViewHelperServiceTest extends TestCase
         $this->assertEquals(
             $vh->setTimezone($val)->format(env('APP_TIMESTAMP_FORMAT')),
             $vh->formatTimestamp($val)
+        );
+    }
+
+    /**
+     * The test of method message().
+     *
+     * @return void
+     */
+    public function testMessage()
+    {
+        $vh = new ViewHelperService();
+        Message::create([
+            'key' => 'test01',
+            'locale' => Lang::getLocale(),
+            'message' => 'message of test01',
+        ]);
+        Message::create([
+            'key' => 'test01',
+            'locale' => 'zz',
+            'message' => 'message of test01(zz)',
+        ]);
+        Message::create([
+            'key' => 'test02',
+            'locale' => 'zz',
+            'message' => 'message of test02(zz)',
+        ]);
+        $this->assertEquals(
+            'test00',
+            $vh->message('test00')
+        );
+        $this->assertEquals(
+            'message of test01',
+            $vh->message('test01')
+        );
+        $this->assertEquals(
+            'test02',
+            $vh->message('test02')
         );
     }
 }

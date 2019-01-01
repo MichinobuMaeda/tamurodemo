@@ -1,16 +1,18 @@
-@php
-  $login = true
-@endphp
 @extends('layouts.app')
-
+@inject('vh', 'App\Services\ViewHelperService')
 @section('content')
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Login') }}</div>
-
+        <div class="card-header">{{ __('E-mail and password') }}</div>
         <div class="card-body">
+          <p>
+            <a href="javascript:window.history.back();">
+              <i class="fas fa-angle-double-left"></i>
+              {{ __('Back') }}
+            </a>
+          </p>
           <form method="POST" action="{{ route('login') }}">
             @csrf
 
@@ -42,38 +44,15 @@
               </div>
             </div>
 
-            <div class="form-group row">
-              <div class="col-md-6 offset-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                  <label class="form-check-label" for="remember">
-                    {{ __('Remember Me') }}
-                  </label>
-                </div>
-              </div>
-            </div>
-
             <div class="form-group row mb-0">
               <div class="col-md-8 offset-md-2">
                 <p>
-                  <button type="submit" class="btn btn-email">
-                    {{ __('E-mail address and password') }}
+                  <button type="submit" class="btn btn-primary">
+                    {{ __('Login') }}
                   </button>
                   <a class="btn btn-link" href="{{ route('password.request') }}">
                     {{ __('Forgot Your Password?') }}
                   </a>
-                </p>
-                <p>
-                  <div id="googleSignInWrapper">
-                    <div id="googleButton" class="btn btn-google">
-                      <span class="icon"></span>
-                      <span class="buttonText">{{ __('Login with Google') }}</span>
-                    </div>
-                  </div>
-                </p>
-                <p id="googleStatus"></p>
-                  <script>startGoogleApp();</script>
                 </p>
               </div>
             </div>
