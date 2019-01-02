@@ -13,7 +13,6 @@
               {{ __('Back') }}
             </a>
           </p>
-          <script src="https://apis.google.com/js/platform.js?onload=onGoogleLoad" async defer></script>
           <script>
             var googleAuth2 = null;
             var onGoogleLoad = function() {
@@ -44,7 +43,7 @@
               if (window.location.href.includes('/login/')) {
                 xhr.open('POST', '{{ route("oAuthLogin") }}');
               } else {
-                xhr.open('POST', '{{ route("post.registration", [ "user" => isset($user) ? $user : null ]) }}');
+                xhr.open('POST', '{{ route("post.registration") }}');
               }
               xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
               xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
@@ -58,10 +57,11 @@
               if (window.location.href.includes('/login/')) {
                 xhr.send('provider_token=' + id_token + "&provider_name=google");
               } else {
-                xhr.send('provider_token=' + id_token + "&token={{ isset($token) ? $token : "" }}&provider_name=google");
+                xhr.send('provider_token=' + id_token + '&token={{ isset($token) ? $token : "" }}&provider_name=google&user={{ isset($user) ? $user->id : "" }}');
               }
              }
           </script>
+          <script src="https://apis.google.com/js/platform.js?onload=onGoogleLoad" async defer></script>
           <p id="googleSinginButton"></p>
           <p id="googleStatus"></p>
           @component('multi_line_message')

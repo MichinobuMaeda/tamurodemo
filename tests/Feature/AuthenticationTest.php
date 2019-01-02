@@ -35,7 +35,7 @@ class AuthenticationTest extends TestCase
     {
         $user = $this->user01;
 
-        $response = $this->get(route('users.invitations', [
+        $response = $this->get(route('get.registration', [
             'user' => $user->id,
             'token' => 'token1',
         ]));
@@ -44,7 +44,7 @@ class AuthenticationTest extends TestCase
         $user->invitation_token = 'token1';
         $user->invited_at = new DateTime();
         $user->save();
-        $response = $this->get(route('users.invitations', [
+        $response = $this->get(route('get.registration', [
             'user' => $user->id,
             'token' => 'token1',
         ]));
@@ -53,20 +53,20 @@ class AuthenticationTest extends TestCase
         $user->invitation_token = 'token1';
         $user->invited_at = new DateTime();
         $user->save();
-        $response = $this->get(route('users.invitations', [
+        $response = $this->get(route('get.registration', [
             'user' => $user->id,
             'token' => 'token1',
             'provider_name' => 'google',
         ]));
         $response->assertViewIs('login_google');
 
-        $response = $this->get(route('users.invitations', [
+        $response = $this->get(route('get.registration', [
             'user' => 0,
             'token' => 'token1',
         ]));
         $response->assertStatus(404);
 
-        $response = $this->get(route('users.invitations', [
+        $response = $this->get(route('get.registration', [
             'user' => $user->id,
             'token' => 'dummy',
         ]));
@@ -89,9 +89,8 @@ class AuthenticationTest extends TestCase
         $mock->shouldReceive('verifyIdToken')->andReturn(['sub' => 'secret1']);
 
         $response = $this->post(
-            route('post.registration', [
+            route('post.registration'), [
                 'user' => $user->id,
-            ]), [
                 'token' => 'token1',
                 'provider_name' => 'google',
                 'provider_token' => 'return1',
@@ -116,9 +115,8 @@ class AuthenticationTest extends TestCase
         $mock->shouldReceive('verifyIdToken')->andReturn(null);
 
         $response = $this->post(
-            route('post.registration', [
+            route('post.registration'), [
                 'user' => $user->id,
-            ]), [
                 'token' => 'token2',
                 'provider_name' => 'google',
                 'provider_token' => 'return2',

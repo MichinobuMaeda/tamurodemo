@@ -58,6 +58,6 @@ class Handler extends ExceptionHandler
      */
     public function unauthenticated($request, AuthenticationException $exception)
     {
-        return redirect()->guest(route('login_select'));
+        return redirect()->guest(route('login.select'));
     }
 }

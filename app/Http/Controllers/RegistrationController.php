@@ -52,17 +52,11 @@ class RegistrationController extends Controller
      * Register OAuth provider and secret.
      *
      * @param Request $request
-     * @param App\User $user
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request, $user = null)
+    public function register(Request $request)
     {
-        if (!$user) {
-            $user = User::find($request->input('user'));
-        }
-        if (!$user) {
-            return response('ng', 200)->header('Content-Type', 'text/plain');
-        }
+        $user = User::find($request->input('user'));
         $token = $request->input('token');
         $provider_name = $request->input('provider_name');
         $provider_token = $request->input('provider_token');

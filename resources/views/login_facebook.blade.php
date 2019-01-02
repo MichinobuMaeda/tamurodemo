@@ -30,7 +30,7 @@
                   if (window.location.href.includes('/login/')) {
                     xhr.open('POST', '{{ route("oAuthLogin") }}');
                   } else {
-                    xhr.open('POST', '{{ route("post.registration", [ "user" => isset($user) ? $user : null ]) }}');
+                    xhr.open('POST', '{{ route("post.registration") }}');
                   }
                   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                   xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
@@ -44,7 +44,7 @@
                   if (window.location.href.includes('/login/')) {
                     xhr.send('provider_token=' + token + "&provider_name=facebook");
                   } else {
-                    xhr.send('provider_token=' + token + "&token={{ isset($token) ? $token : "" }}&provider_name=facebook");
+                    xhr.send('provider_token=' + token + "&token={{ isset($token) ? $token : "" }}&provider_name=facebook&user={{ isset($user) ? $user->id : "" }}");
                   }
                 } else {
                   document.getElementById('facebookStatus').innerText = "{{ __('Failed to authenticate.') }}";

@@ -19,7 +19,7 @@
           <p>{{ __('Send E-mail to set password.') }}</p>
           <p>{{ $user->email }}</p>
           @else
-          <p>{{ route('users.invitations', [ 'user' => $user->id, 'token' => $user->invitation_token ]) }}</p>
+          <p>{{ route('get.registration', [ 'user' => $user->id, 'token' => $user->invitation_token ]) }}</p>
           @endif
         </div>
       </div>

@@ -14,7 +14,7 @@
 Route::view(
   '/login',
   'login_select'
-)->name('login_select')->middleware('guest');
+)->name('login.select')->middleware('guest');
 
 Route::get(
   'login/password',
@@ -48,15 +48,15 @@ Route::post(
 Route::view(
   '/login/facebook',
   'login_facebook'
-)->name('login_facebook')->middleware('guest');
+)->name('login.facebook')->middleware('guest');
 Route::view(
   '/login/yahoojp',
   'login_yahoo_jp'
-)->name('login_yahoo_jp')->middleware('guest');
+)->name('login.yahoo_jp')->middleware('guest');
 Route::view(
   '/login/google',
   'login_google'
-)->name('login_google')->middleware('guest');
+)->name('login.google')->middleware('guest');
 
 Route::get(
   '/',
@@ -83,9 +83,9 @@ Route::get(
 Route::get(
   'registrations/{user}/{token}/{provider_name?}',
   'RegistrationController@viewInvitation'
-)->name('users.invitations');
+)->name('get.registration');
 Route::post(
-  'registrations/{user?}',
+  'registrations',
   'RegistrationController@register'
 )->name('post.registration');
 

@@ -28,7 +28,7 @@ class LoginWithPasswordTest extends TestCase
     {
         // Before login.
         $response = $this->get('/');
-        $response->assertRedirect(route('login_select'));
+        $response->assertRedirect(route('login.select'));
 
         // Login with bad password.
         $response = $this->post(route('login'), [
@@ -77,7 +77,7 @@ class LoginWithPasswordTest extends TestCase
         $response->assertRedirect('/');
 
         $response = $this->get('/');
-        $response->assertRedirect(route('login_select'));
+        $response->assertRedirect(route('login.select'));
 
         $response = $this->get(route('password.request'));
         $response->assertStatus(200);

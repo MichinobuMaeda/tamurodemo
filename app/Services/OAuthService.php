@@ -215,6 +215,14 @@ class OAuthService
     public function register($user, $token, $provider_name, $provider_token)
     {
         if ((!$user) || (!$token) || (!$provider_name)) {
+            Log::info(json_encode([
+                'service' => get_class($this).'#register',
+                'result' => false,
+                'user_id' => ($user ? $user->id : null),
+                'token' => $token,
+                'provider_name' => $provider_name,
+                'message' => 'missed parameter required',
+            ]));
             return false;
         }
         if ($user->invitation_token != $token) {
