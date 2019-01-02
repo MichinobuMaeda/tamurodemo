@@ -38,6 +38,14 @@
               {{ __('Facebook') }}
             </a>
           </p>
+          <p id="yahooJpArea" style="display: none;">
+            <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'yahoo_jp' ]) }}" class="btn btn-outline-dark btn-block text-left">
+              <span style="font-size: 1.2em; margin: 0 1em 0 0; font-family: 'Wide Latin', Copperplate, serif; font-style: italic;">
+                Y!
+              </span>
+              {{ __('Yahoo! JAPAN') }}
+            </a>
+          </p>
           <p id="googleArea" style="display: none;">
             <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'google' ]) }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
@@ -53,6 +61,7 @@
 </div>
 <script>
   document.getElementById("facebookArea").style.display = facebookArea ? "block" : "none";
+  document.getElementById("yahooJpArea").style.display = facebookArea ? "block" : "none";
   document.getElementById("googleArea").style.display = googleArea ? "block" : "none";
 </script>
 @endsection

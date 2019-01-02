@@ -14,6 +14,7 @@
   <script>
     var googleArea = null;
     var facebookArea = null;
+    var yahooJpArea = null;
   </script>
   @include('script_google')
 
@@ -27,6 +28,7 @@
 </head>
 <body>
 @include('script_facebook')
+@include('script_yahoo_jp')
   <script>
     if (googleArea) { initGoogleClient(); }
   </script>

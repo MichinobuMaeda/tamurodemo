@@ -14,10 +14,10 @@ class RegistrationController extends Controller
      *
      * @return void
      */
-    public function __construct(OAuthService $rs)
+    public function __construct(OAuthService $svc)
     {
         $this->middleware('guest');
-        $this->rs = $rs;
+        $this->svc = $svc;
     }
 
     /**
@@ -55,12 +55,18 @@ class RegistrationController extends Controller
      * @param App\User $user
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request, $user)
+    public function register(Request $request, $user = null)
     {
+        if (!$user) {
+            $user = User::find($request->input('user'));
+        }
+        if (!$user) {
+            return response('ng', 200)->header('Content-Type', 'text/plain');
+        }
         $token = $request->input('token');
         $provider_name = $request->input('provider_name');
         $provider_token = $request->input('provider_token');
-        $ret = $this->rs->register($user, $token, $provider_name, $provider_token);
+        $ret = $this->svc->register($user, $token, $provider_name, $provider_token);
         return response($ret ? 'ok' : 'ng', 200)->header('Content-Type', 'text/plain');
     }
 }

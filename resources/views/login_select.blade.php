@@ -37,15 +37,15 @@
               {{ __('Facebook') }}
             </a>
           </p>
-<!-- TODO:
-          <p>
-            <button type="button" class="btn btn-outline-dark btn-block text-left">
+          <p id="yahooJpArea" style="display: none;">
+            <a href="{{ route('login_yahoo_jp') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0; font-family: 'Wide Latin', Copperplate, serif; font-style: italic;">
                 Y!
               </span>
               {{ __('Yahoo! JAPAN') }}
-            </button>
+            </a>
           </p>
+<!-- TODO:
           <p>
             <button type="button" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0; font-family: Geneva, 'Lucida Console', Arial, sans-serif";>
@@ -78,6 +78,7 @@
 </div>
 <script>
   document.getElementById("facebookArea").style.display = facebookArea ? "block" : "none";
+  document.getElementById("yahooJpArea").style.display = facebookArea ? "block" : "none";
   document.getElementById("googleArea").style.display = googleArea ? "block" : "none";
 </script>
 @endsection

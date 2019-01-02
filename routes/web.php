@@ -46,14 +46,17 @@ Route::post(
 )->name('password.update');
 
 Route::view(
-  '/login/google',
-  'login_google'
-)->name('login_google')->middleware('guest');
-
-Route::view(
   '/login/facebook',
   'login_facebook'
 )->name('login_facebook')->middleware('guest');
+Route::view(
+  '/login/yahoojp',
+  'login_yahoo_jp'
+)->name('login_yahoo_jp')->middleware('guest');
+Route::view(
+  '/login/google',
+  'login_google'
+)->name('login_google')->middleware('guest');
 
 Route::get(
   '/',
@@ -82,7 +85,7 @@ Route::get(
   'RegistrationController@viewInvitation'
 )->name('users.invitations');
 Route::post(
-  'registrations/{user}',
+  'registrations/{user?}',
   'RegistrationController@register'
 )->name('post.registration');
 

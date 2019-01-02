@@ -14,10 +14,10 @@ class OAuthLoginController extends Controller
      *
      * @return void
      */
-    public function __construct(OAuthService $rs)
+    public function __construct(OAuthService $svc)
     {
         $this->middleware('guest');
-        $this->rs = $rs;
+        $this->svc = $svc;
     }
 
     /**
@@ -31,7 +31,7 @@ class OAuthLoginController extends Controller
     {
         $provider_name = $request->input('provider_name');
         $provider_token = $request->input('provider_token');
-        $ret = $this->rs->login($provider_name, $provider_token);
+        $ret = $this->svc->login($provider_name, $provider_token);
         return response($ret ? 'ok' : 'ng', 200)->header('Content-Type', 'text/plain');
     }
 }

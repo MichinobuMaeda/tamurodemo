@@ -14,10 +14,10 @@ class UsersController extends Controller
      *
      * @return void
      */
-    public function __construct(UsersService $us)
+    public function __construct(UsersService $svc)
     {
         $this->middleware('auth');
-        $this->us = $us;
+        $this->svc = $svc;
     }
 
     /**
@@ -40,7 +40,7 @@ class UsersController extends Controller
         $orderDir = session('users_list.orderDir', 'asc');
 
         return view('users_list', [
-            'users' => $this->us->list($orderBy, $orderDir),
+            'users' => $this->svc->list($orderBy, $orderDir),
             'orderBy' => $orderBy,
             'orderDir' => $orderDir,
         ]);

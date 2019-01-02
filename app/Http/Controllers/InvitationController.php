@@ -14,10 +14,10 @@ class InvitationController extends Controller
      *
      * @return void
      */
-    public function __construct(InvitationService $is)
+    public function __construct(InvitationService $svc)
     {
         $this->middleware('auth');
-        $this->is = $is;
+        $this->svc = $svc;
     }
 
     /**
@@ -30,7 +30,7 @@ class InvitationController extends Controller
     public function invite(Request $request, $user)
     {
         $sendBy= $request->input('sendBy');
-        $this->is->invite($user, $sendBy);
+        $this->svc->invite($user, $sendBy);
         return redirect()->route('get.invitation', [
             'user' => $user->id,
             'sendBy' => $sendBy

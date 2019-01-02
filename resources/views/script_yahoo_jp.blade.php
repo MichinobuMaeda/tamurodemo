@@ -1,0 +1,3 @@
+<script>
+yahooJpArea = true;
+</script>

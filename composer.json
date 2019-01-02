@@ -9,6 +9,7 @@
         "facebook/graph-sdk": "^5.7",
         "fideloper/proxy": "^4.0",
         "google/apiclient": "^2.2",
+        "guzzlehttp/guzzle": "~6.0",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0"
     },
