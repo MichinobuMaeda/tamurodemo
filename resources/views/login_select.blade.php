@@ -12,12 +12,12 @@
         @endcomponent
 <!-- TODO:
           <p>
-            <button type="button" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('login') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fas fa-exchange-alt"></i>
               </span>
               {{ __('E-mail confirmation') }}
-            </button>
+            </a>
           </p>
 -->
           <p>
@@ -29,7 +29,7 @@
             </a>
           </p>
           <p>{{ __('Login with ...') }}</p>
-          <p id="facebookArea" style="display: none;">
+          <p>
             <a href="{{ route('login_facebook') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-facebook"></i>
@@ -37,7 +37,7 @@
               {{ __('Facebook') }}
             </a>
           </p>
-          <p id="yahooJpArea" style="display: none;">
+          <p>
             <a href="{{ route('login_yahoo_jp') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0; font-family: 'Wide Latin', Copperplate, serif; font-style: italic;">
                 Y!
@@ -47,23 +47,31 @@
           </p>
 <!-- TODO:
           <p>
-            <button type="button" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('login_facebook') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0; font-family: Geneva, 'Lucida Console', Arial, sans-serif";>
                 m
               </span>
               {{ __('mixi') }}
-            </button>
+            </a>
           </p>
           <p>
-            <button type="button" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('login_facebook') }}" class="btn btn-outline-dark btn-block text-left">
+              <span style="font-size: 1.2em; margin: 0 1em 0 0;">
+                <i class="fab fa-amazon_jp"></i>
+              </span>
+              {{ __('amazon.co.jp') }}
+            </a>
+          </p>
+          <p>
+            <a href="{{ route('login_facebook') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-microsoft"></i>
               </span>
               {{ __('Microsoft') }}
-            </button>
+            </a>
           </p>
 -->
-          <p id="googleArea" style="display: none;">
+          <p>
             <a href="{{ route('login_google') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-google"></i>
@@ -76,9 +84,4 @@
     </div>
   </div>
 </div>
-<script>
-  document.getElementById("facebookArea").style.display = facebookArea ? "block" : "none";
-  document.getElementById("yahooJpArea").style.display = facebookArea ? "block" : "none";
-  document.getElementById("googleArea").style.display = googleArea ? "block" : "none";
-</script>
 @endsection

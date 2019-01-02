@@ -11,12 +11,6 @@
 
   <!-- Scripts -->
   <script src="{{ asset('js/app.js') }}" defer></script>
-  <script>
-    var googleArea = null;
-    var facebookArea = null;
-    var yahooJpArea = null;
-  </script>
-  @include('script_google')
 
   <!-- Fonts -->
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -27,11 +21,6 @@
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-@include('script_facebook')
-@include('script_yahoo_jp')
-  <script>
-    if (googleArea) { initGoogleClient(); }
-  </script>
   <div id="app">
     <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
       <div class="container">
@@ -64,8 +53,7 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="{{ route('logout') }}"
                      onclick="event.preventDefault();
-                           document.getElementById('logout-form').submit();
-                           if (googleArea) { googleAuth2.signOut(); }">
+                           document.getElementById('logout-form').submit();">
                     {{ __('Logout') }}
                   </a>
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

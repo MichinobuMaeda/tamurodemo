@@ -30,7 +30,7 @@
               If you want to login with E-mail address, please contact your administrator.
             @endcomponent
           @endif
-          <p id="facebookArea" style="display: none;">
+          <p>
             <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'facebook' ]) }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-facebook"></i>
@@ -38,7 +38,7 @@
               {{ __('Facebook') }}
             </a>
           </p>
-          <p id="yahooJpArea" style="display: none;">
+          <p>
             <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'yahoo_jp' ]) }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0; font-family: 'Wide Latin', Copperplate, serif; font-style: italic;">
                 Y!
@@ -46,7 +46,7 @@
               {{ __('Yahoo! JAPAN') }}
             </a>
           </p>
-          <p id="googleArea" style="display: none;">
+          <p>
             <a href="{{ route('users.invitations', [ 'user' => $user, 'token' => $token, 'provider_name' => 'google' ]) }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fab fa-google"></i>
@@ -59,9 +59,4 @@
     </div>
   </div>
 </div>
-<script>
-  document.getElementById("facebookArea").style.display = facebookArea ? "block" : "none";
-  document.getElementById("yahooJpArea").style.display = facebookArea ? "block" : "none";
-  document.getElementById("googleArea").style.display = googleArea ? "block" : "none";
-</script>
 @endsection

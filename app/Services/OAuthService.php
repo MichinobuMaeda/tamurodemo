@@ -68,7 +68,7 @@ class OAuthService
                     ]
                 );
                 if ($response->getStatusCode() != 200) {
-                    Log::warn('/yconnect/v2/token status: ' + $response->getStatusCode());
+                    Log::warn('/yconnect/v2/token status: ' . $response->getStatusCode());
                     return null;
                 }
                 $data = json_decode($response->getBody());
@@ -85,7 +85,7 @@ class OAuthService
                     'https://auth.login.yahoo.co.jp/yconnect/v2/public-keys'
                 );
                 if ($response->getStatusCode() != 200) {
-                    Log::warn('/yconnect/v2/public-keys status: ' + $response->getStatusCode());
+                    Log::warn('/yconnect/v2/public-keys status: ' . $response->getStatusCode());
                     return null;
                 }
                 $data = json_decode($response->getBody(), TRUE);
@@ -94,8 +94,7 @@ class OAuthService
                     Log::warn('Invalid signature.');
                     return null;
                 }
-
-                if (!$this->verifyPayloadYahooJp($payload, $nonce, time())) {
+                if (!$this->verifyPayloadYahooJp($payload, $nonce, $_SERVER['REQUEST_TIME'])) {
                     return null;
                 }
 
@@ -116,7 +115,7 @@ class OAuthService
                     ]
                 );
                 if ($response->getStatusCode() != 200) {
-                    Log::warn('/yconnect/v2/attribute status: ' + $response->getStatusCode());
+                    Log::warn('/yconnect/v2/attribute status: ' . $response->getStatusCode());
                     return null;
                 }
                 $data = json_decode($response->getBody());

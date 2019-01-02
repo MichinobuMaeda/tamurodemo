@@ -12,6 +12,15 @@ use Tests\Unit\UnitTestHelper;
 use App\Services\OAuthService;
 use App\AuthProvider;
 
+const TOKEN_URL = 'https://auth.login.yahoo.co.jp/yconnect/v2/token';
+const TOKEN_BODY = '{"access_token":"CPbFL28bvI5iy0M0jJeX1Eq76cWsWrNtNumhYxwTzUw.qS1niAl5pmTuJHNbJxjGKM4wx19nPKsdxrpbM4MI_gAGxwOL.j6zOKok9A4kkKBn77uyCwtusNwAFss9_y48BzodXZ1Ci4VWDGpEzPeb3QrtjsFM07JO3JiZzez2vi1v0o8skRbZOXlnHygGmegKTLS.Fma6qfCslcr7FDUDjUkdWwoLDX0uYPYDgKlYo4m2UogsowqaRofvuZVFrt239GF4iQLKjvb3VVVtlYQKQiF5mQrz99.20ucgyqLpRWTQqTZtbUTTqYftphB7slXb4aHL1DwR452g3jrVlAdIk0pQNHITmC_vVvCNXWLpN9pEPnfXUWhzr47xO0sS60KZdvSUcB6XYZwLdqckqdLtW8miHfCdvKJ3O.X8Q7aWAkeGnMPu17dulBuwQUnDaSbtufZjypApDaQpy01cmVsDYOQD.Fya2u3of6SMllGK_uS.i4GwU15ID3eE7N_UQY6LAd5NDjXVoRgGbZCQ1JTDymVnU.Ck8EkbF_JNgeafcvruT08D29uKK6jlvrQwhPny6S9j0rZKTWyvlxlDRISP82FYsX95Lp8s_LBqChOeEpHH6SZ4tZSCCHjPAi8kLesgX_iZVIJpu_pr4FUR8xVrZRxuXLZIkinUVjxqYjaxrMJ7yUO19sWXKKVtvO9a7lrKKbECvXxhOkm1HFQly_q4rSdRqj5sLFZfbZYHlBWnn3xSDYvT1YUp5S.HSVlNkVF7YYitGu3nS28jyFSc3.wvnUbJn_IyhTG77CB9xuQuYy2Kgkfa3HIBibweUC0e8hjQpGKV7PFChk1GtaC3vr8rjKAr_vGPiDkSQj4jmgSs.cFjpvmVaZ3jtuQdz.FgyjW14xCJFBYx3_GgfVNx1dxtnXiIxu7ICpINPI8cA98XfeGvpsa_O9aFgfANdSWEPz.285.AU4hP6tfxdKYCiokqwo.hMUR1dCnBV8yG842ufLZbgJhf0It2hKSRcZ5DoIbjc7Q0FnJ65t0IQhvw.V82oAe9LCQ5mCIR0APIz8Fm0QH_uTA6ns0gCAgv3K1mC_6rLWfMWmE6N2drjGIfaW_hINFCENwV5Pe8J3Vp_JyVE3Mmv.aV9lGL2EOkYOwkH7zP8DCFncLrlcvqULjF0l.fRNknUe0IDdHIL0Jkm0soXZhm_GgciYXDDqhNpGfc4f6_PRI09CrQ34SXDI4r46FYC5JiFSukC8iSoJg_ShYkj3oJKuz0MB_xDPBkupsAyL0YZCZrlkKUG6UokhDhuT7R83cObdWky_krM63uYH10rYdU9Cy0Sx8VEahDzlSY49zjc5G5Fm.9M806Om5IWOejzelYR31kZlFN5wOJsA8_Grggf6MGo8GE_U4NJbM8RZ7lOXxV5tsZAo.KDdHkt5uz2FjruYJMnba6eppwvQSN0RsrQeIrUCvYQs1Xkb6OFfP6uAaTF33WB9k45Hqmwl3YhfKswej9Jr5r5OPeeLaunReYI1mJMyPzfRNoQBY1JzmAMsb42efnkChdnZNQr.1rWidsc4Z_LrS9Qm8qXVBn1JQ6W6nnxcKWDu1AcS0KMNDpIsLnbyP_.c0Pe7RCZBVj7qqfj2_qUYsHY37o7wkcaFH1VmrPvf8Jp7PsrnqjmNTZvAynq1Fg9UtL9E0N.JAlhOLI7.2FI8mKk8IBIGy0FLOUhuY-","token_type":"Bearer","expires_in":3600,"id_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjBjYzE3NWI5YzBmMWI2YTgzMWMzOTllMjY5NzcyNjYxIn0.eyJpc3MiOiJodHRwczpcL1wvYXV0aC5sb2dpbi55YWhvby5jby5qcFwveWNvbm5lY3RcL3YyIiwic3ViIjoiWlhSN0FTNDNPQUZEN0ozTFNZRDVDQ0pONUEiLCJhdWQiOlsiZGowMGFpWnBQWHBpTkUxUFZVSkZWRFl5VHlaelBXTnZibk4xYldWeWMyVmpjbVYwSm5nOVlUSS0iXSwiZXhwIjoxNTQ4ODY3MzMzLCJpYXQiOjE1NDY0NDgxMzMsImFtciI6WyJwd2QiXSwibm9uY2UiOiJmN2FoNXB6ZGQ4dTJnNjJiZTltZTl3N2EiLCJhdF9oYXNoIjoiOXlvYW15djdLOWV1UHJjQzZVS2hvZyJ9.sDLCWIYDeW32RYdS04Ql7tHZI_A3c7jyiemRV27lKsuMj765DfvaQuQMIqk_COcLMbpe8WHIBLN__WWYI15cTH0DFG13K9qYa9u1SVeeXWh6ADELOXg135m6LBDQqrrlBBMu0Y7wphQGMm-BdW55qBqEo82StRHCDf2Orun9eZsbEDKq2IKNHn6tDHWiR0lLteAcUOrfPLqRFoxLBx692G8PsAbbYV2wXEA7J-462b-q2_ls8fy9ZbGG5TUgdbpf0LN8ZIj1Bh-mK6Df2hW4KfhL2ci3tVJOQMHq7JiuTWZopGzDBM-7sPm0L6-f9krIzcNds8BEtbeFN3Di0Qc3rQ","refresh_token":"dopc8jNnPp5XhyT9FMpZVFdBs6kEl4NoGK07hw9P5l4cQHmYAEFYUM0YaeMlcFHRtmea.1KGFHVY"}';
+const TOKEN_BODY_NG = '{"access_token":"xPbFL28bvI5iy0M0jJeX1Eq76cWsWrNtNumhYxwTzUw.qS1niAl5pmTuJHNbJxjGKM4wx19nPKsdxrpbM4MI_gAGxwOL.j6zOKok9A4kkKBn77uyCwtusNwAFss9_y48BzodXZ1Ci4VWDGpEzPeb3QrtjsFM07JO3JiZzez2vi1v0o8skRbZOXlnHygGmegKTLS.Fma6qfCslcr7FDUDjUkdWwoLDX0uYPYDgKlYo4m2UogsowqaRofvuZVFrt239GF4iQLKjvb3VVVtlYQKQiF5mQrz99.20ucgyqLpRWTQqTZtbUTTqYftphB7slXb4aHL1DwR452g3jrVlAdIk0pQNHITmC_vVvCNXWLpN9pEPnfXUWhzr47xO0sS60KZdvSUcB6XYZwLdqckqdLtW8miHfCdvKJ3O.X8Q7aWAkeGnMPu17dulBuwQUnDaSbtufZjypApDaQpy01cmVsDYOQD.Fya2u3of6SMllGK_uS.i4GwU15ID3eE7N_UQY6LAd5NDjXVoRgGbZCQ1JTDymVnU.Ck8EkbF_JNgeafcvruT08D29uKK6jlvrQwhPny6S9j0rZKTWyvlxlDRISP82FYsX95Lp8s_LBqChOeEpHH6SZ4tZSCCHjPAi8kLesgX_iZVIJpu_pr4FUR8xVrZRxuXLZIkinUVjxqYjaxrMJ7yUO19sWXKKVtvO9a7lrKKbECvXxhOkm1HFQly_q4rSdRqj5sLFZfbZYHlBWnn3xSDYvT1YUp5S.HSVlNkVF7YYitGu3nS28jyFSc3.wvnUbJn_IyhTG77CB9xuQuYy2Kgkfa3HIBibweUC0e8hjQpGKV7PFChk1GtaC3vr8rjKAr_vGPiDkSQj4jmgSs.cFjpvmVaZ3jtuQdz.FgyjW14xCJFBYx3_GgfVNx1dxtnXiIxu7ICpINPI8cA98XfeGvpsa_O9aFgfANdSWEPz.285.AU4hP6tfxdKYCiokqwo.hMUR1dCnBV8yG842ufLZbgJhf0It2hKSRcZ5DoIbjc7Q0FnJ65t0IQhvw.V82oAe9LCQ5mCIR0APIz8Fm0QH_uTA6ns0gCAgv3K1mC_6rLWfMWmE6N2drjGIfaW_hINFCENwV5Pe8J3Vp_JyVE3Mmv.aV9lGL2EOkYOwkH7zP8DCFncLrlcvqULjF0l.fRNknUe0IDdHIL0Jkm0soXZhm_GgciYXDDqhNpGfc4f6_PRI09CrQ34SXDI4r46FYC5JiFSukC8iSoJg_ShYkj3oJKuz0MB_xDPBkupsAyL0YZCZrlkKUG6UokhDhuT7R83cObdWky_krM63uYH10rYdU9Cy0Sx8VEahDzlSY49zjc5G5Fm.9M806Om5IWOejzelYR31kZlFN5wOJsA8_Grggf6MGo8GE_U4NJbM8RZ7lOXxV5tsZAo.KDdHkt5uz2FjruYJMnba6eppwvQSN0RsrQeIrUCvYQs1Xkb6OFfP6uAaTF33WB9k45Hqmwl3YhfKswej9Jr5r5OPeeLaunReYI1mJMyPzfRNoQBY1JzmAMsb42efnkChdnZNQr.1rWidsc4Z_LrS9Qm8qXVBn1JQ6W6nnxcKWDu1AcS0KMNDpIsLnbyP_.c0Pe7RCZBVj7qqfj2_qUYsHY37o7wkcaFH1VmrPvf8Jp7PsrnqjmNTZvAynq1Fg9UtL9E0N.JAlhOLI7.2FI8mKk8IBIGy0FLOUhuY-","token_type":"Bearer","expires_in":3600,"id_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjBjYzE3NWI5YzBmMWI2YTgzMWMzOTllMjY5NzcyNjYxIn0.eyJpc3MiOiJodHRwczpcL1wvYXV0aC5sb2dpbi55YWhvby5jby5qcFwveWNvbm5lY3RcL3YyIiwic3ViIjoiWlhSN0FTNDNPQUZEN0ozTFNZRDVDQ0pONUEiLCJhdWQiOlsiZGowMGFpWnBQWHBpTkUxUFZVSkZWRFl5VHlaelBXTnZibk4xYldWeWMyVmpjbVYwSm5nOVlUSS0iXSwiZXhwIjoxNTQ4ODY3MzMzLCJpYXQiOjE1NDY0NDgxMzMsImFtciI6WyJwd2QiXSwibm9uY2UiOiJmN2FoNXB6ZGQ4dTJnNjJiZTltZTl3N2EiLCJhdF9oYXNoIjoiOXlvYW15djdLOWV1UHJjQzZVS2hvZyJ9.sDLCWIYDeW32RYdS04Ql7tHZI_A3c7jyiemRV27lKsuMj765DfvaQuQMIqk_COcLMbpe8WHIBLN__WWYI15cTH0DFG13K9qYa9u1SVeeXWh6ADELOXg135m6LBDQqrrlBBMu0Y7wphQGMm-BdW55qBqEo82StRHCDf2Orun9eZsbEDKq2IKNHn6tDHWiR0lLteAcUOrfPLqRFoxLBx692G8PsAbbYV2wXEA7J-462b-q2_ls8fy9ZbGG5TUgdbpf0LN8ZIj1Bh-mK6Df2hW4KfhL2ci3tVJOQMHq7JiuTWZopGzDBM-7sPm0L6-f9krIzcNds8BEtbeFN3Di0Qc3rQ","refresh_token":"dopc8jNnPp5XhyT9FMpZVFdBs6kEl4NoGK07hw9P5l4cQHmYAEFYUM0YaeMlcFHRtmea.1KGFHVY"}';
+const PUBKY_URL = 'https://auth.login.yahoo.co.jp/yconnect/v2/public-keys';
+const PUBKY_BODY = '{"0cc175b9c0f1b6a831c399e269772661": "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0bXcnrheJ2snfq1wv6Qz\\n8+TEPDGKHCM0SsrQjxEFpXSEycL2/A+oW1ZGUzCuhz4HH4wkvc4CDJl25johSIUT\\nVyo4mrFrJ0ab0QAhrWE7gMyWFIfraj9cksPAGyVAiXLCN9Ly2xuoJxFjCAZXw1VO\\n8i7RTYK8ZP6dhcosiyzdhYt7C/65B5ikmCS4AymXIa83QQanCtjoGiwy4Cf2pLnn\\n9zXMZEnqQ+wwSoGn32YExmap7GAtjOwHNWU5zpW3dwNMq+zkcln3ICEBwxDpWJhE\\nZHZPBpPWgN+dQZDR2FiGHJgUFE3EM+CIcwxekrRBP+R3xEUeMFf5z1HeQNK8sjZe\\nRwIDAQAB\\n-----END PUBLIC KEY-----","b0c88084cd7ced792748340968b7d689": "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf9qYN87qbnuzKZFLM75\\n6UZXhBZuaB7g8l+jBeQsf2Suf6QUC1A/v30Y4yC0Jht/D5M3RzGzRxvPfBRnKm3N\\nxUDV5Ihmunt3+ZW6ia3bNdd7RRgCj3HdtQRiVroa9nDj/8abXZA1n2v2RpfiJKSo\\nHR8fim2TmfM7EMqXaoe65l1P3drEUkRMAOCMnsCXxCEfpcw/z0tXVTuOI/w3aCI8\\nD3mfPe2fTmCUOiYLV4jhnF5+pMZEBcF4/RsYTdKg/50F4hhgQ0qpkFJ2UI/UMV6t\\nHKw0lSJefcwj5j/pfeW4kfutUjb0xPQ2VrJ5IPM+efF5wtlkIhhQE58U5XuhWnc6\\nIwIDAQAB\\n-----END PUBLIC KEY-----"}';
+const PUBKY_BODY_NG = '{"b0c88084cd7ced792748340968b7d689": "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0bXcnrheJ2snfq1wv6Qz\\n8+TEPDGKHCM0SsrQjxEFpXSEycL2/A+oW1ZGUzCuhz4HH4wkvc4CDJl25johSIUT\\nVyo4mrFrJ0ab0QAhrWE7gMyWFIfraj9cksPAGyVAiXLCN9Ly2xuoJxFjCAZXw1VO\\n8i7RTYK8ZP6dhcosiyzdhYt7C/65B5ikmCS4AymXIa83QQanCtjoGiwy4Cf2pLnn\\n9zXMZEnqQ+wwSoGn32YExmap7GAtjOwHNWU5zpW3dwNMq+zkcln3ICEBwxDpWJhE\\nZHZPBpPWgN+dQZDR2FiGHJgUFE3EM+CIcwxekrRBP+R3xEUeMFf5z1HeQNK8sjZe\\nRwIDAQAB\\n-----END PUBLIC KEY-----","0cc175b9c0f1b6a831c399e269772661": "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxf9qYN87qbnuzKZFLM75\\n6UZXhBZuaB7g8l+jBeQsf2Suf6QUC1A/v30Y4yC0Jht/D5M3RzGzRxvPfBRnKm3N\\nxUDV5Ihmunt3+ZW6ia3bNdd7RRgCj3HdtQRiVroa9nDj/8abXZA1n2v2RpfiJKSo\\nHR8fim2TmfM7EMqXaoe65l1P3drEUkRMAOCMnsCXxCEfpcw/z0tXVTuOI/w3aCI8\\nD3mfPe2fTmCUOiYLV4jhnF5+pMZEBcF4/RsYTdKg/50F4hhgQ0qpkFJ2UI/UMV6t\\nHKw0lSJefcwj5j/pfeW4kfutUjb0xPQ2VrJ5IPM+efF5wtlkIhhQE58U5XuhWnc6\\nIwIDAQAB\\n-----END PUBLIC KEY-----"}';
+const ATTR_URL = 'https://userinfo.yahooapis.jp/yconnect/v2/attribute';
+const ATTR_BODY = '{"sub":"user_id_01"}';
+
 class OAuthServiceTest extends TestCase
 {
     use RefreshDatabase;
@@ -150,34 +159,6 @@ class OAuthServiceTest extends TestCase
     }
 
     /**
-     * The test of method providers['yahoo_jp']() --> OK.
-     *
-     * @return void
-     */
-    public function testYahooJpOk()
-    {
-        $svc = new OAuthService();
-
-        $code = 'wwic4Wrf';
-        $nonce = '2fd3yolreld1lnxjyod7zq';
-
-        $mock = \Mockery::mock('overload:'.\GuzzleHttp\Client::class);
-        $mock->shouldReceive('request')
-            ->with('POST', 'https://auth.login.yahoo.co.jp/yconnect/v2/token')
-            ->andReturn(new class {
-                public function getStatusCode() { return 200; }
-                public function getBody() { return '{"access_token":"_TZaaTVq4rKhM1DME2cmvnBzPiczqqao4q_IzJcO9wuv0LQRcYv7_dzfQdSLsBTMkCB83edykhog5utB2RiD_Jnx8OYhVv9QhzOlwTkwpghNXavIZ.WJklTfRFjDHJK4FJzAdR2Ze8DTZ4CDBTmDC_SGWTAn7TfrwK5_nUCXvObnJe5MUUsLRvGyx.5MfJHsElkzYfSyQTKiEXpoitE10_Eil4qNWSWdYk.7._ICP5YVD786CK_RivSk0L5p5TiG_SRHzyZUaV6A2KqpFBq44pA5OlznxWgtbQKjzKOj0A5kSkGFvX8Tbw7VY4rxYM6uG.eCEJDC.PtzxBqlX0oFDcg02SM6kwz3_CQuYRVQIdHNaByvZbFY5WzzO_g772lnE1N_5U0W19rpBjBICAELSsnD4YttuClguNKpefMONQQCnyOmZRvTYe3aervMKZ91ztOPVSWwdUMILpbvZ2pCnwKmFoPbN0OIVm2xNDlorN0GOGIlINrgutRvVe6MnywDgS4.LkfsWhezGYVNhC3pr8HbH.NxrmqQP_B.mMb7JRXxaccscqmhc2yGs24EYi3jJ7hW36FvvO_na0_ogzyQppDYjlvfX_UyeIobTWXXbx7E5dDBrHZzbLkq0cz1YMTs6xf19.npdqenFu4bL2mLXflYx5USOY8A84jqgCqtpLUmPxCK6VhR_DzOypr8aBcVAtudBgz5uaykd2WV.RiwU0dk7cbn9I6iFj5aIEuxHyiMwfIRzXAw5443G3hvP8ZfB7ugFoIQkZDiAgNximMxCtLPGnDqlBZxlRoXHfXOVW.5tCfFv3Bo8zb_X2GJsQ0GCwcRRN82fJ__pYYrIclXHrVkb5RLv388AVbYDgMHTaF7X3z2EliHItN0TE4wq3BZ.fY5F72U5cPDl0IXxJf0LiknsmfkXdeNXixpPL4p4LKOgzM035M4bI4RyZGkNvLFmTHHtGroyC_LsbMbuU_xe9jab12wcHl8by4.G.OvPSUfhiEzysULHNOedogbG4asU1FS6_mrkkUdJsvgCSVcid7HRKBqkTPUVfF0rpy3dl_sFqCbtBCUb4Nj13oDe0HThyb_yf5tlYFYd5ZWKU.MBrlKUhjmilZIjIPjR9uaL.gvZDeIfO42e8m7mGSEjAMBRFoDlMgmeVdJ4BTRPhPk6X4mbb7mZcYMnPbgoZ3mH4IyYstBKiq9TNXqoeNjN3IOP_oWVT0Exxg_PhukClo.xZOl1aHtp6keO.m97N78KmUnPGK96hMXDz3qmBNPtUp3CPdZLuYQUSAWz_ISRNQ4whaU6ttR64NI9UfE2_GNwf6UngDymRCRp4NRHRa8ko7R2Hiw9dh9C1tRkDdTzZ0vBkHn_2lrOAaccMSIaxtxw1o9PEO9zJoysQrJJvY_KqdREJwISsXYZfaf86rDSFZis6aNzaU3q99Zl8ZEd0g_xKxm2zRp8epzNzAsclDJCKzkczMF9n1NlfUXNYzECDIxo8MpJghHq_9HDpJ9tabSf5a75nkiTYJDwqqldyzz_oFayg5EHC_31rQeqX6gdmMqvNhqzz6hUZlFGE79em9.NiCy8Act6bxCxNpH1u3BT8mX827Uq.RzXG9Gu99HJRr4O4YLIOBIK.67kwjC3KOhDuUZupjg6xzgX1Ruk1J8Ud3dymcHF4WJO8xlFnEZ98p.jB5R0z4ROABzAQeOdjOWJs2wtSc-","token_type":"Bearer","expires_in":3600,"id_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjBjYzE3NWI5YzBmMWI2YTgzMWMzOTllMjY5NzcyNjYxIn0.eyJpc3MiOiJodHRwczpcL1wvYXV0aC5sb2dpbi55YWhvby5jby5qcFwveWNvbm5lY3RcL3YyIiwic3ViIjoiWlhSN0FTNDNPQUZEN0ozTFNZRDVDQ0pONUEiLCJhdWQiOlsiZGowMGFpWnBQWHBpTkUxUFZVSkZWRFl5VHlaelBXTnZibk4xYldWeWMyVmpjbVYwSm5nOVlUSS0iXSwiZXhwIjoxNTQ4ODUzNjQ2LCJpYXQiOjE1NDY0MzQ0NDYsImFtciI6WyJwd2QiXSwibm9uY2UiOiIyZmQzeW9scmVsZDFsbnhqeW9kN3pxIiwiYXRfaGFzaCI6ImRYQzVkbjdDY09zLUdGazc3QldoSXcifQ.rOhcuQ61Ara68mNZRsCsaPc--1dfPd7rJ-a5cc8XerEfEnYFna43L87_AY1rhsqoIx6qcsiqJqsN8W0R_aMimQ2PciytVJyhLE8KlOj9ImEw3YqT5dgq0AFE0TiJQ_d-E9aCaTbsh1lzNlVn7dTiEQNfBe1g4pug5axOnWnlbJSsO7lxsWmrTom-dlD9-_Cx5WCnDtPRVmK4Qy3MtsOaUUnylyYZUpGSJnVj6z7n5wOW21W5Mrq6RRbixRbGUc_zj1sUyObj2c3LINgXQAzF3EhH2jD4PFpOeF8X4a26IZPAbpvai3mRuAGZeUL9S8fSlfQmIyLWmMzjJhkpEs5f3A","refresh_token":"dopc8jNnPp5XhyT9FMpZVFdBs6kEl4NoGK07hw9P5l4cQHmYAEFYUM0YaeMlcFHRtmea.1KGFHVY"}'; }
-            });
-        $mock = \Mockery::mock('overload:'.\GuzzleHttp\Client::class);
-        $mock->shouldReceive('request')
-            ->with('GET', 'https://auth.login.yahoo.co.jp/yconnect/v2/public-keys')
-            ->andReturn(new class {
-                public function getStatusCode() { return 200; }
-                public function getBody() { return '{"access_token":"_TZaaTVq4rKhM1DME2cmvnBzPiczqqao4q_IzJcO9wuv0LQRcYv7_dzfQdSLsBTMkCB83edykhog5utB2RiD_Jnx8OYhVv9QhzOlwTkwpghNXavIZ.WJklTfRFjDHJK4FJzAdR2Ze8DTZ4CDBTmDC_SGWTAn7TfrwK5_nUCXvObnJe5MUUsLRvGyx.5MfJHsElkzYfSyQTKiEXpoitE10_Eil4qNWSWdYk.7._ICP5YVD786CK_RivSk0L5p5TiG_SRHzyZUaV6A2KqpFBq44pA5OlznxWgtbQKjzKOj0A5kSkGFvX8Tbw7VY4rxYM6uG.eCEJDC.PtzxBqlX0oFDcg02SM6kwz3_CQuYRVQIdHNaByvZbFY5WzzO_g772lnE1N_5U0W19rpBjBICAELSsnD4YttuClguNKpefMONQQCnyOmZRvTYe3aervMKZ91ztOPVSWwdUMILpbvZ2pCnwKmFoPbN0OIVm2xNDlorN0GOGIlINrgutRvVe6MnywDgS4.LkfsWhezGYVNhC3pr8HbH.NxrmqQP_B.mMb7JRXxaccscqmhc2yGs24EYi3jJ7hW36FvvO_na0_ogzyQppDYjlvfX_UyeIobTWXXbx7E5dDBrHZzbLkq0cz1YMTs6xf19.npdqenFu4bL2mLXflYx5USOY8A84jqgCqtpLUmPxCK6VhR_DzOypr8aBcVAtudBgz5uaykd2WV.RiwU0dk7cbn9I6iFj5aIEuxHyiMwfIRzXAw5443G3hvP8ZfB7ugFoIQkZDiAgNximMxCtLPGnDqlBZxlRoXHfXOVW.5tCfFv3Bo8zb_X2GJsQ0GCwcRRN82fJ__pYYrIclXHrVkb5RLv388AVbYDgMHTaF7X3z2EliHItN0TE4wq3BZ.fY5F72U5cPDl0IXxJf0LiknsmfkXdeNXixpPL4p4LKOgzM035M4bI4RyZGkNvLFmTHHtGroyC_LsbMbuU_xe9jab12wcHl8by4.G.OvPSUfhiEzysULHNOedogbG4asU1FS6_mrkkUdJsvgCSVcid7HRKBqkTPUVfF0rpy3dl_sFqCbtBCUb4Nj13oDe0HThyb_yf5tlYFYd5ZWKU.MBrlKUhjmilZIjIPjR9uaL.gvZDeIfO42e8m7mGSEjAMBRFoDlMgmeVdJ4BTRPhPk6X4mbb7mZcYMnPbgoZ3mH4IyYstBKiq9TNXqoeNjN3IOP_oWVT0Exxg_PhukClo.xZOl1aHtp6keO.m97N78KmUnPGK96hMXDz3qmBNPtUp3CPdZLuYQUSAWz_ISRNQ4whaU6ttR64NI9UfE2_GNwf6UngDymRCRp4NRHRa8ko7R2Hiw9dh9C1tRkDdTzZ0vBkHn_2lrOAaccMSIaxtxw1o9PEO9zJoysQrJJvY_KqdREJwISsXYZfaf86rDSFZis6aNzaU3q99Zl8ZEd0g_xKxm2zRp8epzNzAsclDJCKzkczMF9n1NlfUXNYzECDIxo8MpJghHq_9HDpJ9tabSf5a75nkiTYJDwqqldyzz_oFayg5EHC_31rQeqX6gdmMqvNhqzz6hUZlFGE79em9.NiCy8Act6bxCxNpH1u3BT8mX827Uq.RzXG9Gu99HJRr4O4YLIOBIK.67kwjC3KOhDuUZupjg6xzgX1Ruk1J8Ud3dymcHF4WJO8xlFnEZ98p.jB5R0z4ROABzAQeOdjOWJs2wtSc-","token_type":"Bearer","expires_in":3600,"id_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjBjYzE3NWI5YzBmMWI2YTgzMWMzOTllMjY5NzcyNjYxIn0.eyJpc3MiOiJodHRwczpcL1wvYXV0aC5sb2dpbi55YWhvby5jby5qcFwveWNvbm5lY3RcL3YyIiwic3ViIjoiWlhSN0FTNDNPQUZEN0ozTFNZRDVDQ0pONUEiLCJhdWQiOlsiZGowMGFpWnBQWHBpTkUxUFZVSkZWRFl5VHlaelBXTnZibk4xYldWeWMyVmpjbVYwSm5nOVlUSS0iXSwiZXhwIjoxNTQ4ODUzNjQ2LCJpYXQiOjE1NDY0MzQ0NDYsImFtciI6WyJwd2QiXSwibm9uY2UiOiIyZmQzeW9scmVsZDFsbnhqeW9kN3pxIiwiYXRfaGFzaCI6ImRYQzVkbjdDY09zLUdGazc3QldoSXcifQ.rOhcuQ61Ara68mNZRsCsaPc--1dfPd7rJ-a5cc8XerEfEnYFna43L87_AY1rhsqoIx6qcsiqJqsN8W0R_aMimQ2PciytVJyhLE8KlOj9ImEw3YqT5dgq0AFE0TiJQ_d-E9aCaTbsh1lzNlVn7dTiEQNfBe1g4pug5axOnWnlbJSsO7lxsWmrTom-dlD9-_Cx5WCnDtPRVmK4Qy3MtsOaUUnylyYZUpGSJnVj6z7n5wOW21W5Mrq6RRbixRbGUc_zj1sUyObj2c3LINgXQAzF3EhH2jD4PFpOeF8X4a26IZPAbpvai3mRuAGZeUL9S8fSlfQmIyLWmMzjJhkpEs5f3A","refresh_token":"dopc8jNnPp5XhyT9FMpZVFdBs6kEl4NoGK07hw9P5l4cQHmYAEFYUM0YaeMlcFHRtmea.1KGFHVY"}'; }
-            });
-    }
-
-    /**
      * The test of method providers['facebook']() --> NG.
      *
      * @return void
@@ -194,6 +175,138 @@ class OAuthServiceTest extends TestCase
         });
 
         $this->assertNull($svc->providers['facebook']('test_token'));
+    }
+
+    function yahooJp($code, $nonce, $ts, $stt1, $stt2, $stt3, $token, $pubkeys) {
+        $svc = new OAuthService();
+
+        $mock1 = \Mockery::mock('overload:'.\GuzzleHttp\Client::class);
+        $mock1->shouldReceive('request')
+            ->with('POST', TOKEN_URL, \Mockery::any())
+            ->andReturn(new class ($stt1, $token) {
+                public function __construct($stt, $body) {
+                    $this->stt = $stt;
+                    $this->body = $body;
+                }
+                public function getStatusCode() { return $this->stt; }
+                public function getBody() { return $this->body; }
+            });
+        $mock1->shouldReceive('request')
+            ->with('GET', PUBKY_URL)
+            ->andReturn(new class ($stt2, $pubkeys) {
+                public function __construct($stt, $body) {
+                    $this->stt = $stt;
+                    $this->body = $body;
+                }
+                public function getStatusCode() { return $this->stt; }
+                public function getBody() { return $this->body; }
+            });
+        $mock1->shouldReceive('request')
+            ->with('GET', ATTR_URL, \Mockery::any())
+            ->andReturn(new class ($stt3) {
+                public function __construct($stt) { $this->stt = $stt; }
+                public function getStatusCode() { return $this->stt; }
+                public function getBody() { return ATTR_BODY; }
+            });
+        $_SERVER['REQUEST_TIME'] = $ts;
+        return $svc->providers['yahoo_jp']($code."\t".$nonce);
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> OK.
+     *
+     * @return void
+     */
+    public function testYahooJpOk()
+    {
+        $this->assertEquals(
+            'user_id_01',
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546448136, 200, 200, 200, TOKEN_BODY, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(1).
+     *
+     * @return void
+     */
+    public function testYahooJpNg1()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'xxxxxxxxxxxxxxxx', 1546448136, 200, 200, 200, TOKEN_BODY, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(2).
+     *
+     * @return void
+     */
+    public function testYahooJpNg2()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546449136, 200, 200, 200, TOKEN_BODY, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(3).
+     *
+     * @return void
+     */
+    public function testYahooJpNg3()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546448136, 500, 200, 200, TOKEN_BODY, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(4).
+     *
+     * @return void
+     */
+    public function testYahooJpNg4()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546448136, 200, 500, 200, TOKEN_BODY, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(5).
+     *
+     * @return void
+     */
+    public function testYahooJpNg5()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546448136, 200, 200, 500, TOKEN_BODY, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(6).
+     *
+     * @return void
+     */
+    public function testYahooJpNg6()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546448136, 200, 200, 200, TOKEN_BODY_NG, PUBKY_BODY)
+        );
+    }
+
+    /**
+     * The test of method providers['yahoo_jp']() --> NG(7).
+     *
+     * @return void
+     */
+    public function testYahooJpNg7()
+    {
+        $this->assertNull(
+            $this->yahooJp('03oiUPoy', 'f7ah5pzdd8u2g62be9me9w7a', 1546448136, 200, 200, 200, TOKEN_BODY, PUBKY_BODY_NG)
+        );
     }
 
     /**
