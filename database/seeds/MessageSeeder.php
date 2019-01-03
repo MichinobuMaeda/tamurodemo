@@ -55,5 +55,25 @@ EOT
 メールが数分以内に届かない場合は、管理者にご連絡ください。
 EOT
         ]);
+        Message::create([
+            'key' => "Security notifications about EU ePrivacy directive and privacy policy ...",
+            'locale' => 'ja',
+            'message' => <<<EOT
+このサイトは日本国内外の利用者を想定しているため、日本国の法令規制の他に EU 等の法規にも準拠して運用します。詳細についてはプライバシーポリシーをご参照ください。
+このサイトでは以下の目的のために Cookie を利用しています。
+(1) 認証の状態（ログイン／ログアウト）の保持。
+(2) 利用者の入力中のデータの保持。
+以上についてご了承の上、ログインしてください。
+EOT
+        ]);
+        Message::create([
+            'key' => "Description of security policy ...",
+            'locale' => 'ja',
+            'message' => <<<EOT
+セキュリティポリシーについての説明の文章、１行目。
+２行目。
+３行目。
+EOT
+        ]);
     }
 }

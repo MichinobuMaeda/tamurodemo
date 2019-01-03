@@ -11,6 +11,16 @@
 |
 */
 
+Route::get(
+  '/',
+  'HomeController@index'
+)->name('home');
+
+Route::view(
+  '/security_policy',
+  'security_policy'
+)->name('security_policy');
+
 Route::view(
   'login',
   'login_select'
@@ -69,11 +79,6 @@ Route::view(
   'login/google',
   'login_google'
 )->name('login.google')->middleware('guest');
-
-Route::get(
-  '/',
-  'HomeController@index'
-)->name('home');
 
 Route::get(
   'users',

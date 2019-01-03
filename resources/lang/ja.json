@@ -43,5 +43,7 @@
   "Send E-mail to set password.": "パスワード設定のリンクを記載したメールをお送りしました。",
   "Get Login Link": "ログイン用リンクを受け取る",
   "Login link": "ログイン用リンク",
-  "Please click or copy and paste your login link.": "ログイン用リンクをクリックするか、コピーしてWebブラウザのアドレス欄に記入してください。"
+  "Please click or copy and paste your login link.": "ログイン用リンクをクリックするか、コピーしてWebブラウザのアドレス欄に記入してください。",
+  "Security notification": "セキュリティについて",
+  "Security policy": "セキュリティポリシー"
 }
