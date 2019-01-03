@@ -24,7 +24,6 @@ class OAuthLoginController extends Controller
      * Login with OAuth provider.
      *
      * @param Request $request
-     * @param App\User $user
      * @return \Illuminate\Http\Response
      */
     public function login(Request $request)

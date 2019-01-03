@@ -48,5 +48,12 @@ EOT
 お困りのことがありましたら、管理者にご連絡ください。
 EOT
         ]);
+        Message::create([
+            'key' => "If you do not receive the email within minutes, please contact the administrators.",
+            'locale' => 'ja',
+            'message' => <<<EOT
+メールが数分以内に届かない場合は、管理者にご連絡ください。
+EOT
+        ]);
     }
 }

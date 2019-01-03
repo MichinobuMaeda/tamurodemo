@@ -6,8 +6,6 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use DateTime;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Tests\Unit\UnitTestHelper;
 use App\Services\InvitationService;
 use App\AuthProvider;
@@ -30,13 +28,18 @@ class InvitationServiceTest extends TestCase
      * The test of method invite().
      *
      * @return void
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testInvite()
     {
-        $is = new InvitationService();
+        $svc = new InvitationService();
+
+        $mock = \Mockery::mock('overload:'.\App\Notifications\InvitationMailNotification::class);
+        $mock->shouldReceive('via')->with($this->user01)->once();
 
         $this->assertNull($this->user01->invitation_token);
-        $is->invite($this->user01, 'email');
+        $svc->invite($this->user01, 'email');
 
         $this->user01->refresh();
         $this->assertNotNull($this->user01->invitation_token);

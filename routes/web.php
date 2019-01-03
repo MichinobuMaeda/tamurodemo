@@ -12,7 +12,7 @@
 */
 
 Route::view(
-  '/login',
+  'login',
   'login_select'
 )->name('login.select')->middleware('guest');
 
@@ -45,16 +45,28 @@ Route::post(
   'Auth\ResetPasswordController@reset'
 )->name('password.update');
 
+Route::get(
+  'login/email',
+  'EMailLoginController@show'
+)->name('login.email');
+Route::post(
+  'login/email',
+  'EMailLoginController@send'
+)->name('login.email.send')->middleware('guest');
+Route::get(
+  'login/email/{user}/{token}',
+  'EMailLoginController@login'
+)->name('login.email.token')->middleware('guest');
 Route::view(
-  '/login/facebook',
+  'login/facebook',
   'login_facebook'
 )->name('login.facebook')->middleware('guest');
 Route::view(
-  '/login/yahoojp',
+  'login/yahoojp',
   'login_yahoo_jp'
 )->name('login.yahoo_jp')->middleware('guest');
 Route::view(
-  '/login/google',
+  'login/google',
   'login_google'
 )->name('login.google')->middleware('guest');
 

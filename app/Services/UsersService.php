@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\InvitationMailNotification;
 use App\User;
+use App\AuthProvider;
 
 class UsersService
 {
@@ -38,5 +39,19 @@ class UsersService
             ->where('group_managers.user_id', '=', $user->id)
             ->orderBy($orderBy, $orderDir)
             ->get();
+    }
+
+    /**
+     * List login methods of each user.
+     * 
+     * @return Array
+     */
+    public function listLoginMethods()
+    {
+        $ret = [];
+        foreach (AuthProvider::all() as $item) {
+            $ret[] = ''.$item->user_id."\t".$item->provider;
+        }
+        return $ret;
     }
 }

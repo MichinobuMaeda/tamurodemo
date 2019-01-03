@@ -24,10 +24,7 @@
                   </a>
                 </th>
                 <th>
-                  <a href="{{ route('users.list.orderBy', ['orderBy' => 'email', 'orderDir' => ($orderBy =='email' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
-                    <i class="fas fa-sort"></i>
-                    {{ __('E-mail') }}
-                  </a>
+                  {{ __('Login method') }}
                 </th>
                 <th>
                   <a href="{{ route('users.list.orderBy', ['orderBy' => 'invited_at', 'orderDir' => ($orderBy =='invited_at' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
@@ -42,6 +39,7 @@
                   </a>
                 </th>
                 <th>
+                  {{ __('Invite') }}
                 </th>
               </tr>
             </thead>
@@ -56,7 +54,16 @@
                 </td>
                 <td>
                 @if (preg_match("/.+@.+\..+/", $user->email))
-                  {{ $user->email }}
+                  <i class="far fa-envelope"></i>
+                @endif
+                @if (in_array(''.$user->id."\t".'facebook', $loginMethods))
+                  <i class="fab fa-facebook"></i>
+                @endif
+                @if (in_array(''.$user->id."\t".'yahoo_jp', $loginMethods))
+                  Y!
+                @endif
+                @if (in_array(''.$user->id."\t".'google', $loginMethods))
+                  <i class="fab fa-google"></i>
                 @endif
                 </td>
                 <td>

@@ -31,14 +31,14 @@ return [
     ],
     'boolean'              => 'The :attribute field must be true or false.',
     'confirmed'            => ':attribute が確認のために入力したものと一致しません。',
-    'date'                 => 'The :attribute is not a valid date.',
+    'date'                 => ':attribute が存在しないか正しい書式ではありません。',
     'date_format'          => 'The :attribute does not match the format :format.',
     'different'            => 'The :attribute and :other must be different.',
     'digits'               => 'The :attribute must be :digits digits.',
     'digits_between'       => 'The :attribute must be between :min and :max digits.',
     'dimensions'           => 'The :attribute has invalid image dimensions.',
     'distinct'             => 'The :attribute field has a duplicate value.',
-    'email'                => 'The :attribute must be a valid email address.',
+    'email'                => ':attribute は正しい書式で記入してください。',
     'exists'               => 'The selected :attribute is invalid.',
     'file'                 => 'The :attribute must be a file.',
     'filled'               => 'The :attribute field must have a value.',
@@ -75,7 +75,7 @@ return [
         'array'   => 'The :attribute must not have more than :value items.',
     ],
     'max'                  => [
-        'numeric' => 'The :attribute may not be greater than :max.',
+        'numeric' => ':attribute は :max以下にしてください。',
         'file'    => 'The :attribute may not be greater than :max kilobytes.',
         'string'  => ':attribute は :max文字以下にしてください。',
         'array'   => 'The :attribute may not have more than :max items.',
@@ -83,7 +83,7 @@ return [
     'mimes'                => 'The :attribute must be a file of type: :values.',
     'mimetypes'            => 'The :attribute must be a file of type: :values.',
     'min'                  => [
-        'numeric' => 'The :attribute must be at least :min.',
+        'numeric' => ':attribute は :min以上にしてください。',
         'file'    => 'The :attribute must be at least :min kilobytes.',
         'string'  => ':attribute は :min文字以上にしてください。',
         'array'   => 'The :attribute must have at least :min items.',
@@ -108,10 +108,10 @@ return [
         'array'   => 'The :attribute must contain :size items.',
     ],
     'string'               => 'The :attribute must be a string.',
-    'timezone'             => 'The :attribute must be a valid zone.',
+    'timezone'             => ':attribute が存在しないか正しい書式ではありません。',
     'unique'               => 'The :attribute has already been taken.',
     'uploaded'             => 'The :attribute failed to upload.',
-    'url'                  => 'The :attribute format is invalid.',
+    'url'                  => ':attribute が正しい書式ではありません。',
 
     /*
     |--------------------------------------------------------------------------
@@ -143,6 +143,9 @@ return [
 
     'attributes' => [
         'password' => 'パスワード',
+        'email' => 'メールアドレス',
+        'date' => '日付',
+        'url' => 'URL',
     ],
 
 ];

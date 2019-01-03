@@ -10,6 +10,9 @@
           @component('multi_line_message')
             Please select the login method which you've registered.
           @endcomponent
+          @component('buttons.login_email')
+            {{ route('login.email') }}
+          @endcomponent
           @component('buttons.login_password')
             {{ route('login') }}
           @endcomponent

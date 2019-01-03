@@ -25,8 +25,8 @@
       document.getElementById('yahooJpStatus').innerText = "{{ __('Failed to authenticate.') }} Error Code: 3001.";
       return
     }
-    var action =  sessionStorage.getItem('yahoo_jp_action');
-    var nonce =  sessionStorage.getItem('yahoo_jp_nonce');
+    var action = sessionStorage.getItem('yahoo_jp_action');
+    var nonce = sessionStorage.getItem('yahoo_jp_nonce');
     var xhr = new XMLHttpRequest();
     if (action == 'login') {
       xhr.open('POST', '{{ route("oAuthLogin") }}');
@@ -48,6 +48,10 @@
       var user =  sessionStorage.getItem('yahoo_jp_user');
       xhr.send('provider_token=' + code + '%09' + nonce + "&token=" + state + "&provider_name=yahoo_jp&user=" + user);
     }
+    sessionStorage.removeItem('yahoo_jp_action');
+    sessionStorage.removeItem('yahoo_jp_state');
+    sessionStorage.removeItem('yahoo_jp_nonce');
+    sessionStorage.removeItem('yahoo_jp_user');
   }
 })();
 

@@ -41,6 +41,7 @@ class UsersController extends Controller
 
         return view('users_list', [
             'users' => $this->svc->list($orderBy, $orderDir),
+            'loginMethods' => $this->svc->listLoginMethods(),
             'orderBy' => $orderBy,
             'orderDir' => $orderDir,
         ]);

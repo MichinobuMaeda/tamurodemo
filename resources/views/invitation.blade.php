@@ -13,6 +13,9 @@
             Please select your favorite login method.
           @endcomponent
           @if ($user->email)
+            @component('buttons.login_email')
+              {{ route('login.email') }}
+            @endcomponent
             @component('buttons.login_password')
               {{ route('password.request') }}
             @endcomponent
