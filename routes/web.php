@@ -110,3 +110,24 @@ Route::post(
   'oAuthLogin',
   'OAuthLoginController@login'
 )->name('oAuthLogin');
+
+Route::get(
+  'preferences/login',
+  'UsersController@showPreferenceLogin'
+)->name('get.preferences.login');
+Route::view(
+  'preferences/login/email',
+  'login_edit_email'
+)->name('get.preferences.login.email')->middleware('auth');
+Route::post(
+  'preferences/login/email',
+  'UsersController@savePreferenceLoginEmail'
+)->name('post.preferences.login.email');
+Route::view(
+  'preferences/login/password',
+  'login_edit_password'
+)->name('get.preferences.login.password')->middleware('auth');
+Route::post(
+  'preferences/login/password',
+  'UsersController@savePreferenceLoginPassword'
+)->name('post.preferences.login.password');

@@ -90,7 +90,7 @@ class LocalSeeder extends Seeder
 
         $user06 = User::create([
             'name'      => 'User 06',
-            'email'     => '|'.$this->unique(),
+            'email'     => null,
             'password'  => Hash::make('Password06'),
             'timezone'  => null,
         ]);
@@ -104,7 +104,7 @@ class LocalSeeder extends Seeder
 
         $user08 = User::create([
             'name'      => 'User 08',
-            'email'     => '|'.$this->unique(),
+            'email'     => null,
             'password'  => Hash::make($this->unique()),
             'timezone'  => null,
         ]);
@@ -128,6 +128,6 @@ class LocalSeeder extends Seeder
 
     private function unique()
     {
-        return hash('sha256', env('APP_KEY').(new DateTime())->format('Y-m-d\TH:i:s.u'));
+        return hash('sha256', str_random(16).env('APP_KEY').(new DateTime())->format('Y-m-d\TH:i:s.u'));
     }
 }

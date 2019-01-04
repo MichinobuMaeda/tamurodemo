@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use DateTime;
 
 use App\Group;
 use App\Notifications\MailResetPasswordNotification;
@@ -124,5 +125,37 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new MailResetPasswordNotification($token));
+    }
+
+    /**
+     * Get the user's E-mail address.
+     * 
+     * @param string $value
+     * @return string
+     */
+    public function getEmailAttribute($value)
+    {
+        return (preg_match("/.+@.+\..+/", $value)) ? $value : null;
+    }
+
+    /**
+     * Set the user's E-mail address.
+     * 
+     * @param string $value
+     */
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = $value ? $value : '|'.User::unique();
+    }
+
+    /**
+     * Get unique id.
+     */
+    static public function unique()
+    {
+        return hash(
+            'sha256',
+            str_random(16).env('APP_KEY').(new DateTime())->format('Y-m-d\TH:i:s.u')
+        );
     }
 }

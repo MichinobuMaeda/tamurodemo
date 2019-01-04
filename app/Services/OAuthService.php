@@ -126,7 +126,7 @@ class OAuthService
 
     /**
      * Base64 URL Decode
-     * @param String $data
+     * @param string $data
      * @return String
      */
     public function base64UrlDecode($data)
@@ -141,7 +141,7 @@ class OAuthService
 
     /**
      * Base64 URL Encode
-     * @param String $data
+     * @param string $data
      * @return String
      */
     public function base64UrlEncode($data)
@@ -151,10 +151,10 @@ class OAuthService
 
     /**
      * Validate signature of Yahoo! JAPAN.
-     * @param String $header
-     * @param String $payload
-     * @param String $signature
-     * @param String $publicKey
+     * @param string $header
+     * @param string $payload
+     * @param string $signature
+     * @param string $publicKey
      * @return Boolean
      */
     public function verifySignatureYahooJp($header, $payload, $signature, $publicKey)
@@ -207,9 +207,9 @@ class OAuthService
 
     /**
      * @param App\User $user
-     * @param String $token
-     * @param String $provider_name
-     * @param String $provider_token
+     * @param string $token
+     * @param string $provider_name
+     * @param string $provider_token
      * @return Boolean
      */
     public function register($user, $token, $provider_name, $provider_token)

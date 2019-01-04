@@ -42,6 +42,10 @@
           <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
           </form>
+          <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{ route('get.preferences.login') }}">
+              {{ __('Preferences') }}: {{ __('Login') }}
+            </a>
         @can('users.list')
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ route('users.list') }}">

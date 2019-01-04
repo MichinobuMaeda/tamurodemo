@@ -25,8 +25,8 @@ class RegistrationController extends Controller
      *
      * @param Request $request
      * @param App\User $user
-     * @param String $token
-     * @param String $provider_name ( optional )
+     * @param string $token
+     * @param string $provider_name ( optional )
      * @return \Illuminate\Http\Response
      */
     public function viewInvitation(Request $request, $user, $token, $provider_name = null)

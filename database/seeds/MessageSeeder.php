@@ -75,5 +75,21 @@ EOT
 ３行目。
 EOT
         ]);
+        Message::create([
+            'key' => "Please check the e-mail address entered before saving.",
+            'locale' => 'ja',
+            'message' => <<<EOT
+保存する前に、入力したメールアドレスをよく確認してください。
+@docomo.ne.jp, @ezweb.ne.jp, @softbank.ne.jp などの携帯事業社のメールアドレスの場合は、 info@abc.def からのメールを受信できる設定にしてください。
+ログインにメールアドレスを使わない場合は空欄にしてください。
+EOT
+        ]);
+        Message::create([
+            'key' => "If you do not use a password, please leave it empty.",
+            'locale' => 'ja',
+            'message' => <<<EOT
+パスワードを利用しない場合は空にしてください。
+EOT
+        ]);
     }
 }

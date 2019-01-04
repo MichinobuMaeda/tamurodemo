@@ -25,8 +25,6 @@ class LoginWithEmailTest extends TestCase
      * Test login.
      *
      * @return void
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      */
     public function testLogin()
     {
@@ -85,5 +83,44 @@ class LoginWithEmailTest extends TestCase
 
         $user00->refresh();
         $this->assertNull($user00->invitation_token);
+    }
+
+    /**
+     * Test edit the logged-in user's email.
+     *
+     * @return void
+     */
+    public function testEditLoggedInUsersEmail()
+    {
+        // Before login.
+        $response = $this->get(route('get.preferences.login'));
+        $response->assertRedirect(route('login.select'));
+
+        $response = $this->get(route('get.preferences.login.email'));
+        $response->assertRedirect(route('login.select'));
+
+        // After login.
+        Auth::login($this->user00);
+
+        $response = $this->get(route('get.preferences.login'));
+        $response->assertViewIs('login_edit');
+
+        $response = $this->get(route('get.preferences.login.email'));
+        $response->assertViewIs('login_edit_email');
+
+        $response = $this->post(route('post.preferences.login.email'), [
+            'email' => 'abc@def',
+        ]);
+        $response->assertRedirect(route('get.preferences.login.email'));
+
+        $response = $this->post(route('post.preferences.login.email'), [
+            'email' => '',
+        ]);
+        $response->assertRedirect(route('get.preferences.login'));
+
+        $response = $this->post(route('post.preferences.login.email'), [
+            'email' => 'abc@def.ghi',
+        ]);
+        $response->assertRedirect(route('get.preferences.login'));
     }
 }

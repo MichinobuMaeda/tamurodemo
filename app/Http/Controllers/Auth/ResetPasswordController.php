@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
-use App\Rules\Password;
 
 class ResetPasswordController extends Controller
 {
@@ -52,7 +51,7 @@ class ResetPasswordController extends Controller
         return [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => ['required', 'confirmed', 'min:8', new Password()],
+            'password' => ['required', 'confirmed', 'min:8', new \App\Rules\Password()],
         ];
     }
 }

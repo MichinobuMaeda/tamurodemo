@@ -53,7 +53,7 @@
                   {{ $user->name }}
                 </td>
                 <td>
-                @if (preg_match("/.+@.+\..+/", $user->email))
+                @if ($user->email)
                   <i class="far fa-envelope"></i>
                 @endif
                 @if (in_array(''.$user->id."\t".'facebook', $loginMethods))
@@ -82,7 +82,7 @@
                     <button type="submit" name="sendBy" value="message" class='btn btn-sm' style='background-color:transparent;'>
                       <i class="far fa-comment"></i>
                     </button>
-                    @if (preg_match("/.+@.+\..+/", $user->email))
+                    @if ($user->email)
                     &nbsp;
                     <button type="submit" name="sendBy" value="email" class='btn btn-sm' style='background-color:transparent;'>
                       <i class="fas fa-envelope"></i>

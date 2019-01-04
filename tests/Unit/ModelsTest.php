@@ -76,6 +76,19 @@ class ModelsTest extends TestCase
         $this->assertEquals(0, count($user3->groups));
         $this->assertEquals(0, count($user3->groupsManaging));
 
+        $unique = [];
+        foreach (range(0, 99) as $i) {
+            $unique[] = User::unique();
+        }
+        foreach ($unique as $item) {
+            $this->assertEquals(256 / 8 * 2, strlen($item));
+        }
+        for ($i = 1; $i < count($unique); ++$i) {
+            for ($j = $i; $j < count($unique); ++$j) {
+                $this->assertNotEquals($unique[$i-1], $unique[$j]);
+            }
+        }
+
         // Test relationships.
 
         $role1 = $group1->roles()->save(new GroupRole(['name' => 'primary']));

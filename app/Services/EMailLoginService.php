@@ -23,7 +23,7 @@ class EMailLoginService
     /**
      * Send login URL by e-mail.
      * 
-     * @param String email
+     * @param string email
      * @return boolean
      */
     public function send($email)
@@ -51,7 +51,7 @@ class EMailLoginService
      * Send login URL by e-mail.
      * 
      * @param App\User $user
-     * @param String $token
+     * @param string $token
      * @return boolean
      */
     public function login($user, $token)

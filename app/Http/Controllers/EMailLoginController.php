@@ -51,7 +51,7 @@ class EMailLoginController extends Controller
      *
      * @param Request $request
      * @param App\User $user
-     * @param String $token
+     * @param string $token
      * @return \Illuminate\Http\Response
      */
     public function login(Request $request, User $user, $token)

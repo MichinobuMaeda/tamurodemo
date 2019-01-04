@@ -44,7 +44,7 @@ class UsersService
     /**
      * List login methods of each user.
      * 
-     * @return Array
+     * @return array
      */
     public function listLoginMethods()
     {
@@ -53,5 +53,48 @@ class UsersService
             $ret[] = ''.$item->user_id."\t".$item->provider;
         }
         return $ret;
+    }
+
+    /**
+     * List login methods of each user.
+     * 
+     * @param string $user_id
+     * @return array
+     */
+    public function listUserLoginMethods($user_id)
+    {
+        $ret = [];
+        foreach (AuthProvider::where('user_id', $user_id)->get() as $item) {
+            $ret[] = $item->provider;
+        }
+        return $ret;
+    }
+
+    /**
+     * Save user's e-mail address.
+     * 
+     * @param string $email
+     * @return null
+     */
+    public function savePreferenceLoginEmail($email)
+    {
+        $user = Auth::user();
+        $user->email = $email;
+        $user->save();
+        Auth::user()->refresh();
+    }
+
+    /**
+     * Save user's e-mail address.
+     * 
+     * @param string $password
+     * @return null
+     */
+    public function savePreferenceLoginPassword($password)
+    {
+        $user = Auth::user();
+        $user->password = Hash::make($password ? $password : User::unique());
+        $user->save();
+        Auth::user()->refresh();
     }
 }
