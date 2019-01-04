@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use DateTime;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Group;
 use App\Notifications\MailResetPasswordNotification;
@@ -12,6 +12,14 @@ use App\Notifications\MailResetPasswordNotification;
 class User extends Authenticatable
 {
     use Notifiable;
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -155,7 +163,7 @@ class User extends Authenticatable
     {
         return hash(
             'sha256',
-            str_random(16).env('APP_KEY').(new DateTime())->format('Y-m-d\TH:i:s.u')
+            str_random(16).env('APP_KEY').(new \DateTime())->format('Y-m-d\TH:i:s.u')
         );
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Group;
 use App\GroupRole;
 use App\User;
+use App\AuthProvider;
 
 class ModelsTest extends TestCase
 {
@@ -49,6 +50,19 @@ class ModelsTest extends TestCase
         $this->assertEquals(0, count($group3->members));
         $this->assertEquals(0, count($group3->managers));
 
+        // Test soft-delete.
+        $group3_id = $group3->id;
+        $deleted = $group3->delete();
+        $this->assertTrue($group3->trashed());
+        $this->assertEquals($group3_id, $deleted);
+        $group3 = Group::where('id', $group3_id)->first();
+        $this->assertNull($group3);
+        $group3 = Group::where('id', $group3_id)->withTrashed()->first();
+        $this->assertNotNull($group3);
+        $group3->restore();
+        $group3 = Group::where('id', $group3_id)->first();
+        $this->assertNotNull($group3);
+
         $user1 = User::create([
             'name'      => 'User 1',
             'email'     => 'user1@abc.def',
@@ -76,6 +90,7 @@ class ModelsTest extends TestCase
         $this->assertEquals(0, count($user3->groups));
         $this->assertEquals(0, count($user3->groupsManaging));
 
+        // Test static methods.
         $unique = [];
         foreach (range(0, 99) as $i) {
             $unique[] = User::unique();
@@ -88,6 +103,19 @@ class ModelsTest extends TestCase
                 $this->assertNotEquals($unique[$i-1], $unique[$j]);
             }
         }
+
+        // Test soft-delete.
+        $user3_id = $user3->id;
+        $deleted = $user3->delete();
+        $this->assertTrue($user3->trashed());
+        $this->assertEquals($user3_id, $deleted);
+        $user3 = User::where('id', $user3_id)->first();
+        $this->assertNull($user3);
+        $user3 = User::where('id', $user3_id)->withTrashed()->first();
+        $this->assertNotNull($user3);
+        $user3->restore();
+        $user3 = User::where('id', $user3_id)->first();
+        $this->assertNotNull($user3);
 
         // Test relationships.
 
@@ -197,5 +225,41 @@ class ModelsTest extends TestCase
         $this->assertFalse($user3->isManagerOf($user1));
         $this->assertFalse($user3->isManagerOf($user2));
         $this->assertFalse($user3->isManagerOf($user3));
+
+        // AuthProvider
+        $list1 = AuthProvider::where('user_id', $user1->id)->get();
+        $this->assertCount(0, $list1);
+
+        AuthProvider::create([
+            'user_id' => $user1->id,
+            'provider' => 'provider1',
+            'secret' => 'secret1',
+        ]);
+        AuthProvider::create([
+            'user_id' => $user1->id,
+            'provider' => 'provider2',
+            'secret' => 'secret2',
+        ]);
+        $list1 = AuthProvider::where('user_id', $user1->id)->get();
+        $this->assertCount(2, $list1);
+
+        // Test soft-delete.
+        $provider1 = AuthProvider::where('user_id', $user1->id)
+            ->where('provider', 'provider1')->first();
+        $provider1->delete();
+        $this->assertTrue($provider1->trashed());
+        $list1 = AuthProvider::where('user_id', $user1->id)->get();
+        $this->assertCount(1, $list1);
+        $list1 = AuthProvider::where('user_id', $user1->id)->withTrashed()->get();
+        $this->assertCount(2, $list1);
+        $provider1 = AuthProvider::where('user_id', $user1->id)
+            ->where('provider', 'provider1')->first();
+        $this->assertNull($provider1);
+        $provider1 = AuthProvider::where('user_id', $user1->id)
+            ->where('provider', 'provider1')->withTrashed()->first();
+        $this->assertNotNull($provider1);
+        $provider1->restore();
+        $list1 = AuthProvider::where('user_id', $user1->id)->get();
+        $this->assertCount(2, $list1);
     }
 }
