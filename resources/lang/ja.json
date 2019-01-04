@@ -1,6 +1,7 @@
 {
   "OK": "OK",
   "Save": "保存する",
+  "Delete": "削除する",
   "Cancel": "キャンセル",
   "Stop": "中止する",
   "Retry": "やり直す",
@@ -11,6 +12,7 @@
   "Entrance": "参加",
   "not set": "未設定",
   "Preferences": "設定",
+  "Alert": "警告",
   "Login": "ログイン",
   "Logout": "ログアウト",
   "Login method": "ログイン手段",
@@ -27,6 +29,7 @@
   "Setup login method": "ログイン方法の設定",
   "Please confirm your E-mail address": "メールアドレスは合っていますか？",
   "Back": "戻る",
+  "Do you really want to delete this?": "本当に削除しますか？ この操作を取り消すことはできません。",
   "E-mail confirmation": "折返しメール",
   "E-mail and password": "メールアドレスとパスワード",
   "Login with ...": "SNS等のアカウントでログイン",

@@ -250,12 +250,39 @@ class OAuthService
             ]));
             return false;
         }
+        $ret = $this->set($user, $provider_name, $provider_token);
+        if ($ret) {
+            Auth::login($user);
+        }
+        return $ret;
+    }
+
+    /**
+     * Set logged-in user's OAuth provider.
+     * 
+     * @param App\User $user
+     * @param string $provider_name
+     * @param string $provider_token
+     * @return Boolean
+     */
+    public function set($user, $provider_name, $provider_token)
+    {
+        if ((!$user) || (!$provider_name) || (!$provider_token)) {
+            Log::info(json_encode([
+                'service' => get_class($this).'#set',
+                'result' => false,
+                'user_id' => ($user ? $user->id : null),
+                'provider_name' => $provider_name,
+                'provider_token' => substr($provider_token, 0, 10).'...',
+                'message' => 'missed required parameters',
+            ]));
+            return false;
+        }
         $secret = $this->providers[$provider_name]($provider_token);
         Log::info(json_encode([
-            'service' => get_class($this).'#register',
+            'service' => get_class($this).'#set',
             'result' => !!$secret,
             'user_id' => $user->id,
-            'token' => $token,
             'provider_name' => $provider_name,
             'provider_token' => substr($provider_token, 0, 10).'...',
         ]));
@@ -264,52 +291,46 @@ class OAuthService
         }
         $hashed = $this->hashProviderSecret($provider_name, $secret);
         AuthProvider::updateOrCreate(
-            ['user_id' => $user->id, 'provider' => $provider_name],
-            ['secret' => $hashed]
+            [
+                'user_id' => $user->id,
+                'provider' => $provider_name,
+            ],
+            [
+                'secret' => $hashed,
+            ]
         );
-        Auth::login($user);
         return true;
     }
 
-    // /**
-    //  * Set logged-in user's OAuth provider.
-    //  * 
-    //  * @param string $provider_name
-    //  * @param string $provider_token
-    //  * @return Boolean
-    //  */
-    // public function set($provider_name, $provider_token)
-    // {
-    //     $user = Auth::user();
-    //     if ((!$user) || (!$provider_name) || (!$provider_token)) {
-    //         Log::info(json_encode([
-    //             'service' => get_class($this).'#set',
-    //             'result' => false,
-    //             'user_id' => ($user ? $user->id : null),
-    //             'provider_name' => $provider_name,
-    //             'provider_token' => substr($provider_token, 0, 10).'...',
-    //             'message' => 'missed required parameters',
-    //         ]));
-    //         return false;
-    //     }
-    //     $secret = $this->providers[$provider_name]($provider_token);
-    //     Log::info(json_encode([
-    //         'service' => get_class($this).'#set',
-    //         'result' => !!$secret,
-    //         'user_id' => $user->id,
-    //         'provider_name' => $provider_name,
-    //         'provider_token' => substr($provider_token, 0, 10).'...',
-    //     ]));
-    //     if (!$secret) {
-    //         return false;
-    //     }
-    //     $hashed = $this->hashProviderSecret($provider_name, $secret);
-    //     AuthProvider::updateOrCreate(
-    //         ['user_id' => $user->id, 'provider' => $provider_name],
-    //         ['secret' => $hashed]
-    //     );
-    //     return true;
-    // }
+    /**
+     * Reset logged-in user's OAuth provider.
+     * 
+     * @param App\User $user
+     * @param string $provider_name
+     * @return Boolean
+     */
+    public function reset($user, $provider_name)
+    {
+        if ((!$user) || (!$provider_name)) {
+            Log::info(json_encode([
+                'service' => get_class($this).'#set',
+                'result' => false,
+                'user_id' => ($user ? $user->id : null),
+                'provider_name' => $provider_name,
+                'message' => 'missed required parameters',
+            ]));
+            return false;
+        }
+        AuthProvider::where('user_id', $user->id)
+            ->where('provider', $provider_name)->delete();
+        Log::info(json_encode([
+            'service' => get_class($this).'#set',
+            'result' => true,
+            'user_id' => $user->id,
+            'provider_name' => $provider_name,
+        ]));
+        return true;
+    }
 
     /**
      * @param string $provider_name

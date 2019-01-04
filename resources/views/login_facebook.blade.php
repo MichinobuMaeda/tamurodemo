@@ -30,6 +30,8 @@ function checkLoginState() {
       var xhr = new XMLHttpRequest();
       if (window.location.href.includes('/login/')) {
         xhr.open('POST', '{{ route("oAuthLogin") }}');
+      } else if (window.location.href.includes('/preferences/oauth/')) {
+        xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "facebook"]) }}');
       } else {
         xhr.open('POST', '{{ route("post.registration") }}');
       }
@@ -37,13 +39,15 @@ function checkLoginState() {
       xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
       xhr.onload = function() {
         if (xhr.responseText == 'ok') {
-          document.location = "{{ route('home') }}";
+          document.location = window.location.href.includes('/preferences/oauth/') ? "{{ route('preferences.login') }}" : "{{ route('home') }}";
         } else {
           document.getElementById('facebookStatus').innerText = "{{ __('Failed to authenticate.') }}";
         }
       };
       if (window.location.href.includes('/login/')) {
         xhr.send('provider_token=' + token + "&provider_name=facebook");
+      } else if (window.location.href.includes('/preferences/oauth/')) {
+        xhr.send('provider_token=' + token);
       } else {
         xhr.send('provider_token=' + token + "&token={{ isset($token) ? $token : "" }}&provider_name=facebook&user={{ isset($user) ? $user->id : "" }}");
       }

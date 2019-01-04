@@ -19,7 +19,6 @@ class CreateAuthProvidersTable extends Migration
             $table->string('provider');
             $table->string('secret')->unique();
             $table->timestamps();
-            $table->softDeletes();
             $table->unique(['user_id', 'provider']);
             $table->foreign('user_id')
                 ->references('id')->on('users')

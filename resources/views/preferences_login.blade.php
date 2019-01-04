@@ -31,36 +31,10 @@
             </a>
           </p>
           @endif
-<!--
           <p>{{ __('Login with ...') }}</p>
-          @if (in_array('facebook', $loginMethods))
-            @component('parts.button_login_facebook', ['delete' => 'true'])
-              {{ '' }}
-            @endcomponent
-          @else
-            @component('parts.button_login_facebook')
-              {{ '' }}
-            @endcomponent
-          @endif
-          @if (in_array('yahoo_jp', $loginMethods))
-            @component('parts.button_login_yahoo_jp', ['delete' => 'true'])
-              {{ '' }}
-            @endcomponent
-          @else
-            @component('parts.button_login_yahoo_jp')
-              {{ '' }}
-            @endcomponent
-          @endif
-          @if (in_array('google', $loginMethods))
-            @component('parts.button_login_google', ['delete' => 'true'])
-              {{ '' }}
-            @endcomponent
-          @else
-            @component('parts.button_login_google')
-              {{ '' }}
-            @endcomponent
-          @endif
--->
+          @include('parts.button_login_facebook', ['route_reg' => route('preferences.login.oauth', ['provider' => 'facebook']), 'delete' => in_array('facebook', $loginMethods)])
+          @include('parts.button_login_yahoo_jp', ['route_reg' => route('preferences.login.oauth', ['provider' => 'yahoo_jp']), 'delete' => in_array('yahoo_jp', $loginMethods)])
+          @include('parts.button_login_google',   ['route_reg' => route('preferences.login.oauth', ['provider' => 'google']), 'delete' => in_array('google', $loginMethods)])
         </div>
      </div>
     </div>

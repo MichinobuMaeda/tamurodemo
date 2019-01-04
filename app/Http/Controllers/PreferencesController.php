@@ -68,27 +68,43 @@ class PreferencesController extends Controller
         return redirect()->route('preferences.login');
     }
 
-    // /**
-    //  * Set the logged-in user's OAuth provider.
-    //  * 
-    //  * @param Request $request
-    //  * @return Response
-    //  */
-    // public function setLoginProvider(Request $request)
-    // {
-    //     // $this->svc->saveLoginPassword(Auth::user(), $request->input('password'));
-    //     return redirect()->route('preferences.login');
-    // }
+    /**
+     * Show "Preference: <OAuth provider name>" page.
+     * 
+     * @param Request $request
+     * @param string $provider
+     * @return Response
+     */
+    public function showOAuthProviders(Request $request, $provider)
+    {
+        return view('login_'.$provider);
+    }
 
-    // /**
-    //  * Reset the logged-in user's OAuth provider.
-    //  * 
-    //  * @param Request $request
-    //  * @return Response
-    //  */
-    // public function resetLoginProvider(Request $request)
-    // {
-    //     // $this->svc->saveLoginPassword(Auth::user(), $request->input('password'));
-    //     return redirect()->route('preferences.login');
-    // }
+    /**
+     * Set the logged-in user's OAuth provider.
+     * 
+     * @param Request $request
+     * @param string $provider
+     * @return Response
+     */
+    public function setLoginProvider(Request $request, $provider)
+    {
+        Log::debug($provider);
+        $provider_token = $request->input('provider_token');
+        $ret = $this->oauth->set(Auth::user(), $provider, $provider_token);
+        return response($ret ? 'ok' : 'ng', 200)->header('Content-Type', 'text/plain');
+    }
+
+    /**
+     * Reset the logged-in user's OAuth provider.
+     * 
+     * @param Request $request
+     * @param string $provider
+     * @return Response
+     */
+    public function resetLoginProvider(Request $request, $provider)
+    {
+        $this->oauth->reset(Auth::user(), $provider);
+        return redirect()->route('preferences.login');
+    }
 }

@@ -42,6 +42,8 @@ function onSignIn(googleUser) {
   var xhr = new XMLHttpRequest();
   if (window.location.href.includes('/login/')) {
     xhr.open('POST', '{{ route("oAuthLogin") }}');
+  } else if (window.location.href.includes('/preferences/oauth/')) {
+    xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "google"]) }}');
   } else {
     xhr.open('POST', '{{ route("post.registration") }}');
   }
@@ -49,13 +51,15 @@ function onSignIn(googleUser) {
   xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
   xhr.onload = function() {
     if (xhr.responseText == 'ok') {
-      document.location = "{{ route('home') }}";
+      document.location = window.location.href.includes('/preferences/oauth/') ? "{{ route('preferences.login') }}" : "{{ route('home') }}";
     } else {
       document.getElementById('googleStatus').innerText = "{{ __('Failed to authenticate.') }}";
     }
   };
   if (window.location.href.includes('/login/')) {
     xhr.send('provider_token=' + id_token + "&provider_name=google");
+  } else if (window.location.href.includes('/preferences/oauth/')) {
+    xhr.send('provider_token=' + id_token);
   } else {
     xhr.send('provider_token=' + id_token + '&token={{ isset($token) ? $token : "" }}&provider_name=google&user={{ isset($user) ? $user->id : "" }}');
   }

@@ -136,3 +136,16 @@ Route::post(
   'preferences/login/password',
   'PreferencesController@saveLoginPassword'
 );
+
+Route::get(
+  'preferences/oauth/{provider}',
+  'PreferencesController@showOAuthProviders'
+)->name('preferences.login.oauth');
+Route::post(
+  'preferences/oauth/{provider}',
+  'PreferencesController@setLoginProvider'
+);
+Route::delete(
+  'preferences/oauth/{provider}',
+  'PreferencesController@resetLoginProvider'
+);

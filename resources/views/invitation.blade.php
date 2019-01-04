@@ -30,15 +30,9 @@
             @endcomponent
           @endif
           <p>{{ __('Login with ...') }}</p>
-          @component('parts.button_login_facebook')
-            {{ route('get.registration', [ 'user' => $user, 'token' => $token, 'provider_name' => 'facebook' ]) }}
-          @endcomponent
-          @component('parts.button_login_yahoo_jp')
-            {{ route('get.registration', [ 'user' => $user, 'token' => $token, 'provider_name' => 'yahoo_jp' ]) }}
-          @endcomponent
-          @component('parts.button_login_google')
-            {{ route('get.registration', [ 'user' => $user, 'token' => $token, 'provider_name' => 'google' ]) }}
-          @endcomponent
+          @include('parts.button_login_facebook', ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'facebook'])])
+          @include('parts.button_login_yahoo_jp', ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'yahoo_jp'])])
+          @include('parts.button_login_google',   ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'google'  ])])
         </div>
       </div>
     </div>

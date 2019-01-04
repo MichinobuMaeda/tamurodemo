@@ -242,24 +242,5 @@ class ModelsTest extends TestCase
         ]);
         $list1 = AuthProvider::where('user_id', $user1->id)->get();
         $this->assertCount(2, $list1);
-
-        // Test soft-delete.
-        $provider1 = AuthProvider::where('user_id', $user1->id)
-            ->where('provider', 'provider1')->first();
-        $provider1->delete();
-        $this->assertTrue($provider1->trashed());
-        $list1 = AuthProvider::where('user_id', $user1->id)->get();
-        $this->assertCount(1, $list1);
-        $list1 = AuthProvider::where('user_id', $user1->id)->withTrashed()->get();
-        $this->assertCount(2, $list1);
-        $provider1 = AuthProvider::where('user_id', $user1->id)
-            ->where('provider', 'provider1')->first();
-        $this->assertNull($provider1);
-        $provider1 = AuthProvider::where('user_id', $user1->id)
-            ->where('provider', 'provider1')->withTrashed()->first();
-        $this->assertNotNull($provider1);
-        $provider1->restore();
-        $list1 = AuthProvider::where('user_id', $user1->id)->get();
-        $this->assertCount(2, $list1);
     }
 }
