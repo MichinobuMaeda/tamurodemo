@@ -14,7 +14,7 @@
             <span>
           </p>
           <p>
-            <a href="{{ route('get.preferences.login.email') }}" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('preferences.login.email') }}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="far fa-envelope"></i>
               </span>
@@ -23,7 +23,7 @@
           </p>
           @if (Auth::user()->email)
           <p>
-            <a href="{{ route('get.preferences.login.password')}}" class="btn btn-outline-dark btn-block text-left">
+            <a href="{{ route('preferences.login.password')}}" class="btn btn-outline-dark btn-block text-left">
               <span style="font-size: 1.2em; margin: 0 1em 0 0;">
                 <i class="fas fa-key"></i>
               </span>
@@ -34,29 +34,29 @@
 <!--
           <p>{{ __('Login with ...') }}</p>
           @if (in_array('facebook', $loginMethods))
-            @component('buttons.login_facebook', ['delete' => 'true'])
+            @component('parts.button_login_facebook', ['delete' => 'true'])
               {{ '' }}
             @endcomponent
           @else
-            @component('buttons.login_facebook')
+            @component('parts.button_login_facebook')
               {{ '' }}
             @endcomponent
           @endif
           @if (in_array('yahoo_jp', $loginMethods))
-            @component('buttons.login_yahoo_jp', ['delete' => 'true'])
+            @component('parts.button_login_yahoo_jp', ['delete' => 'true'])
               {{ '' }}
             @endcomponent
           @else
-            @component('buttons.login_yahoo_jp')
+            @component('parts.button_login_yahoo_jp')
               {{ '' }}
             @endcomponent
           @endif
           @if (in_array('google', $loginMethods))
-            @component('buttons.login_google', ['delete' => 'true'])
+            @component('parts.button_login_google', ['delete' => 'true'])
               {{ '' }}
             @endcomponent
           @else
-            @component('buttons.login_google')
+            @component('parts.button_login_google')
               {{ '' }}
             @endcomponent
           @endif

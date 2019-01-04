@@ -130,9 +130,9 @@ class UsersServiceTest extends TestCase
     {
         $svc = new UsersService();
 
-        $ret = $svc->listUserLoginMethods($this->user01->id);
+        $ret = $svc->listUserLoginMethods($this->user01);
         $this->assertCount(0, $ret);
-        $ret = $svc->listUserLoginMethods($this->user02->id);
+        $ret = $svc->listUserLoginMethods($this->user02);
         $this->assertCount(0, $ret);
 
         AuthProvider::create([
@@ -141,10 +141,10 @@ class UsersServiceTest extends TestCase
             'secret' => 'secret01',
         ]);
 
-        $ret = $svc->listUserLoginMethods($this->user01->id);
+        $ret = $svc->listUserLoginMethods($this->user01);
         $this->assertCount(1, $ret);
         $this->assertContains("google", $ret);
-        $ret = $svc->listUserLoginMethods($this->user02->id);
+        $ret = $svc->listUserLoginMethods($this->user02);
         $this->assertCount(0, $ret);
 
         AuthProvider::create([
@@ -153,11 +153,11 @@ class UsersServiceTest extends TestCase
             'secret' => 'secret02',
         ]);
 
-        $ret = $svc->listUserLoginMethods($this->user01->id);
+        $ret = $svc->listUserLoginMethods($this->user01);
         $this->assertCount(2, $ret);
         $this->assertContains("google", $ret);
         $this->assertContains("facebook", $ret);
-        $ret = $svc->listUserLoginMethods($this->user02->id);
+        $ret = $svc->listUserLoginMethods($this->user02);
         $this->assertCount(0, $ret);
 
         AuthProvider::create([
@@ -166,17 +166,17 @@ class UsersServiceTest extends TestCase
             'secret' => 'secret03',
         ]);
 
-        $ret = $svc->listUserLoginMethods($this->user01->id);
+        $ret = $svc->listUserLoginMethods($this->user01);
         $this->assertCount(2, $ret);
         $this->assertContains("google", $ret);
         $this->assertContains("facebook", $ret);
-        $ret = $svc->listUserLoginMethods($this->user02->id);
+        $ret = $svc->listUserLoginMethods($this->user02);
         $this->assertCount(1, $ret);
         $this->assertContains("yahoo_jp", $ret);
     }
 
     /**
-     * The test of method savePreferenceLoginEmail().
+     * The test of method saveLoginEmail().
      *
      * @return void
      */
@@ -184,19 +184,17 @@ class UsersServiceTest extends TestCase
     {
         $svc = new UsersService();
 
-        Auth::login($this->user01);
-
-        $svc->savePreferenceLoginEmail(null);
+        $svc->saveLoginEmail($this->user01, null);
         $this->user01->refresh();
         $this->assertNull($this->user01->email);
 
-        $svc->savePreferenceLoginEmail('abc@def.ghi');
+        $svc->saveLoginEmail($this->user01, 'abc@def.ghi');
         $this->user01->refresh();
         $this->assertEquals('abc@def.ghi', $this->user01->email);
     }
 
     /**
-     * The test of method savePreferenceLoginPassword().
+     * The test of method saveLoginPassword().
      *
      * @return void
      */
@@ -204,16 +202,14 @@ class UsersServiceTest extends TestCase
     {
         $svc = new UsersService();
 
-        Auth::login($this->user01);
-
         $password0 = $this->user01->password;
 
-        $svc->savePreferenceLoginPassword(null);
+        $svc->saveLoginPassword($this->user01, null);
         $this->user01->refresh();
         $password1 = $this->user01->password;
         $this->assertNotEquals($password0, $password1);
 
-        $svc->savePreferenceLoginPassword('password1234567890');
+        $svc->saveLoginPassword($this->user01, 'password1234567890');
         $this->user01->refresh();
         $password2 = $this->user01->password;
         $this->assertNotEquals($password0, $password2);

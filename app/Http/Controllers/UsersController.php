@@ -47,47 +47,4 @@ class UsersController extends Controller
             'orderDir' => $orderDir,
         ]);
     }
-
-    /**
-     * Show "Preference: Login" page.
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function showPreferenceLogin(Request $request)
-    {
-        return view('login_edit', [
-            'loginMethods' => $this->svc->listUserLoginMethods(Auth::user()->id)
-        ]);
-    }
-
-    /**
-     * Save the logged-in user's e-mail address.
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function savePreferenceLoginEmail(Request $request)
-    {
-        $validatedData = $request->validate([
-            'email' => 'nullable|email',
-        ]);
-        $this->svc->savePreferenceLoginEmail($request->input('email'));
-        return redirect()->route('get.preferences.login');
-    }
-
-    /**
-     * Save the logged-in user's password.
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function savePreferenceLoginPassword(Request $request)
-    {
-        $validatedData = $request->validate([
-            'password' => ['nullable', 'confirmed', 'min:8', new \App\Rules\Password()],
-        ]);
-        $this->svc->savePreferenceLoginPassword($request->input('password'));
-        return redirect()->route('get.preferences.login');
-    }
 }

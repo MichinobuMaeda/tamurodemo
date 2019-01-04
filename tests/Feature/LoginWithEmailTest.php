@@ -30,7 +30,7 @@ class LoginWithEmailTest extends TestCase
     {
         // Before login.
         $response = $this->get('/');
-        $response->assertRedirect(route('login.select'));
+        $response->assertRedirect(route('list.logins'));
 
         // Show send email page.
         $response = $this->get(route('login.email'));
@@ -93,34 +93,34 @@ class LoginWithEmailTest extends TestCase
     public function testEditLoggedInUsersEmail()
     {
         // Before login.
-        $response = $this->get(route('get.preferences.login'));
-        $response->assertRedirect(route('login.select'));
+        $response = $this->get(route('preferences.login'));
+        $response->assertRedirect(route('list.logins'));
 
-        $response = $this->get(route('get.preferences.login.email'));
-        $response->assertRedirect(route('login.select'));
+        $response = $this->get(route('preferences.login.email'));
+        $response->assertRedirect(route('list.logins'));
 
         // After login.
         Auth::login($this->user00);
 
-        $response = $this->get(route('get.preferences.login'));
-        $response->assertViewIs('login_edit');
+        $response = $this->get(route('preferences.login'));
+        $response->assertViewIs('preferences_login');
 
-        $response = $this->get(route('get.preferences.login.email'));
-        $response->assertViewIs('login_edit_email');
+        $response = $this->get(route('preferences.login.email'));
+        $response->assertViewIs('preferences_email');
 
-        $response = $this->post(route('post.preferences.login.email'), [
+        $response = $this->post(route('preferences.login.email'), [
             'email' => 'abc@def',
         ]);
-        $response->assertRedirect(route('get.preferences.login.email'));
+        $response->assertRedirect(route('preferences.login.email'));
 
-        $response = $this->post(route('post.preferences.login.email'), [
+        $response = $this->post(route('preferences.login.email'), [
             'email' => '',
         ]);
-        $response->assertRedirect(route('get.preferences.login'));
+        $response->assertRedirect(route('preferences.login'));
 
-        $response = $this->post(route('post.preferences.login.email'), [
+        $response = $this->post(route('preferences.login.email'), [
             'email' => 'abc@def.ghi',
         ]);
-        $response->assertRedirect(route('get.preferences.login'));
+        $response->assertRedirect(route('preferences.login'));
     }
 }

@@ -28,7 +28,7 @@ class LoginWithPasswordTest extends TestCase
     {
         // Before login.
         $response = $this->get('/');
-        $response->assertRedirect(route('login.select'));
+        $response->assertRedirect(route('list.logins'));
 
         // Login with bad password.
         $response = $this->post(route('login'), [
@@ -77,7 +77,7 @@ class LoginWithPasswordTest extends TestCase
         $response->assertRedirect('/');
 
         $response = $this->get('/');
-        $response->assertRedirect(route('login.select'));
+        $response->assertRedirect(route('list.logins'));
 
         $response = $this->get(route('password.request'));
         $response->assertStatus(200);
@@ -107,37 +107,37 @@ class LoginWithPasswordTest extends TestCase
     public function testEditLoggedInUsersPassword()
     {
         // Before login.
-        $response = $this->get(route('get.preferences.login'));
-        $response->assertRedirect(route('login.select'));
+        $response = $this->get(route('preferences.login'));
+        $response->assertRedirect(route('list.logins'));
 
-        $response = $this->get(route('get.preferences.login.password'));
-        $response->assertRedirect(route('login.select'));
+        $response = $this->get(route('preferences.login.password'));
+        $response->assertRedirect(route('list.logins'));
 
         // After login.
         Auth::login($this->user00);
 
-        $response = $this->get(route('get.preferences.login'));
-        $response->assertViewIs('login_edit');
+        $response = $this->get(route('preferences.login'));
+        $response->assertViewIs('preferences_login');
 
-        $response = $this->get(route('get.preferences.login.password'));
-        $response->assertViewIs('login_edit_password');
+        $response = $this->get(route('preferences.login.password'));
+        $response->assertViewIs('preferences_password');
 
-        $response = $this->post(route('post.preferences.login.password'), [
+        $response = $this->post(route('preferences.login.password'), [
             'password' => '1234',
             'password_confirmation' => '1234',
         ]);
-        $response->assertRedirect(route('get.preferences.login.password'));
+        $response->assertRedirect(route('preferences.login.password'));
 
-        $response = $this->post(route('post.preferences.login.password'), [
+        $response = $this->post(route('preferences.login.password'), [
             'password' => '',
             'password_confirmation' => '',
         ]);
-        $response->assertRedirect(route('get.preferences.login'));
+        $response->assertRedirect(route('preferences.login'));
 
-        $response = $this->post(route('post.preferences.login.password'), [
+        $response = $this->post(route('preferences.login.password'), [
             'password' => 'Abcdefg0',
             'password_confirmation' => 'Abcdefg0',
         ]);
-        $response->assertRedirect(route('get.preferences.login'));
+        $response->assertRedirect(route('preferences.login'));
     }
 }

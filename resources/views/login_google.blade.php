@@ -64,7 +64,7 @@
           <script src="https://apis.google.com/js/platform.js?onload=onGoogleLoad" async defer></script>
           <p id="googleSinginButton"></p>
           <p id="googleStatus"></p>
-          @component('multi_line_message')
+          @component('parts.multi_line_message')
             If you have any troubles, please contact your administrator.
           @endcomponent
         </div>

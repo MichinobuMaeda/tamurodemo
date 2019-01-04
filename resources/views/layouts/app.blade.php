@@ -27,7 +27,7 @@
     </main>
     <div class="fixed-bottom" style="padding: 4px; text-align: right;">
     @guest
-      <a class="btn btn-secondary" href="{{ route('login.select') }}">{{ __('Login') }}</a>
+      <a class="btn btn-secondary" href="{{ route('list.logins') }}">{{ __('Login') }}</a>
     @else
       <div class="btn-group dropup">
         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -43,12 +43,12 @@
             @csrf
           </form>
           <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{ route('get.preferences.login') }}">
+            <a class="dropdown-item" href="{{ route('preferences.login') }}">
               {{ __('Preferences') }}: {{ __('Login') }}
             </a>
         @can('users.list')
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{{ route('users.list') }}">
+          <a class="dropdown-item" href="{{ route('list.users') }}">
             {{ __('Account list') }}
           </a>
         @endcan

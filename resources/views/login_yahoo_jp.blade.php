@@ -102,7 +102,7 @@ body.insertBefore(s, body.firstChild);
 })();
 </script>
          <p id="yahooJpStatus"></p>
-          @component('multi_line_message')
+          @component('parts.multi_line_message')
             If you have any troubles, please contact your administrator.
           @endcomponent
         </div>

@@ -7,7 +7,7 @@
       <div class="card">
         <div class="card-header">{{ __('Security policy') }}</div>
         <div class="card-body">
-          @component('multi_line_message')
+          @component('parts.multi_line_message')
             Description of security policy ...
           @endcomponent
         </div>

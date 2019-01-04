@@ -8,7 +8,7 @@
         <div class="card-header">{{ __('Preferences') }}: {{ __('E-Mail Address') }}</div>
 
         <div class="card-body">
-          <form method="POST" action="{{ route('post.preferences.login.email') }}">
+          <form method="POST" action="{{ route('preferences.login.email') }}">
             @csrf
 
             <div class="form-group row">
@@ -26,7 +26,7 @@
             </div>
             <div class="form-group row">
               <div class="col-md-12">
-                @component('multi_line_message')
+                @component('parts.multi_line_message')
                   Please check the e-mail address entered before saving.
                 @endcomponent
               </div>
@@ -37,7 +37,7 @@
                 <button type="submit" class="btn btn-primary">
                   {{ __('Save') }}
                 </button>
-                <a href="{{ route('get.preferences.login') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('preferences.login') }}" class="btn btn-outline-secondary">
                   {{ __('Cancel') }}
                 </a>
               </div>

@@ -1,7 +1,7 @@
       <div class="card">
         <div class="card-header">{{ __('Security notification') }}</div>
         <div class="card-body">
-        @component('multi_line_message')
+        @component('parts.multi_line_message')
           Security notifications about EU ePrivacy directive and privacy policy ...
         @endcomponent
         <p>

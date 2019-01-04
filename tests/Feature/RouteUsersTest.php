@@ -31,11 +31,11 @@ class RouteUsersTest extends TestCase
     {
         Auth::login($this->user00);
 
-        $response = $this->get(route('users.list'));
+        $response = $this->get(route('list.users'));
         $response->assertSessionMissing('users_list.orderBy');
         $response->assertSessionMissing('users_list.orderDir');
 
-        $response = $this->get(route('users.list.orderBy', [
+        $response = $this->get(route('list.users.orderBy', [
             'orderBy' => 'email',
             'orderDir' => 'desc'
         ]));
@@ -46,13 +46,13 @@ class RouteUsersTest extends TestCase
 
         Auth::logout();
 
-        $response = $this->get(route('users.list'));
-        $response->assertRedirect(route('login.select'));
+        $response = $this->get(route('list.users'));
+        $response->assertRedirect(route('list.logins'));
 
-        $response = $this->get(route('users.list.orderBy', [
+        $response = $this->get(route('list.users.orderBy', [
             'orderBy' => 'email',
             'orderDir' => 'desc'
         ]));
-        $response->assertRedirect(route('login.select'));
+        $response->assertRedirect(route('list.logins'));
     }
 }

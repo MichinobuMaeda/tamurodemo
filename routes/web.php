@@ -24,7 +24,7 @@ Route::view(
 Route::view(
   'login',
   'login_select'
-)->name('login.select')->middleware('guest');
+)->name('list.logins')->middleware('guest');
 
 Route::get(
   'login/password',
@@ -34,10 +34,12 @@ Route::post(
   'login/password',
   'Auth\LoginController@login'
 );
+
 Route::post(
   'logout',
   'Auth\LoginController@logout'
 )->name('logout');
+
 Route::get(
   'password/reset',
   'Auth\ForgotPasswordController@showLinkRequestForm'
@@ -83,11 +85,11 @@ Route::view(
 Route::get(
   'users',
   'UsersController@list'
-)->name('users.list')->middleware('can:users.list');
+)->name('list.users')->middleware('can:users.list');
 Route::get(
   'users/orderBy/{orderBy}/orderDir/{orderDir}',
   'UsersController@list'
-)->name('users.list.orderBy')->middleware('can:users.list');
+)->name('list.users.orderBy')->middleware('can:users.list');
 
 Route::post(
   'invitations/{user}',
@@ -97,6 +99,7 @@ Route::get(
   'invitations/{user}/{sendBy}',
   'InvitationController@show'
 )->name('get.invitation')->middleware('can:users.invite,user');
+
 Route::get(
   'registrations/{user}/{token}/{provider_name?}',
   'RegistrationController@viewInvitation'
@@ -113,21 +116,23 @@ Route::post(
 
 Route::get(
   'preferences/login',
-  'UsersController@showPreferenceLogin'
-)->name('get.preferences.login');
+  'PreferencesController@showLogin'
+)->name('preferences.login');
+
 Route::view(
   'preferences/login/email',
-  'login_edit_email'
-)->name('get.preferences.login.email')->middleware('auth');
+  'preferences_email'
+)->name('preferences.login.email')->middleware('auth');
 Route::post(
   'preferences/login/email',
-  'UsersController@savePreferenceLoginEmail'
-)->name('post.preferences.login.email');
+  'PreferencesController@saveLoginEmail'
+);
+
 Route::view(
   'preferences/login/password',
-  'login_edit_password'
-)->name('get.preferences.login.password')->middleware('auth');
+  'preferences_password'
+)->name('preferences.login.password')->middleware('auth');
 Route::post(
   'preferences/login/password',
-  'UsersController@savePreferenceLoginPassword'
-)->name('post.preferences.login.password');
+  'PreferencesController@saveLoginPassword'
+);

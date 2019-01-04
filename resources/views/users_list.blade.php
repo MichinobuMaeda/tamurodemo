@@ -12,13 +12,13 @@
             <thead>
               <tr>
               <th>
-                  <a href="{{ route('users.list.orderBy', ['orderBy' => 'id', 'orderDir' => ($orderBy =='id' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
+                  <a href="{{ route('list.users.orderBy', ['orderBy' => 'id', 'orderDir' => ($orderBy =='id' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
                     <i class="fas fa-sort"></i>
                     {{ __('ID') }}
                   </a>
                 </th>
                 <th>
-                  <a href="{{ route('users.list.orderBy', ['orderBy' => 'name', 'orderDir' => ($orderBy =='name' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
+                  <a href="{{ route('list.users.orderBy', ['orderBy' => 'name', 'orderDir' => ($orderBy =='name' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
                     <i class="fas fa-sort"></i>
                     {{ __('Display name') }}
                   </a>
@@ -27,13 +27,13 @@
                   {{ __('Login method') }}
                 </th>
                 <th>
-                  <a href="{{ route('users.list.orderBy', ['orderBy' => 'invited_at', 'orderDir' => ($orderBy =='invited_at' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
+                  <a href="{{ route('list.users.orderBy', ['orderBy' => 'invited_at', 'orderDir' => ($orderBy =='invited_at' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
                     <i class="fas fa-sort"></i>
                     {{ __('Invitation') }}
                   </a>
                 </th>
                 <th>
-                  <a href="{{ route('users.list.orderBy', ['orderBy' => 'entered_at', 'orderDir' => ($orderBy =='entered_at' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
+                  <a href="{{ route('list.users.orderBy', ['orderBy' => 'entered_at', 'orderDir' => ($orderBy =='entered_at' && $orderDir == 'asc' ? 'desc' : 'asc')]) }}">
                     <i class="fas fa-sort"></i>
                     {{ __('Entrance') }}
                   </a>

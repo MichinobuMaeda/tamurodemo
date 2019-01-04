@@ -10,7 +10,7 @@
         <div class="card-body">
           @if ($sent)
             <div class="alert alert-success" role="alert">
-            @component('multi_line_message')
+            @component('parts.multi_line_message')
               If you do not receive the email within minutes, please contact the administrators.
             @endcomponent
             </div>

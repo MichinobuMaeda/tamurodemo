@@ -67,7 +67,7 @@ class RouteInvitationsTest extends TestCase
         ]), [
             'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('login.select'));
+        $response->assertRedirect(route('list.logins'));
     }
 
     /**
@@ -107,6 +107,6 @@ class RouteInvitationsTest extends TestCase
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
-        $response->assertRedirect(route('login.select'));
+        $response->assertRedirect(route('list.logins'));
     }
 }
