@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@inject('vh', 'App\Services\ViewHelperService')
 @section('content')
 <div class="container">
   <div class="row justify-content-center">

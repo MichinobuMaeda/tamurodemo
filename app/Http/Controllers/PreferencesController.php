@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Services\UsersService;
+use App\Services\OAuthService;
 use App\User;
 
 class PreferencesController extends Controller
@@ -13,12 +14,15 @@ class PreferencesController extends Controller
     /**
      * Create a new controller instance.
      *
+     * @param UsersService
+     * @param OAuthService
      * @return void
      */
-    public function __construct(UsersService $svc)
+    public function __construct(UsersService $svc, OAuthService $oauth)
     {
         $this->middleware('auth');
         $this->svc = $svc;
+        $this->oauth = $oauth;
     }
 
     /**
@@ -63,4 +67,28 @@ class PreferencesController extends Controller
         $this->svc->saveLoginPassword(Auth::user(), $request->input('password'));
         return redirect()->route('preferences.login');
     }
+
+    // /**
+    //  * Set the logged-in user's OAuth provider.
+    //  * 
+    //  * @param Request $request
+    //  * @return Response
+    //  */
+    // public function setLoginProvider(Request $request)
+    // {
+    //     // $this->svc->saveLoginPassword(Auth::user(), $request->input('password'));
+    //     return redirect()->route('preferences.login');
+    // }
+
+    // /**
+    //  * Reset the logged-in user's OAuth provider.
+    //  * 
+    //  * @param Request $request
+    //  * @return Response
+    //  */
+    // public function resetLoginProvider(Request $request)
+    // {
+    //     // $this->svc->saveLoginPassword(Auth::user(), $request->input('password'));
+    //     return redirect()->route('preferences.login');
+    // }
 }

@@ -206,6 +206,8 @@ class OAuthService
     }
 
     /**
+     * Register user's OAuth provider.
+     * 
      * @param App\User $user
      * @param string $token
      * @param string $provider_name
@@ -214,14 +216,15 @@ class OAuthService
      */
     public function register($user, $token, $provider_name, $provider_token)
     {
-        if ((!$user) || (!$token) || (!$provider_name)) {
+        if ((!$user) || (!$token) || (!$provider_name) || (!$provider_token)) {
             Log::info(json_encode([
                 'service' => get_class($this).'#register',
                 'result' => false,
                 'user_id' => ($user ? $user->id : null),
                 'token' => $token,
                 'provider_name' => $provider_name,
-                'message' => 'missed parameter required',
+                'provider_token' => substr($provider_token, 0, 10).'...',
+                'message' => 'missed required parameters',
             ]));
             return false;
         }
@@ -268,6 +271,46 @@ class OAuthService
         return true;
     }
 
+    // /**
+    //  * Set logged-in user's OAuth provider.
+    //  * 
+    //  * @param string $provider_name
+    //  * @param string $provider_token
+    //  * @return Boolean
+    //  */
+    // public function set($provider_name, $provider_token)
+    // {
+    //     $user = Auth::user();
+    //     if ((!$user) || (!$provider_name) || (!$provider_token)) {
+    //         Log::info(json_encode([
+    //             'service' => get_class($this).'#set',
+    //             'result' => false,
+    //             'user_id' => ($user ? $user->id : null),
+    //             'provider_name' => $provider_name,
+    //             'provider_token' => substr($provider_token, 0, 10).'...',
+    //             'message' => 'missed required parameters',
+    //         ]));
+    //         return false;
+    //     }
+    //     $secret = $this->providers[$provider_name]($provider_token);
+    //     Log::info(json_encode([
+    //         'service' => get_class($this).'#set',
+    //         'result' => !!$secret,
+    //         'user_id' => $user->id,
+    //         'provider_name' => $provider_name,
+    //         'provider_token' => substr($provider_token, 0, 10).'...',
+    //     ]));
+    //     if (!$secret) {
+    //         return false;
+    //     }
+    //     $hashed = $this->hashProviderSecret($provider_name, $secret);
+    //     AuthProvider::updateOrCreate(
+    //         ['user_id' => $user->id, 'provider' => $provider_name],
+    //         ['secret' => $hashed]
+    //     );
+    //     return true;
+    // }
+
     /**
      * @param string $provider_name
      * @param string $provider_token
@@ -276,6 +319,13 @@ class OAuthService
     public function login($provider_name, $provider_token)
     {
         if ((!$provider_name) || (!$provider_token)) {
+            Log::info(json_encode([
+                'service' => get_class($this).'#login',
+                'result' => false,
+                'provider_name' => $provider_name,
+                'provider_token' => substr($provider_token, 0, 10).'...',
+                'message' => 'missed required parameters',
+            ]));
             return false;
         }
         $secret = $this->providers[$provider_name]($provider_token);

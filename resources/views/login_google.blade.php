@@ -13,55 +13,55 @@
               {{ __('Back') }}
             </a>
           </p>
-          <script>
-            var googleAuth2 = null;
-            var onGoogleLoad = function() {
-              gapi.load('auth2', () => {
-                googleAuth2 = gapi.auth2.init({
-                  client_id: '{{ env("GOOGLE_CLIENT_ID") }}',
-                  cookiepolicy: 'single_host_origin',
-                  scope: 'profile',
-                }).then(() => {
-                  gapi.signin2.render(
-                    'googleSinginButton',
-                    {
-                      scope: 'profile',
-                      width: 220,
-                      height: 40,
-                      longtitle: true,
-                      theme: 'light',
-                      onsuccess: onSignIn,
-                      onfailure: null
-                    }
-                  );
-                });
-              });
-            };
-            function onSignIn(googleUser) {
-              var id_token = googleUser.getAuthResponse().id_token;
-              var xhr = new XMLHttpRequest();
-              if (window.location.href.includes('/login/')) {
-                xhr.open('POST', '{{ route("oAuthLogin") }}');
-              } else {
-                xhr.open('POST', '{{ route("post.registration") }}');
-              }
-              xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-              xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-              xhr.onload = function() {
-                if (xhr.responseText == 'ok') {
-                  document.location = "{{ route('home') }}";
-                } else {
-                  document.getElementById('googleStatus').innerText = "{{ __('Failed to authenticate.') }}";
-                }
-              };
-              if (window.location.href.includes('/login/')) {
-                xhr.send('provider_token=' + id_token + "&provider_name=google");
-              } else {
-                xhr.send('provider_token=' + id_token + '&token={{ isset($token) ? $token : "" }}&provider_name=google&user={{ isset($user) ? $user->id : "" }}');
-              }
-             }
-          </script>
-          <script src="https://apis.google.com/js/platform.js?onload=onGoogleLoad" async defer></script>
+<script>
+var googleAuth2 = null;
+var onGoogleLoad = function() {
+  gapi.load('auth2', () => {
+    googleAuth2 = gapi.auth2.init({
+      client_id: '{{ env("GOOGLE_CLIENT_ID") }}',
+      cookiepolicy: 'single_host_origin',
+      scope: 'profile',
+    }).then(() => {
+      gapi.signin2.render(
+        'googleSinginButton',
+        {
+          scope: 'profile',
+          width: 220,
+          height: 40,
+          longtitle: true,
+          theme: 'light',
+          onsuccess: onSignIn,
+          onfailure: null
+        }
+      );
+    });
+  });
+};
+function onSignIn(googleUser) {
+  var id_token = googleUser.getAuthResponse().id_token;
+  var xhr = new XMLHttpRequest();
+  if (window.location.href.includes('/login/')) {
+    xhr.open('POST', '{{ route("oAuthLogin") }}');
+  } else {
+    xhr.open('POST', '{{ route("post.registration") }}');
+  }
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+  xhr.onload = function() {
+    if (xhr.responseText == 'ok') {
+      document.location = "{{ route('home') }}";
+    } else {
+      document.getElementById('googleStatus').innerText = "{{ __('Failed to authenticate.') }}";
+    }
+  };
+  if (window.location.href.includes('/login/')) {
+    xhr.send('provider_token=' + id_token + "&provider_name=google");
+  } else {
+    xhr.send('provider_token=' + id_token + '&token={{ isset($token) ? $token : "" }}&provider_name=google&user={{ isset($user) ? $user->id : "" }}');
+  }
+}
+</script>
+<script src="https://apis.google.com/js/platform.js?onload=onGoogleLoad" async defer></script>
           <p id="googleSinginButton"></p>
           <p id="googleStatus"></p>
           @component('parts.multi_line_message')
