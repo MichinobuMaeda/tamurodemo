@@ -51,6 +51,16 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover"
+        ],
+        "test": [
+            "@php artisan migrate:refresh",
+            "phpunit --coverage-html coverage"
+        ],
+        "local": [
+            "@php artisan serve --host localhost --port 8000"
+        ],
+        "refresh": [
+            "@php artisan migrate:refresh --seed"
         ]
     },
     "config": {

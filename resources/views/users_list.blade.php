@@ -62,6 +62,9 @@
                 @if (in_array(''.$user->id."\t".'yahoo_jp', $loginMethods))
                   Y!
                 @endif
+                @if (in_array(''.$user->id."\t".'amazon', $loginMethods))
+                  <i class="fab fa-amazon"></i>
+                @endif
                 @if (in_array(''.$user->id."\t".'google', $loginMethods))
                   <i class="fab fa-google"></i>
                 @endif

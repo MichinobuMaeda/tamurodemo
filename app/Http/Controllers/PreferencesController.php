@@ -77,7 +77,7 @@ class PreferencesController extends Controller
      */
     public function showOAuthProviders(Request $request, $provider)
     {
-        return view('login_'.$provider);
+        return view('login_oauth_'.$provider);
     }
 
     /**
@@ -89,7 +89,6 @@ class PreferencesController extends Controller
      */
     public function setLoginProvider(Request $request, $provider)
     {
-        Log::debug($provider);
         $provider_token = $request->input('provider_token');
         $ret = $this->oauth->set(Auth::user(), $provider, $provider_token);
         return response($ret ? 'ok' : 'ng', 200)->header('Content-Type', 'text/plain');

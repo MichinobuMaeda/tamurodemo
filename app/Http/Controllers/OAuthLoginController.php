@@ -21,16 +21,28 @@ class OAuthLoginController extends Controller
     }
 
     /**
+     * Show page of login with OAuth provider.
+     *
+     * @param Request $request
+     * @param string $provider
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $provider)
+    {
+        return view('login_oauth_'.$provider);
+    }
+
+    /**
      * Login with OAuth provider.
      *
      * @param Request $request
+     * @param string $provider
      * @return \Illuminate\Http\Response
      */
-    public function login(Request $request)
+    public function login(Request $request, $provider)
     {
-        $provider_name = $request->input('provider_name');
         $provider_token = $request->input('provider_token');
-        $ret = $this->svc->login($provider_name, $provider_token);
+        $ret = $this->svc->login($provider, $provider_token);
         return response($ret ? 'ok' : 'ng', 200)->header('Content-Type', 'text/plain');
     }
 }

@@ -14,7 +14,10 @@
             </a>
           </p>
           <span class="yconnectLogin"></span>
-<script type="text/javascript">
+<script>
+var state = null;
+var nonce = null;
+var action = null;
 
 (function () {
   var url = new URL(window.location.href);
@@ -29,7 +32,9 @@
     var nonce = sessionStorage.getItem('yahoo_jp_nonce');
     var xhr = new XMLHttpRequest();
     if (action == 'login') {
-      xhr.open('POST', '{{ route("oAuthLogin") }}');
+      xhr.open('POST', '{{ route("login.oauth", ["provider" => "yahoo_jp"]) }}');
+    } else if (action == 'set') {
+      xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "yahoo_jp"]) }}');
     } else {
       xhr.open('POST', '{{ route("post.registration") }}');
     }
@@ -37,35 +42,46 @@
     xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
     xhr.onload = function() {
       if (xhr.responseText == 'ok') {
-        document.location = "{{ route('home') }}";
+        document.location = (action == 'set') ? "{{ route('preferences.login') }}" : "{{ route('home') }}";
       } else {
         document.getElementById('yahooJpStatus').innerText = "{{ __('Failed to authenticate.') }}";
       }
     };
-    if (action == 'login') {
-      xhr.send('provider_token=' + code + '%09' + nonce + "&provider_name=yahoo_jp");
+    var redirect_uri = (action == 'set') ? "{{ env('YAHOO_JP_REDIRECT_URI2') }}" : "{{ env('YAHOO_JP_REDIRECT_URI') }}";
+    var provider_token = code + '%09' + nonce + '%09' + redirect_uri;
+    if ((action == 'login') || (action == 'set')) {
+      xhr.send('provider_token=' + provider_token);
     } else {
       var user =  sessionStorage.getItem('yahoo_jp_user');
-      xhr.send('provider_token=' + code + '%09' + nonce + "&token=" + state + "&provider_name=yahoo_jp&user=" + user);
+      xhr.send('provider_token=' + provider_token + "&token=" + state + "&provider_name=yahoo_jp&user=" + user);
     }
     sessionStorage.removeItem('yahoo_jp_action');
     sessionStorage.removeItem('yahoo_jp_state');
     sessionStorage.removeItem('yahoo_jp_nonce');
     sessionStorage.removeItem('yahoo_jp_user');
+  } else if (state) {
+    document.getElementById('amazonStatus').innerText = "{{ __('Failed to authenticate.') }}";
   }
 })();
 
+if (window.location.href.includes('/login/')) {
+  action = 'login';
+} else if (window.location.href.includes('/preferences/oauth/')) {
+  action = 'set';
+} else {
+  action = 'registration';
+}
+sessionStorage.setItem('yahoo_jp_action', action);
 @if (isset($token))
-var state = '{{ $token }}';
-sessionStorage.setItem('yahoo_jp_action', 'registration');
+state = '{{ $token }}';
 sessionStorage.setItem('yahoo_jp_user', '{{ $user->id }}');
 @else
-var state = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 16);
-sessionStorage.setItem('yahoo_jp_action', 'login');
+state = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 16);
 @endif
 sessionStorage.setItem('yahoo_jp_state', state);
-var nonce = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 16);
+nonce = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 16);
 sessionStorage.setItem('yahoo_jp_nonce', nonce);
+var redirect_uri = (action == 'set') ? "{{ env('YAHOO_JP_REDIRECT_URI2') }}" : "{{ env('YAHOO_JP_REDIRECT_URI') }}";
 
 window.yconnectInit = function() {
   YAHOO.JP.yconnect.Authorization.init({
@@ -79,7 +95,7 @@ window.yconnectInit = function() {
     },
     authorization: {
       clientId: "{{ env('YAHOO_JP_CLIENT_ID') }}",
-      redirectUri: "{{ env('YAHOO_JP_REDIRECT_URI') }}",
+      redirectUri: redirect_uri,
       scope: "openid",
       responseType: "code",
       state: state,
@@ -95,6 +111,7 @@ window.yconnectInit = function() {
     }
   });
 };
+
 (function(){
 var body = document.getElementsByTagName("body")[0], s = document.createElement("script");
 s.setAttribute("src", "https://s.yimg.jp/images/login/yconnect/auth/2.0.1/auth-min.js");

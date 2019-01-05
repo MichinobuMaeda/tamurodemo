@@ -46,11 +46,12 @@ class OAuthService
                     return null;
                 }
             },
-            'yahoo_jp' => function ($codeAndNonce) {
-                // Get code and nonce.
-                $a = preg_split('/\t/', $codeAndNonce);
+            'yahoo_jp' => function ($params) {
+                // Get code, nonce and redirect_uri.
+                $a = preg_split('/\t/', $params);
                 $code = $a[0];
                 $nonce = $a[1];
+                $redirect_uri = $a[2];
 
                 // Get access_token and id_token.
                 $client = new \GuzzleHttp\Client();
@@ -63,12 +64,14 @@ class OAuthService
                             'client_id' => env('YAHOO_JP_CLIENT_ID'),
                             'client_secret' => env('YAHOO_JP_SECRET'),
                             'code' => $code,
-                            'redirect_uri' => env('YAHOO_JP_REDIRECT_URI'),
+                            'redirect_uri' => $redirect_uri,
                         ],
                     ]
                 );
                 if ($response->getStatusCode() != 200) {
-                    Log::warn('/yconnect/v2/token status: ' . $response->getStatusCode());
+                    Log::warn(
+                        'https://auth.login.yahoo.co.jp/yconnect/v2/token status: '.
+                        $response->getStatusCode());
                     return null;
                 }
                 $data = json_decode($response->getBody());
@@ -85,7 +88,10 @@ class OAuthService
                     'https://auth.login.yahoo.co.jp/yconnect/v2/public-keys'
                 );
                 if ($response->getStatusCode() != 200) {
-                    Log::warn('/yconnect/v2/public-keys status: ' . $response->getStatusCode());
+                    Log::warn(
+                        'https://auth.login.yahoo.co.jp/yconnect/v2/public-keys status: '.
+                        $response->getStatusCode()
+                    );
                     return null;
                 }
                 $data = json_decode($response->getBody(), TRUE);
@@ -115,11 +121,62 @@ class OAuthService
                     ]
                 );
                 if ($response->getStatusCode() != 200) {
-                    Log::warn('/yconnect/v2/attribute status: ' . $response->getStatusCode());
+                    Log::warn(
+                        'https://userinfo.yahooapis.jp/yconnect/v2/attribute status: '.
+                        $response->getStatusCode()
+                    );
                     return null;
                 }
                 $data = json_decode($response->getBody());
                 return $data->sub;
+            },
+            'amazon' => function ($params) {
+                // Get code and redirect_uri.
+                $a = preg_split('/\t/', $params);
+                $code = $a[0];
+                $redirect_uri = $a[1];
+
+                // Get access_token and id_token.
+                $client = new \GuzzleHttp\Client();
+                $response = $client->request(
+                    'POST',
+                    'https://api.amazon.com/auth/o2/token',
+                    [
+                        'form_params' => [
+                            'grant_type' => 'authorization_code',
+                            'code' => $code,
+                            'client_id' => env('AMAZON_CLIENT_ID'),
+                            'client_secret' => env('AMAZON_SECRET'),
+                        ],
+                    ]
+                );
+                if ($response->getStatusCode() != 200) {
+                    Log::warn(
+                        'https://api.amazon.com/auth/o2/token status: '.
+                        $response->getStatusCode()
+                    );
+                    return null;
+                }
+                $data = json_decode($response->getBody());
+                $access_token = $data->access_token;
+              
+                // get user_id
+                $response = $client->request(
+                    'GET',
+                    'https://api.amazon.com/user/profile',
+                    [
+                        'query' => ['access_token' => $access_token],
+                    ]
+                );
+                if ($response->getStatusCode() != 200) {
+                    Log::warn(
+                        'https://api.amazon.com/user/profile status: '.
+                        $response->getStatusCode()
+                    );
+                    return null;
+                }
+                $data = json_decode($response->getBody());
+                return $data->user_id;
             },
         ];
     }

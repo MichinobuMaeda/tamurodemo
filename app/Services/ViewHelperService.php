@@ -12,6 +12,23 @@ use App\Message;
 class ViewHelperService
 {
     /**
+     * Get provider display name.
+     * 
+     * @param string $provider
+     * @return string
+     */
+    public function getProviderName($provider)
+    {
+        $ret = [
+            'facebook' => Lang::getFromJson('Facebook'),
+            'yahoo_jp' => Lang::getFromJson('Yahoo! JAPAN'),
+            'amazon' => Lang::getFromJson('Amazon'),
+            'google' => Lang::getFromJson('Google'),
+        ];
+        return $ret[$provider];
+    }
+
+    /**
      * Create a new service instance.
      *
      * @return void

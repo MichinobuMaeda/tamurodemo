@@ -34,7 +34,8 @@
           <p>{{ __('Login with ...') }}</p>
           @include('parts.button_login_facebook', ['route_reg' => route('preferences.login.oauth', ['provider' => 'facebook']), 'delete' => in_array('facebook', $loginMethods)])
           @include('parts.button_login_yahoo_jp', ['route_reg' => route('preferences.login.oauth', ['provider' => 'yahoo_jp']), 'delete' => in_array('yahoo_jp', $loginMethods)])
-          @include('parts.button_login_google',   ['route_reg' => route('preferences.login.oauth', ['provider' => 'google']), 'delete' => in_array('google', $loginMethods)])
+          @include('parts.button_login_amazon',   ['route_reg' => route('preferences.login.oauth', ['provider' => 'amazon']),   'delete' => in_array('amazon', $loginMethods)])
+          @include('parts.button_login_google',   ['route_reg' => route('preferences.login.oauth', ['provider' => 'google']),   'delete' => in_array('google', $loginMethods)])
         </div>
      </div>
     </div>

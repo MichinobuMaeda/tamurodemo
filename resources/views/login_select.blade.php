@@ -18,9 +18,10 @@
             {{ route('login') }}
           @endcomponent
           <p>{{ __('Login with ...') }}</p>
-          @include('parts.button_login_facebook', ['route_reg' => route('login.facebook')])
-          @include('parts.button_login_yahoo_jp', ['route_reg' => route('login.yahoo_jp')])
-          @include('parts.button_login_google',   ['route_reg' => route('login.google')  ])
+          @include('parts.button_login_facebook', ['route_reg' => route('login.oauth', ['provider' => 'facebook'])])
+          @include('parts.button_login_yahoo_jp', ['route_reg' => route('login.oauth', ['provider' => 'yahoo_jp'])])
+          @include('parts.button_login_amazon',   ['route_reg' => route('login.oauth', ['provider' => 'amazon'])  ])
+          @include('parts.button_login_google',   ['route_reg' => route('login.oauth', ['provider' => 'google'])  ])
         </div>
      </div>
     </div>

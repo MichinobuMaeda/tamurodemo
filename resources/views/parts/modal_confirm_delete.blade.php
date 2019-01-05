@@ -1,8 +1,8 @@
-<div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+<div class="modal fade" id="deleteConfirmation-{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmation-{{ $id }}Label" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-danger" id="deleteConfirmationLabel">
+        <h5 class="modal-title text-danger" id="deleteConfirmation-{{ $id }}Label">
           <i class="fas fa-exclamation-triangle"></i>
           {{ __('Alert') }}
         </h5>
@@ -11,11 +11,12 @@
         </button>
       </div>
       <div class="modal-body alert-danger">
-        {{ __('Do you really want to delete this?') }}
+        <h4>{{ $target }}</h4>
+        <p>{{ __('Do you really want to delete this?') }}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" onclick="event.preventDefault();
-                    document.getElementById('delete-form').submit();">
+                    document.getElementById('delete-form-{{ $id }}').submit();">
           {{ __('Delete') }}
         </button>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
@@ -25,7 +26,7 @@
     </div>
   </div>
 </div>
-<form id="delete-form" action="{{ $slot }}" method="POST" style="display: none;">
+<form id="delete-form-{{ $id }}" action="{{ $slot }}" method="POST" style="display: none;">
   @method('DELETE')
   @csrf
 </form>

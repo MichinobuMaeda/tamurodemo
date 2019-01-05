@@ -29,7 +29,7 @@ function checkLoginState() {
       var token = response.authResponse.accessToken;
       var xhr = new XMLHttpRequest();
       if (window.location.href.includes('/login/')) {
-        xhr.open('POST', '{{ route("oAuthLogin") }}');
+        xhr.open('POST', '{{ route("login.oauth", ["provider" => "facebook"]) }}');
       } else if (window.location.href.includes('/preferences/oauth/')) {
         xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "facebook"]) }}');
       } else {
@@ -44,9 +44,8 @@ function checkLoginState() {
           document.getElementById('facebookStatus').innerText = "{{ __('Failed to authenticate.') }}";
         }
       };
-      if (window.location.href.includes('/login/')) {
-        xhr.send('provider_token=' + token + "&provider_name=facebook");
-      } else if (window.location.href.includes('/preferences/oauth/')) {
+      if (window.location.href.includes('/login/') ||
+          window.location.href.includes('/preferences/oauth/')) {
         xhr.send('provider_token=' + token);
       } else {
         xhr.send('provider_token=' + token + "&token={{ isset($token) ? $token : "" }}&provider_name=facebook&user={{ isset($user) ? $user->id : "" }}");

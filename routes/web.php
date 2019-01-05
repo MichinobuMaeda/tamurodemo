@@ -69,18 +69,6 @@ Route::get(
   'login/email/{user}/{token}',
   'EMailLoginController@login'
 )->name('login.email.token')->middleware('guest');
-Route::view(
-  'login/facebook',
-  'login_facebook'
-)->name('login.facebook')->middleware('guest');
-Route::view(
-  'login/yahoojp',
-  'login_yahoo_jp'
-)->name('login.yahoo_jp')->middleware('guest');
-Route::view(
-  'login/google',
-  'login_google'
-)->name('login.google')->middleware('guest');
 
 Route::get(
   'users',
@@ -109,10 +97,14 @@ Route::post(
   'RegistrationController@register'
 )->name('post.registration');
 
+Route::get(
+  'login/oauth/{provider}',
+  'OAuthLoginController@show'
+)->name('login.oauth');
 Route::post(
-  'oAuthLogin',
+  'login/oauth/{provider}',
   'OAuthLoginController@login'
-)->name('oAuthLogin');
+);
 
 Route::get(
   'preferences/login',

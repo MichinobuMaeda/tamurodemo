@@ -41,7 +41,7 @@ function onSignIn(googleUser) {
   var id_token = googleUser.getAuthResponse().id_token;
   var xhr = new XMLHttpRequest();
   if (window.location.href.includes('/login/')) {
-    xhr.open('POST', '{{ route("oAuthLogin") }}');
+    xhr.open('POST', '{{ route("login.oauth", ["provider" => "google"]) }}');
   } else if (window.location.href.includes('/preferences/oauth/')) {
     xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "google"]) }}');
   } else {
@@ -56,9 +56,8 @@ function onSignIn(googleUser) {
       document.getElementById('googleStatus').innerText = "{{ __('Failed to authenticate.') }}";
     }
   };
-  if (window.location.href.includes('/login/')) {
-    xhr.send('provider_token=' + id_token + "&provider_name=google");
-  } else if (window.location.href.includes('/preferences/oauth/')) {
+  if (window.location.href.includes('/login/') ||
+      window.location.href.includes('/preferences/oauth/')) {
     xhr.send('provider_token=' + id_token);
   } else {
     xhr.send('provider_token=' + id_token + '&token={{ isset($token) ? $token : "" }}&provider_name=google&user={{ isset($user) ? $user->id : "" }}');

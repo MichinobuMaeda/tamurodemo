@@ -32,6 +32,7 @@
           <p>{{ __('Login with ...') }}</p>
           @include('parts.button_login_facebook', ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'facebook'])])
           @include('parts.button_login_yahoo_jp', ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'yahoo_jp'])])
+          @include('parts.button_login_amazon',   ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'amazon'  ])])
           @include('parts.button_login_google',   ['route_reg' => route('get.registration', ['user' => $user, 'token' => $token, 'provider_name' => 'google'  ])])
         </div>
       </div>
