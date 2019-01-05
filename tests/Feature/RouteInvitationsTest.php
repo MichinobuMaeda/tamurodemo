@@ -48,10 +48,7 @@ class RouteInvitationsTest extends TestCase
         ]), [
             'sendBy' => 'email',
         ]);
-        $response->assertRedirect(route('get.invitation', [
-            'user' => $this->user04->id,
-            'sendBy' => 'email',
-        ]));
+        $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
         $response = $this->post(route('post.invitation', [
             'user' => $this->user08->id,
@@ -92,8 +89,7 @@ class RouteInvitationsTest extends TestCase
             'user' => $this->user04->id,
             'sendBy' => 'email',
         ]));
-        $response->assertViewIs('users_invite');
-        $response->assertViewHas('user', User::where('name', 'user 04')->first());
+        $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
         $response = $this->get(route('get.invitation', [
             'user' => $this->user08->id,

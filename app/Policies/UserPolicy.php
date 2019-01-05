@@ -42,8 +42,7 @@ class UserPolicy
     public function update(User $user, User $model)
     {
         return $user->id == $model->id
-            || $user->isManagerOfAll()
-            || $user->isManagerOf($model);
+            || $user->isManagerOfAll();
     }
 
     /**
@@ -66,8 +65,7 @@ class UserPolicy
      */
     public function list(User $user)
     {
-        return $user->isManagerOfAll()
-            || count($user->groupsManaging);
+        return $user->isManagerOfAll();
     }
 
     /**
@@ -79,7 +77,6 @@ class UserPolicy
      */
     public function invite(User $user, User $model)
     {
-        return $user->isManagerOfAll()
-            || $user->isManagerOf($model);
+        return $user->isManagerOfAll();
     }
 }

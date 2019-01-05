@@ -68,7 +68,7 @@ class UserPolicyTest extends TestCase
         $this->assertTrue($pol->update($this->user00, $this->user08));        
         $this->assertFalse($pol->update($this->user01, $this->user08));        
         $this->assertFalse($pol->update($this->user02, $this->user08));        
-        $this->assertTrue($pol->update($this->user03, $this->user08));        
+        $this->assertFalse($pol->update($this->user03, $this->user08));        
         $this->assertFalse($pol->update($this->user04, $this->user08));        
         $this->assertFalse($pol->update($this->user05, $this->user08));        
         $this->assertTrue($pol->update($this->user06, $this->user08));        
@@ -104,9 +104,9 @@ class UserPolicyTest extends TestCase
     {
         $pol = new UserPolicy();
         $this->assertTrue($pol->list($this->user00));        
-        $this->assertTrue($pol->list($this->user01));        
+        $this->assertFalse($pol->list($this->user01));        
         $this->assertFalse($pol->list($this->user02));        
-        $this->assertTrue($pol->list($this->user03));        
+        $this->assertFalse($pol->list($this->user03));        
         $this->assertFalse($pol->list($this->user04));        
         $this->assertFalse($pol->list($this->user05));        
         $this->assertTrue($pol->list($this->user06));        
@@ -125,7 +125,7 @@ class UserPolicyTest extends TestCase
         $this->assertTrue($pol->invite($this->user00, $this->user08));        
         $this->assertFalse($pol->invite($this->user01, $this->user08));        
         $this->assertFalse($pol->invite($this->user02, $this->user08));        
-        $this->assertTrue($pol->invite($this->user03, $this->user08));        
+        $this->assertFalse($pol->invite($this->user03, $this->user08));        
         $this->assertFalse($pol->invite($this->user04, $this->user08));        
         $this->assertFalse($pol->invite($this->user05, $this->user08));        
         $this->assertTrue($pol->invite($this->user06, $this->user08));        
