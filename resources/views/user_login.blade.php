@@ -5,10 +5,10 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Preferences') }}: {{ __('E-Mail Address') }}</div>
-
+        <div class="card-header">{{ __('Preferences') }}: {{ __('Login') }}</div>
         <div class="card-body">
-          <form method="POST" action="{{ route('preferences.login.email') }}">
+          <h3>{{ $user->name }}</h3>
+          <form method="POST" action="{{ route('user.login.email', ['user' => $user->id]) }}">
             @method('PUT')
             @csrf
 
@@ -16,7 +16,7 @@
               <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
               <div class="col-md-6">
-                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email', Auth::user()->email) }}">
+                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email', $user->email) }}">
 
                 @if ($errors->has('email'))
                   <span class="invalid-feedback" role="alert">
@@ -25,27 +25,26 @@
                 @endif
               </div>
             </div>
-            <div class="form-group row">
-              <div class="col-md-12">
-                @component('parts.multi_line_message')
-                  Please check the e-mail address entered before saving.
-                @endcomponent
-              </div>
-            </div>
 
             <div class="form-group row mb-0">
               <div class="col-md-6 offset-md-4">
                 <button type="submit" class="btn btn-primary">
                   {{ __('Save') }}
                 </button>
-                <a href="{{ route('preferences.login') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('user.login', ['user' => $user->id]) }}" class="btn btn-outline-secondary">
                   {{ __('Cancel') }}
                 </a>
               </div>
             </div>
           </form>
+          <p>{{ __('Login with ...') }}</p>
+          @foreach($vh->getProviders() as $provider)
+            @if(in_array($provider, $loginMethods))
+              @include('parts.button_login_'.$provider, ['route_reg' => route('user.login.oauth', ['user' => $user->id, 'provider' => $provider]), 'delete' => route('user.login.oauth', ['user' => $user->id, 'provider' => $provider])])
+            @endif
+          @endforeach
         </div>
-      </div>
+     </div>
     </div>
   </div>
 </div>

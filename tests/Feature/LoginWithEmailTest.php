@@ -108,17 +108,17 @@ class LoginWithEmailTest extends TestCase
         $response = $this->get(route('preferences.login.email'));
         $response->assertViewIs('preferences_email');
 
-        $response = $this->post(route('preferences.login.email'), [
+        $response = $this->put(route('preferences.login.email'), [
             'email' => 'abc@def',
         ]);
         $response->assertRedirect(route('preferences.login.email'));
 
-        $response = $this->post(route('preferences.login.email'), [
+        $response = $this->put(route('preferences.login.email'), [
             'email' => '',
         ]);
         $response->assertRedirect(route('preferences.login'));
 
-        $response = $this->post(route('preferences.login.email'), [
+        $response = $this->put(route('preferences.login.email'), [
             'email' => 'abc@def.ghi',
         ]);
         $response->assertRedirect(route('preferences.login'));

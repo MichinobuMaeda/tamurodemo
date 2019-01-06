@@ -14,7 +14,7 @@
 Route::get(
   '/',
   'HomeController@index'
-)->name('home');
+)->name('home')->middleware('history');
 
 Route::view(
   '/security_policy',
@@ -73,29 +73,42 @@ Route::get(
 Route::get(
   'users',
   'UsersController@list'
-)->name('list.users')->middleware('can:users.list');
+)->name('users')->middleware('can:users.list')->middleware('history');
 Route::get(
   'users/orderBy/{orderBy}/orderDir/{orderDir}',
   'UsersController@list'
-)->name('list.users.orderBy')->middleware('can:users.list');
+)->name('users.orderBy')->middleware('can:users.list');
 
-Route::post(
-  'invitations/{user}',
+Route::get(
+  'users/{user}/login',
+  'UsersController@showLogin'
+)->name('user.login')->middleware('can:users.update,user')->middleware('history');
+Route::put(
+  'users/{user}/login/email',
+  'UsersController@saveLoginEmail'
+)->name('user.login.email')->middleware('can:users.update,user');
+Route::delete(
+  'users/{user}/login/oauth/{provider}',
+  'UsersController@resetLoginProvider'
+)->name('user.login.oauth')->middleware('can:users.update,user');
+
+Route::get(
+  'invitations/{user}/{sendBy}/post',
   'InvitationController@invite'
-)->name('post.invitation')->middleware('can:users.invite,user');
+)->name('invite')->middleware('can:users.invite,user');
 Route::get(
   'invitations/{user}/{sendBy}',
   'InvitationController@show'
-)->name('get.invitation')->middleware('can:users.invite,user');
+)->name('invitation')->middleware('can:users.invite,user');
 
 Route::get(
   'registrations/{user}/{token}/{provider_name?}',
   'RegistrationController@viewInvitation'
-)->name('get.registration');
+)->name('registration');
 Route::post(
   'registrations',
   'RegistrationController@register'
-)->name('post.registration');
+)->name('register');
 
 Route::get(
   'login/oauth/{provider}',
@@ -109,13 +122,13 @@ Route::post(
 Route::get(
   'preferences/login',
   'PreferencesController@showLogin'
-)->name('preferences.login');
+)->name('preferences.login')->middleware('history');
 
 Route::view(
   'preferences/login/email',
   'preferences_email'
 )->name('preferences.login.email')->middleware('auth');
-Route::post(
+Route::put(
   'preferences/login/email',
   'PreferencesController@saveLoginEmail'
 );
@@ -124,7 +137,7 @@ Route::view(
   'preferences/login/password',
   'preferences_password'
 )->name('preferences.login.password')->middleware('auth');
-Route::post(
+Route::put(
   'preferences/login/password',
   'PreferencesController@saveLoginPassword'
 );
@@ -141,3 +154,13 @@ Route::delete(
   'preferences/oauth/{provider}',
   'PreferencesController@resetLoginProvider'
 );
+
+Route::get(
+  'pages/back',
+  'PageController@back'
+)->name('page.back');
+
+Route::get(
+  'pages/forward',
+  'PageController@forward'
+)->name('page.forward');

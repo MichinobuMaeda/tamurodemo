@@ -22,7 +22,7 @@ var action = null;
     } else if (action == 'set') {
       xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "amazon"]) }}');
     } else {
-      xhr.open('POST', '{{ route("post.registration") }}');
+      xhr.open('POST', '{{ route("register") }}');
     }
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
@@ -87,12 +87,6 @@ function onClickAmazon() {
       <div class="card">
         <div class="card-header">{{ __('Login with Yahoo! JAPAN') }}</div>
         <div class="card-body">
-          <p>
-            <a href="javascript:window.history.back();">
-              <i class="fas fa-angle-double-left"></i>
-              {{ __('Back') }}
-            </a>
-          </p>
           <p>
             <a href="javascript:onClickAmazon();" id="LoginWithAmazon">
               <img style="boder: none;" alt="Login with Amazon"

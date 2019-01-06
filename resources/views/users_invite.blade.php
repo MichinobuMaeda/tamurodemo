@@ -9,7 +9,7 @@
 
         <div class="card-body">
           <p>
-            <a class="button button-primary" href="{{ route('list.users') }}">
+            <a class="button button-primary" href="{{ route('users') }}">
               <i class="fas fa-angle-double-left"></i> 
               {{ __('Account list') }}
             </a>
@@ -19,7 +19,7 @@
           <p>{{ __('Send E-mail to set password.') }}</p>
           <p>{{ $user->email }}</p>
           @else
-          <p>{{ route('get.registration', [ 'user' => $user->id, 'token' => $user->invitation_token ]) }}</p>
+          <p>{{ route('registration', [ 'user' => $user->id, 'token' => $user->invitation_token ]) }}</p>
           @endif
         </div>
       </div>

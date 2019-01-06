@@ -45,7 +45,7 @@ class InvitationMailNotification extends Notification
         $mail = (new MailMessage)
             ->subject(config('app.name').' '.Lang::getFromJson('Setup login method'))
             ->line(Lang::getFromJson('Please setup your login method.'))
-            ->action(Lang::getFromJson('Setup login method'), url(config('app.url').route('get.registration', [ 'user' => $notifiable->id, 'token' => $notifiable->invitation_token ], false)))
+            ->action(Lang::getFromJson('Setup login method'), url(config('app.url').route('registration', [ 'user' => $notifiable->id, 'token' => $notifiable->invitation_token ], false)))
             ->line(Lang::getFromJson('If you have any questions, please contact us.'))
             ->line(env('MAIL_FROM_ADDRESS'))
             ->line('')

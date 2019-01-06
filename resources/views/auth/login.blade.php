@@ -7,12 +7,6 @@
       <div class="card">
         <div class="card-header">{{ __('E-mail and password') }}</div>
         <div class="card-body">
-          <p>
-            <a href="javascript:window.history.back();">
-              <i class="fas fa-angle-double-left"></i>
-              {{ __('Back') }}
-            </a>
-          </p>
           <form method="POST" action="{{ route('login') }}">
             @csrf
 

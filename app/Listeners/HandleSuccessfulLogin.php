@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use DateTime;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\Log;
 
 class HandleSuccessfulLogin
 {
@@ -30,9 +31,11 @@ class HandleSuccessfulLogin
       $event->user->invited_at = null;
       $event->user->entered_at = new DateTime();
       $event->user->save();
+      $event->user->refresh();
     } else if (!$event->user->entered_at) {
       $event->user->entered_at = new DateTime();
       $event->user->save();
+      $event->user->refresh();
     }
   }
 }

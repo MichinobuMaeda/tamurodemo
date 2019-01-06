@@ -7,12 +7,6 @@
       <div class="card">
         <div class="card-header">{{ __('Login with Facebook') }}</div>
         <div class="card-body">
-          <p>
-            <a href="javascript:window.history.back();">
-              <i class="fas fa-angle-double-left"></i>
-              {{ __('Back') }}
-            </a>
-          </p>
           <div id="fb-root"></div>
 <script>
 (function(d, s, id) {
@@ -33,7 +27,7 @@ function checkLoginState() {
       } else if (window.location.href.includes('/preferences/oauth/')) {
         xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "facebook"]) }}');
       } else {
-        xhr.open('POST', '{{ route("post.registration") }}');
+        xhr.open('POST', '{{ route("register") }}');
       }
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');

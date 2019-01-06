@@ -18,6 +18,6 @@
 </p>
 @if (isset($delete) && $delete)
   @component('parts.modal_confirm_delete', ['id' => $provider, 'target' => $vh->getProviderName($provider)])
-    {{ route('preferences.login.oauth', ['provider' => $provider]) }}
+    {{ $delete }}
   @endcomponent
 @endif

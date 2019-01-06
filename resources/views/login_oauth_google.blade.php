@@ -7,12 +7,6 @@
       <div class="card">
         <div class="card-header">{{ __('Login with Google') }}</div>
         <div class="card-body">
-          <p>
-            <a href="javascript:window.history.back();">
-              <i class="fas fa-angle-double-left"></i>
-              {{ __('Back') }}
-            </a>
-          </p>
 <script>
 var googleAuth2 = null;
 var onGoogleLoad = function() {
@@ -45,7 +39,7 @@ function onSignIn(googleUser) {
   } else if (window.location.href.includes('/preferences/oauth/')) {
     xhr.open('POST', '{{ route("preferences.login.oauth", ["provider" => "google"]) }}');
   } else {
-    xhr.open('POST', '{{ route("post.registration") }}');
+    xhr.open('POST', '{{ route("register") }}');
   }
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');

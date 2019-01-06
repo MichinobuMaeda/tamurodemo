@@ -7,10 +7,36 @@ use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 
+use App\Services\PageHistoryService;
 use App\Message;
 
 class ViewHelperService
 {
+    /**
+     * Create a new view helper instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->providers = [
+            'facebook' => Lang::getFromJson('Facebook'),
+            'yahoo_jp' => Lang::getFromJson('Yahoo! JAPAN'),
+            'amazon' => Lang::getFromJson('Amazon'),
+            'google' => Lang::getFromJson('Google'),
+        ];
+    }
+
+    /**
+     * Get provider list.
+     * 
+     * @return string
+     */
+    public function getProviders()
+    {
+        return array_keys($this->providers);
+    }
+
     /**
      * Get provider display name.
      * 
@@ -19,22 +45,7 @@ class ViewHelperService
      */
     public function getProviderName($provider)
     {
-        $ret = [
-            'facebook' => Lang::getFromJson('Facebook'),
-            'yahoo_jp' => Lang::getFromJson('Yahoo! JAPAN'),
-            'amazon' => Lang::getFromJson('Amazon'),
-            'google' => Lang::getFromJson('Google'),
-        ];
-        return $ret[$provider];
-    }
-
-    /**
-     * Create a new service instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
+        return $this->providers[$provider];
     }
 
     /**
@@ -117,5 +128,27 @@ class ViewHelperService
         $message = Message::where('key', $key)
             ->where('locale', Lang::getLocale())->first();
         return $message ? $message->message : $key;
+    }
+
+    /**
+     * Is the page history of backward.
+     * 
+     * @param Object $session
+     * @return boolean
+     */
+    public function isPagePrev($session)
+    {
+        return !!(new PageHistoryService($session))->prev();
+    }
+
+    /**
+     * Is the page history of forward.
+     * 
+     * @param Object $session
+     * @return boolean
+     */
+    public function isPageNext($session)
+    {
+        return !!(new PageHistoryService($session))->next();
     }
 }

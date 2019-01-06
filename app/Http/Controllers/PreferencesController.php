@@ -34,7 +34,7 @@ class PreferencesController extends Controller
     public function showLogin(Request $request)
     {
         return view('preferences_login', [
-            'loginMethods' => $this->svc->listUserLoginMethods(Auth::user())
+            'loginMethods' => $this->svc->listUserLoginMethods(Auth::user()),
         ]);
     }
 

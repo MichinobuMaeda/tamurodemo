@@ -122,19 +122,19 @@ class LoginWithPasswordTest extends TestCase
         $response = $this->get(route('preferences.login.password'));
         $response->assertViewIs('preferences_password');
 
-        $response = $this->post(route('preferences.login.password'), [
+        $response = $this->put(route('preferences.login.password'), [
             'password' => '1234',
             'password_confirmation' => '1234',
         ]);
         $response->assertRedirect(route('preferences.login.password'));
 
-        $response = $this->post(route('preferences.login.password'), [
+        $response = $this->put(route('preferences.login.password'), [
             'password' => '',
             'password_confirmation' => '',
         ]);
         $response->assertRedirect(route('preferences.login'));
 
-        $response = $this->post(route('preferences.login.password'), [
+        $response = $this->put(route('preferences.login.password'), [
             'password' => 'Abcdefg0',
             'password_confirmation' => 'Abcdefg0',
         ]);

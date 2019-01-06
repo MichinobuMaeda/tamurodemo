@@ -9,6 +9,7 @@
 
         <div class="card-body">
           <form method="POST" action="{{ route('preferences.login.password') }}">
+            @method('PUT')
             @csrf
 
             <div class="form-group row">

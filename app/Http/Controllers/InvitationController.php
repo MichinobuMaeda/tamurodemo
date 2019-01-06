@@ -25,13 +25,13 @@ class InvitationController extends Controller
      *
      * @param Request $request
      * @param App\User $user
+     * @param string $sendBy
      * @return \Illuminate\Http\Response
      */
-    public function invite(Request $request, $user)
+    public function invite(Request $request, $user, $sendBy)
     {
-        $sendBy= $request->input('sendBy');
         $this->svc->invite($user, $sendBy);
-        return redirect()->route('get.invitation', [
+        return redirect()->route('invitation', [
             'user' => $user->id,
             'sendBy' => $sendBy
         ]);

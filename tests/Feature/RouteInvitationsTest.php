@@ -31,39 +31,35 @@ class RouteInvitationsTest extends TestCase
     {
         Auth::login($this->user00);
 
-        $response = $this->post(route('post.invitation', [
+        $response = $this->get(route('invite', [
             'user' => $this->user00->id,
-        ]), [
             'sendBy' => 'email',
-        ]);
-        $response->assertRedirect(route('get.invitation', [
+        ]));
+        $response->assertRedirect(route('invitation', [
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
 
         Auth::login($this->user01);
 
-        $response = $this->post(route('post.invitation', [
+        $response = $this->get(route('invite', [
             'user' => $this->user04->id,
-        ]), [
             'sendBy' => 'email',
-        ]);
+        ]));
         $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
-        $response = $this->post(route('post.invitation', [
+        $response = $this->get(route('invite', [
             'user' => $this->user08->id,
-        ]), [
             'sendBy' => 'email',
-        ]);
+        ]));
         $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
         Auth::logout();
 
-        $response = $this->post(route('post.invitation', [
+        $response = $this->get(route('invite', [
             'user' => $this->user00->id,
-        ]), [
             'sendBy' => 'email',
-        ]);
+        ]));
         $response->assertRedirect(route('list.logins'));
     }
 
@@ -76,7 +72,7 @@ class RouteInvitationsTest extends TestCase
     {
         Auth::login($this->user00);
 
-        $response = $this->get(route('get.invitation', [
+        $response = $this->get(route('invitation', [
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
@@ -85,13 +81,13 @@ class RouteInvitationsTest extends TestCase
 
         Auth::login($this->user01);
 
-        $response = $this->get(route('get.invitation', [
+        $response = $this->get(route('invitation', [
             'user' => $this->user04->id,
             'sendBy' => 'email',
         ]));
         $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
 
-        $response = $this->get(route('get.invitation', [
+        $response = $this->get(route('invitation', [
             'user' => $this->user08->id,
             'sendBy' => 'email',
         ]));
@@ -99,7 +95,7 @@ class RouteInvitationsTest extends TestCase
 
         Auth::logout();
 
-        $response = $this->get(route('get.invitation', [
+        $response = $this->get(route('invitation', [
             'user' => $this->user00->id,
             'sendBy' => 'email',
         ]));
