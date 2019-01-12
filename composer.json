@@ -53,8 +53,8 @@
             "@php artisan package:discover"
         ],
         "test": [
-            "@php artisan migrate:refresh",
             "@php -r \"copy('.env.phpunit', '.env');\"",
+            "@php artisan migrate:refresh",
             "phpunit --coverage-html coverage"
         ],
         "refresh": [

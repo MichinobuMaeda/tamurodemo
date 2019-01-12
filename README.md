@@ -22,7 +22,7 @@ Test
 
 Run with test data for local
 
-    $ cp .env.local .env.dev
+    $ cp .env.phpunit .env.dev
     $ vi .env.dev
     $ cp .env.dev .env
     $ php artisan migrate:refresh --seed

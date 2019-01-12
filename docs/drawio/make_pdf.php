@@ -11,7 +11,7 @@
 
 $dir_src = dirname(__FILE__).DIRECTORY_SEPARATOR;
 $dir_tmp = dirname(__FILE__).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
-$pdf = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'design.pdf';
+$pdf = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'tamuro_design.pdf';
 
 function emptyDir($dir) {
   if (is_dir($dir)) {
