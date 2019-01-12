@@ -11,19 +11,19 @@ Requirements
 
 Setup dev. environment
 
-    # git clone https://github.com/MichinobuMaeda/tamuro.git
-    # cd tamuro
-    # composer install
-    # touch storage/tamuro.sqlite 
+    $ git clone https://github.com/MichinobuMaeda/tamuro.git
+    $ cd tamuro
+    $ composer install
+    $ touch storage/tamuro.sqlite 
 
 Test
 
-    # composer test
+    $ composer test
 
 Run with test data for local
 
-    # cp .env.local .env.dev
-    # vi .env.dev
-    # cp .env.dev .env
-    # php artisan migrate:refresh --seed
-    # php artisan serve --host localhost --port 8000
+    $ cp .env.local .env.dev
+    $ vi .env.dev
+    $ cp .env.dev .env
+    $ php artisan migrate:refresh --seed
+    $ php artisan serve --host localhost --port 8000
