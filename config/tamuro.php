@@ -10,7 +10,7 @@ return [
     'timestamp_format' => env('APP_TIMESTAMP_FORMAT', 'Y-m-d H:i:s'),
 
     'primary_user_email' => env('APP_PRIMARY_USER_EMAIL'),
-    'primary_user_password' => env('APP_PASSWORD_RESET_EXPIRE'),
+    'primary_user_password' => env('APP_PRIMARY_USER_PASSWORD'),
 
     'password_reset_expire' => env('APP_PASSWORD_RESET_EXPIRE', 60),
     'invitation_expire' => env('APP_INVITATION_EXPIRE', 600),
