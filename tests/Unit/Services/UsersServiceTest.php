@@ -176,6 +176,28 @@ class UsersServiceTest extends TestCase
     }
 
     /**
+     * The test of method saveProfile().
+     *
+     * @return void
+     */
+    public function testSaveProfile()
+    {
+        $svc = new UsersService();
+
+        $svc->saveProfile($this->user01, 'test name1', 'test desc1', 'Europe/London');
+        $this->user01->refresh();
+        $this->assertEquals('test name1', $this->user01->name);
+        $this->assertEquals('test desc1', $this->user01->desc);
+        $this->assertEquals('Europe/London', $this->user01->timezone);
+
+        $svc->saveProfile($this->user01, 'test name2', null, null);
+        $this->user01->refresh();
+        $this->assertEquals('test name2', $this->user01->name);
+        $this->assertEquals(null, $this->user01->desc);
+        $this->assertEquals(config('tamuro.default_timezone'), $this->user01->timezone);
+    }
+
+    /**
      * The test of method saveLoginEmail().
      *
      * @return void

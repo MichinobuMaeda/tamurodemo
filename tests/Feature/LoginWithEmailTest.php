@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Tests\Unit\UnitTestHelper;
 
@@ -34,7 +33,7 @@ class LoginWithEmailTest extends TestCase
 
         // Show send email page.
         $response = $this->get(route('login.email'));
-        $response->assertViewIs('login_email');
+        $response->assertViewIs('auth.login_email');
 
         // Send bad format email address.
         $response = $this->post(route('login.email.send'), [

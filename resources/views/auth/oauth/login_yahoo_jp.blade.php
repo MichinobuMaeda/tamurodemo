@@ -1,5 +1,8 @@
 @extends('layouts.app')
 @inject('vh', 'App\Services\ViewHelperService')
+@php
+$conf = config('tamuro.oauth_yahoo_jp')
+@endphp
 @section('content')
 <div class="container">
   <div class="row justify-content-center">
@@ -41,7 +44,7 @@ var action = null;
         document.getElementById('yahooJpStatus').innerText = "{{ __('Failed to authenticate.') }}";
       }
     };
-    var redirect_uri = (action == 'set') ? "{{ env('YAHOO_JP_REDIRECT_URI2') }}" : "{{ env('YAHOO_JP_REDIRECT_URI') }}";
+    var redirect_uri = (action == 'set') ? "{{ $conf['redirect_uri2'] }}" : "{{ $conf['redirect_uri1'] }}";
     var provider_token = code + '%09' + nonce + '%09' + redirect_uri;
     if ((action == 'login') || (action == 'set')) {
       xhr.send('provider_token=' + provider_token);
@@ -75,7 +78,7 @@ state = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).su
 sessionStorage.setItem('yahoo_jp_state', state);
 nonce = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 16);
 sessionStorage.setItem('yahoo_jp_nonce', nonce);
-var redirect_uri = (action == 'set') ? "{{ env('YAHOO_JP_REDIRECT_URI2') }}" : "{{ env('YAHOO_JP_REDIRECT_URI') }}";
+var redirect_uri = (action == 'set') ? "{{ $conf['redirect_uri2'] }}" : "{{ $conf['redirect_uri1'] }}";
 
 window.yconnectInit = function() {
   YAHOO.JP.yconnect.Authorization.init({
@@ -88,7 +91,7 @@ window.yconnectInit = function() {
       className: "yconnectLogin"
     },
     authorization: {
-      clientId: "{{ env('YAHOO_JP_CLIENT_ID') }}",
+      clientId: "{{ $conf['client_id'] }}",
       redirectUri: redirect_uri,
       scope: "openid",
       responseType: "code",

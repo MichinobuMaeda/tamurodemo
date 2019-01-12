@@ -71,6 +71,24 @@ class UsersService
     }
 
     /**
+     * Save user's profiles.
+     * 
+     * @param App\User $user
+     * @param string $name
+     * @param string $desc
+     * @param string $timezone
+     * @return null
+     */
+    public function saveProfile($user, $name, $desc, $timezone)
+    {
+        $user->name = $name;
+        $user->desc = $desc;
+        $user->timezone = $timezone ? $timezone : config('tamuro.default_timezone');
+        $user->save();
+        $user->refresh();
+    }
+
+    /**
      * Save user's e-mail address.
      * 
      * @param App\User $user

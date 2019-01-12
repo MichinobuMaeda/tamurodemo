@@ -128,6 +128,6 @@ class LocalSeeder extends Seeder
 
     private function unique()
     {
-        return hash('sha256', str_random(16).env('APP_KEY').(new DateTime())->format('Y-m-d\TH:i:s.u'));
+        return hash('sha256', str_random(16).config('app.key').(new DateTime())->format('Y-m-d\TH:i:s.u'));
     }
 }

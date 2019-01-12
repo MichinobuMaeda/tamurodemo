@@ -38,14 +38,14 @@ class ViewHelperServiceTest extends TestCase
         $this->assertNull($vh->setTimezone(null));
         $val = new DateTime();
         $this->assertEquals(
-            env('APP_DEFAULT_TIMEZONE'),
+            config('tamuro.default_timezone'),
             $vh->setTimezone($val)->getTimeZone()->getName()
         );
 
         Auth::login($this->user01);
         $ret = $vh->setTimezone($val);
         $this->assertEquals(
-            env('APP_DEFAULT_TIMEZONE'),
+            config('tamuro.default_timezone'),
             $vh->setTimezone($val)->getTimeZone()->getName()
         );
         Auth::logout();
@@ -69,7 +69,7 @@ class ViewHelperServiceTest extends TestCase
         $this->assertNull($vh->formatDate(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
-            $vh->setTimezone($val)->format(env('APP_DATE_FORMAT')),
+            $vh->setTimezone($val)->format(config('tamuro.date_format')),
             $vh->formatDate($val)
         );
     }
@@ -85,7 +85,7 @@ class ViewHelperServiceTest extends TestCase
         $this->assertNull($vh->formatTime(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
-            $vh->setTimezone($val)->format(env('APP_TIME_FORMAT')),
+            $vh->setTimezone($val)->format(config('tamuro.time_format')),
             $vh->formatTime($val)
         );
     }
@@ -101,7 +101,7 @@ class ViewHelperServiceTest extends TestCase
         $this->assertNull($vh->formatDateTime(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
-            $vh->setTimezone($val)->format(env('APP_DATE_TIME_FORMAT')),
+            $vh->setTimezone($val)->format(config('tamuro.date_time_format')),
             $vh->formatDateTime($val)
         );
     }
@@ -117,7 +117,7 @@ class ViewHelperServiceTest extends TestCase
         $this->assertNull($vh->formatTimestamp(null));
         $val = new DateTime('2012-03-04T05:06:07');
         $this->assertEquals(
-            $vh->setTimezone($val)->format(env('APP_TIMESTAMP_FORMAT')),
+            $vh->setTimezone($val)->format(config('tamuro.timestamp_format')),
             $vh->formatTimestamp($val)
         );
     }
@@ -130,6 +130,7 @@ class ViewHelperServiceTest extends TestCase
     public function testMessage()
     {
         $vh = new ViewHelperService();
+
         Message::create([
             'key' => 'test01',
             'locale' => Lang::getLocale(),
@@ -157,5 +158,23 @@ class ViewHelperServiceTest extends TestCase
             'test02',
             $vh->message('test02')
         );
+    }
+
+    /**
+     * The test of method timezones().
+     *
+     * @return void
+     */
+    public function testTimezones()
+    {
+        $vh = new ViewHelperService();
+
+        $this->assertContains('Asia/Tokyo', $vh->timezones());
+        $this->assertContains('UTC', $vh->timezones());
+        $this->assertNotContains('Hongkong', $vh->timezones());
+
+        $this->assertContains('Asia/Tokyo', $vh->timezones(true));
+        $this->assertContains('UTC', $vh->timezones(true));
+        $this->assertContains('Hongkong', $vh->timezones(true));
     }
 }

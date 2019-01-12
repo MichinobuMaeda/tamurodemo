@@ -23,7 +23,7 @@ Route::view(
 
 Route::view(
   'login',
-  'login_select'
+  'auth.login_select'
 )->name('list.logins')->middleware('guest');
 
 Route::get(
@@ -71,6 +71,31 @@ Route::get(
 )->name('login.email.token')->middleware('guest');
 
 Route::get(
+  'groups/{group}',
+  'GroupsController@show'
+)->name('group')->middleware('history');
+Route::get(
+  'groups/{group}/edit',
+  'GroupsController@showProfileForm'
+)->name('group.edit')->middleware('can:groups.update,group')->middleware('history');
+Route::put(
+  'groups/{group}',
+  'GroupsController@saveProfile'
+)->middleware('can:groups.update,group');
+
+Route::get(
+  'users/{user}',
+  'UsersController@show'
+)->name('user')->middleware('history');
+Route::get(
+  'users/{user}/edit',
+  'UsersController@showProfileForm'
+)->name('user.edit')->middleware('can:users.update,user')->middleware('history');
+Route::put(
+  'users/{user}',
+  'UsersController@saveProfile'
+)->middleware('can:users.update,user');
+Route::get(
   'users',
   'UsersController@list'
 )->name('users')->middleware('can:users.list')->middleware('history');
@@ -81,7 +106,7 @@ Route::get(
 
 Route::get(
   'users/{user}/login',
-  'UsersController@showLogin'
+  'UsersController@showEditLoginForm'
 )->name('user.login')->middleware('can:users.update,user')->middleware('history');
 Route::put(
   'users/{user}/login/email',
@@ -121,13 +146,13 @@ Route::post(
 
 Route::get(
   'preferences/login',
-  'PreferencesController@showLogin'
+  'PreferencesController@showEditLoginForm'
 )->name('preferences.login')->middleware('history');
 
 Route::view(
   'preferences/login/email',
   'preferences_email'
-)->name('preferences.login.email')->middleware('auth');
+)->name('preferences.login.email')->middleware('auth')->middleware('history');;
 Route::put(
   'preferences/login/email',
   'PreferencesController@saveLoginEmail'
@@ -136,7 +161,7 @@ Route::put(
 Route::view(
   'preferences/login/password',
   'preferences_password'
-)->name('preferences.login.password')->middleware('auth');
+)->name('preferences.login.password')->middleware('auth')->middleware('history');;
 Route::put(
   'preferences/login/password',
   'PreferencesController@saveLoginPassword'

@@ -39,7 +39,7 @@ class EMailLoginService
             ]));
             return false;
         }
-        $token = hash('sha512', env('APP_KEY').((new DateTime())->format('Y-m-dTH:i:s.u')).$user->id);
+        $token = hash('sha512', config('app.key').((new DateTime())->format('Y-m-dTH:i:s.u')).$user->id);
         $user->invitation_token = $token;
         $user->invited_at = new DateTime();
         $user->save();
@@ -87,7 +87,7 @@ class EMailLoginService
             return false;
         }
         if ($user->invited_at < (new DateTime())->modify(
-            '-'.env('APP_PASSWORD_RESET_EXPIRE', 10).' minutes'
+            '-'.config('tamuro.password_reset_expire').' minutes'
         )) {
             Log::info(json_encode([
                 'service' => get_class($this).'#login',

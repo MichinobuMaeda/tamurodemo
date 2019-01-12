@@ -9,7 +9,7 @@
 
         <div class="card-body">
           <p>
-            <a class="button button-primary" href="{{ route('users') }}">
+            <a class="btn btn-outline-primary" href="{{ route('users') }}">
               <i class="fas fa-angle-double-left"></i> 
               {{ __('Account list') }}
             </a>

@@ -54,13 +54,14 @@
         ],
         "test": [
             "@php artisan migrate:refresh",
+            "@php -r \"copy('.env.phpunit', '.env');\"",
             "phpunit --coverage-html coverage"
-        ],
-        "local": [
-            "@php artisan serve --host localhost --port 8000"
         ],
         "refresh": [
             "@php artisan migrate:refresh --seed"
+        ],
+        "local": [
+            "@php artisan serve --host localhost --port 8000"
         ]
     },
     "config": {

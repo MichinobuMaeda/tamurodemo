@@ -33,12 +33,12 @@ class RegistrationController extends Controller
     {
         if ($user && ($user->invitation_token == $token)) {
             if ($provider_name ) {
-                return view('login_oauth_'.$provider_name, [
+                return view('auth.oauth.login_'.$provider_name, [
                     'user' => $user,
                     'token' => $token,
                 ]);
             } else {
-                return view('invitation', [
+                return view('auth.invitation', [
                     'user' => $user,
                     'token' => $token,
                 ]);

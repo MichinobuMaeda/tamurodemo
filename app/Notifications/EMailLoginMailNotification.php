@@ -47,7 +47,7 @@ class EMailLoginMailNotification extends Notification
             ->line(Lang::getFromJson('Please click or copy and paste your login link.'))
             ->action(Lang::getFromJson('Login'), url(config('app.url').route('login.email.token', [ 'user' => $notifiable->id, 'token' => $notifiable->invitation_token ], false)))
             ->line(Lang::getFromJson('If you have any questions, please contact us.'))
-            ->line(env('MAIL_FROM_ADDRESS'))
+            ->line(config('tamuro.from_address'))
             ->line('')
             ->line(Lang::getFromJson('Regards,'));
         $mail->viewData = [

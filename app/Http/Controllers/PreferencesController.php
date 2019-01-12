@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Services\UsersService;
 use App\Services\OAuthService;
+use App\Services\PageHistoryService;
 use App\User;
 
 class PreferencesController extends Controller
@@ -31,7 +32,7 @@ class PreferencesController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function showLogin(Request $request)
+    public function showEditLoginForm(Request $request)
     {
         return view('preferences_login', [
             'loginMethods' => $this->svc->listUserLoginMethods(Auth::user()),
@@ -77,7 +78,7 @@ class PreferencesController extends Controller
      */
     public function showOAuthProviders(Request $request, $provider)
     {
-        return view('login_oauth_'.$provider);
+        return view('auth.oauth.login_'.$provider);
     }
 
     /**

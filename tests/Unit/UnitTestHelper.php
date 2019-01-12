@@ -11,7 +11,9 @@ use App\GroupRole;
 
 class UnitTestHelper
 {
+    const HTTP_RESP_STT_AUTH_REQ = 401;
     const HTTP_RESP_STT_FORBIDDEN = 403;
+
     /**
      * Create a new rule instance.
      *
@@ -64,9 +66,9 @@ class UnitTestHelper
             // Create the primary user.
             $this->test->user00 = User::create([
                 'name'      => 'Primary user',
-                'email'     => env('APP_PRIMARY_USER_EMAIL'),
+                'email'     => config('tamuro.primary_user_email'),
                 'password'  => Hash::make('Password00'),
-                'timezone'  => env('APP_DEFAULT_TIMEZONE', 'UTC'),
+                'timezone'  => config('tamuro.default_timezone'),
             ]);
     
             // The primary user is a manager of the primary group.

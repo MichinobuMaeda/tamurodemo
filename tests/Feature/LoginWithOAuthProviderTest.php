@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 use DateTime;
 use Facebook\Facebook;
@@ -48,7 +47,7 @@ class AuthenticationTest extends TestCase
             'user' => $user->id,
             'token' => 'token1',
         ]));
-        $response->assertViewIs('invitation');
+        $response->assertViewIs('auth.invitation');
 
         $user->invitation_token = 'token1';
         $user->invited_at = new DateTime();
@@ -58,7 +57,7 @@ class AuthenticationTest extends TestCase
             'token' => 'token1',
             'provider_name' => 'google',
         ]));
-        $response->assertViewIs('login_oauth_google');
+        $response->assertViewIs('auth.oauth.login_google');
 
         $response = $this->get(route('registration', [
             'user' => 0,
@@ -126,7 +125,7 @@ class AuthenticationTest extends TestCase
     }
 
     /**
-     * Test login.oahth.
+     * Test login.oauth.
      *
      * @return void
      */
@@ -141,7 +140,7 @@ class AuthenticationTest extends TestCase
         $mock->shouldReceive('verifyIdToken')->andReturn(['sub' => 'secret1']);
 
         $response = $this->get(route('login.oauth', ['provider' => 'google']));
-        $response->assertViewIs('login_oauth_google');
+        $response->assertViewIs('auth.oauth.login_google');
 
         $response = $this->post(
             route('login.oauth', [
@@ -155,7 +154,7 @@ class AuthenticationTest extends TestCase
         $ap1 = new AuthProvider([
             'user_id' => $user->id,
             'provider' => 'google',
-            'secret' => hash('sha256', 'google'.'secret1'.env('APP_KEY')),
+            'secret' => hash('sha256', 'google'.'secret1'.config('app.key')),
         ]);
         $ap1->save();
 
@@ -212,7 +211,7 @@ class AuthenticationTest extends TestCase
         $response = $this->get(
             route('preferences.login.oauth', ['provider' => 'google'])
         );
-        $response->assertViewIs('login_oauth_google');
+        $response->assertViewIs('auth.oauth.login_google');
 
         $response = $this->post(
             route('preferences.login.oauth', ['provider' => 'google']),

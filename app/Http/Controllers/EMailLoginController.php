@@ -28,7 +28,7 @@ class EMailLoginController extends Controller
      */
     public function show(Request $request)
     {
-        return view('login_email', ['sent' => !!$request->input('sent')]);
+        return view('auth.login_email', ['sent' => !!$request->input('sent')]);
     }
 
     /**

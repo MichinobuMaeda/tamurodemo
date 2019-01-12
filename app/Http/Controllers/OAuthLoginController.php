@@ -29,7 +29,7 @@ class OAuthLoginController extends Controller
      */
     public function show(Request $request, $provider)
     {
-        return view('login_oauth_'.$provider);
+        return view('auth.oauth.login_'.$provider);
     }
 
     /**

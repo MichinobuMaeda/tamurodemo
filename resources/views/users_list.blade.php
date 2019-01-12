@@ -48,9 +48,12 @@
               <tr>
                 <td>
                   {{ $user->id }}
+                  </a>
                 </td>
                 <td>
-                  {{ $user->name }}
+                  <a href="{{ route('user.edit', ['user' => $user->id]) }}"class="btn btn-outline-primary btn-sm">
+                    {{ $user->name }}
+                  </a>
                 </td>
                 <td>
                   <a href="{{ route('user.login', ['user' => $user->id]) }}"class="btn btn-outline-primary btn-sm">

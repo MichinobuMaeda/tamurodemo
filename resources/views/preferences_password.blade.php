@@ -42,10 +42,10 @@
 
             <div class="form-group row mb-0">
               <div class="col-md-6 offset-md-4">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-outline-primary">
                   {{ __('Save') }}
                 </button>
-                <a href="{{ route('preferences.login') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('page.back') }}" class="btn btn-outline-secondary">
                   {{ __('Cancel') }}
                 </a>
               </div>

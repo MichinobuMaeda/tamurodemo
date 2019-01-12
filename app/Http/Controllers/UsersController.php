@@ -54,13 +54,62 @@ class UsersController extends Controller
     }
 
     /**
-     * Show the user's login methods.
+     * Show user.
+     *
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function show(Request $request, $user)
+    {
+        return view('user', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Show the user's profile editor.
      * 
      * @param Request $request
      * @param App\User $user
      * @return Response
      */
-    public function showLogin(Request $request, $user)
+    public function showProfileForm(Request $request, $user)
+    {
+        return view('user_profile', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Save the user's profile.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function saveProfile(Request $request, $user)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required',
+        ]);
+        $this->svc->saveProfile(
+            $user,
+            $request->input('name'),
+            $request->input('desc'),
+            $request->input('timezone')
+        );
+        return redirect()->route('user.edit', ['user' => $user->id]);
+    }
+
+    /**
+     * Show the user's login methods editor.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function showEditLoginForm(Request $request, $user)
     {
         if ($user->id == Auth::user()->id) {
             $svc = new PageHistoryService($request->session());

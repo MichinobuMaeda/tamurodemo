@@ -40,9 +40,12 @@
         @csrf
       </form>
       <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{{ route('preferences.login') }}">
-          {{ __('Preferences') }}: {{ __('Login') }}
-        </a>
+      <a class="dropdown-item" href="{{ route('preferences.login') }}">
+        {{ __('Preferences') }}: {{ __('Login') }}
+      </a>
+      <a class="dropdown-item" href="{{ route('user.edit', ['user' => Auth::user()->id]) }}">
+        {{ __('Preferences') }}: {{ __('Profile') }}
+      </a>
     @can('users.list')
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{{ route('users') }}">

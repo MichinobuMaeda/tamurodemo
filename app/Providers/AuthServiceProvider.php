@@ -25,6 +25,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::resource('groups', 'App\Policies\GroupPolicy', [
+            'view' => 'view',
+            'create' => 'create',
+            'update' => 'update',
+            'delete' => 'delete',
+        ]);
+
         Gate::resource('users', 'App\Policies\UserPolicy', [
             'view' => 'view',
             'create' => 'create',

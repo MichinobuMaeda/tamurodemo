@@ -17,9 +17,9 @@ class UserSeeder extends Seeder
         // Create the primary user.
         $user = User::create([
             'name'      => 'Primary user',
-            'email'     => env('APP_PRIMARY_USER_EMAIL'),
-            'password'  => Hash::make(uniqid()),
-            'timezone'  => env('APP_DEFAULT_TIMEZONE', 'UTC'),
+            'email'     => config('tamuro.primary_user_email'),
+            'password'  => Hash::make(config('tamuro.primary_user_password')),
+            'timezone'  => config('tamuro.default_timezone'),
         ]);
 
         // The primary user is a manager of the primary group.

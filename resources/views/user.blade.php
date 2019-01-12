@@ -4,7 +4,7 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
-    @include('parts.card_group', ['group' => $group])
+      @include('parts.card_user', ['user' => $user])
     </div>
   </div>
 </div>

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 @inject('vh', 'App\Services\ViewHelperService')
+@php
+$conf = config('tamuro.oauth_facebook')
+@endphp
 @section('content')
 <div class="container">
   <div class="row justify-content-center">
@@ -13,7 +16,7 @@
   var js, body = d.getElementsByTagName('body')[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
-  js.src = 'https://connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v3.2&appId={{ env("FACEBOOK_APP_ID") }}&autoLogAppEvents=1';
+  js.src = 'https://connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v3.2&appId={{ $conf["app_id"] }}&autoLogAppEvents=1';
   body.insertBefore(js, body.firstChild);
 }(document, 'script', 'facebook-jssdk'));
 

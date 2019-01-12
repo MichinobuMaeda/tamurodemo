@@ -1,5 +1,8 @@
 @extends('layouts.app')
 @inject('vh', 'App\Services\ViewHelperService')
+@php
+$conf = config('tamuro.oauth_amazon')
+@endphp
 @section('content')
 <div id="amazon-root"></div>
 <script>
@@ -33,7 +36,7 @@ var action = null;
         document.getElementById('amazonStatus').innerText = "{{ __('Failed to authenticate.') }}";
       }
     };
-    var redirect_uri = (action == 'set') ? "{{ env('AMAZON_REDIRECT_URI2') }}" : "{{ env('AMAZON_REDIRECT_URI') }}";
+    var redirect_uri = (action == 'set') ? "{{ $conf['redirect_uri2'] }}" : "{{ $conf['redirect_uri1'] }}";
     var provider_token = code + '%09' + redirect_uri;
     if ((action == 'login') || (action == 'set')) {
       xhr.send('provider_token=' + provider_token);
@@ -49,7 +52,7 @@ var action = null;
   }
 })();
 window.onAmazonLoginReady = function() {
-  amazon.Login.setClientId("{{ env('AMAZON_CLIENT_ID') }}");
+  amazon.Login.setClientId("{{ $conf['client_id'] }}");
 };
 (function(d) {
   var a = d.createElement('script'); a.type = 'text/javascript';
@@ -73,7 +76,7 @@ sessionStorage.setItem('amazon_user', '{{ $user->id }}');
 state = Math.random().toString(36).substr(2, 16) + Math.random().toString(36).substr(2, 16);
 @endif
 sessionStorage.setItem('amazon_state', state);
-var redirect_uri = (action == 'set') ? "{{ env('AMAZON_REDIRECT_URI2') }}" : "{{ env('AMAZON_REDIRECT_URI') }}";
+var redirect_uri = (action == 'set') ? "{{ $conf['redirect_uri2'] }}" : "{{ $conf['redirect_uri1'] }}";
 
 function onClickAmazon() {
   options = { scope: 'profile', response_type: 'code', state: state };

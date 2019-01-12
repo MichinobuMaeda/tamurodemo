@@ -1,5 +1,8 @@
 @extends('layouts.app')
 @inject('vh', 'App\Services\ViewHelperService')
+@php
+$conf = config('tamuro.oauth_google')
+@endphp
 @section('content')
 <div class="container">
   <div class="row justify-content-center">
@@ -12,7 +15,7 @@ var googleAuth2 = null;
 var onGoogleLoad = function() {
   gapi.load('auth2', () => {
     googleAuth2 = gapi.auth2.init({
-      client_id: '{{ env("GOOGLE_CLIENT_ID") }}',
+      client_id: '{{ $conf["client_id"] }}',
       cookiepolicy: 'single_host_origin',
       scope: 'profile',
     }).then(() => {

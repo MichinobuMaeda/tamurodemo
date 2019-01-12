@@ -18,6 +18,7 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 .env
+.env.dev
 .phpunit.result.cache
 
 # IDE / Editor
