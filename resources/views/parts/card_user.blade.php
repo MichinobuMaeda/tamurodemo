@@ -13,7 +13,7 @@
     <p>
       @foreach($user->groups()->orderBy('name')->get() as $upper)
       <a href="{{ route('group', ['group' => $upper->id]) }}">
-        <i class="fas fa-users" style="margin-right: 0 0.25em 0 0.5em"></i>
+        <i class="fas fa-users" style="margin: 0 0.25em 0 0.5em"></i>
         {{ $upper->name }}
       </a>
       @endforeach
@@ -22,7 +22,7 @@
     <p>
       @foreach($user->groupsManaging()->orderBy('name')->get() as $lower)
         <a href="{{ route('group', ['group' => $lower->id]) }}">
-          <i class="fas fa-user-tie" style="margin-right: 0 0.25em 0 0.5em"></i>
+          <i class="fas fa-user-tie" style="margin: 0 0.25em 0 0.5em"></i>
           {{ $lower->name }}
         </a>
         @endforeach

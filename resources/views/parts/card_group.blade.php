@@ -22,7 +22,7 @@
     <p>
       <a href="{{ route('group', ['group' => $lower->id]) }}">
         {{ $lower->name }}
-        <i class="fas fa-angle-double-right" style="margin-right: 0.5em"></i>
+        <i class="fas fa-angle-double-right" style="margin-left: 0.5em"></i>
       </a>
     </p>
     @endforeach
