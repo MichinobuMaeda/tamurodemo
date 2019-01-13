@@ -10,21 +10,23 @@
 
   <div class="card-body">
     @include('parts.multi_line_text', ['text' => $user->desc])
-    @foreach($user->groups()->orderBy('name')->get() as $upper)
     <p>
+      @foreach($user->groups()->orderBy('name')->get() as $upper)
       <a href="{{ route('group', ['group' => $upper->id]) }}">
-        <i class="fas fa-arrow-alt-circle-up" style="margin-right: 0.5em"></i>
+        <i class="fas fa-users" style="margin-right: 0 0.25em 0 0.5em"></i>
         {{ $upper->name }}
       </a>
+      @endforeach
     </p>
-    @endforeach
-    @foreach($user->groupsManaging()->orderBy('name')->get() as $lower)
+    @if($user->groupsManaging()->count())
     <p>
-      <a href="{{ route('group', ['group' => $lower->id]) }}">
-        <i class="fas fa-user-tie" style="margin-right: 0.5em"></i>
-        {{ $lower->name }}
-      </a>
+      @foreach($user->groupsManaging()->orderBy('name')->get() as $lower)
+        <a href="{{ route('group', ['group' => $lower->id]) }}">
+          <i class="fas fa-user-tie" style="margin-right: 0 0.25em 0 0.5em"></i>
+          {{ $lower->name }}
+        </a>
+        @endforeach
     </p>
-    @endforeach
+    @endif
   </div>
 </div>

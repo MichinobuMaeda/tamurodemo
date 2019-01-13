@@ -36,6 +36,22 @@ class Group extends Model
     }
 
     /**
+     * Get role for the group.
+     * 
+     * @param string $role_name
+     * @return boolean
+     */
+    public function hasRole($role_name)
+    {
+        foreach ($this->roles('App\GroupRole')->get() as $role) {
+            if ($role->name == $role_name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get sub-groups of the group.
      * 
      * @return collection
