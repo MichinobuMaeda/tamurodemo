@@ -39,7 +39,7 @@ return [
     'dimensions'           => 'The :attribute has invalid image dimensions.',
     'distinct'             => 'The :attribute field has a duplicate value.',
     'email'                => ':attribute は正しい書式で記入してください。',
-    'exists'               => 'The selected :attribute is invalid.',
+    'exists'               => ':attribute で選択された値が正しくありません。',
     'file'                 => 'The :attribute must be a file.',
     'filled'               => 'The :attribute field must have a value.',
     'gt'                   => [

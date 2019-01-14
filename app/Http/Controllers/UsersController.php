@@ -123,7 +123,7 @@ class UsersController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'upper' => 'required|integer|exists:users,id',
+            'upper' => 'required|integer|exists:groups,id',
             'name' => 'required|unique:users,name',
         ]);
         $model = $this->svc->create(
