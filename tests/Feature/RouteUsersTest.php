@@ -19,7 +19,6 @@ class RouteUsersTest extends TestCase
         parent::setUp();
         $this->helper = new UnitTestHelper($this);
         $this->helper->prepareGroupsAndUsers();
-        $this->user00 = User::where('name', 'Primary user')->first();
     }
 
     /**
@@ -249,5 +248,49 @@ class RouteUsersTest extends TestCase
         $this->assertEquals('test name1', $this->user01->name);
         $this->assertEquals('test desc1', $this->user01->desc);
         $this->assertEquals('Europe/London', $this->user01->timezone);
+    }
+
+    /**
+     * The test of route: user.create.form.
+     *
+     * @return void
+     */
+    public function testUserCreate()
+    {
+        $response = $this->get(route('user.create.form'));
+        $response->assertRedirect(route('list.logins'));
+
+        $response = $this->post(route('users'));
+        $response->assertRedirect(route('list.logins'));
+
+        Auth::login($this->user01);
+
+        $response = $this->get(route('user.create.form'));
+        $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
+
+        $response = $this->post(route('users'));
+        $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
+
+        Auth::login($this->user00);
+
+        $response = $this->get(route('user.create.form'));
+        $response->assertViewIs('user_new');
+
+        $response = $this->post(route('users'), [
+            'upper' => $this->pri->id,
+            'name' => null,
+            'desc' => 'desc new',
+            'timezone' => 'Asia/Tokyo',
+        ]);
+        $response->assertRedirect(route('user.create.form'));
+
+        $response = $this->post(route('users'), [
+            'upper' => $this->pri->id,
+            'name' => 'name new',
+            'desc' => 'desc new',
+            'timezone' => 'Asia/Tokyo',
+        ]);
+        $model = User::where('name', 'name new')->first();
+        $response->assertRedirect(route('user', ['user' => $model->id]));
     }
 }

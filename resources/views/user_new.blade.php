@@ -8,14 +8,14 @@
         <div class="card-header">{{ __('Create') }}: {{ __('User') }}</div>
         <div class="card-body">
 
-          <form method="POST" action="{{ route('user.create') }}">
+          <form method="POST" action="{{ route('users') }}">
             @csrf
 
             <div class="form-group row">
 
               <label for="upper" class="col-md-3 col-form-label text-md-right">{{ __('Upper group') }}</label>
               <p class="col-md-9">
-                <select id="upper" name="upper" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}">
+                <select id="upper" name="upper" class="form-control{{ $errors->has('upper') ? ' is-invalid' : '' }}">
                   <option value="">--</option>
                   @foreach($groups as $group)
                   <option value="{{ $group->id }}"{{ (old('upper') == $group->id) ? ' selected' : '' }}>{{ $group->name }}</option>

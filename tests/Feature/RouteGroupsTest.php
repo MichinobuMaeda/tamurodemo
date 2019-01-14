@@ -73,4 +73,46 @@ class RouteGroupsTest extends TestCase
         $this->assertEquals('test name1', $this->group01->name);
         $this->assertEquals('test desc1', $this->group01->desc);
     }
+
+    /**
+     * The test of route: user.create.form.
+     *
+     * @return void
+     */
+    public function testUserCreate()
+    {
+        $response = $this->get(route('group.create.form'));
+        $response->assertRedirect(route('list.logins'));
+
+        $response = $this->post(route('groups'));
+        $response->assertRedirect(route('list.logins'));
+
+        Auth::login($this->user01);
+
+        $response = $this->get(route('group.create.form'));
+        $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
+
+        $response = $this->post(route('groups'));
+        $response->assertStatus($this->helper::HTTP_RESP_STT_FORBIDDEN);
+
+        Auth::login($this->user00);
+
+        $response = $this->get(route('group.create.form'));
+        $response->assertViewIs('group_new');
+
+        $response = $this->post(route('groups'), [
+            'upper' => $this->pri->id,
+            'name' => null,
+            'desc' => 'desc new',
+        ]);
+        $response->assertRedirect(route('group.create.form'));
+
+        $response = $this->post(route('groups'), [
+            'upper' => $this->pri->id,
+            'name' => 'name new',
+            'desc' => 'desc new',
+        ]);
+        $model = Group::where('name', 'name new')->first();
+        $response->assertRedirect(route('group', ['group' => $model->id]));
+    }
 }

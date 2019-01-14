@@ -8,7 +8,7 @@
         <div class="card-header">{{ __('Create') }}: {{ __('Group') }}</div>
         <div class="card-body">
 
-          <form method="POST" action="{{ route('group.create') }}">
+          <form method="POST" action="{{ route('groups') }}">
             @csrf
 
             <div class="form-group row">

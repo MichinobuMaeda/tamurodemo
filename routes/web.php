@@ -104,9 +104,18 @@ Route::get(
 Route::post(
   'groups',
   'GroupsController@create'
-)->name('group.create')->middleware('can:groups.create');
+)->name('groups')->middleware('can:groups.create');
 
 # Users
+
+Route::get(
+  'users',
+  'UsersController@list'
+)->name('users')->middleware('can:users.list')->middleware('history');
+Route::get(
+  'users/orderBy/{orderBy}/orderDir/{orderDir}',
+  'UsersController@list'
+)->name('users.orderBy')->middleware('can:users.list');
 
 Route::get(
   'users/{user}',
@@ -129,16 +138,7 @@ Route::get(
 Route::post(
   'users',
   'UsersController@create'
-)->name('user.create')->middleware('can:users.create');
-
-Route::get(
-  'users',
-  'UsersController@list'
-)->name('users')->middleware('can:users.list')->middleware('history');
-Route::get(
-  'users/orderBy/{orderBy}/orderDir/{orderDir}',
-  'UsersController@list'
-)->name('users.orderBy')->middleware('can:users.list');
+)->middleware('can:users.create');
 
 Route::get(
   'users/{user}/login',
