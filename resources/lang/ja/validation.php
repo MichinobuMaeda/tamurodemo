@@ -93,7 +93,7 @@ return [
     'numeric'              => 'The :attribute must be a number.',
     'present'              => 'The :attribute field must be present.',
     'regex'                => 'The :attribute format is invalid.',
-    'required'             => 'The :attribute field is required.',
+    'required'             => ':attribute の記入が必要です。',
     'required_if'          => 'The :attribute field is required when :other is :value.',
     'required_unless'      => 'The :attribute field is required unless :other is in :values.',
     'required_with'        => 'The :attribute field is required when :values is present.',
@@ -109,7 +109,7 @@ return [
     ],
     'string'               => 'The :attribute must be a string.',
     'timezone'             => ':attribute が存在しないか正しい書式ではありません。',
-    'unique'               => 'The :attribute has already been taken.',
+    'unique'               => ':attribute に記入した値が既に使われています。',
     'uploaded'             => 'The :attribute failed to upload.',
     'url'                  => ':attribute が正しい書式ではありません。',
 
@@ -143,9 +143,11 @@ return [
 
     'attributes' => [
         'password' => 'パスワード',
+        'name' => '表示名',
         'email' => 'メールアドレス',
         'date' => '日付',
         'url' => 'URL',
+        'upper' => '上位のグループ',
     ],
 
 ];

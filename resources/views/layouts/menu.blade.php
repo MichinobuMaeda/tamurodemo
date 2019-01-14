@@ -51,14 +51,22 @@
       <a class="dropdown-item" href="{{ route('user.edit', ['user' => Auth::user()->id]) }}">
         {{ __('Preferences') }}: {{ __('Profile') }}
       </a>
+    @can('groups.create')
+      <a class="dropdown-item" href="{{ route('group.create.form') }}">
+        {{ __('Create') }}: {{ __('Group') }}
+      </a>
+    @endcan
+    @can('users.create')
+      <a class="dropdown-item" href="{{ route('user.create.form') }}">
+        {{ __('Create') }}: {{ __('User') }}
+      </a>
+    @endcan
     @can('users.list')
-      <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{{ route('users') }}">
         {{ __('Account list') }}
       </a>
     @endcan
     @can('system.administrate')
-      <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{{ route('sysadmin') }}">
         {{ __('System administration') }}
       </a>

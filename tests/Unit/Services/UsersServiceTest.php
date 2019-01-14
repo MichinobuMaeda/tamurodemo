@@ -198,6 +198,23 @@ class UsersServiceTest extends TestCase
     }
 
     /**
+     * The test of method create().
+     *
+     * @return void
+     */
+    public function testCreate()
+    {
+        $svc = new UsersService();
+
+        $count = $this->group01->members()->count();
+        $model = $svc->create($this->group01->id, 'test name9', 'test desc9', null);
+        $this->assertEquals('test name9', $model->name);
+        $this->assertEquals('test desc9', $model->desc);
+        $this->assertEquals(config('tamuro.default_timezone'), $model->timezone);
+        $this->assertEquals($count + 1, $this->group01->members()->count());
+    }
+
+    /**
      * The test of method saveLoginEmail().
      *
      * @return void

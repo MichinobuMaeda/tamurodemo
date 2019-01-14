@@ -63,7 +63,7 @@ class GroupsController extends Controller
     public function saveProfile(Request $request, $group)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:users,name',
         ]);
         $this->svc->saveProfile(
             $group,
@@ -71,5 +71,36 @@ class GroupsController extends Controller
             $request->input('desc')
         );
         return redirect()->route('group.edit', ['group' => $group->id]);
+    }
+
+    /**
+     * Show create group form.
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function showCreateForm(Request $request)
+    {
+        return view('group_new', ['groups' => Group::orderBy('name')->get()]);
+    }
+
+    /**
+     * Create group.
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'upper' => 'required|integer|exists:groups,id',
+            'name' => 'required|unique:groups,name',
+        ]);
+        $model = $this->svc->create(
+            intval($request->input('upper')),
+            $request->input('name'),
+            $request->input('desc')
+        );
+        return redirect()->route('group', ['group' => $model->id]);
     }
 }

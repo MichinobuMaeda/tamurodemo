@@ -87,6 +87,7 @@ Route::get(
   'groups/{group}',
   'GroupsController@show'
 )->name('group')->middleware('history');
+
 Route::get(
   'groups/{group}/edit',
   'GroupsController@showProfileForm'
@@ -96,12 +97,22 @@ Route::put(
   'GroupsController@saveProfile'
 )->middleware('can:groups.update,group');
 
+Route::get(
+  'groups/new/create',
+  'GroupsController@showCreateForm'
+)->name('group.create.form')->middleware('can:groups.create');
+Route::post(
+  'groups',
+  'GroupsController@create'
+)->name('group.create')->middleware('can:groups.create');
+
 # Users
 
 Route::get(
   'users/{user}',
   'UsersController@show'
 )->name('user')->middleware('history');
+
 Route::get(
   'users/{user}/edit',
   'UsersController@showProfileForm'
@@ -110,6 +121,16 @@ Route::put(
   'users/{user}',
   'UsersController@saveProfile'
 )->middleware('can:users.update,user');
+
+Route::get(
+  'users/new/create',
+  'UsersController@showCreateForm'
+)->name('user.create.form')->middleware('can:users.create');
+Route::post(
+  'users',
+  'UsersController@create'
+)->name('user.create')->middleware('can:users.create');
+
 Route::get(
   'users',
   'UsersController@list'

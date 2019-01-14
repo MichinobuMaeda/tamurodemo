@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\UsersService;
 use App\Services\OAuthService;
 use App\Services\PageHistoryService;
+use App\Group;
 use App\User;
 
 class UsersController extends Controller
@@ -91,7 +92,7 @@ class UsersController extends Controller
     public function saveProfile(Request $request, $user)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:users,name',
         ]);
         $this->svc->saveProfile(
             $user,
@@ -100,6 +101,38 @@ class UsersController extends Controller
             $request->input('timezone')
         );
         return redirect()->route('user.edit', ['user' => $user->id]);
+    }
+
+    /**
+     * Show create user form.
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function showCreateForm(Request $request)
+    {
+        return view('user_new', ['groups' => Group::orderBy('name')->get()]);
+    }
+
+    /**
+     * Create user.
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'upper' => 'required|integer|exists:users,id',
+            'name' => 'required|unique:users,name',
+        ]);
+        $model = $this->svc->create(
+            intval($request->input('upper')),
+            $request->input('name'),
+            $request->input('desc'),
+            $request->input('timezone')
+        );
+        return redirect()->route('user', ['user' => $model->id]);
     }
 
     /**

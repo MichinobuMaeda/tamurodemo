@@ -6,6 +6,7 @@ use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\InvitationMailNotification;
+use App\Group;
 use App\User;
 use App\AuthProvider;
 
@@ -86,6 +87,29 @@ class UsersService
         $user->timezone = $timezone ? $timezone : config('tamuro.default_timezone');
         $user->save();
         $user->refresh();
+    }
+
+    /**
+     * Create user.
+     * 
+     * @param App\Group $group
+     * @param integer $upper
+     * @param string $name
+     * @param string $desc
+     * @param string $timezone
+     * @return null
+     */
+    public function create($upper, $name, $desc, $timezone)
+    {
+        $group = Group::find($upper);
+        $model = $group->members()->create([
+            'name' => $name,
+            'email' => '|'.User::unique(),
+            'password' => Hash::make(User::unique()),
+            'desc' => $desc,
+            'timezone' => $timezone ? $timezone : config('tamuro.default_timezone'),
+        ]);
+        return $model;
     }
 
     /**
