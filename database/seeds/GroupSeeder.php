@@ -17,13 +17,13 @@ class GroupSeeder extends Seeder
         $pri = Group::create([
             'name' => 'Primary group',
         ]);
-        $pri->roles()->save(new GroupRole(['name' => 'primary']));
+        $pri->roles()->save(new GroupRole(['name' => GroupRole::PRIMARY]));
 
         // Create the group of system administrators.
         $adm = Group::create([
             'name' => 'System administrators',
         ]);
-        $adm->roles()->save(new GroupRole(['name' => 'sysadmin']));
+        $adm->roles()->save(new GroupRole(['name' => GroupRole::SYSADMIN]));
 
         // The group of system administrators is a sub-group of the primary group.
         $pri->subGroups()->attach($adm);

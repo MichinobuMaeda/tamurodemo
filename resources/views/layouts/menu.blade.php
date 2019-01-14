@@ -1,9 +1,11 @@
 @inject('vh', 'App\Services\ViewHelperService')
 @guest
-  <a class="btn btn-secondary" href="javascript:window.history.back();">
+  @if (Route::current()->getName() != 'list.logins')
+  <a class="btn btn-outline-primary" href="{{ route('list.logins') }}">
     <i class="fas fa-angle-double-left"></i>
     {{ __('Back') }}
   </a>
+  @endif
 @else
   <a href="{{ route('home') }}" class="btn btn-outline-success btn-sm text-success" style="background-color:transparent; margin-right: 1em;">
     <i class="fas fa-home"></i>
@@ -39,6 +41,9 @@
       <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
       </form>
+      <a class="dropdown-item" href="{{ route('security_policy') }}">
+        {{ __('Security policy') }}
+      </a>
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{{ route('preferences.login') }}">
         {{ __('Preferences') }}: {{ __('Login') }}
@@ -50,6 +55,12 @@
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{{ route('users') }}">
         {{ __('Account list') }}
+      </a>
+    @endcan
+    @can('system.administrate')
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="{{ route('sysadmin') }}">
+        {{ __('System administration') }}
       </a>
     @endcan
     </div>

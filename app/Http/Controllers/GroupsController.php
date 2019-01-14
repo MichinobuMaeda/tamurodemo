@@ -32,9 +32,11 @@ class GroupsController extends Controller
      */
     public function show(Request $request, $group)
     {
-        return view('group', [
-            'group' => $group,
-        ]);
+        return $group->isPrimary()
+            ? redirect()->route('home')
+            : view('group', [
+                'group' => $group,
+            ]);
     }
 
     /**

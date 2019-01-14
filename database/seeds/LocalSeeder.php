@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 
 use App\User;
 use App\Group;
+use App\GroupRole;
 
 class LocalSeeder extends Seeder
 {
@@ -30,11 +31,11 @@ class LocalSeeder extends Seeder
         //         user07
 
         $pri = Group::whereHas('roles', function ($query) {
-            $query->where('name', 'primary');
+            $query->where('name', GroupRole::PRIMARY);
         })->orderBy('id', 'asc')->first();
 
         $adm = Group::whereHas('roles', function ($query) {
-            $query->where('name', 'sysadmin');
+            $query->where('name', GroupRole::SYSADMIN);
         })->orderBy('id', 'asc')->first();
 
         $user00 = User::find(1);

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\GroupRole;
 
 class Group extends Model
 {
@@ -36,7 +37,7 @@ class Group extends Model
     }
 
     /**
-     * Get role for the group.
+     * Get having the role or not.
      * 
      * @param string $role_name
      * @return boolean
@@ -49,6 +50,26 @@ class Group extends Model
             }
         }
         return false;
+    }
+
+    /**
+     * Is primary.
+     * 
+     * @return boolean
+     */
+    public function isPrimary()
+    {
+        return $this->hasRole(GroupRole::PRIMARY);
+    }
+
+    /**
+     * Is sysadmin.
+     * 
+     * @return boolean
+     */
+    public function isSysAdmin()
+    {
+        return $this->hasRole(GroupRole::SYSADMIN);
     }
 
     /**

@@ -12,20 +12,37 @@
     @include('parts.multi_line_text', ['text' => $group->desc])
     @foreach($group->superGroups()->orderBy('name')->get() as $upper)
     <p>
-      <a href="{{ $upper->hasRole('primary') ? route('home') : route('group', ['group' => $upper->id]) }}">
+      <a href="{{ $upper->isPrimary() ? route('home') : route('group', ['group' => $upper->id]) }}">
         <i class="fas fa-angle-double-left" style="margin-right: 0.5em"></i>
         {{ $upper->name }}
       </a>
     </p>
     @endforeach
+    @php
+      $sysadmin = null;
+    @endphp
     @foreach($group->subGroups()->orderBy('name')->get() as $lower)
+    @if ($lower->isSysAdmin())
+      @php
+        $sysadmin = $lower;
+      @endphp
+    @else
     <p>
       <a href="{{ route('group', ['group' => $lower->id]) }}">
         {{ $lower->name }}
         <i class="fas fa-angle-double-right" style="margin-left: 0.5em"></i>
       </a>
     </p>
+    @endif
     @endforeach
+    @if ($sysadmin)
+    <p>
+      <a href="{{ route('group', ['group' => $sysadmin->id]) }}">
+        {{ $sysadmin->name }}
+        <i class="fas fa-angle-double-right" style="margin-left: 0.5em"></i>
+      </a>
+    </p>
+    @endif
     @if($group->managers()->count())
     <p>
       {{ __('Managers:') }}

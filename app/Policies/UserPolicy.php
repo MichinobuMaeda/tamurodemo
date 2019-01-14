@@ -72,7 +72,7 @@ class UserPolicy
      * Determine whether the user can invite the model.
      *
      * @param  \App\User  $user
-     * @param  \App\Group  $model
+     * @param  \App\User  $model
      * @return mixed
      */
     public function invite(User $user, User $model)

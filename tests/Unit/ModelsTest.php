@@ -134,6 +134,12 @@ class ModelsTest extends TestCase
         $this->assertFalse($group2->hasRole('Role 2'));
         $this->assertTrue($group2->hasRole('sysadmin'));
 
+        $this->assertTrue($group1->isPrimary());
+        $this->assertFalse($group2->isPrimary());
+
+        $this->assertFalse($group1->isSysAdmin());
+        $this->assertTrue($group2->isSysAdmin());
+
         $this->assertEquals(2, count($group1->roles));
         $this->assertEquals(1, count($group2->roles));
         $this->assertEquals(0, count($group3->roles));

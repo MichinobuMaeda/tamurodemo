@@ -35,6 +35,9 @@ class RouteGroupsTest extends TestCase
 
         $response = $this->get(route('group', ['group' => $this->group01->id]));
         $response->assertViewIs('group');
+
+        $response = $this->get(route('group', ['group' => $this->pri->id]));
+        $response->assertRedirect(route('home'));
     }
 
     /**

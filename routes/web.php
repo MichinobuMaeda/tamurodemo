@@ -19,12 +19,19 @@ Route::get(
 Route::view(
   '/security_policy',
   'security_policy'
-)->name('security_policy');
+)->name('security_policy')->middleware('history');
+
+# Login / Logout
 
 Route::view(
   'login',
   'auth.login_select'
 )->name('list.logins')->middleware('guest');
+
+Route::post(
+  'logout',
+  'Auth\LoginController@logout'
+)->name('logout');
 
 Route::get(
   'login/password',
@@ -35,10 +42,14 @@ Route::post(
   'Auth\LoginController@login'
 );
 
+Route::get(
+  'login/oauth/{provider}',
+  'OAuthLoginController@show'
+)->name('login.oauth');
 Route::post(
-  'logout',
-  'Auth\LoginController@logout'
-)->name('logout');
+  'login/oauth/{provider}',
+  'OAuthLoginController@login'
+);
 
 Route::get(
   'password/reset',
@@ -70,6 +81,8 @@ Route::get(
   'EMailLoginController@login'
 )->name('login.email.token')->middleware('guest');
 
+# Groups
+
 Route::get(
   'groups/{group}',
   'GroupsController@show'
@@ -82,6 +95,8 @@ Route::put(
   'groups/{group}',
   'GroupsController@saveProfile'
 )->middleware('can:groups.update,group');
+
+# Users
 
 Route::get(
   'users/{user}',
@@ -117,6 +132,8 @@ Route::delete(
   'UsersController@resetLoginProvider'
 )->name('user.login.oauth')->middleware('can:users.update,user');
 
+# Invitation / Registration
+
 Route::get(
   'invitations/{user}/{sendBy}/post',
   'InvitationController@invite'
@@ -135,14 +152,7 @@ Route::post(
   'RegistrationController@register'
 )->name('register');
 
-Route::get(
-  'login/oauth/{provider}',
-  'OAuthLoginController@show'
-)->name('login.oauth');
-Route::post(
-  'login/oauth/{provider}',
-  'OAuthLoginController@login'
-);
+# Preferences of the logged-in user
 
 Route::get(
   'preferences/login',
@@ -179,6 +189,15 @@ Route::delete(
   'preferences/oauth/{provider}',
   'PreferencesController@resetLoginProvider'
 );
+
+# System administration
+
+Route::get(
+  'sysadmin',
+  'SysAdminController@showMenu'
+)->name('sysadmin')->middleware('can:system.administrate')->middleware('history');
+
+# Page go back / go forward
 
 Route::get(
   'pages/back',

@@ -40,5 +40,9 @@ class AuthServiceProvider extends ServiceProvider
             'list' => 'list',
             'invite' => 'invite',
         ]);
+
+        Gate::resource('system', 'App\Policies\SystemPolicy', [
+            'administrate' => 'administrate',
+        ]);
     }
 }

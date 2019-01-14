@@ -1,5 +1,6 @@
 # Tamuro
 /storage/tamuro.sqlite
+/storage/tamuro.sqlite-*
 /coverage
 /tmp
 /docs/tmp

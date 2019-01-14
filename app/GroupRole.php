@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class GroupRole extends Model
 {
+    public const PRIMARY = 'primary';
+    public const SYSADMIN = 'sysadmin';
+
     /**
      * The attributes that are mass assignable.
      *
