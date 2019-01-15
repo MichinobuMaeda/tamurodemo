@@ -63,7 +63,7 @@
     @endcan
     @can('users.list')
       <a class="dropdown-item" href="{{ route('users') }}">
-        {{ __('Account list') }}
+        {{ __('User list') }}
       </a>
     @endcan
     @can('system.administrate')

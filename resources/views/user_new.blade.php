@@ -13,17 +13,17 @@
 
             <div class="form-group row">
 
-              <label for="upper" class="col-md-3 col-form-label text-md-right">{{ __('Upper group') }}</label>
+              <label for="higher" class="col-md-3 col-form-label text-md-right">{{ __('Group') }}</label>
               <p class="col-md-9">
-                <select id="upper" name="upper" class="form-control{{ $errors->has('upper') ? ' is-invalid' : '' }}">
+                <select id="higher" name="higher" class="form-control{{ $errors->has('higher') ? ' is-invalid' : '' }}">
                   <option value="">--</option>
                   @foreach($groups as $group)
-                  <option value="{{ $group->id }}"{{ (old('upper') == $group->id) ? ' selected' : '' }}>{{ $group->name }}</option>
+                  <option value="{{ $group->id }}"{{ (old('higher') == $group->id) ? ' selected' : '' }}>{{ $group->name }}</option>
                   @endforeach
                 </select>
-                @if ($errors->has('upper'))
+                @if ($errors->has('higher'))
                   <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('upper') }}</strong>
+                    <strong>{{ $errors->first('higher') }}</strong>
                   </span>
                 @endif
               </p>

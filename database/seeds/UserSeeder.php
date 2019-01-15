@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
         $pri = Group::whereHas('roles', function ($query) {
             $query->where('name', 'primary');
         })->orderBy('id', 'asc')->first();
-        $user->groupsManaging()->attach($pri);
+        $user->managingGroups()->attach($pri);
 
         // The primary user is a system administrator.
         $adm = Group::whereHas('roles', function ($query) {

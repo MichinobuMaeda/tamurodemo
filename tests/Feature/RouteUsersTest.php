@@ -277,7 +277,7 @@ class RouteUsersTest extends TestCase
         $response->assertViewIs('user_new');
 
         $response = $this->post(route('users'), [
-            'upper' => $this->pri->id,
+            'higher' => $this->pri->id,
             'name' => null,
             'desc' => 'desc new',
             'timezone' => 'Asia/Tokyo',
@@ -285,7 +285,7 @@ class RouteUsersTest extends TestCase
         $response->assertRedirect(route('user.create.form'));
 
         $response = $this->post(route('users'), [
-            'upper' => $this->pri->id,
+            'higher' => $this->pri->id,
             'name' => 'name new',
             'desc' => 'desc new',
             'timezone' => 'Asia/Tokyo',

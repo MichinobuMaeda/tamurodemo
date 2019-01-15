@@ -104,6 +104,93 @@ class UsersController extends Controller
     }
 
     /**
+     * Show managing groups form.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function showManagingGroupsForm(Request $request, $user)
+    {
+        return view('user_managing_groups', [
+            'user' => $user,
+            'selected' => $this->getActiveIds($user->managingGroups()->get()),
+            'list' => Group::orderBy('name')->get(),
+        ]);
+    }
+
+    /**
+     * Save managing groups.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function saveManagingGroups(Request $request, $user)
+    {
+        $this->svc->saveManagingGroups($user, $this->getSelectedIds($request->input()));
+        return redirect()->route('user.managingGroups', ['user' => $user->id]);
+    }
+
+    /**
+     * Show groups form.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function showGroupsForm(Request $request, $user)
+    {
+        return view('user_groups', [
+            'user' => $user,
+            'selected' => $this->getActiveIds($user->groups()->get()),
+            'list' => Group::orderBy('name')->get(),
+        ]);
+    }
+
+    /**
+     * Save groups.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function saveGroups(Request $request, $user)
+    {
+        $this->svc->saveGroups($user, $this->getSelectedIds($request->input()));
+        return redirect()->route('user.groups', ['user' => $user->id]);
+    }
+
+    /**
+     * @param Collection $records
+     * @return array
+     */
+    public function getActiveIds($records)
+    {
+        $selected = [];
+        foreach($records as $item) {
+            $selected[] = $item->id;
+        }
+        return $selected;
+    }
+
+    /**
+     * @param array $inputs
+     * @return array
+     */
+    public function getSelectedIds($inputs)
+    {
+        $matches = null;
+        $selected = [];
+        foreach (array_keys($inputs) as $key) {
+            if (preg_match("/^i([0-9])+$/", $key, $matches)) {
+                $selected[] = intval($matches[1]);
+            }
+        }
+        return $selected;
+    }
+
+    /**
      * Show create user form.
      * 
      * @param Request $request
@@ -123,11 +210,11 @@ class UsersController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'upper' => 'required|integer|exists:groups,id',
+            'higher' => 'required|integer|exists:groups,id',
             'name' => 'required|unique:users,name',
         ]);
         $model = $this->svc->create(
-            intval($request->input('upper')),
+            intval($request->input('higher')),
             $request->input('name'),
             $request->input('desc'),
             $request->input('timezone')

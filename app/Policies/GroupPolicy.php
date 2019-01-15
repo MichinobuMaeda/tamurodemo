@@ -50,10 +50,20 @@ class GroupPolicy
      * Determine whether the user can delete the group.
      *
      * @param  \App\User  $user
-     * @param  \App\Group  $group
      * @return mixed
      */
-    public function delete(User $user, Group $group)
+    public function delete(User $user)
+    {
+        return $user->isManagerOfAll();
+    }
+
+    /**
+     * Determine whether the user can delete the group.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function all(User $user)
     {
         return $user->isManagerOfAll();
     }

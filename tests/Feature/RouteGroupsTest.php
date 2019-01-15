@@ -101,14 +101,14 @@ class RouteGroupsTest extends TestCase
         $response->assertViewIs('group_new');
 
         $response = $this->post(route('groups'), [
-            'upper' => $this->pri->id,
+            'higher' => $this->pri->id,
             'name' => null,
             'desc' => 'desc new',
         ]);
         $response->assertRedirect(route('group.create.form'));
 
         $response = $this->post(route('groups'), [
-            'upper' => $this->pri->id,
+            'higher' => $this->pri->id,
             'name' => 'name new',
             'desc' => 'desc new',
         ]);

@@ -61,7 +61,7 @@ class UnitTestHelper
             $this->test->adm->roles()->save(new GroupRole(['name' => 'sysadmin']));
 
             // The group of system administrators is a sub-group of the primary group.
-            $this->test->pri->subGroups()->attach($this->test->adm);
+            $this->test->pri->subgroups()->attach($this->test->adm);
 
             // Create the primary user.
             $this->test->user00 = User::create([
@@ -72,7 +72,7 @@ class UnitTestHelper
             ]);
     
             // The primary user is a manager of the primary group.
-            $this->test->user00->groupsManaging()->attach($this->test->pri);
+            $this->test->user00->managingGroups()->attach($this->test->pri);
 
             // The primary user is a system administrator.
             $this->test->user00->groups()->attach($this->test->adm);
@@ -145,9 +145,9 @@ class UnitTestHelper
                 'timezone'  => null,
             ]);
 
-            $this->test->pri->subGroups()->attach($this->test->group01);
-            $this->test->pri->subGroups()->attach($this->test->group02);
-            $this->test->group01->subGroups()->attach($this->test->group03);
+            $this->test->pri->subgroups()->attach($this->test->group01);
+            $this->test->pri->subgroups()->attach($this->test->group02);
+            $this->test->group01->subgroups()->attach($this->test->group03);
 
             $this->test->adm->members()->attach($this->test->user05);
             $this->test->group01->members()->attach($this->test->user01);
@@ -157,9 +157,9 @@ class UnitTestHelper
             $this->test->group03->members()->attach($this->test->user03);
             $this->test->group03->members()->attach($this->test->user08);
 
-            $this->test->user06->groupsManaging()->attach($this->test->pri);
-            $this->test->user01->groupsManaging()->attach($this->test->group01);
-            $this->test->user03->groupsManaging()->attach($this->test->group03);
+            $this->test->user06->managingGroups()->attach($this->test->pri);
+            $this->test->user01->managingGroups()->attach($this->test->group01);
+            $this->test->user03->managingGroups()->attach($this->test->group03);
         });
     }
 }

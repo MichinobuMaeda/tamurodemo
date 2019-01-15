@@ -5,6 +5,7 @@ namespace App\Services;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Notifications\InvitationMailNotification;
 use App\Group;
 use App\User;
@@ -90,18 +91,68 @@ class UsersService
     }
 
     /**
+     * Save user's managing Groups.
+     * 
+     * @param App\User $user
+     * @param string $ids
+     * @return null
+     */
+    public function saveManagingGroups($user, $ids)
+    {
+        foreach ($user->managingGroups()->get() as $item) {
+            if (in_array($item->id, $ids)) {
+                $key = array_search($item->id, $ids);
+                if (false !== $key) {
+                    unset($ids[$key]);
+                }
+            } else {
+                $user->managingGroups()->detach($item->id);
+                Log::debug('detach: '.$item->id);
+            }
+        }
+        foreach ($ids as $id) {
+            $user->managingGroups()->attach($id);
+            Log::debug('attach: '.$id);
+        }
+    }
+
+    /**
+     * Save user's Groups.
+     * 
+     * @param App\User $user
+     * @param string $ids
+     * @return null
+     */
+    public function saveGroups($user, $ids)
+    {
+        foreach ($user->groups()->get() as $item) {
+            if (in_array($item->id, $ids)) {
+                $key = array_search($item->id, $ids);
+                if (false !== $key) {
+                    unset($ids[$key]);
+                }
+            } else {
+                $user->groups()->detach($item->id);
+            }
+        }
+        foreach ($ids as $id) {
+            $user->groups()->attach($id);
+        }
+    }
+
+    /**
      * Create user.
      * 
      * @param App\Group $group
-     * @param integer $upper
+     * @param integer $higher
      * @param string $name
      * @param string $desc
      * @param string $timezone
      * @return null
      */
-    public function create($upper, $name, $desc, $timezone)
+    public function create($higher, $name, $desc, $timezone)
     {
-        $group = Group::find($upper);
+        $group = Group::find($higher);
         $model = $group->members()->create([
             'name' => $name,
             'email' => '|'.User::unique(),

@@ -26,6 +26,6 @@ class GroupSeeder extends Seeder
         $adm->roles()->save(new GroupRole(['name' => GroupRole::SYSADMIN]));
 
         // The group of system administrators is a sub-group of the primary group.
-        $pri->subGroups()->attach($adm);
+        $pri->subgroups()->attach($adm);
     }
 }

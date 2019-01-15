@@ -98,6 +98,42 @@ Route::put(
 )->middleware('can:groups.update,group');
 
 Route::get(
+  'groups/{group}/higherGroups',
+  'GroupsController@showHigherGroupsForm'
+)->name('group.higherGroups')->middleware('can:groups.all')->middleware('history');
+Route::put(
+  'groups/{group}/higherGroups',
+  'GroupsController@saveHigherGroups'
+)->middleware('can:groups.all');
+
+Route::get(
+  'groups/{group}/subgroups',
+  'GroupsController@showSubgroupsForm'
+)->name('group.subgroups')->middleware('can:groups.all')->middleware('history');
+Route::put(
+  'groups/{group}/subgroups',
+  'GroupsController@saveSubgroups'
+)->middleware('can:groups.all');
+
+Route::get(
+  'groups/{group}/managers',
+  'GroupsController@showManagersForm'
+)->name('group.managers')->middleware('can:groups.all')->middleware('history');
+Route::put(
+  'groups/{group}/managers',
+  'GroupsController@saveManagers'
+)->middleware('can:groups.all');
+
+Route::get(
+  'groups/{group}/members',
+  'GroupsController@showMembersForm'
+)->name('group.members')->middleware('can:groups.update,group')->middleware('history');
+Route::put(
+  'groups/{group}/members',
+  'GroupsController@saveMembers'
+)->middleware('can:groups.update,group');
+
+Route::get(
   'groups/new/create',
   'GroupsController@showCreateForm'
 )->name('group.create.form')->middleware('can:groups.create');
@@ -130,6 +166,24 @@ Route::put(
   'users/{user}',
   'UsersController@saveProfile'
 )->middleware('can:users.update,user');
+
+Route::get(
+  'users/{user}/managingGroups',
+  'UsersController@showManagingGroupsForm'
+)->name('user.managingGroups')->middleware('can:groups.all')->middleware('history');
+Route::put(
+  'users/{user}/managingGroups',
+  'UsersController@saveManagingGroups'
+)->middleware('can:groups.all');
+
+Route::get(
+  'users/{user}/groups',
+  'UsersController@showGroupsForm'
+)->name('user.groups')->middleware('can:groups.all')->middleware('history');
+Route::put(
+  'users/{user}/groups',
+  'UsersController@saveGroups'
+)->middleware('can:groups.all');
 
 Route::get(
   'users/new/create',

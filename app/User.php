@@ -70,7 +70,7 @@ class User extends Authenticatable
      * 
      * @return collection
      */
-    public function groupsManaging()
+    public function managingGroups()
     {
         return $this->belongsToMany('App\Group', 'group_managers', 'user_id', 'group_id');
     }
@@ -81,7 +81,7 @@ class User extends Authenticatable
      * @return boolean
      */
     public function isManagerOfAll() {
-        return !!count($this->groupsManaging()->whereHas('roles', function ($query) {
+        return !!count($this->managingGroups()->whereHas('roles', function ($query) {
             $query->where('name', 'primary');
         })->get());
     }

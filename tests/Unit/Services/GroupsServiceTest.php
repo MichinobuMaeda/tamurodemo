@@ -51,10 +51,10 @@ class GroupsServiceTest extends TestCase
     {
         $svc = new GroupsService();
 
-        $count = $this->group01->subGroups()->count();
+        $count = $this->group01->subgroups()->count();
         $model = $svc->create($this->group01->id, 'test name9', 'test desc9');
         $this->assertEquals('test name9', $model->name);
         $this->assertEquals('test desc9', $model->desc);
-        $this->assertEquals($count + 1, $this->group01->subGroups()->count());
+        $this->assertEquals($count + 1, $this->group01->subgroups()->count());
     }
 }

@@ -38,13 +38,95 @@
                   {{ __('Save') }}
                 </button>
                 <a href="{{ route('page.back') }}" class="btn btn-outline-secondary">
-                  {{ __('Cancel') }}
+                  {{ __('Exit') }}
                 </a>
               </div>
             </div>
           </form>
         </div>
-     </div>
+      </div>
+      @if(!$group->isPrimary())
+      <div class="card">
+        <div class="card-header">
+          @can('groups.all')
+          <a href="{{ route('group.higherGroups', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
+            <i class="fas fa-edit"></i>
+          </a>
+          @endcan
+          {{ __('Higher groups') }}
+        </div>
+        <div class="card-body">
+          <ul class="list-inline">
+          @foreach($group->higherGroups()->orderBy('name')->get() as $higher)
+            <li class="list-inline-item"><a href="{{ route('group', ['group' => $higher->id]) }}">
+              <i class="fas fa-users" style="margin: 0 0.25em 0 0.5em"></i>
+              {{ $higher->name }}
+            </a></li>
+          @endforeach
+          </ul>
+        </div>
+      </div>
+      @endif
+      @can('groups.all')
+      <div class="card">
+        <div class="card-header">
+          <a href="{{ route('group.subgroups', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
+            <i class="fas fa-edit"></i>
+          </a>
+          {{ __('Subgroups') }}
+        </div>
+        <div class="card-body">
+          <ul class="list-inline">
+          @foreach($group->subgroups()->orderBy('name')->get() as $subgroup)
+            <li class="list-inline-item"><a href="{{ route('group', ['group' => $subgroup->id]) }}">
+              <i class="fas fa-user-friends" style="margin: 0 0.25em 0 0.5em"></i>
+              {{ $subgroup->name }}
+            </a></li>
+          @endforeach
+          </ul>
+        </div>
+      </div>
+      @endcan
+      @can('groups.all')
+      <div class="card">
+        <div class="card-header">
+          <a href="{{ route('group.managers', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
+            <i class="fas fa-edit"></i>
+          </a>
+          {{ __('Managers') }}
+        </div>
+        <div class="card-body">
+          <ul class="list-inline">
+          @foreach($group->managers()->orderBy('name')->get() as $manager)
+            <li class="list-inline-item"><a href="{{ route('user', ['user' => $manager->id]) }}">
+              <i class="fas fa-user-tie" style="margin: 0 0.25em 0 0.5em"></i>
+              {{ $manager->name }}
+            </a></li>
+          @endforeach
+          </ul>
+        </div>
+      </div>
+      @endcan
+      @can('groups.update', $group)
+      <div class="card">
+        <div class="card-header">
+          <a href="{{ route('group.members', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
+            <i class="fas fa-edit"></i>
+          </a>
+          {{ __('Members') }}
+        </div>
+        <div class="card-body">
+          <ul class="list-inline">
+          @foreach($group->members()->orderBy('name')->get() as $member)
+            <li class="list-inline-item"><a href="{{ route('user', ['user' => $member->id]) }}">
+              <i class="far fa-user" style="margin: 0 0.25em 0 0.5em"></i>
+              {{ $member->name }}
+            </a></li>
+          @endforeach
+          </ul>
+        </div>
+      </div>
+      @endcan
     </div>
   </div>
 </div>

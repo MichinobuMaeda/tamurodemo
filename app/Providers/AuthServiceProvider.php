@@ -30,6 +30,7 @@ class AuthServiceProvider extends ServiceProvider
             'create' => 'create',
             'update' => 'update',
             'delete' => 'delete',
+            'all' => 'all',
         ]);
 
         Gate::resource('users', 'App\Policies\UserPolicy', [

@@ -10,18 +10,18 @@
 
   <div class="card-body">
     @include('parts.multi_line_text', ['text' => $group->desc])
-    @foreach($group->superGroups()->orderBy('name')->get() as $upper)
+    @foreach($group->higherGroups()->orderBy('name')->get() as $higher)
     <p>
-      <a href="{{ $upper->isPrimary() ? route('home') : route('group', ['group' => $upper->id]) }}">
+      <a href="{{ $higher->isPrimary() ? route('home') : route('group', ['group' => $higher->id]) }}">
         <i class="fas fa-angle-double-left" style="margin-right: 0.5em"></i>
-        {{ $upper->name }}
+        {{ $higher->name }}
       </a>
     </p>
     @endforeach
     @php
       $sysadmin = null;
     @endphp
-    @foreach($group->subGroups()->orderBy('name')->get() as $lower)
+    @foreach($group->subgroups()->orderBy('name')->get() as $lower)
     @if ($lower->isSysAdmin())
       @php
         $sysadmin = $lower;

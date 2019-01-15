@@ -110,9 +110,9 @@ class LocalSeeder extends Seeder
             'timezone'  => null,
         ]);
 
-        $pri->subGroups()->attach($group01);
-        $pri->subGroups()->attach($group02);
-        $group01->subGroups()->attach($group03);
+        $pri->subgroups()->attach($group01);
+        $pri->subgroups()->attach($group02);
+        $group01->subgroups()->attach($group03);
 
         $adm->members()->attach($user05);
         $group01->members()->attach($user01);
@@ -122,9 +122,9 @@ class LocalSeeder extends Seeder
         $group03->members()->attach($user03);
         $group03->members()->attach($user08);
 
-        $user06->groupsManaging()->attach($pri);
-        $user01->groupsManaging()->attach($group01);
-        $user03->groupsManaging()->attach($group03);
+        $user06->managingGroups()->attach($pri);
+        $user01->managingGroups()->attach($group01);
+        $user03->managingGroups()->attach($group03);
     }
 
     private function unique()

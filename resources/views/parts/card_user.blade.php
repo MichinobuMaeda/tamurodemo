@@ -10,23 +10,23 @@
 
   <div class="card-body">
     @include('parts.multi_line_text', ['text' => $user->desc])
-    <p>
-      @foreach($user->groups()->orderBy('name')->get() as $upper)
-      <a href="{{ route('group', ['group' => $upper->id]) }}">
-        <i class="fas fa-users" style="margin: 0 0.25em 0 0.5em"></i>
-        {{ $upper->name }}
-      </a>
+    @if($user->managingGroups()->count())
+    <ul class="list-inline">
+      @foreach($user->managingGroups()->orderBy('name')->get() as $group)
+      <li class="list-inline-item"><a href="{{ route('group', ['group' => $group->id]) }}">
+        <i class="fas fa-user-tie" style="margin: 0 0.25em 0 0.5em"></i>
+        {{ $group->name }}
+      </a></li>
       @endforeach
-    </p>
-    @if($user->groupsManaging()->count())
-    <p>
-      @foreach($user->groupsManaging()->orderBy('name')->get() as $lower)
-        <a href="{{ route('group', ['group' => $lower->id]) }}">
-          <i class="fas fa-user-tie" style="margin: 0 0.25em 0 0.5em"></i>
-          {{ $lower->name }}
-        </a>
-        @endforeach
-    </p>
+    </ul>
     @endif
+    <ul class="list-inline">
+      @foreach($user->groups()->orderBy('name')->get() as $group)
+      <li class="list-inline-item"><a href="{{ route('group', ['group' => $group->id]) }}">
+        <i class="fas fa-user-friends" style="margin: 0 0.25em 0 0.5em"></i>
+        {{ $group->name }}
+      </a></li>
+      @endforeach
+    </ul>
   </div>
 </div>

@@ -27,8 +27,8 @@ class ModelsTest extends TestCase
             'name'      => 'Group 1',
         ]);
         $this->assertEquals(0, count($group1->roles));
-        $this->assertEquals(0, count($group1->superGroups));
-        $this->assertEquals(0, count($group1->subGroups));
+        $this->assertEquals(0, count($group1->higherGroups));
+        $this->assertEquals(0, count($group1->subgroups));
         $this->assertEquals(0, count($group1->members));
         $this->assertEquals(0, count($group1->managers));
 
@@ -36,8 +36,8 @@ class ModelsTest extends TestCase
             'name'      => 'Group 2',
         ]);
         $this->assertEquals(0, count($group2->roles));
-        $this->assertEquals(0, count($group2->superGroups));
-        $this->assertEquals(0, count($group2->subGroups));
+        $this->assertEquals(0, count($group2->higherGroups));
+        $this->assertEquals(0, count($group2->subgroups));
         $this->assertEquals(0, count($group2->members));
         $this->assertEquals(0, count($group2->managers));
 
@@ -45,8 +45,8 @@ class ModelsTest extends TestCase
             'name'      => 'Group 3',
         ]);
         $this->assertEquals(0, count($group3->roles));
-        $this->assertEquals(0, count($group3->superGroups));
-        $this->assertEquals(0, count($group3->subGroups));
+        $this->assertEquals(0, count($group3->higherGroups));
+        $this->assertEquals(0, count($group3->subgroups));
         $this->assertEquals(0, count($group3->members));
         $this->assertEquals(0, count($group3->managers));
 
@@ -70,7 +70,7 @@ class ModelsTest extends TestCase
             'timezone'  => null
         ]);
         $this->assertEquals(0, count($user1->groups));
-        $this->assertEquals(0, count($user1->groupsManaging));
+        $this->assertEquals(0, count($user1->managingGroups));
 
         $user2 = User::create([
             'name'      => 'User 2',
@@ -79,7 +79,7 @@ class ModelsTest extends TestCase
             'timezone'  => 'Asia/Tokyo'
         ]);
         $this->assertEquals(0, count($user2->groups));
-        $this->assertEquals(0, count($user2->groupsManaging));
+        $this->assertEquals(0, count($user2->managingGroups));
 
         $user3 = User::create([
             'name'      => 'User 3',
@@ -88,7 +88,7 @@ class ModelsTest extends TestCase
             'timezone'  => 'Europe/London'
         ]);
         $this->assertEquals(0, count($user3->groups));
-        $this->assertEquals(0, count($user3->groupsManaging));
+        $this->assertEquals(0, count($user3->managingGroups));
 
         // Test static methods.
         $unique = [];
@@ -149,25 +149,25 @@ class ModelsTest extends TestCase
         $this->assertEquals([$role2->name, $role1->name], $names);
         $this->assertEquals($role3->name, $group2->roles[0]->name);
 
-        $group1->subGroups()->attach($group2);
-        $group3->superGroups()->attach($group2);
+        $group1->subgroups()->attach($group2);
+        $group3->higherGroups()->attach($group2);
 
-        $group1->load('subGroups');
-        $group2->load('subGroups');
-        $group2->load('superGroups');
-        $group3->load('superGroups');
+        $group1->load('subgroups');
+        $group2->load('subgroups');
+        $group2->load('higherGroups');
+        $group3->load('higherGroups');
 
-        $this->assertEquals(0, count($group1->superGroups));
-        $this->assertEquals(1, count($group1->subGroups));
-        $this->assertEquals(1, count($group2->superGroups));
-        $this->assertEquals(1, count($group2->subGroups));
-        $this->assertEquals(1, count($group3->superGroups));
-        $this->assertEquals(0, count($group3->subGroups));
+        $this->assertEquals(0, count($group1->higherGroups));
+        $this->assertEquals(1, count($group1->subgroups));
+        $this->assertEquals(1, count($group2->higherGroups));
+        $this->assertEquals(1, count($group2->subgroups));
+        $this->assertEquals(1, count($group3->higherGroups));
+        $this->assertEquals(0, count($group3->subgroups));
 
-        $this->assertEquals($group2->id, $group1->subGroups[0]->id);
-        $this->assertEquals($group1->id, $group2->superGroups[0]->id);
-        $this->assertEquals($group3->id, $group2->subGroups[0]->id);
-        $this->assertEquals($group2->id, $group3->superGroups[0]->id);
+        $this->assertEquals($group2->id, $group1->subgroups[0]->id);
+        $this->assertEquals($group1->id, $group2->higherGroups[0]->id);
+        $this->assertEquals($group3->id, $group2->subgroups[0]->id);
+        $this->assertEquals($group2->id, $group3->higherGroups[0]->id);
 
         $group1->managers()->attach($user1);
         $group2->members()->attach($user1);
@@ -180,9 +180,9 @@ class ModelsTest extends TestCase
         $group3->load('managers');
         $group3->load('members');
         $user1->load('groups');
-        $user1->load('groupsManaging');
+        $user1->load('managingGroups');
         $user2->load('groups');
-        $user2->load('groupsManaging');
+        $user2->load('managingGroups');
         $user3->load('groups');
 
         $this->assertEquals(1, count($group1->managers));
@@ -192,18 +192,18 @@ class ModelsTest extends TestCase
         $this->assertEquals(1, count($group3->managers));
         $this->assertEquals(2, count($group3->members));
         $this->assertEquals(1, count($user1->groups));
-        $this->assertEquals(1, count($user1->groupsManaging));
+        $this->assertEquals(1, count($user1->managingGroups));
         $this->assertEquals(1, count($user2->groups));
-        $this->assertEquals(1, count($user2->groupsManaging));
+        $this->assertEquals(1, count($user2->managingGroups));
         $this->assertEquals(1, count($user3->groups));
-        $this->assertEquals(0, count($user3->groupsManaging));
+        $this->assertEquals(0, count($user3->managingGroups));
 
         $this->assertEquals($user1->id, $group1->managers[0]->id);
         $this->assertEquals($user1->id, $group2->members[0]->id);
         $this->assertEquals($user2->id, $group3->members[0]->id);
-        $this->assertEquals($group1->id, $user1->groupsManaging[0]->id);
+        $this->assertEquals($group1->id, $user1->managingGroups[0]->id);
         $this->assertEquals($group2->id, $user1->groups[0]->id);
-        $this->assertEquals($group3->id, $user2->groupsManaging[0]->id);
+        $this->assertEquals($group3->id, $user2->managingGroups[0]->id);
         $this->assertEquals($group3->id, $user2->groups[0]->id);
         $this->assertEquals($group3->id, $user3->groups[0]->id);
 

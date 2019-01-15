@@ -77,17 +77,17 @@ class Group extends Model
      * 
      * @return collection
      */
-    public function subGroups()
+    public function subgroups()
     {
         return $this->belongsToMany('App\Group', 'sub_groups', 'group_id', 'sub_group_id');
     }
 
     /**
-     * Get super-groups of the group.
+     * Get higher-groups of the group.
      * 
      * @return collection
      */
-    public function superGroups()
+    public function higherGroups()
     {
         return $this->belongsToMany('App\Group', 'sub_groups', 'sub_group_id', 'group_id');
     }
