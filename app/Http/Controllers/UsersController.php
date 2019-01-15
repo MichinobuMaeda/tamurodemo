@@ -183,7 +183,7 @@ class UsersController extends Controller
         $matches = null;
         $selected = [];
         foreach (array_keys($inputs) as $key) {
-            if (preg_match("/^i([0-9])+$/", $key, $matches)) {
+            if (preg_match("/^i([0-9]+)$/", $key, $matches)) {
                 $selected[] = intval($matches[1]);
             }
         }
