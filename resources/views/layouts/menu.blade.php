@@ -66,6 +66,11 @@
         {{ __('User list') }}
       </a>
     @endcan
+    @can('groups.list')
+      <a class="dropdown-item" href="{{ route('groups') }}">
+        {{ __('Group list') }}
+      </a>
+    @endcan
     @can('system.administrate')
       <a class="dropdown-item" href="{{ route('sysadmin') }}">
         {{ __('System administration') }}

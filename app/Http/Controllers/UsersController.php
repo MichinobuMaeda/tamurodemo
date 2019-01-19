@@ -31,26 +31,33 @@ class UsersController extends Controller
      * Show user list.
      *
      * @param Request $request
-     * @param string $orderBy (optional) column name
-     * @param string $orderDir (optional) 'asc' or 'desc'
      * @return Response
      */
-    public function list(Request $request, $orderBy=null, $orderDir=null)
+    public function list(Request $request)
     {
+        $orderBy = $request->input('orderBy');
+        $orderDir = $request->input('orderDir');
+        $withTrashed = $request->input('withTrashed');
+
         if ($orderBy) {
             session(['users_list.orderBy' => $orderBy]);
         }
         if ($orderDir) {
             session(['users_list.orderDir' => $orderDir]);
         }
+        if ($withTrashed) {
+            session(['users_list.withTrashed' => $withTrashed]);
+        }
         $orderBy = session('users_list.orderBy', 'name');
         $orderDir = session('users_list.orderDir', 'asc');
+        $withTrashed = session('users_list.withTrashed', 'false') == 'true';
 
         return view('users_list', [
-            'users' => $this->svc->list($orderBy, $orderDir),
+            'users' => $this->svc->list($orderBy, $orderDir, $withTrashed),
             'loginMethods' => $this->svc->listLoginMethods(),
             'orderBy' => $orderBy,
             'orderDir' => $orderDir,
+            'withTrashed' => $withTrashed,
         ]);
     }
 
@@ -61,7 +68,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function show(Request $request, $user)
+    public function show(Request $request, User $user)
     {
         return view('user', [
             'user' => $user,
@@ -75,7 +82,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function showProfileForm(Request $request, $user)
+    public function showProfileForm(Request $request, User $user)
     {
         return view('user_profile', [
             'user' => $user,
@@ -89,7 +96,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function saveProfile(Request $request, $user)
+    public function saveProfile(Request $request, User $user)
     {
         $validatedData = $request->validate([
             'name' => 'required|unique:users,name',
@@ -110,7 +117,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function showManagingGroupsForm(Request $request, $user)
+    public function showManagingGroupsForm(Request $request, User $user)
     {
         return view('user_managing_groups', [
             'user' => $user,
@@ -126,7 +133,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function saveManagingGroups(Request $request, $user)
+    public function saveManagingGroups(Request $request, User $user)
     {
         $this->svc->saveManagingGroups($user, $this->getSelectedIds($request->input()));
         return redirect()->route('user.managingGroups', ['user' => $user->id]);
@@ -139,7 +146,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function showGroupsForm(Request $request, $user)
+    public function showGroupsForm(Request $request, User $user)
     {
         return view('user_groups', [
             'user' => $user,
@@ -155,7 +162,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function saveGroups(Request $request, $user)
+    public function saveGroups(Request $request, User $user)
     {
         $this->svc->saveGroups($user, $this->getSelectedIds($request->input()));
         return redirect()->route('user.groups', ['user' => $user->id]);
@@ -223,13 +230,56 @@ class UsersController extends Controller
     }
 
     /**
+     * Delete user.
+     * 
+     * @param Request $request
+     * @param App\User $user
+     * @return Response
+     */
+    public function delete(Request $request, User $user)
+    {
+        $user->delete();
+        return redirect()->route('users');
+    }
+
+    /**
+     * Restore deleted user.
+     * 
+     * @param Request $request
+     * @param String $idDeleted
+     * @return Response
+     */
+    public function restoreDeleted(Request $request, $idDeleted)
+    {
+        User::withTrashed()
+            ->where('id', intval($idDeleted))
+            ->restore();
+        return redirect()->route('users');
+    }
+
+    /**
+     * Delete permanently deleted user.
+     * 
+     * @param Request $request
+     * @param String $idDeleted
+     * @return Response
+     */
+    public function deletePermanently(Request $request, $idDeleted)
+    {
+        User::withTrashed()
+            ->where('id', intval($idDeleted))
+            ->forceDelete();
+        return redirect()->route('users');
+    }
+
+    /**
      * Show the user's login methods editor.
      * 
      * @param Request $request
      * @param App\User $user
      * @return Response
      */
-    public function showEditLoginForm(Request $request, $user)
+    public function showEditLoginForm(Request $request, User $user)
     {
         if ($user->id == Auth::user()->id) {
             $svc = new PageHistoryService($request->session());
@@ -249,7 +299,7 @@ class UsersController extends Controller
      * @param App\User $user
      * @return Response
      */
-    public function saveLoginEmail(Request $request, $user)
+    public function saveLoginEmail(Request $request, User $user)
     {
         $validatedData = $request->validate([
             'email' => 'nullable|email',
@@ -266,7 +316,7 @@ class UsersController extends Controller
      * @param string $provider
      * @return Response
      */
-    public function resetLoginProvider(Request $request, $user, $provider)
+    public function resetLoginProvider(Request $request, User $user, $provider)
     {
         $this->oauth->reset($user, $provider);
         return redirect()->route('user.login', ['user' => $user->id]);

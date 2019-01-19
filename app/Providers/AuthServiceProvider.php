@@ -30,6 +30,8 @@ class AuthServiceProvider extends ServiceProvider
             'create' => 'create',
             'update' => 'update',
             'delete' => 'delete',
+            'deletePermanently' => 'deletePermanently',
+            'list' => 'list',
             'all' => 'all',
         ]);
 
@@ -38,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
             'create' => 'create',
             'update' => 'update',
             'delete' => 'delete',
+            'deletePermanently' => 'deletePermanently',
             'list' => 'list',
             'invite' => 'invite',
         ]);

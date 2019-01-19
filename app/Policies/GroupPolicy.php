@@ -50,9 +50,21 @@ class GroupPolicy
      * Determine whether the user can delete the group.
      *
      * @param  \App\User  $user
+     * @param  \App\Group  $group
      * @return mixed
      */
-    public function delete(User $user)
+    public function delete(User $user, Group $group)
+    {
+        return $user->isManagerOfAll();
+    }
+
+    /**
+     * Determine whether the user can delete permanently the soft deleted model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function deletePermanently(User $user)
     {
         return $user->isManagerOfAll();
     }
@@ -64,6 +76,17 @@ class GroupPolicy
      * @return mixed
      */
     public function all(User $user)
+    {
+        return $user->isManagerOfAll();
+    }
+
+    /**
+     * Determine whether the user can list models.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function list(User $user)
     {
         return $user->isManagerOfAll();
     }

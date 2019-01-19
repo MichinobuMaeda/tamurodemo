@@ -84,6 +84,11 @@ Route::get(
 # Groups
 
 Route::get(
+  'groups',
+  'GroupsController@list'
+)->name('groups')->middleware('can:groups.all')->middleware('history');
+
+Route::get(
   'groups/{group}',
   'GroupsController@show'
 )->name('group')->middleware('history');
@@ -142,16 +147,25 @@ Route::post(
   'GroupsController@create'
 )->name('groups')->middleware('can:groups.create');
 
+Route::delete(
+  'groups/{group}',
+  'GroupsController@delete'
+)->middleware('can:groups.delete,group');
+Route::get(
+  'groups/{idDeleted}/restoreDeleted',
+  'GroupsController@restoreDeleted'
+)->name('group.restoreDeleted')->middleware('can:groups.create');
+Route::get(
+  'groups/{idDeleted}/deletePermanently',
+  'GroupsController@deletePermanently'
+)->name('group.deletePermanently')->middleware('can:groups.deletePermanently');
+
 # Users
 
 Route::get(
   'users',
   'UsersController@list'
 )->name('users')->middleware('can:users.list')->middleware('history');
-Route::get(
-  'users/orderBy/{orderBy}/orderDir/{orderDir}',
-  'UsersController@list'
-)->name('users.orderBy')->middleware('can:users.list');
 
 Route::get(
   'users/{user}',
@@ -193,6 +207,19 @@ Route::post(
   'users',
   'UsersController@create'
 )->middleware('can:users.create');
+
+Route::delete(
+  'users/{user}',
+  'UsersController@delete'
+)->middleware('can:users.delete,user');
+Route::get(
+  'users/{idDeleted}/restoreDeleted',
+  'UsersController@restoreDeleted'
+)->name('user.restoreDeleted')->middleware('can:users.create');
+Route::get(
+  'users/{idDeleted}/deletePermanently',
+  'UsersController@deletePermanently'
+)->name('user.deletePermanently')->middleware('can:users.deletePermanently');
 
 Route::get(
   'users/{user}/login',

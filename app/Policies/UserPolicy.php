@@ -58,6 +58,17 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can delete permanently the soft deleted model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function deletePermanently(User $user)
+    {
+        return $user->isManagerOfAll();
+    }
+
+    /**
      * Determine whether the user can list models.
      *
      * @param  \App\User  $user

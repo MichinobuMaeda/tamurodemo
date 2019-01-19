@@ -50,7 +50,7 @@ class RouteUsersTest extends TestCase
         $response->assertSessionMissing('users_list.orderBy');
         $response->assertSessionMissing('users_list.orderDir');
 
-        $response = $this->get(route('users.orderBy', [
+        $response = $this->get(route('users', [
             'orderBy' => 'email',
             'orderDir' => 'desc'
         ]));
@@ -64,7 +64,7 @@ class RouteUsersTest extends TestCase
         $response = $this->get(route('users'));
         $response->assertRedirect(route('list.logins'));
 
-        $response = $this->get(route('users.orderBy', [
+        $response = $this->get(route('users', [
             'orderBy' => 'email',
             'orderDir' => 'desc'
         ]));

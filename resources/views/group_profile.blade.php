@@ -127,6 +127,21 @@
         </div>
       </div>
       @endcan
+      @can('groups.delete', $group)
+      <div class="card">
+        <div class="card-header">
+          {{ __('Managers only') }}
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmation-{{ $group->id }}">
+            {{ __('Delete') }}
+          </button>
+          @component('parts.modal_confirm_delete', ['id' => $group->id, 'target' => $group->name])
+            {{ route('group', ['group' => $group->id]) }}
+          @endcomponent
+        </div>
+      </div>
+      @endcan
     </div>
   </div>
 </div>

@@ -25,13 +25,46 @@ class GroupsController extends Controller
     }
 
     /**
+     * Show group list.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function list(Request $request)
+    {
+        $orderBy = $request->input('orderBy');
+        $orderDir = $request->input('orderDir');
+        $withTrashed = $request->input('withTrashed');
+
+        if ($orderBy) {
+            session(['groups_list.orderBy' => $orderBy]);
+        }
+        if ($orderDir) {
+            session(['groups_list.orderDir' => $orderDir]);
+        }
+        if ($withTrashed) {
+            session(['groups_list.withTrashed' => $withTrashed]);
+        }
+        $orderBy = session('groups_list.orderBy', 'name');
+        $orderDir = session('groups_list.orderDir', 'asc');
+        $withTrashed = session('groups_list.withTrashed', 'false') == 'true';
+
+        return view('groups_list', [
+            'groups' => $this->svc->list($orderBy, $orderDir, $withTrashed),
+            'orderBy' => $orderBy,
+            'orderDir' => $orderDir,
+            'withTrashed' => $withTrashed,
+        ]);
+    }
+
+    /**
      * Show the application dashboard.
      *
      * @param Request $request
      * @param App\Group $group
      * @return Response
      */
-    public function show(Request $request, $group)
+    public function show(Request $request, Group $group)
     {
         return $group->isPrimary()
             ? redirect()->route('home')
@@ -47,7 +80,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function showProfileForm(Request $request, $group)
+    public function showProfileForm(Request $request, Group $group)
     {
         return view('group_profile', [
             'group' => $group,
@@ -61,7 +94,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function saveProfile(Request $request, $group)
+    public function saveProfile(Request $request, Group $group)
     {
         $validatedData = $request->validate([
             'name' => 'required|unique:users,name',
@@ -92,7 +125,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function showHigherGroupsForm(Request $request, $group)
+    public function showHigherGroupsForm(Request $request, Group $group)
     {
         return view('group_higher_groups', [
             'group' => $group,
@@ -108,7 +141,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function saveHigherGroups(Request $request, $group)
+    public function saveHigherGroups(Request $request, Group $group)
     {
         $this->svc->saveHigherGroups($group, $this->getSelectedIds($request->input()));
         return redirect()->route('group.higherGroups', ['group' => $group->id]);
@@ -121,7 +154,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function showSubgroupsForm(Request $request, $group)
+    public function showSubgroupsForm(Request $request, Group $group)
     {
         return view('group_subgroups', [
             'group' => $group,
@@ -139,7 +172,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function saveSubgroups(Request $request, $group)
+    public function saveSubgroups(Request $request, Group $group)
     {
         $this->svc->saveSubgroups($group, $this->getSelectedIds($request->input()));
         return redirect()->route('group.subgroups', ['group' => $group->id]);
@@ -152,7 +185,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function showManagersForm(Request $request, $group)
+    public function showManagersForm(Request $request, Group $group)
     {
         return view('group_managers', [
             'group' => $group,
@@ -168,7 +201,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function saveManagers(Request $request, $group)
+    public function saveManagers(Request $request, Group $group)
     {
         $this->svc->saveManagers($group, $this->getSelectedIds($request->input()));
         return redirect()->route('group.managers', ['group' => $group->id]);
@@ -181,7 +214,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function showMembersForm(Request $request, $group)
+    public function showMembersForm(Request $request, Group $group)
     {
         return view('group_members', [
             'group' => $group,
@@ -197,7 +230,7 @@ class GroupsController extends Controller
      * @param App\Group $group
      * @return Response
      */
-    public function saveMembers(Request $request, $group)
+    public function saveMembers(Request $request, Group $group)
     {
         $this->svc->saveMembers($group, $this->getSelectedIds($request->input()));
         return redirect()->route('group.members', ['group' => $group->id]);
@@ -250,5 +283,48 @@ class GroupsController extends Controller
             $request->input('desc')
         );
         return redirect()->route('group', ['group' => $model->id]);
+    }
+
+    /**
+     * Delete group.
+     * 
+     * @param Request $request
+     * @param App\Group $group
+     * @return Response
+     */
+    public function delete(Request $request, Group $group)
+    {
+        $group->delete();
+        return redirect()->route('groups');
+    }
+
+    /**
+     * Restore deleted group.
+     * 
+     * @param Request $request
+     * @param String $idDeleted
+     * @return Response
+     */
+    public function restoreDeleted(Request $request, $idDeleted)
+    {
+        Group::withTrashed()
+            ->where('id', intval($idDeleted))
+            ->restore();
+        return redirect()->route('groups');
+    }
+
+    /**
+     * Delete permanently deleted group.
+     * 
+     * @param Request $request
+     * @param String $idDeleted
+     * @return Response
+     */
+    public function deletePermanently(Request $request, $idDeleted)
+    {
+        Group::withTrashed()
+            ->where('id', intval($idDeleted))
+            ->forceDelete();
+        return redirect()->route('groups');
     }
 }

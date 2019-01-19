@@ -18,6 +18,21 @@ class GroupsService
     }
 
     /**
+     * List groups.
+     * 
+     * @param  string $orderBy default 'name'
+     * @param  string $orderDir 'asc' (default) or 'desc'
+     * @param boolean $withTrashed
+     * @return Collection
+     */
+    public function list($orderBy='name', $orderDir='asc', $withTrashed=false)
+    {
+        return $withTrashed
+            ? Group::withTrashed()->orderBy($orderBy, $orderDir)->get()
+            : Group::orderBy($orderBy, $orderDir)->get();
+    }
+
+    /**
      * Save group's profiles.
      * 
      * @param App\Group $group

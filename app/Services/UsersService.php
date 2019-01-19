@@ -28,19 +28,29 @@ class UsersService
      * 
      * @param  string $orderBy default 'name'
      * @param  string $orderDir 'asc' (default) or 'desc'
+     * @param boolean $withTrashed
      * @return Collection
      */
-    public function list($orderBy='name', $orderDir='asc')
+    public function list($orderBy='name', $orderDir='asc', $withTrashed=false)
     {
         $user = Auth::user();
         if ($user->isManagerOfAll()) {
-            return User::orderBy($orderBy, $orderDir)->get();
+            return $withTrashed
+                ? User::withTrashed()->orderBy($orderBy, $orderDir)->get()
+                : User::orderBy($orderBy, $orderDir)->get();
         }
-        return User::join('members', 'users.id', '=', 'members.user_id')
-            ->join('group_managers', 'members.group_id', '=', 'group_managers.group_id')
-            ->where('group_managers.user_id', '=', $user->id)
-            ->orderBy($orderBy, $orderDir)
-            ->get();
+        return $withTrashed
+            ? User::withTrashed()
+                ->join('members', 'users.id', '=', 'members.user_id')
+                ->join('group_managers', 'members.group_id', '=', 'group_managers.group_id')
+                ->where('group_managers.user_id', '=', $user->id)
+                ->orderBy($orderBy, $orderDir)
+                ->get()
+            : User::join('members', 'users.id', '=', 'members.user_id')
+                ->join('group_managers', 'members.group_id', '=', 'group_managers.group_id')
+                ->where('group_managers.user_id', '=', $user->id)
+                ->orderBy($orderBy, $orderDir)
+                ->get();
     }
 
     /**

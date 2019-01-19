@@ -99,6 +99,21 @@
         </div>
       </div>
       @endcan
+      @can('users.delete', $user)
+      <div class="card">
+        <div class="card-header">
+          {{ __('Managers only') }}
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmation-{{ $user->id }}">
+            {{ __('Delete') }}
+          </button>
+          @component('parts.modal_confirm_delete', ['id' => $user->id, 'target' => $user->name])
+            {{ route('user', ['user' => $user->id]) }}
+          @endcomponent
+        </div>
+      </div>
+      @endcan
     </div>
   </div>
 </div>
