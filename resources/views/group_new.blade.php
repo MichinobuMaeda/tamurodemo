@@ -8,6 +8,9 @@
         <div class="card-header">{{ __('Create') }}: {{ __('Group') }}</div>
         <div class="card-body">
 
+          <h5>
+            <div class="text text-secondary">{{ __('Managers only') }}</div>
+          </h5>
           <form method="POST" action="{{ route('groups') }}">
             @csrf
 
