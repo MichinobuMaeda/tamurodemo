@@ -101,6 +101,13 @@ function onClickAmazon() {
           @component('parts.multi_line_message')
             If you have any troubles, please contact your administrator.
           @endcomponent
+          @if(Auth::check())
+          <p class="text-right">
+            <a href="{{ route('preferences.login') }}" class="btn btn-outline-secondary">
+              {{ __('Cancel') }}
+            </a>
+          </p>
+          @endif
         </div>
       </div>
     </div>

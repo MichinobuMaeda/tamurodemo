@@ -38,7 +38,7 @@
                   {{ __('Save') }}
                 </button>
                 <a href="{{ route('page.back') }}" class="btn btn-outline-secondary">
-                  {{ __('Exit') }}
+                  {{ __('Stop') }}
                 </a>
               </div>
             </div>
@@ -50,7 +50,7 @@
         <div class="card-header">
           @can('groups.all')
           <a href="{{ route('group.higherGroups', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
-            <i class="fas fa-edit"></i>
+            <i class="fas fa-edit"></i> {{ __('Edit') }}
           </a>
           @endcan
           {{ __('Higher groups') }}
@@ -71,7 +71,7 @@
       <div class="card">
         <div class="card-header">
           <a href="{{ route('group.subgroups', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
-            <i class="fas fa-edit"></i>
+            <i class="fas fa-edit"></i> {{ __('Edit') }}
           </a>
           {{ __('Subgroups') }}
         </div>
@@ -91,7 +91,7 @@
       <div class="card">
         <div class="card-header">
           <a href="{{ route('group.managers', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
-            <i class="fas fa-edit"></i>
+            <i class="fas fa-edit"></i> {{ __('Edit') }}
           </a>
           {{ __('Managers') }}
         </div>
@@ -111,7 +111,7 @@
       <div class="card">
         <div class="card-header">
           <a href="{{ route('group.members', ['group' => $group->id]) }}" class="text-primary float-right" style="background-color:transparent;">
-            <i class="fas fa-edit"></i>
+            <i class="fas fa-edit"></i> {{ __('Edit') }}
           </a>
           {{ __('Members') }}
         </div>

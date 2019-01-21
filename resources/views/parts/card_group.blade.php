@@ -2,7 +2,7 @@
   <div class="card-header">
     @can('groups.update', $group)
     <a href="{{ route('group.edit', ['group' => $group]) }}" class="text-primary float-right" style="background-color:transparent;">
-      <i class="fas fa-edit"></i>
+      <i class="fas fa-edit"></i> {{ __('Edit') }}
     </a>
     @endcan
     {{ $group->name }}

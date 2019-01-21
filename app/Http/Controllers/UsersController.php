@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use App\Services\UsersService;
 use App\Services\OAuthService;
 use App\Services\PageHistoryService;
@@ -99,7 +100,10 @@ class UsersController extends Controller
     public function saveProfile(Request $request, User $user)
     {
         $validatedData = $request->validate([
-            'name' => 'required|unique:users,name',
+            'name' => [
+                'required',
+                Rule::unique('users')->ignore($user->id),
+            ],
         ]);
         $this->svc->saveProfile(
             $user,
@@ -107,7 +111,7 @@ class UsersController extends Controller
             $request->input('desc'),
             $request->input('timezone')
         );
-        return redirect()->route('user.edit', ['user' => $user->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**
@@ -136,7 +140,7 @@ class UsersController extends Controller
     public function saveManagingGroups(Request $request, User $user)
     {
         $this->svc->saveManagingGroups($user, $this->getSelectedIds($request->input()));
-        return redirect()->route('user.managingGroups', ['user' => $user->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**
@@ -165,7 +169,7 @@ class UsersController extends Controller
     public function saveGroups(Request $request, User $user)
     {
         $this->svc->saveGroups($user, $this->getSelectedIds($request->input()));
-        return redirect()->route('user.groups', ['user' => $user->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**

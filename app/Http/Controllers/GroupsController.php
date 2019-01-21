@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use App\Services\GroupsService;
 use App\Services\PageHistoryService;
 
@@ -97,14 +98,17 @@ class GroupsController extends Controller
     public function saveProfile(Request $request, Group $group)
     {
         $validatedData = $request->validate([
-            'name' => 'required|unique:users,name',
+            'name' => [
+                'required',
+                Rule::unique('groups')->ignore($group->id),
+            ],
         ]);
         $this->svc->saveProfile(
             $group,
             $request->input('name'),
             $request->input('desc')
         );
-        return redirect()->route('group.edit', ['group' => $group->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**
@@ -144,7 +148,7 @@ class GroupsController extends Controller
     public function saveHigherGroups(Request $request, Group $group)
     {
         $this->svc->saveHigherGroups($group, $this->getSelectedIds($request->input()));
-        return redirect()->route('group.higherGroups', ['group' => $group->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**
@@ -175,7 +179,7 @@ class GroupsController extends Controller
     public function saveSubgroups(Request $request, Group $group)
     {
         $this->svc->saveSubgroups($group, $this->getSelectedIds($request->input()));
-        return redirect()->route('group.subgroups', ['group' => $group->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**
@@ -204,7 +208,7 @@ class GroupsController extends Controller
     public function saveManagers(Request $request, Group $group)
     {
         $this->svc->saveManagers($group, $this->getSelectedIds($request->input()));
-        return redirect()->route('group.managers', ['group' => $group->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**
@@ -233,7 +237,7 @@ class GroupsController extends Controller
     public function saveMembers(Request $request, Group $group)
     {
         $this->svc->saveMembers($group, $this->getSelectedIds($request->input()));
-        return redirect()->route('group.members', ['group' => $group->id]);
+        return redirect()->away((new PageHistoryService($request->session()))->back());
     }
 
     /**

@@ -2,7 +2,7 @@
   <div class="card-header">
     @can('users.update', $user)
     <a href="{{ route('user.edit', ['user' => $user]) }}" class="text-primary float-right" style="background-color:transparent;">
-      <i class="fas fa-edit"></i>
+      <i class="fas fa-edit"></i> {{ __('Edit') }}
     </a>
     @endcan
     {{ $user->name }}

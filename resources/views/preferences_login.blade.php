@@ -5,7 +5,7 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Preferences') }}: {{ __('Login') }}</div>
+        <div class="card-header">{{ __('Configure') }}: {{ __('Login') }}</div>
         <div class="card-body">
           <p>
             <i class="fas fa-envelope"></i>

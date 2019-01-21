@@ -18,7 +18,7 @@
                   {{ __('Save') }}
                 </button>
                 <a href="{{ route('page.back') }}" class="btn btn-outline-secondary">
-                  {{ __('Exit') }}
+                  {{ __('Stop') }}
                 </a>
               </div>
             </div>
