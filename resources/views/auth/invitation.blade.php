@@ -6,7 +6,10 @@
     <div class="col-md-8">
       @include('parts.security_notification')
       <div class="card">
-        <div class="card-header">{{ __('Setup login method') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Setup login method') }}
+        </div>
 
         <div class="card-body">
           <h3>{{ __('Hello!') }} {{ $user->name }} {{ __('-san') }}</h3>

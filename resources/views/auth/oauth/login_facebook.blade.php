@@ -8,7 +8,10 @@ $conf = config('tamuro.oauth_facebook')
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Login with Facebook') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Login with Facebook') }}
+        </div>
         <div class="card-body">
           <div id="fb-root"></div>
 <script>

@@ -5,6 +5,7 @@
       <i class="fas fa-edit"></i> {{ __('Edit') }}
     </a>
     @endcan
+    @include('layouts.logo')
     {{ $group->name }}
   </div>
 

@@ -21,7 +21,10 @@ function deletePermanently($id, $name) {
   <div class="row justify-content-center">
     <div class="col-12 col-xl-10">
       <div class="card">
-        <div class="card-header">{{ __('Group list') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Group list') }}
+        </div>
 
         <div class="card-body">
           <h5>

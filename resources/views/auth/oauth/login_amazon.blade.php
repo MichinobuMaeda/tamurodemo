@@ -88,7 +88,10 @@ function onClickAmazon() {
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Login with Yahoo! JAPAN') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Login with Yahoo! JAPAN') }}
+        </div>
         <div class="card-body">
           <p>
             <a href="javascript:onClickAmazon();" id="LoginWithAmazon">

@@ -7,11 +7,8 @@
   </a>
   @endif
 @else
-  <a href="{{ route('home') }}" class="btn btn-outline-success btn-sm text-success" style="background-color:transparent; margin-right: 1em;">
-    <i class="fas fa-home"></i>
-  </a>
   @if($vh->IsPagePrev(request()->session()))
-  <a href="{{ route('page.back') }}" class="btn btn-outline-success btn-sm text-success" style="background-color:transparent; margin-right: 1em;">
+  <a href="{{ route('page.back') }}" class="btn btn-success btn-sm text-white" style="margin-right: 1em;">
     <i class="fas fa-arrow-left"></i>
   </a>
   @else
@@ -20,7 +17,7 @@
   </a>
   @endif
   @if($vh->IsPageNext(request()->session()))
-  <a href="{{ route('page.forward') }}" class="btn btn-outline-success btn-sm text-success" style="background-color:transparent; margin-right: 1em;">
+  <a href="{{ route('page.forward') }}" class="btn btn-success btn-sm text-white" style="margin-right: 1em;">
     <i class="fas fa-arrow-right"></i>
   </a>
   @else
@@ -29,7 +26,7 @@
   </a>
   @endif
   <div class="btn-group drop{{ $dir }}">
-    <button type="button" class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ __('Menu') }}
     </button>
     <div class="dropdown-menu">

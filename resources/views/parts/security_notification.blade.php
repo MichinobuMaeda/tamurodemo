@@ -1,5 +1,8 @@
       <div class="card">
-        <div class="card-header">{{ __('Security notification') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Security notification') }}
+        </div>
         <div class="card-body">
         @component('parts.multi_line_message')
           Security notifications about EU ePrivacy directive and privacy policy ...

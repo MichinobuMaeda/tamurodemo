@@ -5,7 +5,10 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Preferences') }}: {{ __('Login') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Preferences') }}: {{ __('Login') }}
+        </div>
         <div class="card-body">
           <h3>{{ $user->name }}</h3>
           <form method="POST" action="{{ route('user.login.email', ['user' => $user->id]) }}">

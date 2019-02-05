@@ -8,7 +8,10 @@ $conf = config('tamuro.oauth_google')
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Login with Google') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Login with Google') }}
+        </div>
         <div class="card-body">
 <script>
 var googleAuth2 = null;

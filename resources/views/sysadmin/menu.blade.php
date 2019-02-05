@@ -6,6 +6,7 @@
     <div class="col-md-8">
     <div class="card">
       <div class="card-header">
+        @include('layouts.logo')
         {{ __('System administration') }}
       </div>
 

@@ -5,7 +5,10 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Create') }}: {{ __('User') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Create') }}: {{ __('User') }}
+        </div>
         <div class="card-body">
 
           <h5>

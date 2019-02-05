@@ -5,7 +5,10 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Edit') }}: {{ $group->name }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Edit') }}: {{ $group->name }}
+        </div>
         <div class="card-body">
           <form method="POST" action="{{ route('group', ['group' => $group->id]) }}">
             @method('PUT')

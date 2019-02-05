@@ -8,7 +8,10 @@ $conf = config('tamuro.oauth_yahoo_jp')
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Login with Yahoo! JAPAN') }}</div>
+        <div class="card-header">
+          @include('layouts.logo')
+          {{ __('Login with Yahoo! JAPAN') }}
+        </div>
         <div class="card-body">
           <span class="yconnectLogin"></span>
 <script>

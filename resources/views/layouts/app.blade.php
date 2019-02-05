@@ -53,7 +53,7 @@
     <div class="fixed-top d-none d-md-block" style="padding: 4px 8px; text-align: right;">
     @include('layouts.menu',['dir' => 'down'])
     </div>
-    <div class="fixed-bottom d-md-none" style="padding: 4px 8px; text-align: right;">
+    <div class="fixed-bottom d-md-none" style="padding: 4px 8px; text-align: center;">
     @include('layouts.menu',['dir' => 'up'])
     </div>
   </div>
