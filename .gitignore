@@ -1,85 +1,20 @@
-# Tamuro
-/storage/tamuro.sqlite
-/storage/tamuro.sqlite-*
-/coverage
-/tmp
-/docs/tmp
-
-# Laravel
-/node_modules
-/public/hot
-/public/storage
-/storage/*.key
-/vendor
-/.idea
-/.vscode
-/.vagrant
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-.env
-.env.dev
-.phpunit.result.cache
-
-# IDE / Editor
-.metadata
-.settings/
-build/
-tmp/
-nbproject/private/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-# Mac OS
+.quasar
 .DS_Store
-.AppleDouble
-.LSOverride
+.thumbs.db
+node_modules
+/dist
+/src-cordova/node_modules
+/src-cordova/platforms
+/src-cordova/plugins
+/src-cordova/www
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# Windows thumbnail cache files
-Thumbs.db
-ehthumbs.db
-ehthumbs_vista.db
-
-# Dump file
-*.stackdump
-
-# Folder config file
-[Dd]esktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

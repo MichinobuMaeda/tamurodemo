@@ -1,29 +1,26 @@
-Tamuro
-======
+# tamuro (tamuro)
 
-A group ware for closed communities.
+tamuro
 
-Requirements
+## Install the dependencies
+```bash
+yarn
+```
 
- - PHP: 7.2
- - Composer
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
+```bash
+quasar dev
+```
 
+### Lint the files
+```bash
+yarn run lint
+```
 
-Setup dev. environment
+### Build the app for production
+```bash
+quasar build
+```
 
-    $ git clone https://github.com/MichinobuMaeda/tamuro.git
-    $ cd tamuro
-    $ composer install
-    $ touch storage/tamuro.sqlite 
-
-Test
-
-    $ composer test
-
-Run with test data for local
-
-    $ cp .env.phpunit .env.dev
-    $ vi .env.dev
-    $ cp .env.dev .env
-    $ php artisan migrate:refresh --seed
-    $ php artisan serve --host localhost --port 8000
+### Customize the configuration
+See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
