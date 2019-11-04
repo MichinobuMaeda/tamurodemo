@@ -1,3 +1,5 @@
+src/conf/firebase.js
+
 .quasar
 .DS_Store
 .thumbs.db
