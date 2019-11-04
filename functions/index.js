@@ -29,11 +29,11 @@ const addDocIfNotExist = async (db, collection, name, data) => {
 
 const setup = async () => {
   const ts = new Date()
-  await db.collection('service').doc('status').set({
+  await addDocIfNotExist(db, 'service', 'status', {
     version: '0000000000'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
-    url: ''
+    url: '[Project ID].web.app'
   })
   await addDocIfNotExist(db, 'service', 'line', {
     grant_type: 'authorization_code',
@@ -45,7 +45,10 @@ const setup = async () => {
   })
 }
 
-appTamuro.get('/setup', async (req, res) => setup())
+appTamuro.get('/setup', async (req, res) => {
+  await setup()
+  res.send({ status: 'ok' })
+})
 
 appTamuro.get('/initialize', async (req, res) => {
   await setup()
@@ -79,8 +82,9 @@ appTamuro.get('/initialize', async (req, res) => {
       updatedAt: ts
     })
     const token = await admin.auth().createCustomToken(user.id)
-    const serviceStatus = await db.collection('service').doc('status').get()
-    res.send({ url: UI_URL + '?v=' + serviceStatus.data().verison + '&invitation=' + token })
+    let status = await db.collection('service').doc('status').get()
+    let ui = await db.collection('service').doc('ui').get()
+    res.send({ url: ui.data().url + '?v=' + status.data().verison + '&invitation=' + token })
   }
 })
 
@@ -89,9 +93,10 @@ exports.tamuro = functions.https.onRequest(appTamuro);
 // HTTP API: Get invitation URL
 exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
   await db.collection('users').doc(data.id).update({ invitedAt: new Date() })
+  let ui = await db.collection('service').doc('ui').get()
   let status = await db.collection('service').doc('status').get()
   const token = await admin.auth().createCustomToken(data.id)
-  return UI_URL + '?v=' + status.data().version + '&invitation=' + token
+  return ui.data().url + '?v=' + status.data().version + '&invitation=' + token
 })
 
 // HTTP API: Unlink Line
