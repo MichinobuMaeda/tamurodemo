@@ -13,6 +13,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/PrivacyPolicy.vue') }
     ]
+  },
+  {
+    path: '/preferences',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Preferences.vue') }
+    ]
   }
 ]
 

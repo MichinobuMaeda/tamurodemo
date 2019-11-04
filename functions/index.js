@@ -9,11 +9,6 @@ const crypto = require('crypto')
 // UI
 const UI_URL = 'https://tamuro-dev1.web.app/'
 
-// LINE
-const LINE_CLIENT_ID = '1653379416'
-const LINE_TOKEN_URL = 'https://api.line.me/oauth2/v2.1/token'
-const LINE_ISS = 'https://access.line.me'
-
 // Setup Firebase admin user
 admin.initializeApp()
 const db = admin.firestore()
@@ -24,21 +19,46 @@ appTamuro.use(cors({ origin: true }))
 appTamuro.use(express.json()) 
 
 // HTTP API: initialize Service
+const addDocIfNotExist = async (db, collection, name, data) => {
+  let ref = db.collection(collection).doc(name)
+  let doc = await ref.get()
+  if (!(doc && doc.exists)) {
+    await ref.set(data)
+  }
+}
+
+const setup = async () => {
+  const ts = new Date()
+  await db.collection('service').doc('status').set({
+    version: '0000000000'
+  })
+  await addDocIfNotExist(db, 'service', 'ui', {
+    url: ''
+  })
+  await addDocIfNotExist(db, 'service', 'line', {
+    grant_type: 'authorization_code',
+    client_id: '',
+    client_secret: '',
+    iss: 'https://access.line.me',
+    auth_url: 'https://access.line.me/oauth2/v2.1/authorize',
+    token_url: 'https://api.line.me/oauth2/v2.1/token'
+  })
+}
+
+appTamuro.get('/setup', async (req, res) => setup())
+
 appTamuro.get('/initialize', async (req, res) => {
+  await setup()
   let users = await db.collection('users').get()
   if (users.size) {
-    res.send({ token: null })
+    res.send({ url: null })
   } else {
-    const version = '0000000000'
     const ts = new Date()
     let user = await db.collection('users').add({
       name: 'Administrator',
       invitedAt: ts,
       createdAt: ts,
       updatedAt: ts
-    })
-    await db.collection('service').doc('status').set({
-      version
     })
     await db.collection('groups').doc('top').set({
       name: 'Tamuro',
@@ -59,7 +79,8 @@ appTamuro.get('/initialize', async (req, res) => {
       updatedAt: ts
     })
     const token = await admin.auth().createCustomToken(user.id)
-    res.send({ url: UI_URL + '?v=' + version + '&invitation=' + token })
+    const serviceStatus = await db.collection('service').doc('status').get()
+    res.send({ url: UI_URL + '?v=' + serviceStatus.data().verison + '&invitation=' + token })
   }
 })
 
@@ -87,16 +108,20 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
   const nonce = data.nonce
 
   // Get client secret.
-  let secrets = await db.collection('service').doc('secrets').get()
-  const LINE_CLIENT_SECRET = secrets.data().line_client_secret
-
+  let lineService = await db.collection('service').doc('line').get()
+  const grant_type = lineService.data().grant_type
+  const client_id = lineService.data().client_id
+  const client_secret = lineService.data().client_secret
+  const token_url = lineService.data().token_url
+  const iss = lineService.data().iss
+  
   // Get access token.
-  let acc = await axios.post(LINE_TOKEN_URL, querystring.stringify({
-    grant_type: 'authorization_code',
+  let acc = await axios.post(token_url, querystring.stringify({
+    grant_type,
     code,
     redirect_uri,
-    client_id: LINE_CLIENT_ID,
-    client_secret: LINE_CLIENT_SECRET
+    client_id,
+    client_secret
   }))
 
   // Parse access token.
@@ -105,7 +130,7 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
   let sygniture = Buffer.from(respParts[2], 'base64').toString('hex')
 
   // Validate access token.
-  const hmac = crypto.createHmac('sha256', LINE_CLIENT_SECRET)
+  const hmac = crypto.createHmac('sha256', client_secret)
   hmac.update(respParts[0] + '.' + respParts[1])
   if (hmac.digest('hex') !== sygniture) {
     console.error('mismatched sygniture')
@@ -113,10 +138,10 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
   } else if (payload.nonce !== nonce) {
     console.error('mismatched nonce: ' + payload.nonce + ' / ' + nonce)
     return { error: 'mismatched nonce' }
-  } else if (payload.iss !== LINE_ISS) {
+  } else if (payload.iss !== iss) {
     console.error('mismatched iss')
     return { error: 'mismatched iss' }
-  } else if (payload.aud !== LINE_CLIENT_ID) {
+  } else if (payload.aud !== client_id) {
     console.error('mismatched aud')
     return { error: 'mismatched aud' }
   } else if (payload.exp < ((new Date()).getTime() / 1000)) {

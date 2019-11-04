@@ -2,15 +2,17 @@
   <div class="q-pa-md">
     <div class="row">
       <div class="col q-gutter-sm">
-        <div class="text-h5 text-light-green-10">
-          <q-avatar size="64px">
-            <q-icon name="security" />
-          </q-avatar>
-          Privacy policy
-        </div>
+        <p :class="conf.styles.pageTitle">
+          <q-icon name="policy" />
+          {{ $t('privacyPolicy') }}
+        </p>
         <p>
           This site is the test site for <a href="https://github.com/MichinobuMaeda/tamuro">Tamuro</a> project.
-          Please don't save your personal information.
+          Please don't post your personal information.
+        </p>
+        <p>
+          このサイトは <a href="https://github.com/MichinobuMaeda/tamuro">Tamuro</a> プロジェクトのテストサイトです。
+          個人情報を入力しないでください。
         </p>
       </div>
     </div>
@@ -21,7 +23,12 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'PagePrivacyPolicy'
+  name: 'PagePrivacyPolicy',
+  computed: {
+    ...mapGetters([ 'conf' ])
+  }
 }
 </script>
