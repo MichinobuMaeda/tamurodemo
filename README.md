@@ -66,7 +66,7 @@ $ cp .firebaserc-sample .firebaserc
 $ cp src/conf/firebase-sample.js src/conf/firebase.js
 ```
 
-edit .firebaserc
+Edit .firebaserc
 
 ```
 {
@@ -96,7 +96,7 @@ $ firebase projects:list
 $ firebase deploy --only functions,firestore,stroage
 ```
 
-https://us-central1-[Project ID].cloudfunctions.net/tamuro/setup
+https://us-central1-[Project_ID].cloudfunctions.net/tamuro/setup
 
 return
 
@@ -110,10 +110,14 @@ https://console.firebase.google.com/
      * service
        * ui
        * line
+       * yahoojp
+       * mixi
+
+Edit ``src/conf/auth.js``
 
 ### The primary account and groups
 
-https://us-central1-[Project ID].cloudfunctions.net/tamuro/initialize
+https://us-central1-[Project_ID].cloudfunctions.net/tamuro/initialize
 
 return
 

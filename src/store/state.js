@@ -11,5 +11,5 @@ export default {
   db,
   loading: true,
   me: null,
-  serviceStatus: null
+  service: {}
 }
