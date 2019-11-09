@@ -1,7 +1,6 @@
 import crypto from 'crypto'
 import querystring from 'querystring'
 import Firebase from 'firebase'
-import version from '../utils/version'
 
 export const signOut = ({ state }) => state.firebase.auth().signOut()
 
@@ -14,12 +13,11 @@ const onSignIn = async ({ commit, state }, { user }) => {
         commit('setAccounts', querySnapshot)
       }))
     }
-    commit('addUnsubscriber', state.db.collection('service').doc('schema').onSnapshot(doc => {
-      commit('setProperties', doc.data().properties)
-      commit('setStreets', doc.data().streets)
+    commit('addUnsubscriber', state.db.collection('groups').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+      commit('setGrops', querySnapshot)
     }))
-    commit('addUnsubscriber', state.db.collection('members').onSnapshot(querySnapshot => {
-      commit('setMembers', querySnapshot)
+    commit('addUnsubscriber', state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+      commit('setUsers', querySnapshot)
     }))
     commit('addUnsubscriber', state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
       commit('setMe', doc.exists ? doc : null)
@@ -35,11 +33,10 @@ const onSignOut = async ({ commit, state }) => {
     unsubscriber()
   })
   commit('resetUnsubscribers')
-  commit('resetProperties')
-  commit('resetStreets')
-  commit('resetMembers')
-  commit('resetMe')
   commit('resetAccounts')
+  commit('resetUsers')
+  commit('resetGrops')
+  commit('resetMe')
 }
 
 export const onAuthStateChanged = async ({ state, commit }, router) => {
@@ -56,7 +53,7 @@ export const onAuthStateChanged = async ({ state, commit }, router) => {
             )
           )
           window.localStorage.removeItem('sessionState')
-          window.location.href = window.location.href.replace(/\?.*/, '') + '?v=' + version + '#/'
+          window.location.href = window.location.href.replace(/\?.*/, '') + '?v=' + state.conf.version + '#/'
         }
       } else {
         await onSignIn({ commit, state }, { user })
@@ -73,37 +70,30 @@ export const onAuthStateChanged = async ({ state, commit }, router) => {
   })
 }
 
-export const signInWithFacebook = ({ state, commit }) => {
+const signInWith = ({ state, commit }, provider) => {
   commit('setLoading')
-  state.firebase.auth().signInWithRedirect(new Firebase.auth.FacebookAuthProvider())
+  state.firebase.auth().signInWithRedirect(provider)
 }
 
-export const signInWithTwitter = ({ state, commit }) => {
+const linkWithRedirect = ({ state, commit }, provider) => {
   commit('setLoading')
-  state.firebase.auth().signInWithRedirect(new Firebase.auth.TwitterAuthProvider())
+  state.firebase.auth().currentUser.linkWithRedirect(provider)
 }
 
-export const linkWithFacebook = ({ commit, state }) => {
+const unlinkProvider = async ({ commit, state }, providerID) => {
   commit('setLoading')
-  state.firebase.auth().currentUser.linkWithRedirect(new Firebase.auth.FacebookAuthProvider())
-}
-
-export const linkWithTwitter = ({ commit, state }) => {
-  commit('setLoading')
-  state.firebase.auth().currentUser.linkWithRedirect(new Firebase.auth.TwitterAuthProvider())
-}
-
-export const unlinkFacebook = async ({ commit, state }) => {
-  commit('setLoading')
-  await state.firebase.auth().currentUser.unlink(Firebase.auth.FacebookAuthProvider.PROVIDER_ID)
+  await state.firebase.auth().currentUser.unlink(providerID)
   window.location.reload()
 }
 
-export const unlinkTwitter = async ({ commit, state }) => {
-  commit('setLoading')
-  await state.firebase.auth().currentUser.unlink(Firebase.auth.TwitterAuthProvider.PROVIDER_ID)
-  window.location.reload()
-}
+export const signInWithFacebook = context => signInWith(context, new Firebase.auth.FacebookAuthProvider())
+export const signInWithTwitter = context => signInWith(context, new Firebase.auth.TwitterAuthProvider())
+
+export const linkWithFacebook = context => linkWithRedirect(context, new Firebase.auth.FacebookAuthProvider())
+export const linkWithTwitter = context => linkWithRedirect(context, new Firebase.auth.TwitterAuthProvider())
+
+export const unlinkFacebook = context => unlinkProvider(context, Firebase.auth.FacebookAuthProvider.PROVIDER_ID)
+export const unlinkTwitter = context => unlinkProvider(context, Firebase.auth.TwitterAuthProvider.PROVIDER_ID)
 
 const topUrl = version => window.location.href.replace(/\?.*/, '') + '?v=' + version + '#/'
 const signInUrl = version => window.location.href.replace(/\?.*/, '') + '?v=' + version + '#/signin'
@@ -111,7 +101,7 @@ const generateState = seed => crypto.createHash('sha256').update((new Date()).to
 const generateNonce = seed => crypto.createHash('sha256').update(seed + (new Date()).toISOString()).digest('base64').substr(0, 20)
 // const generateFakePassword = seed => crypto.createHash('sha256').update((new Date()).toISOString() + seed).digest('base64')
 
-const redirectToLineAuth = ({ commit }, link = null) => {
+const redirectToLineAuth = async ({ commit, state }, link = null) => {
   commit('setLoading')
   const ids = await state.firebase.functions().httpsCallable('getAuthIds')()
   const request = {
@@ -126,9 +116,9 @@ const redirectToLineAuth = ({ commit }, link = null) => {
   window.location.href = ids.line.auth_url + '?' + querystring.stringify(request)
 }
 
-export const signInWithLine = ({ commit }) => redirectToLineAuth({ commit })
+export const signInWithLine = ({ state, commit }) => redirectToLineAuth({ state, commit })
 
-export const linkWithLine = ({ state, commit }) => redirectToLineAuth({ commit }, state.me.id)
+export const linkWithLine = ({ state, commit }) => redirectToLineAuth({ state, commit }, state.me.id)
 
 export const verifyRedirectFromLine = async ({ state, commit }) => {
   commit('setLoading')
@@ -142,25 +132,25 @@ export const verifyRedirectFromLine = async ({ state, commit }) => {
   let sessionState = savedSsessionState ? JSON.parse(savedSsessionState) : null
   // Validate parameters and session state.
   if (!sessionState) {
-    window.location.href = topUrl(version)
+    window.location.href = topUrl(state.conf.version)
   } else if (params.state !== sessionState.state) {
     alert(
       'ログインをもう一度やり直してください。' + '\n' +
       '２回以上やり直してもログインできない場合は番号「 11 」をシステム管理者に伝えてください。'
     )
-    window.location.href = signInUrl(version)
+    window.location.href = signInUrl(state.conf.version)
   } else if (params['error']) {
     alert(
       'ログインをもう一度やり直してください。' + '\n' +
       '２回以上やり直してもログインできない場合は番号「 12 」をシステム管理者に伝えてください。'
     )
-    window.location.href = signInUrl(version)
+    window.location.href = signInUrl(state.conf.version)
   } else if (!params['code']) {
     alert(
       'ログインをもう一度やり直してください。' + '\n' +
       '２回以上やり直してもログインできない場合は番号「 13 」をシステム管理者に伝えてください。'
     )
-    window.location.href = signInUrl(version)
+    window.location.href = signInUrl(state.conf.version)
   } else {
     let result = await state.firebase.functions().httpsCallable('signInWithLine')({
       code: params.code,
@@ -168,7 +158,7 @@ export const verifyRedirectFromLine = async ({ state, commit }) => {
     })
     window.localStorage.removeItem('sessionState')
     if (!result.data.token) {
-      window.location.href = topUrl(version)
+      window.location.href = topUrl(state.conf.version)
     } else {
       try {
         await state.firebase.auth().signInWithCustomToken(result.data.token)
@@ -197,19 +187,21 @@ export const signInWithEmailLink = async ({ state }, email) => sendEmailLink(sta
 
 export const linkWithEmail = async ({ state }, email) => sendEmailLink(state, { link: state.me.id, email })
 
-const onServiceStatusReceived = ({ commit, state }, doc) => {
+// On update of service status
+const onServiceStatusUpdated = ({ commit, state }, doc) => {
   commit('setService', doc)
-  if (state.service.status.version > version) {
+  if (state.service.status.version > state.conf.version) {
     window.location.href = topUrl(state.service.status.version)
   }
 }
 
+// Detect update of service status
 export const onServiceStatusChanged = async ({ commit, state }) => {
-  onServiceStatusReceived({ commit, state }, await state.db.collection('service').doc('status').get())
+  onServiceStatusUpdated({ commit, state }, await state.db.collection('service').doc('status').get())
   state.db.collection('service').doc('status').onSnapshot(doc => {
-    onServiceStatusReceived({ commit, state }, doc)
+    onServiceStatusUpdated({ commit, state }, doc)
   })
 }
 
-// For admin: release new version of UI.
-export const releaseUiSoftware = ({ state }) => state.db.collection('service').doc('status').update({ version })
+// For admin: release new version of UI
+export const releaseUiSoftware = ({ state }) => state.db.collection('service').doc('status').update({ version: state.conf.version })

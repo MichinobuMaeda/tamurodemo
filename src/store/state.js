@@ -11,5 +11,9 @@ export default {
   db,
   loading: true,
   me: null,
+  groups: [],
+  accounts: [],
+  users: [],
+  profiles: {},
   service: {}
 }

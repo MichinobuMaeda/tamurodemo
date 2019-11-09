@@ -3,11 +3,11 @@ Tamuro
 
 ## Setup
 
-### Install or update Node.js global packages
+### Node.js global packages
 
 ```
 $ node --version
-v10.xx.x
+v10.x.x
 $ npm i npm -g
 $ npm i yarn -g
 $ npm i firebase-tools -g
@@ -38,6 +38,10 @@ https://console.firebase.google.com/
 https://console.cloud.google.com
 
  * Billing
+ * APIs & Services
+   * Library
+     * Search "IAM" -> Identity and Access Management (IAM) API
+       * Enable
  * IAM & admin
    * [Project ID]@appspot.gserviceaccount.com
      * ADD ANOTHER ROLL: Service Account Token Creator
@@ -52,8 +56,8 @@ https://console.cloud.google.com
 
 ### Development environment
 
-Fork git@github.com:MichinobuMaeda/tamuro.git
-to git@github.com:[Your Accuont]/[Project Name].git
+Fork ``git@github.com:MichinobuMaeda/tamuro.git``
+to ``git@github.com:[Your Accuont]/[Project Name].git``
 
 ```
 $ git clone git@github.com:[Your Accuont]/[Project Name].git
@@ -83,22 +87,21 @@ https://console.firebase.google.com/
        * Your apps
          * </>
 
-Copy ``var firebaseConfig = { ... }`` and paste to ``src/conf/firebase.js``
+Copy ``var firebaseConfig = { ... }`` and paste to ``src/conf/firebase.js`` and replace " to '.
 
 ```
 $ firebase login
+$ firebase use [Project ID]
 $ firebase projects:list
 ```
 
 ### Service
 
 ```
-$ firebase deploy --only functions,firestore,stroage
+$ yarn deployWithoutUI
 ```
 
-https://us-central1-[Project_ID].cloudfunctions.net/tamuro/setup
-
-return
+curl https://us-central1-[Project_ID].cloudfunctions.net/tamuro/setup
 
 ```
 { "status": "ok" }
@@ -110,14 +113,14 @@ https://console.firebase.google.com/
      * service
        * ui
        * line
-       * yahoojp
-       * mixi
+       * yahoojp -- under construction
+       * mixi -- under construction
 
 Edit ``src/conf/auth.js``
 
 ### The primary account and groups
 
-https://us-central1-[Project_ID].cloudfunctions.net/tamuro/initialize
+curl https://us-central1-[Project_ID].cloudfunctions.net/tamuro/initialize
 
 return
 

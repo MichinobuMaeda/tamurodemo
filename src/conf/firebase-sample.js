@@ -1,4 +1,4 @@
-const firebase = {
+const firebaseConfig = {
   apiKey: '',
   authDomain: '',
   databaseURL: '',
@@ -8,4 +8,4 @@ const firebase = {
   appId: ''
 }
 
-export default firebase
+export default firebaseConfig

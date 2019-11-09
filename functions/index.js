@@ -35,7 +35,7 @@ const setup = async () => {
     version: '0000000000'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
-    url: projectId + '.web.app'
+    url: 'https://' + projectId + '.web.app/'
   })
   await addDocIfNotExist(db, 'service', 'line', {
     grant_type: 'authorization_code',
@@ -48,19 +48,22 @@ const setup = async () => {
   })
   await addDocIfNotExist(db, 'groups', 'top', {
     name: 'Tamuro',
-    users: 'all',
+    members: [],
+    subGrups: [ 'admin', 'manager' ],
     createdAt: ts,
     updatedAt: ts
   })
   await addDocIfNotExist(db, 'groups', 'admin', {
     name: 'Administrators',
-    users: [],
+    members: [],
+    subGrups: [],
     createdAt: ts,
     updatedAt: ts
   })
   await addDocIfNotExist(db, 'groups', 'manager', {
     name: 'Managers',
-    users: [],
+    members: [],
+    subGrups: [],
     createdAt: ts,
     updatedAt: ts
   })
@@ -77,23 +80,31 @@ appTamuro.get('/setup', async (req, res) => {
 appTamuro.get('/initialize', async (req, res) => {
   // Create basic docs.
   await setup()
-  let users = await db.collection('users').get()
-  if (users.size) {
+  let accounts = await db.collection('accounts').get()
+  if (accounts.size) {
     res.send({ url: null })
   } else {
     const ts = new Date()
     let user = await db.collection('users').add({
       name: 'Administrator',
+      createdAt: ts,
+      updatedAt: ts
+    })
+    await db.collection('profiles').doc(user.id).set({
+      createdAt: ts,
+      updatedAt: ts
+    })
+    await db.collection('accounts').doc(user.id).set({
       invitedAt: ts,
       createdAt: ts,
       updatedAt: ts
     })
     await db.collection('groups').doc('admin').update({
-      users: [ user.id ],
+      members: [ user.id ],
       updatedAt: ts
     })
     await db.collection('groups').doc('manager').update({
-      users: [ user.id ],
+      members: [ user.id ],
       updatedAt: ts
     })
     const token = await admin.auth().createCustomToken(user.id)
@@ -122,7 +133,7 @@ exports.getAuthIds = functions.https.onCall(async (data, context) => {
 
 // HTTP Callable API: Get invitation URL
 exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
-  await db.collection('users').doc(data.id).update({ invitedAt: new Date() })
+  await db.collection('accounts').doc(data.id).update({ invitedAt: new Date() })
   let status = await db.collection('service').doc('status').get()
   const token = await admin.auth().createCustomToken(data.id)
   const url = await getUiUrl()
@@ -184,7 +195,7 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
     return { error: 'expired token ID' }
   } else if (link) {
     // Link LINE ID to the user.
-    let docRef = db.collection('users').doc(link)
+    let docRef = db.collection('accounts').doc(link)
     let user = await docRef.get()
     if (user && user.exists) {
       await docRef.update({
@@ -199,7 +210,7 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
   } else {
     // On sing in,
     // Get data of sub.
-    let snapshot = await db.collection('users').where('lineUid', '==', payload.sub).get()
+    let snapshot = await db.collection('accounts').where('lineUid', '==', payload.sub).get()
     if (snapshot.size === 1) {
       // Return token.
       let user = snapshot.docs.reduce((ret, cur) => cur ? cur : ret, null)
