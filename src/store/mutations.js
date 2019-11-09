@@ -31,3 +31,5 @@ export const resetUsers = (state) => {
 }
 export const setAccounts = (state, querySnapshot) => { state.accounts = querySnapshot.docs }
 export const resetAccounts = (state) => { state.accounts = [] }
+export const setLoading = state => { state.loading = true }
+export const resetLoading = state => { state.loading = false }

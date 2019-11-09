@@ -3,7 +3,7 @@ const auth = {
   password: false,
   google: false,
   facebook: false,
-  twitter: false,
+  twitter: true,
   github: false,
   microsoft: false,
   line: true,

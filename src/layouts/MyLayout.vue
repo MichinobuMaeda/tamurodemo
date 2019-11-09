@@ -24,17 +24,37 @@
         v-touch-swipe.mouse="handleSwipe"
         :direction="(menuPosition === 'bottom-right' || menuPosition === 'bottom-left') ? 'up' : 'down'"
       >
-        <q-fab-action :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home" to="/">
+        <q-fab-action
+          v-if="$store.state.me"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home"
+          to="/"
+        >
           <q-tooltip anchor="center left" self="center right">
             {{ $t('home') }}
           </q-tooltip>
         </q-fab-action>
-        <q-fab-action :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="policy" to="/policy">
+        <q-fab-action
+          v-else
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="exit_to_app"
+          to="/signin"
+        >
+          <q-tooltip anchor="center left" self="center right">
+            {{ $t('signin') }}
+          </q-tooltip>
+        </q-fab-action>
+        <q-fab-action
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="policy"
+          to="/policy"
+        >
           <q-tooltip anchor="center left" self="center right">
             {{ $t('privacyPolicy') }}
           </q-tooltip>
         </q-fab-action>
-        <q-fab-action :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications" to="/preferences">
+        <q-fab-action
+          v-if="$store.state.me"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications"
+          to="/preferences"
+        >
           <q-tooltip anchor="center left" self="center right">
             {{ $t('preferences') }}
           </q-tooltip>
