@@ -3,8 +3,6 @@ import querystring from 'querystring'
 import Firebase from 'firebase'
 import version from '../utils/version'
 
-const LINE_AUTH_URL = 'https://access.line.me/oauth2/v2.1/authorize'
-
 export const signOut = ({ state }) => state.firebase.auth().signOut()
 
 const onSignIn = async ({ commit, state }, { user }) => {
@@ -115,16 +113,17 @@ const generateNonce = seed => crypto.createHash('sha256').update(seed + (new Dat
 
 const redirectToLineAuth = ({ commit }, link = null) => {
   commit('setLoading')
+  const ids = await state.firebase.functions().httpsCallable('getAuthIds')()
   const request = {
     response_type: 'code',
-    client_id: '1623814635',
-    scope: 'profile openid',
+    client_id: ids.line.client_id,
+    scope: ids.line.scope,
     redirect_uri: window.location.href.replace(/\/[?#].*/, '/?signinwith=line'),
-    state: generateState(LINE_AUTH_URL),
-    nonce: generateNonce(LINE_AUTH_URL)
+    state: generateState(ids.line.auth_url),
+    nonce: generateNonce(ids.line.auth_url)
   }
   window.localStorage.setItem('sessionState', JSON.stringify({ link, ...request }))
-  window.location.href = LINE_AUTH_URL + '?' + querystring.stringify(request)
+  window.location.href = ids.line.auth_url + '?' + querystring.stringify(request)
 }
 
 export const signInWithLine = ({ commit }) => redirectToLineAuth({ commit })
@@ -198,18 +197,19 @@ export const signInWithEmailLink = async ({ state }, email) => sendEmailLink(sta
 
 export const linkWithEmail = async ({ state }, email) => sendEmailLink(state, { link: state.me.id, email })
 
-const onServiceUpdated = ({ commit, state }, querySnapshot) => {
-  commit('setService', querySnapshot)
+const onServiceStatusReceived = ({ commit, state }, doc) => {
+  commit('setService', doc)
   if (state.service.status.version > version) {
-    window.location.href = topUrl(serviceStatus.version)
+    window.location.href = topUrl(state.service.status.version)
   }
 }
 
-export const onServiceChanged = async ({ commit, state }) => {
-  onServiceUpdated({ commit, state }, await state.db.collection('service').get())
-  state.db.collection('service').onSnapshot(querySnapshot => {
-    onServiceUpdated({ commit, state }, querySnapshot)
+export const onServiceStatusChanged = async ({ commit, state }) => {
+  onServiceStatusReceived({ commit, state }, await state.db.collection('service').doc('status').get())
+  state.db.collection('service').doc('status').onSnapshot(doc => {
+    onServiceStatusReceived({ commit, state }, doc)
   })
 }
 
+// For admin: release new version of UI.
 export const releaseUiSoftware = ({ state }) => state.db.collection('service').doc('status').update({ version })

@@ -6,19 +6,20 @@ const axios = require('axios')
 const querystring = require('querystring')
 const crypto = require('crypto')
 
-// UI
-const UI_URL = 'https://tamuro-dev1.web.app/'
-
-// Setup Firebase admin user
+// Setup Firebase admin user connection
 admin.initializeApp()
 const db = admin.firestore()
+const projectId = admin.instanceId().app.options.projectId
 
-// HTTP API for tamuro
+// Get URL of UI
+const getUiUrl = () => db.collection('service').doc('ui').get().then(ui => ui.data().url)
+
+// Initialize HTTP API for tamuro
 const appTamuro = express();
 appTamuro.use(cors({ origin: true }))
 appTamuro.use(express.json()) 
 
-// HTTP API: initialize Service
+// Add the doc if it's not exists.
 const addDocIfNotExist = async (db, collection, name, data) => {
   let ref = db.collection(collection).doc(name)
   let doc = await ref.get()
@@ -27,30 +28,54 @@ const addDocIfNotExist = async (db, collection, name, data) => {
   }
 }
 
+// Create basic docs.
 const setup = async () => {
   const ts = new Date()
   await addDocIfNotExist(db, 'service', 'status', {
     version: '0000000000'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
-    url: '[Project ID].web.app'
+    url: projectId + '.web.app'
   })
   await addDocIfNotExist(db, 'service', 'line', {
     grant_type: 'authorization_code',
     client_id: '',
     client_secret: '',
+    scope: 'profile openid',
     iss: 'https://access.line.me',
     auth_url: 'https://access.line.me/oauth2/v2.1/authorize',
     token_url: 'https://api.line.me/oauth2/v2.1/token'
   })
+  await addDocIfNotExist(db, 'groups', 'top', {
+    name: 'Tamuro',
+    users: 'all',
+    createdAt: ts,
+    updatedAt: ts
+  })
+  await addDocIfNotExist(db, 'groups', 'admin', {
+    name: 'Administrators',
+    users: [],
+    createdAt: ts,
+    updatedAt: ts
+  })
+  await addDocIfNotExist(db, 'groups', 'manager', {
+    name: 'Managers',
+    users: [],
+    createdAt: ts,
+    updatedAt: ts
+  })
 }
 
+// HTTP API: setup the service
 appTamuro.get('/setup', async (req, res) => {
+  // Create basic docs.
   await setup()
   res.send({ status: 'ok' })
 })
 
+// HTTP API: initialize the primary user and groups
 appTamuro.get('/initialize', async (req, res) => {
+  // Create basic docs.
   await setup()
   let users = await db.collection('users').get()
   if (users.size) {
@@ -63,48 +88,53 @@ appTamuro.get('/initialize', async (req, res) => {
       createdAt: ts,
       updatedAt: ts
     })
-    await db.collection('groups').doc('top').set({
-      name: 'Tamuro',
-      users: 'all',
-      createdAt: ts,
+    await db.collection('groups').doc('admin').update({
+      users: [ user.id ],
       updatedAt: ts
     })
-    await db.collection('groups').doc('admin').set({
-      name: 'Administrators',
+    await db.collection('groups').doc('manager').update({
       users: [ user.id ],
-      createdAt: ts,
-      updatedAt: ts
-    })
-    await db.collection('groups').doc('manager').set({
-      name: 'Managers',
-      users: [ user.id ],
-      createdAt: ts,
       updatedAt: ts
     })
     const token = await admin.auth().createCustomToken(user.id)
     let status = await db.collection('service').doc('status').get()
-    let ui = await db.collection('service').doc('ui').get()
-    res.send({ url: ui.data().url + '?v=' + status.data().verison + '&invitation=' + token })
+    const url = await getUiUrl()
+    res.send({ url: url + '?v=' + status.data().verison + '&invitation=' + token })
   }
 })
 
+// Setup HTTP API for tamuro
 exports.tamuro = functions.https.onRequest(appTamuro);
 
-// HTTP API: Get invitation URL
-exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
-  await db.collection('users').doc(data.id).update({ invitedAt: new Date() })
-  let ui = await db.collection('service').doc('ui').get()
-  let status = await db.collection('service').doc('status').get()
-  const token = await admin.auth().createCustomToken(data.id)
-  return ui.data().url + '?v=' + status.data().version + '&invitation=' + token
+// HTTP Callable API: Get auth ids for clients.
+exports.getAuthIds = functions.https.onCall(async (data, context) => {
+  const url = await getUiUrl()
+  let line = await db.collection('service').doc('line').get()
+  return {
+    ui: { url },
+    line: {
+      auth_url: line.data().auth_url,
+      client_id: line.data().client_id,
+      scope: line.data().scope
+    }
+  }
 })
 
-// HTTP API: Unlink Line
+// HTTP Callable API: Get invitation URL
+exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
+  await db.collection('users').doc(data.id).update({ invitedAt: new Date() })
+  let status = await db.collection('service').doc('status').get()
+  const token = await admin.auth().createCustomToken(data.id)
+  const url = await getUiUrl()
+  return url + '?v=' + status.data().version + '&invitation=' + token
+})
+
+// HTTP Callable API: Unlink LINE
 exports.unlinkLine = functions.https.onCall(async (data, context) => {
   await admin.auth().setCustomUserClaims(context.auth.uid, { lineUid: null })
 })
 
-// HTTP API: on Sing in with LINE
+// HTTP Callable API: on Sing in with LINE
 exports.signInWithLine = functions.https.onCall(async (data, context) => {
   // Get post data.
   const link = data.link

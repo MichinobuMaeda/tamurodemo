@@ -11,11 +11,11 @@ export default {
   name: 'App',
   async created () {
     this.$store.state.firebase.auth().languageCode = 'ja'
-    await this.onServiceChanged()
+    await this.onServiceStatusChanged()
     await this.onAuthStateChanged(this.$router)
   },
   methods: {
-    ...mapActions([ 'onServiceChanged', 'onAuthStateChanged' ])
+    ...mapActions([ 'onServiceStatusChanged', 'onAuthStateChanged' ])
   }
 }
 </script>
