@@ -1,6 +1,6 @@
 <template>
   <q-page class="row">
-    <div class="col q-pa-sm">
+    <div class="col q-pa-md">
       Top page
     </div>
   </q-page>
