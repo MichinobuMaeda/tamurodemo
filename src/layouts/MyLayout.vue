@@ -63,6 +63,15 @@
         </q-fab-action>
         <q-fab-action
           v-if="isAdmin"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="cloud_circle"
+          to="/service"
+        >
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+            Serivce
+          </q-tooltip>
+        </q-fab-action>
+        <q-fab-action
+          v-if="isAdmin"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="memory"
           to="/raw"
         >

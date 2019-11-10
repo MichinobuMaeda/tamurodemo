@@ -11,7 +11,7 @@
           label="conf:"
           header-class="text-h6 bg-grey-3"
         >
-          <pre>{{ JSON.stringify($store.state.conf, 0, 2) }}</pre>
+          <code><pre>{{ JSON.stringify($store.state.conf, 0, 2) }}</pre></code>
         </q-expansion-item>
 
         <q-expansion-item

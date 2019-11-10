@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <q-page class="q-pa-md">
     <div class="row">
       <div class="col q-gutter-sm">
         <p :class="conf.styles.pageTitle">
@@ -16,7 +16,7 @@
         </p>
       </div>
     </div>
-  </div>
+  </q-page>
 </template>
 
 <style>
