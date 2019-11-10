@@ -33,3 +33,5 @@ export const setAccounts = (state, querySnapshot) => { state.accounts = querySna
 export const resetAccounts = (state) => { state.accounts = [] }
 export const setLoading = state => { state.loading = true }
 export const resetLoading = state => { state.loading = false }
+export const addUnsubscriber = (state, unsubscriber) => { state.unsubscribers.push(unsubscriber) }
+export const resetUnsubscribers = state => { state.unsubscribers = [] }

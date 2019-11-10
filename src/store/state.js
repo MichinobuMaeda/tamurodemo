@@ -15,5 +15,6 @@ export default {
   accounts: [],
   users: [],
   profiles: {},
-  service: {}
+  service: {},
+  unsubscribers: []
 }

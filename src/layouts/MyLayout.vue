@@ -23,13 +23,15 @@
         icon="menu" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
         v-touch-swipe.mouse="handleSwipe"
         :direction="(menuPosition === 'bottom-right' || menuPosition === 'bottom-left') ? 'up' : 'down'"
+        @show="showToolChip"
+        @hide="hideToolChip"
       >
         <q-fab-action
           v-if="$store.state.me"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home"
           to="/"
         >
-          <q-tooltip anchor="center left" self="center right">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
             {{ $t('home') }}
           </q-tooltip>
         </q-fab-action>
@@ -38,7 +40,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="exit_to_app"
           to="/signin"
         >
-          <q-tooltip anchor="center left" self="center right">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
             {{ $t('signin') }}
           </q-tooltip>
         </q-fab-action>
@@ -46,7 +48,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="policy"
           to="/policy"
         >
-          <q-tooltip anchor="center left" self="center right">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
             {{ $t('privacyPolicy') }}
           </q-tooltip>
         </q-fab-action>
@@ -55,7 +57,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications"
           to="/preferences"
         >
-          <q-tooltip anchor="center left" self="center right">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
             {{ $t('preferences') }}
           </q-tooltip>
         </q-fab-action>
@@ -71,11 +73,24 @@ export default {
   name: 'MyLayout',
   data () {
     return {
-      menuPosition: 'bottom-right'
+      menuPosition: 'bottom-right',
+      toolChip: false,
+      toolChipTimer: null
     }
   },
   methods: {
+    showToolChip () {
+      this.toolChipTimer = setTimeout(() => { this.toolChip = true }, 1500)
+    },
+    hideToolChip () {
+      if (this.toolChipTimer) {
+        clearTimeout(this.toolChipTimer)
+        this.toolChipTimer = null
+      }
+      this.toolChip = false
+    },
     handleSwipe ({ evt, ...info }) {
+      this.toolChip = false
       if (this.menuPosition === 'bottom-right') {
         if (info.direction === 'left') {
           this.menuPosition = 'bottom-left'

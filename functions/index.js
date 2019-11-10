@@ -95,6 +95,7 @@ appTamuro.get('/initialize', async (req, res) => {
       updatedAt: ts
     })
     await db.collection('accounts').doc(user.id).set({
+      valid: true,
       invitedAt: ts,
       createdAt: ts,
       updatedAt: ts
@@ -110,7 +111,7 @@ appTamuro.get('/initialize', async (req, res) => {
     const token = await admin.auth().createCustomToken(user.id)
     let status = await db.collection('service').doc('status').get()
     const url = await getUiUrl()
-    res.send({ url: url + '?v=' + status.data().verison + '&invitation=' + token })
+    res.send({ url: url + '?v=' + status.data().version + '&invitation=' + token })
   }
 })
 

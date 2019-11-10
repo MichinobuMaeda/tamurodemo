@@ -14,7 +14,7 @@ const onSignIn = async ({ commit, state }, { user }) => {
       }))
     }
     commit('addUnsubscriber', state.db.collection('groups').orderBy('name', 'asc').onSnapshot(querySnapshot => {
-      commit('setGrops', querySnapshot)
+      commit('setGroups', querySnapshot)
     }))
     commit('addUnsubscriber', state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
       commit('setUsers', querySnapshot)
@@ -35,7 +35,7 @@ const onSignOut = async ({ commit, state }) => {
   commit('resetUnsubscribers')
   commit('resetAccounts')
   commit('resetUsers')
-  commit('resetGrops')
+  commit('resetGroups')
   commit('resetMe')
 }
 
@@ -58,14 +58,14 @@ export const onAuthStateChanged = async ({ state, commit }, router) => {
       } else {
         await onSignIn({ commit, state }, { user })
         commit('resetLoading')
-        router.push('/')
+        router.push('/').catch(() => {})
       }
     } else {
       if (state.me) {
         await onSignOut({ commit, state })
       }
       commit('resetLoading')
-      router.push('/signin')
+      router.push('/signin').catch(() => {})
     }
   })
 }
@@ -120,7 +120,7 @@ export const signInWithLine = ({ state, commit }) => redirectToLineAuth({ state,
 
 export const linkWithLine = ({ state, commit }) => redirectToLineAuth({ state, commit }, state.me.id)
 
-export const verifyRedirectFromLine = async ({ state, commit }) => {
+const verifyRedirectFromLine = async ({ state, commit }) => {
   commit('setLoading')
   // Parse GET parameters.
   var params = {}
@@ -186,6 +186,32 @@ const sendEmailLink = async (state, { link, email }) => {
 export const signInWithEmailLink = async ({ state }, email) => sendEmailLink(state, { link: null, email })
 
 export const linkWithEmail = async ({ state }, email) => sendEmailLink(state, { link: state.me.id, email })
+
+// On app create.
+export const onAppCreate = async ({ commit, state }) => {
+  if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
+    const savedSessionState = window.localStorage.getItem('sessionState')
+    const sessionState = savedSessionState ? JSON.parse(savedSessionState) : null
+    if (sessionState && sessionState.email) {
+      if (!sessionState.link) {
+        await state.firebase.auth().signInWithEmailLink(
+          sessionState.email,
+          window.location.href
+        )
+        window.localStorage.removeItem('sessionState')
+        window.location.href = window.location.href.replace(/\?.*/, '') + '?v=' + state.conf.version + '#/'
+      }
+    } else {
+      window.location.href = window.location.href.replace(/\?.*/, '') + '?v=' + state.conf.version + '#/signin'
+    }
+  } else if (window.location.href.includes('?signinwith=line')) {
+    await verifyRedirectFromLine({ state, commit })
+  } else if (window.location.href.includes('&invitation=')) {
+    let token = window.location.href.replace(/.*&invitation=/, '').replace(/#\/.*/, '')
+    await state.firebase.auth().signInWithCustomToken(token)
+    window.location.href = window.location.href.replace(/&invitation=.*/, '')
+  }
+}
 
 // On update of service status
 const onServiceStatusUpdated = ({ commit, state }, doc) => {
