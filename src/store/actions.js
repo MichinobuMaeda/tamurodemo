@@ -24,13 +24,21 @@ const unlinkProvider = async ({ commit, state }, providerID) => {
   window.location.reload()
 }
 
-export const signInWithFacebook = context => signInWith(context, new Firebase.auth.FacebookAuthProvider())
-export const linkWithFacebook = context => linkWithRedirect(context, new Firebase.auth.FacebookAuthProvider())
-export const unlinkTwitter = context => unlinkProvider(context, Firebase.auth.TwitterAuthProvider.PROVIDER_ID)
-
 export const signInWithTwitter = context => signInWith(context, new Firebase.auth.TwitterAuthProvider())
 export const linkWithTwitter = context => linkWithRedirect(context, new Firebase.auth.TwitterAuthProvider())
 export const unlinkFacebook = context => unlinkProvider(context, Firebase.auth.FacebookAuthProvider.PROVIDER_ID)
+
+export const signInWithGithub = context => signInWith(context, new Firebase.auth.GithubAuthProvider())
+export const linkWithGithub = context => linkWithRedirect(context, new Firebase.auth.GithubAuthProvider())
+export const unlinkGithub = context => unlinkProvider(context, Firebase.auth.GithubAuthProvider.PROVIDER_ID)
+
+export const signInWithGoogle = context => signInWith(context, new Firebase.auth.GoogleAuthProvider())
+export const linkWithGoogle = context => linkWithRedirect(context, new Firebase.auth.GoogleAuthProvider())
+export const unlinkGoogle = context => unlinkProvider(context, Firebase.auth.GoogleAuthProvider.PROVIDER_ID)
+
+export const signInWithFacebook = context => signInWith(context, new Firebase.auth.FacebookAuthProvider())
+export const linkWithFacebook = context => linkWithRedirect(context, new Firebase.auth.FacebookAuthProvider())
+export const unlinkTwitter = context => unlinkProvider(context, Firebase.auth.TwitterAuthProvider.PROVIDER_ID)
 
 const redirectToLineAuth = async ({ commit, state }, link = null) => {
   commit('setLoading')

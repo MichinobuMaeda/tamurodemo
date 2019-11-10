@@ -17,6 +17,18 @@
           @click="signInWithFacebook($route)"
         />
         <q-btn
+          v-if="conf.auth.github"
+          class="q-my-md full-width" align="left" outline color="black"
+          label="GitHub"
+          @click="signInWithGithub($route)"
+        />
+        <q-btn
+          v-if="conf.auth.google"
+          class="q-my-md full-width" align="left" outline color="red-10"
+          label="Google"
+          @click="signInWithGoogle($route)"
+        />
+        <q-btn
           v-if="conf.auth.twitter"
           class="q-my-md full-width" align="left" outline color="light-blue"
           label="Twitter"
@@ -69,6 +81,8 @@ export default {
     ...mapActions([
       'signInWithLine',
       'signInWithFacebook',
+      'signInWithGithub',
+      'signInWithGoogle',
       'signInWithTwitter',
       'signInWithEmailLink'
     ]),

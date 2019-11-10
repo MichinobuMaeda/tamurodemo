@@ -34,6 +34,30 @@
           @click="linkWithFacebook"
         />
         <q-btn
+          v-if="conf.auth.github && isGithub"
+          class="q-my-md full-width" align="left" outline color="black"
+          icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'GitHub' })"
+          @click="unlinkGithub"
+        />
+        <q-btn
+          v-else-if="conf.auth.github"
+          class="q-my-md full-width" align="left" outline color="black"
+          icon="add_circle_outline" :label="$t('addProvider', { provider: 'GitHub' })"
+          @click="linkWithGithub"
+        />
+        <q-btn
+          v-if="conf.auth.google && isGoogle"
+          class="q-my-md full-width" align="left" outline color="red-10"
+          icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'Google' })"
+          @click="unlinkGoogle"
+        />
+        <q-btn
+          v-else-if="conf.auth.google"
+          class="q-my-md full-width" align="left" outline color="red-10"
+          icon="add_circle_outline" :label="$t('addProvider', { provider: 'Google' })"
+          @click="linkWithGoogle"
+        />
+        <q-btn
           v-if="conf.auth.twitter && isTwitter"
           class="q-my-md full-width" align="left" outline color="light-blue"
           icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'Twitter' })"
@@ -95,11 +119,15 @@ export default {
     ...mapActions([
       'linkWithLine',
       'linkWithFacebook',
+      'linkWithGithub',
+      'linkWithGoogle',
       'linkWithTwitter',
       'linkWithEmail',
-      'unlinkFacebook',
-      'unlinkTwitter',
       'unlinkLine',
+      'unlinkFacebook',
+      'unlinkGithub',
+      'unlinkGoogle',
+      'unlinkTwitter',
       'signOut'
     ])
   },
@@ -107,9 +135,11 @@ export default {
     ...mapGetters([
       'conf',
       'isSignInMethod',
-      'isTwitter',
-      'isFacebook',
       'isLine',
+      'isFacebook',
+      'isGithub',
+      'isGoogle',
+      'isTwitter',
       'isEmail'
     ])
   }

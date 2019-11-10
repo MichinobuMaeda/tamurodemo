@@ -13,6 +13,14 @@ export const isFacebook = state => {
   let user = state.firebase.auth().currentUser
   return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.FacebookAuthProvider.PROVIDER_ID || ret, false) : false
 }
+export const isGithub = state => {
+  let user = state.firebase.auth().currentUser
+  return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.GithubAuthProvider.PROVIDER_ID || ret, false) : false
+}
+export const isGoogle = state => {
+  let user = state.firebase.auth().currentUser
+  return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.GoogleAuthProvider.PROVIDER_ID || ret, false) : false
+}
 export const isTwitter = state => {
   let user = state.firebase.auth().currentUser
   return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.TwitterAuthProvider.PROVIDER_ID || ret, false) : false
