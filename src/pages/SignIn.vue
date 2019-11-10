@@ -2,26 +2,27 @@
   <div class="q-pa-md">
     <div class="row justify-center">
       <div class="col q-pa-xs col-xs-12 col-sm-6 col-md-5 col-lg-4 col-xl-4">
+        <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
         <div class="q-my-md">{{ $t('signInWithSns') }}</div>
         <q-btn
-          v-if="$store.state.conf.auth.line"
+          v-if="conf.auth.line"
           class="q-my-md full-width" align="left" outline color="green"
           label="Line"
           @click="signInWithLine($route)"
         />
         <q-btn
-          v-if="$store.state.conf.auth.facebook"
+          v-if="conf.auth.facebook"
           class="q-my-md full-width" align="left" outline color="blue-10"
           label="Facebook"
           @click="signInWithFacebook($route)"
         />
         <q-btn
-          v-if="$store.state.conf.auth.twitter"
+          v-if="conf.auth.twitter"
           class="q-my-md full-width" align="left" outline color="light-blue"
           label="Twitter"
           @click="signInWithTwitter($route)"
         />
-        <div v-if="$store.state.conf.auth.emailLink">
+        <div v-if="conf.auth.emailLink">
           <q-separator class="q-my-md" />
           <div class="q-my-md">{{ $t('passwordlessSignIn') }}</div>
           <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')">
@@ -53,7 +54,7 @@
 </style>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { validateEmail } from '../utils/validators'
 
 export default {
@@ -61,7 +62,7 @@ export default {
   data () {
     return {
       email: '',
-      emailRule: [ v => (!v || validateEmail(v)) || '正しいメールアドレスを入力してください。' ]
+      emailRule: [ v => (!v || validateEmail(v)) || this.$t('invalidEmailAddress') ]
     }
   },
   methods: {
@@ -72,6 +73,11 @@ export default {
       'signInWithEmailLink'
     ]),
     validateEmail
+  },
+  computed: {
+    ...mapGetters([
+      'conf'
+    ])
   }
 }
 </script>

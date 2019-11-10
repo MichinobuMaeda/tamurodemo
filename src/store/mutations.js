@@ -34,4 +34,12 @@ export const resetAccounts = (state) => { state.accounts = [] }
 export const setLoading = state => { state.loading = true }
 export const resetLoading = state => { state.loading = false }
 export const addUnsubscriber = (state, unsubscriber) => { state.unsubscribers.push(unsubscriber) }
+export const setMessage = (state, message) => {
+  state.message = message.key ? message : { key: message, params: {} }
+  window.localStorage.setItem('message', JSON.stringify(state.message))
+}
+export const resetMessage = (state) => {
+  state.message = { key: 'noMessage', params: {} }
+  window.localStorage.setItem('message', JSON.stringify(state.message))
+}
 export const resetUnsubscribers = state => { state.unsubscribers = [] }
