@@ -8,7 +8,7 @@
       <q-list>
         <q-item clickable v-ripple to="/groups/top">
           <q-item-section avatar><q-icon name="people" /></q-item-section>
-          <q-item-section>{{ group('top').data().name }}</q-item-section>
+          <q-item-section>{{ group('top') && group('top').data().name }}</q-item-section>
         </q-item>
         <div v-for="group in $store.state.groups" v-bind:key="group.id">
           <q-item
@@ -21,11 +21,11 @@
         </div>
         <q-item clickable v-ripple to="/groups/manager">
           <q-item-section avatar><q-icon name="people" /></q-item-section>
-          <q-item-section>{{ group('manager').data().name }}</q-item-section>
+          <q-item-section>{{ group('manager') && group('manager').data().name }}</q-item-section>
         </q-item>
         <q-item clickable v-ripple to="/groups/admin">
           <q-item-section avatar><q-icon name="people" /></q-item-section>
-          <q-item-section>{{ group('admin').data().name }}</q-item-section>
+          <q-item-section>{{ group('admin') && group('admin').data().name }}</q-item-section>
         </q-item>
       </q-list>
     </div>
