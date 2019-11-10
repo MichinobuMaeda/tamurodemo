@@ -2,10 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
-      return request.auth.uid in get(/databases/$(database)/documents/groups/admin).members;
+      return request.auth.uid in get(/databases/$(database)/documents/groups/admin).data.members;
     }
     function isManager() {
-      return request.auth.uid in get(/databases/$(database)/documents/groups/manager).members;
+      return request.auth.uid in get(/databases/$(database)/documents/groups/manager).data.members;
     }
     match /service/status {
       allow write: if isAdmin();
@@ -15,8 +15,8 @@ service cloud.firestore {
       allow write: if isManager();
       allow read: if request.auth.uid != null;
     }
-    match /accounts/{userId} {
-      allow read, write: if (request.auth.uid == userId) || isManager() || isAdmin();
+    match /accounts/{accountId} {
+      allow read, write: if (request.auth.uid == accountId) || isManager() || isAdmin();
     }
     match /users/{userId} {
       allow write: if (request.auth.uid == userId) || isManager() || isAdmin();

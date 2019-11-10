@@ -32,9 +32,9 @@ const routes = [
     ]
   },
   {
-    path: '/debug',
+    path: '/raw',
     component: () => import('layouts/MyLayout.vue'),
-    children: [ { path: '', component: () => import('pages/Debug.vue') } ]
+    children: [ { path: '', component: () => import('pages/RawData.vue') } ]
   }
 ]
 

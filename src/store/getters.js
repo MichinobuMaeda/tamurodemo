@@ -2,13 +2,9 @@ import Firebase from 'firebase'
 
 export const conf = state => state.conf
 export const isValidAccount = state => state.me && state.me.data().valid
-export const isAdmin = state => state.me && state.me.data().valid && state.me.data().admin
-export const isManager = state => state.me && state.me.data().valid && state.me.data().manager
-export const isSignInMethod = state => {
-  let me = state.me
-  let user = state.firebase.auth().currentUser
-  return me && user && (me.data().lineUid || (user.providerData && user.providerData.length))
-}
+export const isAdmin = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'admin') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
+export const isManager = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'manager') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
+export const isSignInMethod = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => ((cur.id === 'admin') || (cur.id === 'manager')) ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
 export const isFacebook = state => {
   let user = state.firebase.auth().currentUser
   return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.FacebookAuthProvider.PROVIDER_ID || ret, false) : false

@@ -27,7 +27,7 @@
         @hide="hideToolChip"
       >
         <q-fab-action
-          v-if="$store.state.me"
+          v-if="isValidAccount"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home"
           to="/"
         >
@@ -53,12 +53,21 @@
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
-          v-if="$store.state.me"
+          v-if="isValidAccount"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications"
           to="/preferences"
         >
           <q-tooltip anchor="center left" self="center right" v-model="toolChip">
             {{ $t('preferences') }}
+          </q-tooltip>
+        </q-fab-action>
+        <q-fab-action
+          v-if="isAdmin"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="memory"
+          to="/raw"
+        >
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+            Raw data
           </q-tooltip>
         </q-fab-action>
       </q-fab>
@@ -119,7 +128,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([ 'conf' ])
+    ...mapGetters([
+      'conf',
+      'isValidAccount',
+      'isAdmin',
+      'isManager'
+    ])
   }
 }
 </script>

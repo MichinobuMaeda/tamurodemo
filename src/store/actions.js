@@ -145,8 +145,9 @@ const onSignIn = async ({ commit, state }, { user }) => {
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
     commit('setMe', me)
-    if (me.data().admin || me.data().manager) {
-      commit('addUnsubscriber', state.db.collection('accounts').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+    let admin = await state.db.collection('groups').doc('admin').get()
+    if (admin.data().members.includes(me.id)) {
+      commit('addUnsubscriber', state.db.collection('accounts').onSnapshot(querySnapshot => {
         commit('setAccounts', querySnapshot)
       }))
     }

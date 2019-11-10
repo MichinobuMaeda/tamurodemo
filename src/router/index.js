@@ -44,7 +44,7 @@ export default function ({ store } /* { store, ssrContext } */) {
       replace = '/'
     } else if ([
       '/service',
-      '/debug'
+      '/raw'
     ].includes(to.path) && (!store.getters.isAdmin)) {
       replace = '/'
     }
