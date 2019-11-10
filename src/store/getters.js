@@ -1,6 +1,7 @@
 import Firebase from 'firebase'
 
 export const conf = state => state.conf
+export const group = state => id => state.groups.reduce((ret, cur) => cur.id === id ? cur : ret, null)
 export const isValidAccount = state => state.me && state.me.data().valid
 export const isAdmin = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'admin') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
 export const isManager = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'manager') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)

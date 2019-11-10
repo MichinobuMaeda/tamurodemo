@@ -3,9 +3,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Index.vue') }
-    ]
+    children: [ { path: '', component: () => import('pages/Index.vue') } ]
   },
   {
     path: '/loading',
@@ -15,9 +13,7 @@ const routes = [
   {
     path: '/policy',
     component: () => import('layouts/MyLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PrivacyPolicy.vue') }
-    ]
+    children: [ { path: '', component: () => import('pages/PrivacyPolicy.vue') } ]
   },
   {
     path: '/signin',
@@ -27,8 +23,13 @@ const routes = [
   {
     path: '/preferences',
     component: () => import('layouts/MyLayout.vue'),
+    children: [ { path: '', component: () => import('pages/Preferences.vue') } ]
+  },
+  {
+    path: '/groups/:id',
+    component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Preferences.vue') }
+      { path: '', component: () => import('pages/Group.vue') }
     ]
   },
   {

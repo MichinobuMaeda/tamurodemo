@@ -16,6 +16,7 @@ export default {
   preferences: '設定',
   privacyPolicy: 'プライバシー・ポリシー',
   home: 'ホーム',
+  groups: 'グループ',
   signout: 'ログアウト',
   enUs: 'English',
   jaJp: '日本語',

@@ -16,6 +16,7 @@ export default {
   preferences: '設定いろう',
   privacyPolicy: 'プライバシーどないしよ',
   home: 'ホームじゃ',
+  groups: 'グループ',
   signout: 'いんでこーわい',
   enUs: 'English',
   jaJp: '日本語',

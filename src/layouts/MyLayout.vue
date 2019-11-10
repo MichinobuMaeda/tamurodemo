@@ -7,7 +7,7 @@
         </q-avatar>
       </router-link>
       <q-toolbar-title :class="'text-' + conf.styles.headerText">
-        Tamuro
+        {{ group('top') && group('top').data().name }}
       </q-toolbar-title>
     </q-toolbar>
     <q-page-container>
@@ -139,6 +139,7 @@ export default {
   computed: {
     ...mapGetters([
       'conf',
+      'group',
       'isValidAccount',
       'isAdmin',
       'isManager'
