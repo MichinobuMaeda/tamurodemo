@@ -28,9 +28,12 @@ const routes = [
   {
     path: '/groups/:id',
     component: () => import('layouts/MyLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Group.vue') }
-    ]
+    children: [ { path: '', component: () => import('pages/Group.vue') } ]
+  },
+  {
+    path: '/users/:id',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [ { path: '', component: () => import('pages/User.vue') } ]
   },
   {
     path: '/service',

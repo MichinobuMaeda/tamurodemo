@@ -5,7 +5,7 @@
         <q-icon name="people" />
         {{ $t('groups') }}
       </p>
-      <q-list bordered separator>
+      <q-list>
         <q-item clickable v-ripple to="/groups/top">
           <q-item-section avatar><q-icon name="people" /></q-item-section>
           <q-item-section>{{ group('top').data().name }}</q-item-section>
