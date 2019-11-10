@@ -39,37 +39,6 @@ const onSignOut = async ({ commit, state }) => {
   commit('resetMe')
 }
 
-export const onAuthStateChanged = async ({ state, commit }, router) => {
-  state.firebase.auth().onAuthStateChanged(async user => {
-    if (user) {
-      if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
-        const savedSessionState = window.localStorage.getItem('sessionState')
-        const sessionState = savedSessionState ? JSON.parse(savedSessionState) : null
-        if (sessionState) {
-          await user.linkWithCredential(
-            Firebase.auth.EmailAuthProvider.credentialWithLink(
-              sessionState.email,
-              window.location.href
-            )
-          )
-          window.localStorage.removeItem('sessionState')
-          window.location.href = window.location.href.replace(/\?.*/, '') + '?v=' + state.conf.version + '#/'
-        }
-      } else {
-        await onSignIn({ commit, state }, { user })
-        commit('resetLoading')
-        router.push('/').catch(() => {})
-      }
-    } else {
-      if (state.me) {
-        await onSignOut({ commit, state })
-      }
-      commit('resetLoading')
-      router.push('/signin').catch(() => {})
-    }
-  })
-}
-
 const signInWith = ({ state, commit }, provider) => {
   commit('setLoading')
   state.firebase.auth().signInWithRedirect(provider)
@@ -187,8 +156,15 @@ export const signInWithEmailLink = async ({ state }, email) => sendEmailLink(sta
 
 export const linkWithEmail = async ({ state }, email) => sendEmailLink(state, { link: state.me.id, email })
 
-// On app create.
-export const onAppCreate = async ({ commit, state }) => {
+// Release new version of UI.
+export const releaseUiSoftware = ({ state }) => state.db.collection('service').doc('status').update({ version: state.conf.version })
+
+// On app created
+export const onAppCreated = async ({ commit, state }, router) => {
+  // Set defaults.
+  state.firebase.auth().languageCode = 'ja'
+
+  // Evaluate HTTP request path.
   if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
     const savedSessionState = window.localStorage.getItem('sessionState')
     const sessionState = savedSessionState ? JSON.parse(savedSessionState) : null
@@ -211,23 +187,31 @@ export const onAppCreate = async ({ commit, state }) => {
     await state.firebase.auth().signInWithCustomToken(token)
     window.location.href = window.location.href.replace(/&invitation=.*/, '')
   }
-}
 
-// On update of service status
-const onServiceStatusUpdated = ({ commit, state }, doc) => {
-  commit('setService', doc)
-  if (state.service.status.version > state.conf.version) {
-    window.location.href = topUrl(state.service.status.version)
+  // On service status changed
+  const onServiceStatusChanged = ({ commit, state }, doc) => {
+    commit('setService', doc)
+    if (state.service.status.version > state.conf.version) {
+      window.location.href = topUrl(state.service.status.version)
+    }
   }
-}
-
-// Detect update of service status
-export const onServiceStatusChanged = async ({ commit, state }) => {
-  onServiceStatusUpdated({ commit, state }, await state.db.collection('service').doc('status').get())
+  onServiceStatusChanged({ commit, state }, await state.db.collection('service').doc('status').get())
   state.db.collection('service').doc('status').onSnapshot(doc => {
-    onServiceStatusUpdated({ commit, state }, doc)
+    onServiceStatusChanged({ commit, state }, doc)
+  })
+
+  // On auth status changed
+  state.firebase.auth().onAuthStateChanged(async user => {
+    if (user) {
+      await onSignIn({ commit, state }, { user })
+      commit('resetLoading')
+      router.push('/').catch(() => {})
+    } else {
+      if (state.me) {
+        await onSignOut({ commit, state })
+      }
+      commit('resetLoading')
+      router.push('/signin').catch(() => {})
+    }
   })
 }
-
-// For admin: release new version of UI
-export const releaseUiSoftware = ({ state }) => state.db.collection('service').doc('status').update({ version: state.conf.version })

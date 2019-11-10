@@ -10,13 +10,10 @@ import { mapActions } from 'vuex'
 export default {
   name: 'App',
   async created () {
-    this.$store.state.firebase.auth().languageCode = 'ja'
-    await this.onAppCreate()
-    await this.onServiceStatusChanged()
-    await this.onAuthStateChanged(this.$router)
+    await this.onAppCreated(this.$router)
   },
   methods: {
-    ...mapActions([ 'onAppCreate', 'onServiceStatusChanged', 'onAuthStateChanged' ])
+    ...mapActions([ 'onAppCreated' ])
   }
 }
 </script>
