@@ -96,9 +96,12 @@ const verifyEmailLink = async ({ state }) => {
         sessionState.email,
         window.location.href
       )
-      window.localStorage.removeItem('sessionState')
-      window.location.href = topUrl(state.conf.version)
+    } else {
+      const credential = Firebase.auth.EmailAuthProvider.credentialWithLink(sessionState.email, window.location.href)
+      await state.firebase.auth().currentUser.linkWithCredential(credential)
     }
+    window.localStorage.removeItem('sessionState')
+    window.location.href = topUrl(state.conf.version)
   } else {
     window.location.href = signInUrl(state.conf.version)
   }
@@ -183,9 +186,7 @@ export const onAppCreated = async ({ commit, state }, router) => {
   state.firebase.auth().languageCode = 'ja'
 
   // Evaluate HTTP request path.
-  if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
-    await verifyEmailLink({ state, commit })
-  } else if (window.location.href.includes('?signinwith=line')) {
+  if (window.location.href.includes('?signinwith=line')) {
     await verifyRedirectFromLine({ state, commit })
   } else if (window.location.href.includes('&invitation=')) {
     await verifyInvitationUrl({ state, commit })
@@ -206,7 +207,9 @@ export const onAppCreated = async ({ commit, state }, router) => {
   // On auth status changed
   state.firebase.auth().onAuthStateChanged(async user => {
     commit('setLoading')
-    if (user) {
+    if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
+      await verifyEmailLink({ state, commit })
+    } else if (user) {
       await onSignIn({ commit, state }, { user })
     } else if (state.me) {
       await onSignOut({ commit, state })
