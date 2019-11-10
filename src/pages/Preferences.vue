@@ -7,7 +7,7 @@
       </p>
 
       <div class="row">
-        <div class="col q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="col q-pa-md col-xs-12 col-sm-6 col-md-4 col-lg-4">
           <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
           <q-separator class="q-my-md" />
           <div class="q-my-md">{{ $t('signInMethod') }}</div>
@@ -92,7 +92,7 @@
           </div>
         </div>
 
-        <div class="col q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="col q-pa-md col-xs-12 col-sm-6 col-md-4 col-lg-4">
           <p>
             <q-btn outline color="negative" :label="$t('signout')" @click="signOut" />
           </p>
