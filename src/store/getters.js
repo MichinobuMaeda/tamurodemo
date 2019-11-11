@@ -3,9 +3,14 @@ import Firebase from 'firebase'
 export const conf = state => state.conf
 export const group = state => id => state.groups.reduce((ret, cur) => cur.id === id ? cur : ret, null)
 export const user = state => id => state.users.reduce((ret, cur) => cur.id === id ? cur : ret, null)
+export const accountStatus = state => id => {
+  let account = state.accounts.reduce((ret, cur) => cur.id === id ? cur : ret, null)
+  return (account && account.data().valid) ? (account.data().enteredAt ? 'done' : (account.data().invitedAt ? 'send' : null)) : 'block'
+}
 export const isValidAccount = state => state.me && state.me.data().valid
 export const isAdmin = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'admin') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
 export const isManager = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'manager') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
+export const isAdminOrManager = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => ['admin', 'manager'].includes(cur.id) ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
 export const isSignInMethod = state => {
   let me = state.me
   let user = state.firebase.auth().currentUser

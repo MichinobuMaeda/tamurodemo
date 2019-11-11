@@ -13,6 +13,11 @@
           >
             <q-item-section avatar><q-icon name="person" /></q-item-section>
             <q-item-section>{{ user.data().name }}</q-item-section>
+            <q-item-section avatar>
+              <q-avatar v-if="isAdminOrManager">
+                <q-icon :name="accountStatus(user.id)" />
+              </q-avatar>
+            </q-item-section>
           </q-item>
         </div>
       </q-list>
@@ -28,7 +33,9 @@ export default {
   computed: {
     ...mapGetters([
       'conf',
-      'group'
+      'group',
+      'accountStatus',
+      'isAdminOrManager'
     ])
   }
 }

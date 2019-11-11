@@ -143,13 +143,14 @@ const verifyRedirectFromLine = async ({ state, commit }) => {
   }
 }
 
-const onSignIn = async ({ commit, state }, { user }) => {
+const onSignIn = async ({ commit, state, getters }, { user }) => {
   let me = await state.db.collection('accounts').doc(user.uid).get()
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
     commit('setMe', me)
     let admin = await state.db.collection('groups').doc('admin').get()
-    if (admin.data().members.includes(me.id)) {
+    let manager = await state.db.collection('groups').doc('manager').get()
+    if (admin.data().members.includes(me.id) || manager.data().members.includes(me.id)) {
       commit('addUnsubscriber', state.db.collection('accounts').onSnapshot(querySnapshot => {
         commit('setAccounts', querySnapshot)
       }))
@@ -160,6 +161,13 @@ const onSignIn = async ({ commit, state }, { user }) => {
     commit('addUnsubscriber', state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
       commit('setUsers', querySnapshot)
     }))
+    if ((!me.data().enteredAt) && getters.isSignInMethod) {
+      let ts = new Date()
+      await state.db.collection('accounts').doc(user.uid).update({
+        enteredAt: ts,
+        updatedAt: ts
+      })
+    }
     commit('addUnsubscriber', state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
       commit('setMe', doc.exists ? doc : null)
     }))
@@ -181,7 +189,7 @@ const onSignOut = async ({ commit, state }) => {
 }
 
 // On app created
-export const onAppCreated = async ({ commit, state }, router) => {
+export const onAppCreated = async ({ commit, state, getters }, router) => {
   // Set defaults.
   state.firebase.auth().languageCode = 'ja'
 
@@ -210,7 +218,7 @@ export const onAppCreated = async ({ commit, state }, router) => {
     if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
       await verifyEmailLink({ state, commit })
     } else if (user) {
-      await onSignIn({ commit, state }, { user })
+      await onSignIn({ commit, state, getters }, { user })
     } else if (state.me) {
       await onSignOut({ commit, state })
     }
