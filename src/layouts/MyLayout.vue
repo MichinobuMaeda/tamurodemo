@@ -91,7 +91,7 @@ export default {
   name: 'MyLayout',
   data () {
     return {
-      menuPosition: 'bottom-right',
+      menuPosition: (this.$store.state.me && this.$store.state.me.data().menuPosition) || 'bottom-right',
       toolChip: {
         'home': false,
         'signin': false,
@@ -118,8 +118,8 @@ export default {
         Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = false })
       }
     },
-    handleSwipe ({ evt, ...info }) {
-      this.toolChip = false
+    async handleSwipe ({ evt, ...info }) {
+      Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = false })
       if (this.menuPosition === 'bottom-right') {
         if (info.direction === 'left') {
           this.menuPosition = 'bottom-left'
@@ -145,6 +145,9 @@ export default {
           this.menuPosition = 'top-left'
         }
       }
+      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+        menuPosition: this.menuPosition
+      })
     }
   },
   computed: {
