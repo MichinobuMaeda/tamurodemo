@@ -106,6 +106,7 @@ appTamuro.get('/setup', async (req, res) => {
 appTamuro.get('/initialize', async (req, res) => {
   // Create basic docs.
   await setup()
+  let status = await db.collection('service').doc('status').get()
   let accounts = await db.collection('accounts').get()
   if (accounts.size) {
     res.send('status: warn\nAlready initialized.\n')
@@ -121,6 +122,7 @@ appTamuro.get('/initialize', async (req, res) => {
       updatedAt: ts
     })
     await db.collection('accounts').doc(user.id).set({
+      timezone: status.data().timezone,
       valid: true,
       invitedAt: ts,
       createdAt: ts,
@@ -135,7 +137,6 @@ appTamuro.get('/initialize', async (req, res) => {
       updatedAt: ts
     })
     const token = await admin.auth().createCustomToken(user.id)
-    let status = await db.collection('service').doc('status').get()
     const url = await getUiUrl()
     const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
     res.send('status: ok\n' + shortUrl + '\n')

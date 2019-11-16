@@ -94,6 +94,9 @@
 
         <div class="col q-pa-md col-xs-12 col-sm-6 col-md-4 col-lg-4">
           <p>
+            <q-select v-model="timezone" :options="TIMEZONES" label="Timezone" @input="onTimezoneChanged" />
+          </p>
+          <p>
             <q-btn outline color="negative" :label="$t('signout')" @click="signOut" />
           </p>
         </div>
@@ -109,6 +112,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { validateEmail, validatePassword } from '../utils/validators'
+import { TIMEZONES } from '../utils/constants'
 
 export default {
   name: 'PagePreferences',
@@ -116,10 +120,17 @@ export default {
     return {
       email: '',
       isPwd: true,
-      emailRule: [ v => (!v || validateEmail(v)) || this.$t('invalidEmailAddress') ]
+      emailRule: [ v => (!v || validateEmail(v)) || this.$t('invalidEmailAddress') ],
+      timezone: this.$store.state.me.data().timezone,
+      TIMEZONES
     }
   },
   methods: {
+    async onTimezoneChanged () {
+      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+        timezone: this.timezone
+      })
+    },
     validateEmail,
     validatePassword,
     ...mapActions([
