@@ -31,7 +31,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home"
           to="/"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip['home']">
             {{ $t('home') }}
           </q-tooltip>
         </q-fab-action>
@@ -40,7 +40,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="exit_to_app"
           to="/signin"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip['signin']">
             {{ $t('signin') }}
           </q-tooltip>
         </q-fab-action>
@@ -48,7 +48,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="policy"
           to="/policy"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip['policy']">
             {{ $t('privacyPolicy') }}
           </q-tooltip>
         </q-fab-action>
@@ -57,7 +57,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications"
           to="/preferences"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip['preferences']">
             {{ $t('preferences') }}
           </q-tooltip>
         </q-fab-action>
@@ -66,7 +66,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="cloud_circle"
           to="/service"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip['service']">
             Serivce
           </q-tooltip>
         </q-fab-action>
@@ -75,7 +75,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="memory"
           to="/raw"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip">
+          <q-tooltip anchor="center left" self="center right" v-model="toolChip['raw']">
             Raw data
           </q-tooltip>
         </q-fab-action>
@@ -92,20 +92,31 @@ export default {
   data () {
     return {
       menuPosition: 'bottom-right',
-      toolChip: false,
+      toolChip: {
+        'home': false,
+        'signin': false,
+        'policy': false,
+        'preferences': false,
+        'service': false,
+        'raw': false
+      },
       toolChipTimer: null
     }
   },
   methods: {
     showToolChip () {
-      this.toolChipTimer = setTimeout(() => { this.toolChip = true }, 1500)
+      if (this.$store.state.isMobile) {
+        this.toolChipTimer = setTimeout(() => { Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = true }) }, 1500)
+      }
     },
     hideToolChip () {
-      if (this.toolChipTimer) {
-        clearTimeout(this.toolChipTimer)
-        this.toolChipTimer = null
+      if (this.$store.state.isMobile) {
+        if (this.toolChipTimer) {
+          clearTimeout(this.toolChipTimer)
+          this.toolChipTimer = null
+        }
+        Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = false })
       }
-      this.toolChip = false
     },
     handleSwipe ({ evt, ...info }) {
       this.toolChip = false
