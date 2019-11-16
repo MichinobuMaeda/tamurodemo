@@ -164,12 +164,36 @@ exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
   if ((!(await isManager(context.auth.uid))) && (!(await isAdmin(context.auth.uid)))) {
     return null
   }
+  console.info({ uid: context.auth.uid, target: data.id })
   let status = await db.collection('service').doc('status').get()
   const token = await admin.auth().createCustomToken(data.id)
   const url = await getUiUrl()
   const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
   await db.collection('accounts').doc(data.id).update({ invitedAt: new Date() })
   return { url: shortUrl }
+})
+
+// HTTP Callable API: Unlink LINE
+exports.getAccountEmail = functions.https.onCall(async (data, context) => {
+  if ((!(await isManager(context.auth.uid))) && (!(await isAdmin(context.auth.uid)))) {
+    return { email: null }
+  }
+  console.info({ uid: context.auth.uid, target: data.id })
+  let user = await admin.auth().getUser(data.id)
+  return { email: (user ? user.email : null) }
+})
+
+// HTTP Callable API: Unlink LINE
+exports.setAccountEmail = functions.https.onCall(async (data, context) => {
+  if ((!(await isManager(context.auth.uid))) && (!(await isAdmin(context.auth.uid)))) {
+    return { email: null }
+  }
+  console.info({ uid: context.auth.uid, target: data.id })
+  await admin.auth().updateUser(data.id, {
+    email: data.email
+  })
+  let user = await admin.auth().getUser(data.id)
+  return { email: (user ? user.email : null) }
 })
 
 // HTTP Callable API: Unlink LINE

@@ -8,7 +8,7 @@
       <span v-for="group in $store.state.groups" v-bind:key="group.id">
         <q-btn
           v-if="group.data().members.includes($route.params.id)"
-          class="q-mx-sm" rounded outline
+          class="q-mx-sm" rounded
           icon="people" :label="group.data().name"
           :to="'/groups/' + group.id"
         />

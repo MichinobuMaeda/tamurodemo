@@ -1,6 +1,14 @@
 <template>
   <div class="row">
     <div class="col q-pa-md">
+      <div class="row">
+        <div class="col col-xs-8 col-sm-10 q-px-md">
+        <q-input v-model="email" />
+        </div>
+        <div class="col col-xs-4 col-sm-2 q-pa-md">
+          <q-btn :label="$t('update')" color="primary" @click="setEmail" />
+        </div>
+      </div>
       <div class="row" v-if="account.id !== $store.state.me.id">
         <div class="col col-xs-4 col-sm-2 q-pa-md">
           <q-btn :label="$t('invitation')" color="primary" @click="invite" />
@@ -54,19 +62,33 @@ export default {
   props: [ 'account' ],
   data () {
     return {
-      paused: !this.account.data().valid
+      paused: !this.account.data().valid,
+      email: ''
     }
+  },
+  async mounted () {
+    let result = await this.$store.state.firebase.functions().httpsCallable('getAccountEmail')({
+      id: this.$store.state.me.id
+    })
+    this.email = result.data.email
   },
   methods: {
     async invite () {
-      const id = this.account.id
-      let result = await this.$store.state.firebase.functions().httpsCallable('getInvitationUrl')({ id })
+      let result = await this.$store.state.firebase.functions().httpsCallable('getInvitationUrl')({
+        id: this.account.id
+      })
       this.account.invitationURL = result.data.url
       this.$forceUpdate()
     },
+    async setEmail () {
+      let result = await this.$store.state.firebase.functions().httpsCallable('setAccountEmail')({
+        id: this.$store.state.me.id,
+        email: this.email
+      })
+      this.email = result.data.email
+    },
     async toggleValid () {
-      const id = this.account.id
-      await this.$store.state.db.collection('accounts').doc(id).update({
+      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
         valid: !this.account.data().valid
       })
     }
