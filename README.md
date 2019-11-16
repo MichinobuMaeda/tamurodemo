@@ -34,6 +34,7 @@ https://console.firebase.google.com/
    * Storage -> Get started
    * Hosting -> Get started
    * Functions -> Get started
+   * Dynamic Links -> Get started
 
 https://console.cloud.google.com
 
