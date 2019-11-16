@@ -170,6 +170,9 @@ const onSignIn = async ({ commit, state, getters }, { user }) => {
     }
     commit('addUnsubscriber', state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
       commit('setMe', doc.exists ? doc : null)
+      if (!(state.me && state.me.exists && state.me.data().valid)) {
+        await signOut({ state })
+      }
     }))
   } else {
     await signOut({ state })

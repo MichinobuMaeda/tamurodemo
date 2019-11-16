@@ -14,18 +14,26 @@
         />
       </span>
     </div>
+    <div class="col col-12" v-if="isAdminOrManager">
+      <AccountAdmin v-bind:account="$store.state.accounts.reduce((ret, cur) => cur.id === $route.params.id ? cur : ret, null)" />
+    </div>
   </q-page>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import AccountAdmin from '../components/AccountAdmin'
 
 export default {
   name: 'PageUser',
+  components: {
+    AccountAdmin
+  },
   computed: {
     ...mapGetters([
       'conf',
-      'user'
+      'user',
+      'isAdminOrManager'
     ])
   }
 }

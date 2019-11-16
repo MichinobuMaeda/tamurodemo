@@ -32,6 +32,16 @@ const shortenURL = async url => {
   return result.data.shortLink
 }
 
+const isManager = async id => {
+  let manager = await db.collection('groups').doc('manager').get()
+  return manager.data().members.includes(id)
+}
+
+const isAdmin = async id => {
+  let admin = await db.collection('groups').doc('admin').get()
+  return admin.data().members.includes(id)
+}
+
 // Add the doc if it's not exists.
 const addDocIfNotExist = async (db, collection, name, data) => {
   let ref = db.collection(collection).doc(name)
@@ -45,7 +55,8 @@ const addDocIfNotExist = async (db, collection, name, data) => {
 const setup = async () => {
   const ts = new Date()
   await addDocIfNotExist(db, 'service', 'status', {
-    version: '0000000000'
+    version: '0000000000',
+    timezone: 'Asia/Tokyo'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
     url: 'https://' + projectId + '.web.app/',
@@ -150,9 +161,7 @@ exports.getAuthIds = functions.https.onCall(async (data, context) => {
 
 // HTTP Callable API: Get invitation URL
 exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
-  let manager = await db.collection('groups').doc('manager').get()
-  let admin = await db.collection('groups').doc('admin').get()
-  if ((!manager.data().members.includes(context.auth.uid)) && (!admin.data().members.includes(context.auth.uid))) {
+  if ((!(await isManager(context.auth.uid))) && (!(await isAdmin(context.auth.uid)))) {
     return null
   }
   let status = await db.collection('service').doc('status').get()
@@ -160,7 +169,7 @@ exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
   const url = await getUiUrl()
   const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
   await db.collection('accounts').doc(data.id).update({ invitedAt: new Date() })
-  return shortUrl
+  return { url: shortUrl }
 })
 
 // HTTP Callable API: Unlink LINE

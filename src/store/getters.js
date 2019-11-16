@@ -1,4 +1,5 @@
 import Firebase from 'firebase'
+import Moment from 'moment-timezone'
 
 export const conf = state => state.conf
 export const group = state => id => state.groups.reduce((ret, cur) => cur.id === id ? cur : ret, null)
@@ -34,3 +35,4 @@ export const isTwitter = state => {
 }
 export const isLine = state => !!state.me.data().lineUid
 export const isEmail = state => !!state.firebase.auth().currentUser.email
+export const longTimestamp = state => tm => Moment(tm).tz(state.me.timezone || state.service.status.timezone).format('YYYY-MM-DD HH:mm:ss')
