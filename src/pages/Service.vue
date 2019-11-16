@@ -26,8 +26,8 @@
           <q-btn
             color="primary"
             icon="cloud_upload" label="Release"
-            @click="releaseUiSoftware"
-            :disable="version <= $store.state.service.status.version"
+            @click="releaseUiNewVersion"
+            :disable="conf.version <= $store.state.service.status.version"
           />
         </div>
       </div>
@@ -48,7 +48,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ 'releaseUiSoftware' ])
+    ...mapActions([ 'releaseUiNewVersion' ])
   },
   computed: {
     ...mapGetters([

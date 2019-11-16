@@ -1,4 +1,7 @@
-export const setService = (state, doc) => { state.service[doc.id] = doc.data() }
+export const setService = (state, doc) => {
+  state.service[doc.id] = doc.data()
+  state.service = { ...state.service }
+}
 export const setMe = (state, me) => { state.me = me }
 export const resetMe = state => { state.me = null }
 export const setGroups = (state, querySnapshot) => { state.groups = querySnapshot.docs }
