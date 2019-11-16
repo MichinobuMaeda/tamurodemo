@@ -105,8 +105,10 @@ $ yarn deployWithoutUI
 curl https://us-central1-[Project_ID].cloudfunctions.net/tamuro/setup
 
 ```
-{ "status": "ok" }
+status: ok
 ```
+
+Fill empty fields of docs.
 
 https://console.firebase.google.com/
  * [Project ID]
@@ -123,8 +125,7 @@ Edit ``src/conf/auth.js``
 
 curl https://us-central1-[Project_ID].cloudfunctions.net/tamuro/initialize
 
-return
-
 ```
-{ "url": "https://..." }
+status: ok
+https://...
 ```

@@ -10,6 +10,7 @@ const crypto = require('crypto')
 admin.initializeApp()
 const db = admin.firestore()
 const projectId = admin.instanceId().app.options.projectId
+const dyanmicLinkGenerator = 'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key='
 
 // Get URL of UI
 const getUiUrl = () => db.collection('service').doc('ui').get().then(ui => ui.data().url)
@@ -18,6 +19,18 @@ const getUiUrl = () => db.collection('service').doc('ui').get().then(ui => ui.da
 const appTamuro = express();
 appTamuro.use(cors({ origin: true }))
 appTamuro.use(express.json()) 
+
+// Shorten URL
+const shortenURL = async url => {
+  let ui = await db.collection('service').doc('ui').get()
+  let result = await axios.post(dyanmicLinkGenerator + ui.data().webApiKey, {
+    dynamicLinkInfo: {
+      domainUriPrefix: ui.data().shortLinkPrefix,
+      link: url
+    }
+  })
+  return result.data.shortLink
+}
 
 // Add the doc if it's not exists.
 const addDocIfNotExist = async (db, collection, name, data) => {
@@ -35,7 +48,9 @@ const setup = async () => {
     version: '0000000000'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
-    url: 'https://' + projectId + '.web.app/'
+    url: 'https://' + projectId + '.web.app/',
+    webApiKey: '',
+    shortLinkPrefix: ''
   })
   await addDocIfNotExist(db, 'service', 'line', {
     grant_type: 'authorization_code',
@@ -73,7 +88,7 @@ const setup = async () => {
 appTamuro.get('/setup', async (req, res) => {
   // Create basic docs.
   await setup()
-  res.send({ status: 'ok' })
+  res.send('status: ok\n')
 })
 
 // HTTP API: initialize the primary user and groups
@@ -82,7 +97,7 @@ appTamuro.get('/initialize', async (req, res) => {
   await setup()
   let accounts = await db.collection('accounts').get()
   if (accounts.size) {
-    res.send({ url: null })
+    res.send('status: warn\nAlready initialized.\n')
   } else {
     const ts = new Date()
     let user = await db.collection('users').add({
@@ -111,7 +126,8 @@ appTamuro.get('/initialize', async (req, res) => {
     const token = await admin.auth().createCustomToken(user.id)
     let status = await db.collection('service').doc('status').get()
     const url = await getUiUrl()
-    res.send({ url: url + '?v=' + status.data().version + '&invitation=' + token })
+    const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
+    res.send('status: ok\n' + shortUrl + '\n')
   }
 })
 
@@ -134,11 +150,17 @@ exports.getAuthIds = functions.https.onCall(async (data, context) => {
 
 // HTTP Callable API: Get invitation URL
 exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
-  await db.collection('accounts').doc(data.id).update({ invitedAt: new Date() })
+  let manager = await db.collection('groups').doc('manager').get()
+  let admin = await db.collection('groups').doc('admin').get()
+  if ((!manager.data().members.includes(context.auth.uid)) && (!admin.data().members.includes(context.auth.uid))) {
+    return null
+  }
   let status = await db.collection('service').doc('status').get()
   const token = await admin.auth().createCustomToken(data.id)
   const url = await getUiUrl()
-  return url + '?v=' + status.data().version + '&invitation=' + token
+  const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
+  await db.collection('accounts').doc(data.id).update({ invitedAt: new Date() })
+  return shortUrl
 })
 
 // HTTP Callable API: Unlink LINE

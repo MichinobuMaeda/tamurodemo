@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col text-center q-py-xl" style="font-size: 4em">
-      <q-spinner-ball color="blue-10" size="3em" />
+      <q-spinner-ball :color="conf.styles.menuBg" size="3em" />
     </div>
   </div>
 </template>
@@ -10,7 +10,14 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'PageLoading'
+  name: 'PageLoading',
+  computed: {
+    ...mapGetters([
+      'conf'
+    ])
+  }
 }
 </script>
