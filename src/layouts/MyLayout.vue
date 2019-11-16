@@ -18,11 +18,11 @@
         Powerd by <a href="https://github.com/MichinobuMaeda/tamuro" target="_blank">Tamuro</a>
       </div>
     </div>
-    <q-page-sticky :position="menuPosition" :offset="[8, 8]">
+    <q-page-sticky :position="this.$store.state.menuPosition" :offset="[8, 8]">
       <q-fab
         icon="menu" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
         v-touch-swipe.mouse="handleSwipe"
-        :direction="(menuPosition === 'bottom-right' || menuPosition === 'bottom-left') ? 'up' : 'down'"
+        :direction="(this.$store.state.menuPosition === 'bottom-right' || this.$store.state.menuPosition === 'bottom-left') ? 'up' : 'down'"
         @show="showToolChip"
         @hide="hideToolChip"
       >
@@ -31,7 +31,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home"
           to="/"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip['home']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['home']">
             {{ $t('home') }}
           </q-tooltip>
         </q-fab-action>
@@ -40,7 +40,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="exit_to_app"
           to="/signin"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip['signin']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['signin']">
             {{ $t('signin') }}
           </q-tooltip>
         </q-fab-action>
@@ -48,7 +48,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="policy"
           to="/policy"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip['policy']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['policy']">
             {{ $t('privacyPolicy') }}
           </q-tooltip>
         </q-fab-action>
@@ -57,7 +57,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications"
           to="/preferences"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip['preferences']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['preferences']">
             {{ $t('preferences') }}
           </q-tooltip>
         </q-fab-action>
@@ -66,7 +66,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="cloud_circle"
           to="/service"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip['service']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['service']">
             Serivce
           </q-tooltip>
         </q-fab-action>
@@ -75,7 +75,7 @@
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="memory"
           to="/raw"
         >
-          <q-tooltip anchor="center left" self="center right" v-model="toolChip['raw']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['raw']">
             Raw data
           </q-tooltip>
         </q-fab-action>
@@ -91,7 +91,6 @@ export default {
   name: 'MyLayout',
   data () {
     return {
-      menuPosition: (this.$store.state.me && this.$store.state.me.data().menuPosition) || 'bottom-right',
       toolChip: {
         'home': false,
         'signin': false,
@@ -119,38 +118,41 @@ export default {
       }
     },
     async handleSwipe ({ evt, ...info }) {
-      Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = false })
-      if (this.menuPosition === 'bottom-right') {
+      this.hideToolChip()
+      if (this.$store.state.menuPosition === 'bottom-right') {
         if (info.direction === 'left') {
-          this.menuPosition = 'bottom-left'
+          this.$store.state.menuPosition = 'bottom-left'
         } else if (info.direction === 'up') {
-          this.menuPosition = 'top-right'
+          this.$store.state.menuPosition = 'top-right'
         }
-      } else if (this.menuPosition === 'top-right') {
+      } else if (this.$store.state.menuPosition === 'top-right') {
         if (info.direction === 'left') {
-          this.menuPosition = 'top-left'
+          this.$store.state.menuPosition = 'top-left'
         } else if (info.direction === 'down') {
-          this.menuPosition = 'bottom-right'
+          this.$store.state.menuPosition = 'bottom-right'
         }
-      } else if (this.menuPosition === 'top-left') {
+      } else if (this.$store.state.menuPosition === 'top-left') {
         if (info.direction === 'right') {
-          this.menuPosition = 'top-right'
+          this.$store.state.menuPosition = 'top-right'
         } else if (info.direction === 'down') {
-          this.menuPosition = 'bottom-left'
+          this.$store.state.menuPosition = 'bottom-left'
         }
-      } else if (this.menuPosition === 'bottom-left') {
+      } else if (this.$store.state.menuPosition === 'bottom-left') {
         if (info.direction === 'right') {
-          this.menuPosition = 'bottom-right'
+          this.$store.state.menuPosition = 'bottom-right'
         } else if (info.direction === 'up') {
-          this.menuPosition = 'top-left'
+          this.$store.state.menuPosition = 'top-left'
         }
       }
       await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
-        menuPosition: this.menuPosition
+        menuPosition: this.$store.state.menuPosition
       })
+      this.showToolChip()
     }
   },
   computed: {
+    toolChipAnchor () { return this.$store.state.menuPosition.includes('left') ? 'center right' : 'center left' },
+    toolChipSelf () { return this.$store.state.menuPosition.includes('left') ? 'center left' : 'center right' },
     ...mapGetters([
       'conf',
       'group',

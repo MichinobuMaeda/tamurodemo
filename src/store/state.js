@@ -29,5 +29,6 @@ export default {
   profiles: {},
   service: {},
   unsubscribers: [],
+  menuPosition: 'bottom-right',
   isMobile: mobilecheck()
 }
