@@ -67,14 +67,13 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { validateEmail } from '../utils/validators'
 
 export default {
   name: 'PageSignIn',
   data () {
     return {
       email: '',
-      emailRule: [ v => (!v || validateEmail(v)) || this.$t('invalidEmailAddress') ]
+      emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ]
     }
   },
   methods: {
@@ -85,8 +84,7 @@ export default {
       'signInWithGoogle',
       'signInWithTwitter',
       'signInWithEmailLink'
-    ]),
-    validateEmail
+    ])
   },
   computed: {
     ...mapGetters([

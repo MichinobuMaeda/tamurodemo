@@ -35,4 +35,9 @@ export const isTwitter = state => {
 }
 export const isLine = state => !!state.me.data().lineUid
 export const isEmail = state => !!state.firebase.auth().currentUser.email
-export const longTimestamp = state => tm => Moment(tm).tz(state.me.data().timezone || state.service.status.timezone).format('YYYY-MM-DD HH:mm:ss')
+
+const formatDateTime = (state, tm, format) => Moment(tm).tz(state.me.data().timezone || state.service.status.timezone).format(format)
+export const longTimestamp = state => tm => formatDateTime(state, tm, state.conf.locales.longTimestamp)
+export const shortTimestamp = state => tm => formatDateTime(state, tm, state.conf.shortTimestamp)
+export const shortDate = state => tm => formatDateTime(state, tm, state.conf.shortDate)
+export const shortTime = state => tm => formatDateTime(state, tm, state.conf.shortTime)

@@ -11,6 +11,7 @@
           <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
           <q-separator class="q-my-md" />
           <div class="q-my-md">{{ $t('signInMethod') }}</div>
+
           <q-btn
             v-if="conf.auth.line && isLine"
             class="q-my-md full-width" align="left" outline color="green"
@@ -23,6 +24,7 @@
             icon="add_circle_outline" :label="$t('addProvider', { provider: 'LINE' })"
             @click="linkWithLine"
           />
+
           <q-btn
             v-if="conf.auth.facebook && isFacebook"
             class="q-my-md full-width" align="left" outline color="blue-10"
@@ -35,6 +37,7 @@
             icon="add_circle_outline" :label="$t('addProvider', { provider: 'Facebook' })"
             @click="linkWithFacebook"
           />
+
           <q-btn
             v-if="conf.auth.github && isGithub"
             class="q-my-md full-width" align="left" outline color="black"
@@ -47,6 +50,7 @@
             icon="add_circle_outline" :label="$t('addProvider', { provider: 'GitHub' })"
             @click="linkWithGithub"
           />
+
           <q-btn
             v-if="conf.auth.google && isGoogle"
             class="q-my-md full-width" align="left" outline color="red-10"
@@ -59,6 +63,7 @@
             icon="add_circle_outline" :label="$t('addProvider', { provider: 'Google' })"
             @click="linkWithGoogle"
           />
+
           <q-btn
             v-if="conf.auth.twitter && isTwitter"
             class="q-my-md full-width" align="left" outline color="light-blue"
@@ -71,6 +76,7 @@
             icon="add_circle_outline" :label="$t('addProvider', { provider: 'Twitter' })"
             @click="linkWithTwitter"
           />
+
           <div v-if="(conf.auth.emailLink || conf.auth.password) && isEmail">
             <q-separator class="q-my-md" />
             <div>{{ $t('emailAddressSaved') }}</div>
@@ -90,11 +96,11 @@
               @click="linkWithEmail(email)"
             />
           </div>
-        </div>
 
+        </div>
         <div class="col q-pa-md col-xs-12 col-sm-6 col-md-4 col-lg-4">
           <p>
-            <q-select v-model="timezone" :options="TIMEZONES" label="Timezone" @input="onTimezoneChanged" />
+            <q-select v-model="timezone" :options="conf.locales.timezones" label="Timezone" @input="onTimezoneChanged" />
           </p>
           <p>
             <q-btn outline color="negative" :label="$t('signout')" @click="signOut" />
@@ -111,8 +117,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { validateEmail, validatePassword } from '../utils/validators'
-import { TIMEZONES } from '../utils/constants'
 
 export default {
   name: 'PagePreferences',
@@ -120,9 +124,8 @@ export default {
     return {
       email: '',
       isPwd: true,
-      emailRule: [ v => (!v || validateEmail(v)) || this.$t('invalidEmailAddress') ],
-      timezone: this.$store.state.me.data().timezone,
-      TIMEZONES
+      emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ],
+      timezone: this.$store.state.me.data().timezone
     }
   },
   methods: {
@@ -131,8 +134,6 @@ export default {
         timezone: this.timezone
       })
     },
-    validateEmail,
-    validatePassword,
     ...mapActions([
       'linkWithLine',
       'linkWithFacebook',

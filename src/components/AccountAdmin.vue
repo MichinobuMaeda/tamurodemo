@@ -3,7 +3,7 @@
     <div class="col q-pa-md">
       <div class="row">
         <div class="col col-xs-8 col-sm-10 q-px-md">
-        <q-input v-model="email" />
+        <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')" />
         </div>
         <div class="col col-xs-4 col-sm-2 q-pa-md">
           <q-btn :label="$t('update')" color="primary" @click="setEmail" />
@@ -63,7 +63,8 @@ export default {
   data () {
     return {
       paused: !this.account.data().valid,
-      email: ''
+      email: '',
+      emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ]
     }
   },
   async mounted () {
