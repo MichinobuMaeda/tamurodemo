@@ -139,17 +139,20 @@ export default {
   methods: {
     async onMenuPositionChanged () {
       await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
-        menuPosition: this.menuPosition.value
+        menuPosition: this.menuPosition.value,
+        updatedAt: new Date()
       })
     },
     async onTimezoneChanged () {
       await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
-        timezone: this.timezone
+        timezone: this.timezone,
+        updatedAt: new Date()
       })
     },
     async onLocaleChanged () {
       await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
-        locale: this.locale.value
+        locale: this.locale.value,
+        updatedAt: new Date()
       })
     },
     ...mapActions([
