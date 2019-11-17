@@ -143,11 +143,12 @@ const verifyRedirectFromLine = async ({ state, commit }) => {
   }
 }
 
-const onSignIn = async ({ commit, state, getters }, { user }) => {
+const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
   let me = await state.db.collection('accounts').doc(user.uid).get()
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
     commit('setMe', me)
+    i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
     let admin = await state.db.collection('groups').doc('admin').get()
     let manager = await state.db.collection('groups').doc('manager').get()
     if (admin.data().members.includes(me.id) || manager.data().members.includes(me.id)) {
@@ -170,6 +171,7 @@ const onSignIn = async ({ commit, state, getters }, { user }) => {
     }
     commit('addUnsubscriber', state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
       commit('setMe', doc.exists ? doc : null)
+      i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
       if (!(state.me && state.me.exists && state.me.data().valid)) {
         await signOut({ state })
       }
@@ -179,7 +181,7 @@ const onSignIn = async ({ commit, state, getters }, { user }) => {
   }
 }
 
-const onSignOut = async ({ commit, state }) => {
+const onSignOut = async ({ commit, state }, { i18n }) => {
   state.unsubscribers.forEach(unsubscriber => {
     unsubscriber()
   })
@@ -189,10 +191,11 @@ const onSignOut = async ({ commit, state }) => {
   commit('resetGroups')
   commit('resetMe')
   commit('resetMessage')
+  i18n.locale = state.service.status.locale || i18n.locale
 }
 
 // On app created
-export const onAppCreated = async ({ commit, state, getters }, router) => {
+export const onAppCreated = async ({ commit, state, getters }, { router, i18n }) => {
   // Set defaults.
   state.firebase.auth().languageCode = 'ja'
 
@@ -206,6 +209,7 @@ export const onAppCreated = async ({ commit, state, getters }, router) => {
   // On service status changed
   const onServiceStatusChanged = ({ commit, state }, doc) => {
     commit('setService', doc)
+    i18n.locale = (state.service && state.service.status && state.service.status.locale) || i18n.locale
     if (state.service.status.version > state.conf.version) {
       window.location.href = topUrl(state.service.status.version)
     }
@@ -221,9 +225,9 @@ export const onAppCreated = async ({ commit, state, getters }, router) => {
     if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
       await verifyEmailLink({ state, commit })
     } else if (user) {
-      await onSignIn({ commit, state, getters }, { user })
+      await onSignIn({ commit, state, getters }, { user, i18n })
     } else if (state.me) {
-      await onSignOut({ commit, state })
+      await onSignOut({ commit, state }, { i18n })
     }
     commit('resetLoading')
     router.push(user ? '/' : '/signin').catch(() => {})

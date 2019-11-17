@@ -19,13 +19,13 @@ export default {
   accountEntered: 'Entered',
   accountPaused: 'Paused',
   invitation: 'Invitation',
+  menuPosition: 'Menu position',
+  timezone: 'Timezone',
+  locale: 'Locale',
   add: 'Add',
   remove: 'Remove',
   update: 'Update',
   home: 'Home',
   groups: 'Groups',
-  signout: 'Sign-out',
-  enUs: 'English',
-  jaJp: 'Japanese',
-  jaJpMatsuyama: 'Matsuyama dialect'
+  signout: 'Sign-out'
 }

@@ -1,4 +1,4 @@
-const auth = {
+export default {
   emailLink: true,
   password: false,
   google: false,
@@ -10,5 +10,3 @@ const auth = {
   yahoojp: false,
   mixi: false
 }
-
-export default auth

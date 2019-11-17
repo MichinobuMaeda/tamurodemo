@@ -100,7 +100,13 @@
         </div>
         <div class="col q-pa-md col-xs-12 col-sm-6 col-md-4 col-lg-4">
           <p>
-            <q-select v-model="timezone" :options="conf.locales.timezones" label="Timezone" @input="onTimezoneChanged" />
+            <q-select v-model="menuPosition" :options="conf.styles.menuPositions" :label="$t('menuPosition')" @input="onMenuPositionChanged" />
+          </p>
+          <p>
+            <q-select v-model="timezone" :options="conf.locales.timezones" :label="$t('timezone')" @input="onTimezoneChanged" />
+          </p>
+          <p>
+            <q-select v-model="locale" :options="conf.locales.locales" :label="$t('locale')" @input="onLocaleChanged" />
           </p>
           <p>
             <q-btn outline color="negative" :label="$t('signout')" @click="signOut" />
@@ -125,13 +131,25 @@ export default {
       email: '',
       isPwd: true,
       emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ],
-      timezone: this.$store.state.me.data().timezone
+      menuPosition: this.$store.state.conf.styles.menuPositions.reduce((ret, cur) => cur.value === this.$store.state.me.data().menuPosition ? cur : ret, null),
+      timezone: this.$store.state.me.data().timezone,
+      locale: this.$store.state.conf.locales.locales.reduce((ret, cur) => cur.value === this.$store.state.me.data().locale ? cur : ret, null)
     }
   },
   methods: {
+    async onMenuPositionChanged () {
+      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+        menuPosition: this.menuPosition.value
+      })
+    },
     async onTimezoneChanged () {
       await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
         timezone: this.timezone
+      })
+    },
+    async onLocaleChanged () {
+      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+        locale: this.locale.value
       })
     },
     ...mapActions([

@@ -19,13 +19,13 @@ export default {
   accountEntered: '最初のログイン',
   accountPaused: '停止中',
   invitation: '招待',
+  menuPosition: 'メニューの位置',
+  timezone: 'タイムゾーン',
+  locale: '言語・地域',
   add: '追加',
   remove: '削除',
   update: '更新',
   home: 'ホーム',
   groups: 'グループ',
-  signout: 'ログアウト',
-  enUs: 'English',
-  jaJp: '日本語',
-  jaJpMatsuyama: '松山弁'
+  signout: 'ログアウト'
 }

@@ -1,5 +1,5 @@
 // https://quasar.dev/style/color-palette
-const styles = {
+export default {
   pageTitle: 'text-h5 text-light-green-10',
   headerBg: 'teal-1',
   headerText: 'teal-10',
@@ -8,7 +8,23 @@ const styles = {
   menuBg: 'teal-7',
   menuText: 'white',
   menuItemBg: 'light-green-10',
-  menuItemText: 'white'
+  menuItemText: 'white',
+  menuPositions: [
+    {
+      label: '右下',
+      value: 'bottom-right'
+    },
+    {
+      label: '左下',
+      value: 'bottom-left'
+    },
+    {
+      label: '右上',
+      value: 'top-right'
+    },
+    {
+      label: '左上',
+      value: 'top-left'
+    }
+  ]
 }
-
-export default styles

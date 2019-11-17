@@ -19,13 +19,13 @@ export default {
   accountEntered: 'おいでとき',
   accountPaused: 'あがられん',
   invitation: '呼ぶ',
+  menuPosition: 'メニューはどこがええ？',
+  timezone: '時差があったら変えてや',
+  locale: '自分のことば',
   add: '足す',
   remove: '消す',
   update: '変える',
   home: 'ホームじゃ',
   groups: 'グループ',
-  signout: 'いんでこーわい',
-  enUs: 'English',
-  jaJp: '日本語',
-  jaJpMatsuyama: '松山弁'
+  signout: 'いんでこーわい'
 }

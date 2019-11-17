@@ -56,7 +56,8 @@ const setup = async () => {
   const ts = new Date()
   await addDocIfNotExist(db, 'service', 'status', {
     version: '0000000000',
-    timezone: 'Asia/Tokyo'
+    timezone: 'Asia/Tokyo',
+    locale: 'ja-jp'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
     url: 'https://' + projectId + '.web.app/',
@@ -122,7 +123,9 @@ appTamuro.get('/initialize', async (req, res) => {
       updatedAt: ts
     })
     await db.collection('accounts').doc(user.id).set({
+      menuPosition: status.data().menuPosition,
       timezone: status.data().timezone,
+      locale: status.data().locale,
       valid: true,
       invitedAt: ts,
       createdAt: ts,

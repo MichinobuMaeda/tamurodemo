@@ -1,4 +1,4 @@
-const locales = {
+export default {
   longTimestamp: 'YYYY-MM-DD HH:mm:ss',
   shortTimestamp: 'YYYY-MM-DD HH:mm',
   shortDate: 'M/D',
@@ -9,6 +9,20 @@ const locales = {
     months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
     monthsShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
   },
+  locales: [
+    {
+      label: 'English(US)',
+      value: 'en-us'
+    },
+    {
+      label: '日本語(標準)',
+      value: 'ja-jp'
+    },
+    {
+      label: '日本語(松山弁)',
+      value: 'ja-jp-matsuyama'
+    }
+  ],
   timezones: [
     'Africa/Abidjan',
     'Africa/Accra',
@@ -550,5 +564,3 @@ const locales = {
     'Zulu'
   ]
 }
-
-export default locales
