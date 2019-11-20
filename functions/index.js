@@ -76,21 +76,21 @@ const setup = async () => {
   await addDocIfNotExist(db, 'groups', 'top', {
     name: 'Tamuro',
     members: [],
-    subGrups: [ 'admin', 'manager' ],
+    subGroups: [ 'admin', 'manager' ],
     createdAt: ts,
     updatedAt: ts
   })
   await addDocIfNotExist(db, 'groups', 'admin', {
     name: 'Administrators',
     members: [],
-    subGrups: [],
+    subGroups: [],
     createdAt: ts,
     updatedAt: ts
   })
   await addDocIfNotExist(db, 'groups', 'manager', {
     name: 'Managers',
     members: [],
-    subGrups: [],
+    subGroups: [],
     createdAt: ts,
     updatedAt: ts
   })

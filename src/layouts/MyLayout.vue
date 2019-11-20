@@ -9,6 +9,12 @@
       <q-toolbar-title :class="'text-' + conf.styles.headerText">
         {{ group('top') && group('top').data().name }}
       </q-toolbar-title>
+       <q-btn
+        v-if="this.$route.path === '/' && isAdminOrManager"
+        flat round dense :color="conf.styles.headerText" class="q-mr-sm"
+        icon="edit"
+        @click="openNameEditor"
+      />
     </q-toolbar>
     <q-page-container>
       <router-view />
@@ -81,6 +87,23 @@
         </q-fab-action>
       </q-fab>
     </q-page-sticky>
+    <q-dialog v-model="nameEditor">
+      <q-card :style="conf.styles.dlgCardStyle">
+        <q-card-section :class="conf.styles.dlgTitle">
+          <q-avatar icon="edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <span :class="conf.styles.dlgTitleText">{{ $t('title') }}</span>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section>
+          <q-input autofocus type="text" v-model="name" />
+        </q-card-section>
+        <q-card-section class="row items-center">
+          <q-space />
+          <q-btn color="primary" :label="$t('ok')" @click="saveName" :disable="(!name) || name === group('top').data().name" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -91,6 +114,8 @@ export default {
   name: 'MyLayout',
   data () {
     return {
+      name: '',
+      nameEditor: false,
       toolChip: {
         'home': false,
         'signin': false,
@@ -103,6 +128,17 @@ export default {
     }
   },
   methods: {
+    openNameEditor () {
+      this.name = this.group('top').data().name
+      this.nameEditor = true
+    },
+    async saveName () {
+      this.nameEditor = false
+      await this.$store.state.db.collection('groups').doc('top').update({
+        name: this.name,
+        updatedAt: new Date()
+      })
+    },
     showToolChip () {
       if (this.$store.state.isMobile) {
         this.toolChipTimer = setTimeout(() => { Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = true }) }, 1500)
@@ -157,6 +193,7 @@ export default {
       'conf',
       'group',
       'isValidAccount',
+      'isAdminOrManager',
       'isAdmin',
       'isManager'
     ])
