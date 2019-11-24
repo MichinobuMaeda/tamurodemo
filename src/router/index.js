@@ -24,37 +24,36 @@ export default function ({ store } /* { store, ssrContext } */) {
 
   router.beforeEach((to, from, next) => {
     var replace = null
-    if (to.path === '/policy') {
+    if (to.name === 'policy') {
       replace = null
     } else if (store.state.loading) {
-      replace = '/loading'
+      replace = { name: 'loading' }
     } else if ((!store.state.loading) && (to.path === '/loading')) {
-      replace = '/'
+      replace = { name: 'top' }
     } else if (!store.getters.isValidAccount) {
-      replace = '/signin'
+      replace = { name: 'signin' }
     } else if (!store.getters.isSignInMethod) {
-      replace = '/preferences'
-    } else if (['/signin'].includes(to.path)) {
-      replace = '/'
+      replace = { name: 'preferences' }
+    } else if ([ 'signin' ].includes(to.name)) {
+      replace = { name: 'top' }
     } else if ([
-      '/accounts',
-      '/properties',
-      '/streets'
-    ].includes(to.path) && (!store.getters.isManager)) {
-      replace = '/'
+      'accounts',
+      'properties'
+    ].includes(to.name) && (!store.getters.isManager)) {
+      replace = { name: 'top' }
     } else if ([
-      '/service',
-      '/raw'
-    ].includes(to.path) && (!store.getters.isAdmin)) {
-      replace = '/'
+      'service',
+      'raw'
+    ].includes(to.name) && (!store.getters.isAdmin)) {
+      replace = { name: 'top' }
     }
 
     // Call next() once exactly.
     if (!replace) {
       next()
-    } else if (replace === to.path) {
+    } else if (replace.path === to.path) {
       next()
-    } else if (replace === from.path) {
+    } else if (replace.path === from.path) {
       next(false)
     } else {
       next(replace)

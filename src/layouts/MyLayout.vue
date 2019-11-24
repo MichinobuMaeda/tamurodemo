@@ -140,12 +140,12 @@ export default {
       })
     },
     showToolChip () {
-      if (this.$store.state.isMobile) {
+      if (this.$q.platform.is.mobile) {
         this.toolChipTimer = setTimeout(() => { Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = true }) }, 1500)
       }
     },
     hideToolChip () {
-      if (this.$store.state.isMobile) {
+      if (this.$q.platform.is.mobile) {
         if (this.toolChipTimer) {
           clearTimeout(this.toolChipTimer)
           this.toolChipTimer = null

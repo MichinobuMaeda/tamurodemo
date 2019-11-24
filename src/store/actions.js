@@ -230,6 +230,6 @@ export const onAppCreated = async ({ commit, state, getters }, { router, i18n })
       await onSignOut({ commit, state }, { i18n })
     }
     commit('resetLoading')
-    router.push(user ? '/' : '/signin').catch(() => {})
+    router.push(user ? { name: 'top' } : { name: 'signin' }).catch(() => {})
   })
 }
