@@ -33,7 +33,7 @@ export const isTwitter = state => {
   let user = state.firebase.auth().currentUser
   return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.TwitterAuthProvider.PROVIDER_ID || ret, false) : false
 }
-export const isLine = state => !!state.me.data().lineUid
+export const isLine = state => state.me && (!!state.me.data().lineUid)
 export const isEmail = state => !!state.firebase.auth().currentUser.email
 
 const formatDateTime = (state, tm, format) => Moment(tm).tz(state.me.data().timezone || state.service.status.timezone).format(format)

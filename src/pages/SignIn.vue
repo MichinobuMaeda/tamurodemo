@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <q-page class="q-pa-md">
     <div class="row justify-center">
       <div class="col q-pa-xs col-xs-12 col-sm-6 col-md-5 col-lg-4 col-xl-4">
         <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
@@ -45,7 +45,7 @@
           <q-btn
             class="full-width" align="left" outline color="brown-9"
             :label="$t('getEmailLink')"
-            :disable="!validateEmail(email)"
+            :disable="email && !conf.validators.email(email)"
             @click="signInWithEmailLink(email)"
           />
         </div>
@@ -59,7 +59,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </q-page>
 </template>
 
 <style scoped>

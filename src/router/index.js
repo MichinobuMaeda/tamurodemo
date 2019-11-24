@@ -26,9 +26,9 @@ export default function ({ store } /* { store, ssrContext } */) {
     var replace = null
     if (to.name === 'policy') {
       replace = null
-    } else if (store.state.loading) {
+    } else if (store.state.loading.length) {
       replace = { name: 'loading' }
-    } else if ((!store.state.loading) && (to.path === '/loading')) {
+    } else if ((!store.state.loading.length) && (to.name === 'loading')) {
       replace = { name: 'top' }
     } else if (!store.getters.isValidAccount) {
       replace = { name: 'signin' }
@@ -51,9 +51,9 @@ export default function ({ store } /* { store, ssrContext } */) {
     // Call next() once exactly.
     if (!replace) {
       next()
-    } else if (replace.path === to.path) {
+    } else if (replace.name === to.name) {
       next()
-    } else if (replace.path === from.path) {
+    } else if (replace.name === from.name) {
       next(false)
     } else {
       next(replace)

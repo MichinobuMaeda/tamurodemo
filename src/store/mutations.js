@@ -37,8 +37,20 @@ export const resetUsers = (state) => {
 }
 export const setAccounts = (state, querySnapshot) => { state.accounts = querySnapshot.docs }
 export const resetAccounts = (state) => { state.accounts = [] }
-export const setLoading = state => { state.loading = true }
-export const resetLoading = state => { state.loading = false }
+
+export const startLoading = state => {
+  state.loading = [ 'start' ]
+}
+export const setLoading = (state, key) => {
+  state.loading = [ ...state.loading.filter(item => item !== key), key ]
+}
+export const resetLoading = (state, key) => {
+  state.loading = [ ...state.loading.filter(item => item !== key) ]
+}
+export const clearLoading = state => {
+  state.loading = []
+}
+
 export const addUnsubscriber = (state, unsubscriber) => { state.unsubscribers.push(unsubscriber) }
 export const setMessage = (state, message) => {
   state.message = message.key ? message : { key: message, params: {} }

@@ -2,24 +2,23 @@ import crypto from 'crypto'
 import querystring from 'querystring'
 import Firebase from 'firebase'
 
-const topUrl = version => window.location.href.replace(/\?.*/, '') + '?v=' + version + '#/'
-const signInUrl = version => window.location.href.replace(/\?.*/, '') + '?v=' + version + '#/signin'
+const topUrl = version => window.location.href.replace(/\?.*/, '').replace(/#.*/, '') + '?v=' + version + '#/'
+const signInUrl = version => window.location.href.replace(/\?.*/, '').replace(/#.*/, '') + '?v=' + version + '#/signin'
 const generateState = seed => crypto.createHash('sha256').update((new Date()).toISOString() + seed).digest('base64').substr(0, 20)
 const generateNonce = seed => crypto.createHash('sha256').update(seed + (new Date()).toISOString()).digest('base64').substr(0, 20)
-// const generateFakePassword = seed => crypto.createHash('sha256').update((new Date()).toISOString() + seed).digest('base64')
 
 const signInWith = ({ state, commit }, provider) => {
-  commit('setLoading')
+  commit('startLoading')
   state.firebase.auth().signInWithRedirect(provider)
 }
 
 const linkWithRedirect = ({ state, commit }, provider) => {
-  commit('setLoading')
+  commit('startLoading')
   state.firebase.auth().currentUser.linkWithRedirect(provider)
 }
 
 const unlinkProvider = async ({ commit, state }, providerID) => {
-  commit('setLoading')
+  commit('startLoading')
   await state.firebase.auth().currentUser.unlink(providerID)
   window.location.reload()
 }
@@ -41,7 +40,7 @@ export const linkWithFacebook = context => linkWithRedirect(context, new Firebas
 export const unlinkTwitter = context => unlinkProvider(context, Firebase.auth.TwitterAuthProvider.PROVIDER_ID)
 
 const redirectToLineAuth = async ({ commit, state }, link = null) => {
-  commit('setLoading')
+  commit('startLoading')
   const result = await state.firebase.functions().httpsCallable('getAuthIds')()
   const request = {
     response_type: 'code',
@@ -58,7 +57,7 @@ const redirectToLineAuth = async ({ commit, state }, link = null) => {
 export const signInWithLine = ({ state, commit }) => redirectToLineAuth({ state, commit })
 export const linkWithLine = ({ state, commit }) => redirectToLineAuth({ state, commit }, state.me.id)
 export const unlinkLine = ({ commit, state }) => {
-  commit('setLoading')
+  commit('startLoading')
   return state.db.collection('accounts').doc(state.me.id).update({
     lineUid: null
   })
@@ -211,7 +210,7 @@ export const onAppCreated = async ({ commit, state, getters }, { router, i18n })
     commit('setService', doc)
     i18n.locale = (state.service && state.service.status && state.service.status.locale) || i18n.locale
     if (state.service.status.version > state.conf.version) {
-      window.location.href = topUrl(state.service.status.version)
+      window.location.href = window.location.href.replace(/(\/\?ver=[^/]*|)\/#\//, '/?ver=' + state.service.status.version + '/#/')
     }
   }
   onServiceStatusChanged({ commit, state }, await state.db.collection('service').doc('status').get())
@@ -221,7 +220,7 @@ export const onAppCreated = async ({ commit, state, getters }, { router, i18n })
 
   // On auth status changed
   state.firebase.auth().onAuthStateChanged(async user => {
-    commit('setLoading')
+    commit('setLoading', 'auth')
     if (state.firebase.auth().isSignInWithEmailLink(window.location.href)) {
       await verifyEmailLink({ state, commit })
     } else if (user) {
@@ -229,7 +228,8 @@ export const onAppCreated = async ({ commit, state, getters }, { router, i18n })
     } else if (state.me) {
       await onSignOut({ commit, state }, { i18n })
     }
-    commit('resetLoading')
+    commit('resetLoading', 'auth')
     router.push(user ? { name: 'top' } : { name: 'signin' }).catch(() => {})
   })
+  commit('resetLoading', 'start')
 }
