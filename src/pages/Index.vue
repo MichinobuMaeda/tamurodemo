@@ -2,35 +2,35 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p class="text-body1" v-if="group('top') && group('top').data().desc || isAdminOrManager">
-        <q-icon name="description" class="q-mr-sm" />
+        <q-icon name="far fa-comment-alt" class="q-mr-sm" />
         <span v-if="group('top').data().desc">{{ group('top').data().desc }}</span>
         <span v-else>{{ $t('noDesc') }}</span>
-        <q-btn flat raund icon="edit" @click="openDescEditor" />
+        <q-btn flat raund icon="fas fa-edit" @click="openDescEditor" />
       </p>
       <p :class="conf.styles.pageTitle">
-        <q-icon name="people" />
+        <q-icon name="fas fa-users" />
         {{ $t('groups') }}
-        <q-btn flat raund icon="add" @click="openNameEditor" />
+        <q-btn flat raund icon="fas fa-plus-circle" @click="openNameEditor" />
       </p>
       <q-list>
         <div v-for="group in $store.state.groups" v-bind:key="group.id">
           <q-item
             v-if="!['top', 'manager', 'admin'].includes(group.id) && (isAdminOrManager || (!group.data().deletedAt))"
-            clickable v-ripple :to="'/groups/' + group.id"
+            clickable v-ripple :to="{ name: 'group', params: { id: group.id } }"
           >
             <q-item-section avatar>
-              <q-icon name="delete" v-if="group.data().deletedAt" />
-              <q-icon name="people" v-else />
+              <q-icon name="fas fa-minus-circle" v-if="group.data().deletedAt" />
+              <q-icon name="fas fa-users" v-else />
             </q-item-section>
             <q-item-section>{{ group.data().name }}</q-item-section>
           </q-item>
         </div>
-        <q-item clickable v-ripple to="/groups/manager">
-          <q-item-section avatar><q-icon name="people" /></q-item-section>
+        <q-item clickable v-ripple :to="{ name: 'group', params: { id: 'manager' } }">
+          <q-item-section avatar><q-icon name="fas fa-users" /></q-item-section>
           <q-item-section>{{ group('manager') && group('manager').data().name }}</q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/groups/admin">
-          <q-item-section avatar><q-icon name="people" /></q-item-section>
+        <q-item clickable v-ripple :to="{ name: 'group', params: { id: 'admin' } }">
+          <q-item-section avatar><q-icon name="fas fa-users" /></q-item-section>
           <q-item-section>{{ group('admin') && group('admin').data().name }}</q-item-section>
         </q-item>
       </q-list>
@@ -38,13 +38,13 @@
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="group_add" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar icon="fas fa-plus-circle" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('group') }}</span>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="fas fa-times" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
-          <q-input autofocus type="text" v-model="name" />
+          <q-input autofocus type="text" :label="$t('name')" v-model="name" />
         </q-card-section>
         <q-card-section class="row items-center">
           <q-space />
@@ -55,10 +55,10 @@
     <q-dialog v-model="descditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('desc') }}</span>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="fas fa-times" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus outlined class="q-mt-sm" type="textarea" v-model="desc" />

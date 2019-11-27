@@ -2,20 +2,23 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="person" />
+        <q-icon name="fas fa-user" />
         {{ user($route.params.id).data().name }}
       </p>
       <span v-for="group in $store.state.groups" v-bind:key="group.id">
         <q-btn
           v-if="group.data().members.includes($route.params.id)"
           class="q-ma-xs" rounded
-          icon="people" :label="group.data().name"
-          :to="'/groups/' + group.id"
+          icon="fas fa-users" :label="group.data().name"
+          :to="{ name: 'group', params: { id: group.id } }"
         />
       </span>
     </div>
     <div class="col col-12" v-if="isAdminOrManager">
-      <AccountAdmin v-bind:account="$store.state.accounts.reduce((ret, cur) => cur.id === $route.params.id ? cur : ret, null)" />
+      <AccountAdmin v-bind:account="$store.state.accounts.reduce(
+        (ret, cur) => cur.id === $route.params.id ? cur : ret,
+        null
+      )" />
     </div>
   </q-page>
 </template>

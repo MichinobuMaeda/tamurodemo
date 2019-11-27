@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-toolbar :class="'bg-' + conf.styles.headerBg">
-      <router-link to="/">
+      <router-link :to="{ name: 'top' }">
         <q-avatar rounded>
           <img src="statics/app-logo-128x128.png">
         </q-avatar>
@@ -10,9 +10,9 @@
         {{ group('top') && group('top').data().name }}
       </q-toolbar-title>
        <q-btn
-        v-if="this.$route.path === '/' && isAdminOrManager"
+        v-if="this.$route.name === 'top' && isAdminOrManager"
         flat round dense :color="conf.styles.headerText" class="q-mr-sm"
-        icon="edit"
+        icon="fas fa-edit"
         @click="openNameEditor"
       />
     </q-toolbar>
@@ -26,7 +26,7 @@
     </div>
     <q-page-sticky :position="this.$store.state.menuPosition" :offset="[8, 8]">
       <q-fab
-        icon="menu" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
+        icon="fas fa-bars" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
         v-touch-swipe.mouse="handleSwipe"
         :direction="(this.$store.state.menuPosition === 'bottom-right' || this.$store.state.menuPosition === 'bottom-left') ? 'up' : 'down'"
         @show="showToolChip"
@@ -34,8 +34,8 @@
       >
         <q-fab-action
           v-if="isValidAccount"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="home"
-          to="/"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-home"
+          :to="{ name: 'top' }"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['home']">
             {{ $t('home') }}
@@ -43,16 +43,16 @@
         </q-fab-action>
         <q-fab-action
           v-else
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="exit_to_app"
-          to="/signin"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-sign-in-alt"
+          :to="{ name: 'signin' }"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['signin']">
             {{ $t('signin') }}
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="policy"
-          to="/policy"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-shield-alt"
+          :to="{ name: 'policy' }"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['policy']">
             {{ $t('privacyPolicy') }}
@@ -60,8 +60,8 @@
         </q-fab-action>
         <q-fab-action
           v-if="isValidAccount"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="settings_applications"
-          to="/preferences"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-user-cog"
+          :to="{ name: 'preferences' }"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['preferences']">
             {{ $t('preferences') }}
@@ -69,8 +69,8 @@
         </q-fab-action>
         <q-fab-action
           v-if="isAdmin"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="cloud_circle"
-          to="/service"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-server"
+          :to="{ name: 'service' }"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['service']">
             Serivce
@@ -78,8 +78,8 @@
         </q-fab-action>
         <q-fab-action
           v-if="isAdmin"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="memory"
-          to="/raw"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-microchip"
+          :to="{ name: 'raw' }"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['raw']">
             Raw data
@@ -90,10 +90,10 @@
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('title') }}</span>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="fas fa-times" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus type="text" v-model="name" />

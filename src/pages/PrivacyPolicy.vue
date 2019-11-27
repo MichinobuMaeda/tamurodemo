@@ -2,7 +2,7 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="policy" />
+        <q-icon name="fas fa-shield-alt" />
         {{ $t('privacyPolicy') }}
       </p>
       <p>

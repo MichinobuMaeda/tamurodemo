@@ -8,30 +8,35 @@
           v-if="conf.auth.line"
           class="q-my-md full-width" align="left" outline color="green"
           label="Line"
+          icon="fab fa-line"
           @click="signInWithLine($route)"
         />
         <q-btn
           v-if="conf.auth.facebook"
           class="q-my-md full-width" align="left" outline color="blue-10"
           label="Facebook"
+          icon="fab fa-facebook"
           @click="signInWithFacebook($route)"
         />
         <q-btn
           v-if="conf.auth.github"
           class="q-my-md full-width" align="left" outline color="black"
           label="GitHub"
+          icon="fab fa-github"
           @click="signInWithGithub($route)"
         />
         <q-btn
           v-if="conf.auth.google"
           class="q-my-md full-width" align="left" outline color="red-10"
           label="Google"
+          icon="fab fa-google"
           @click="signInWithGoogle($route)"
         />
         <q-btn
           v-if="conf.auth.twitter"
           class="q-my-md full-width" align="left" outline color="light-blue"
           label="Twitter"
+          icon="fab fa-twitter"
           @click="signInWithTwitter($route)"
         />
         <div v-if="conf.auth.emailLink">
@@ -39,7 +44,7 @@
           <div class="q-my-md">{{ $t('passwordlessSignIn') }}</div>
           <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')">
             <template v-slot:before>
-              <q-icon name="mail_outline" />
+              <q-icon name="far fa-envelope" />
             </template>
           </q-input>
           <q-btn
@@ -53,8 +58,8 @@
         <div class="text-center">
           <q-btn
             flat rounded class="q-my-md" color="light-green-10"
-            icon="security" :label="$t('privacyPolicy')"
-            to="/policy"
+            icon="fas fa-shield-alt" :label="$t('privacyPolicy')"
+            :to="{ name: 'policy' }"
           />
         </div>
       </div>

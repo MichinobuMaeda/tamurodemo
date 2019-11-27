@@ -6,12 +6,25 @@ export const group = state => id => state.groups.reduce((ret, cur) => cur.id ===
 export const user = state => id => state.users.reduce((ret, cur) => cur.id === id ? cur : ret, null)
 export const accountStatus = state => id => {
   let account = state.accounts.reduce((ret, cur) => cur.id === id ? cur : ret, null)
-  return (account && account.data().valid) ? (account.data().enteredAt ? 'done' : (account.data().invitedAt ? 'send' : null)) : 'block'
+  return (account && account.data().valid) ? (
+    account.data().enteredAt ? 'far fa-check-circle' : (
+      account.data().invitedAt ? 'far fa-paper-plane' : null
+    )
+  ) : 'fas fa-lock'
 }
 export const isValidAccount = state => state.me && state.me.data().valid
-export const isAdmin = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'admin') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
-export const isManager = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => (cur.id === 'manager') ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
-export const isAdminOrManager = state => state.me && state.me.data().valid && state.groups.reduce((ret, cur) => ['admin', 'manager'].includes(cur.id) ? cur.data().members.filter(member => member === state.me.id).length : ret, false)
+export const isAdmin = state => state.me && state.me.data().valid && state.groups.reduce(
+  (ret, cur) => (cur.id === 'admin') ? cur.data().members.filter(member => member === state.me.id).length : ret,
+  false
+)
+export const isManager = state => state.me && state.me.data().valid && state.groups.reduce(
+  (ret, cur) => (cur.id === 'manager') ? cur.data().members.filter(member => member === state.me.id).length : ret,
+  false
+)
+export const isAdminOrManager = state => state.me && state.me.data().valid && state.groups.reduce(
+  (ret, cur) => ['admin', 'manager'].includes(cur.id) ? cur.data().members.filter(member => member === state.me.id).length : ret,
+  false
+)
 export const isSignInMethod = state => {
   let me = state.me
   let user = state.firebase.auth().currentUser
@@ -19,24 +32,38 @@ export const isSignInMethod = state => {
 }
 export const isFacebook = state => {
   let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.FacebookAuthProvider.PROVIDER_ID || ret, false) : false
+  return user.providerData ? user.providerData.reduce(
+    (ret, cur) => cur.providerId === Firebase.auth.FacebookAuthProvider.PROVIDER_ID || ret,
+    false
+  ) : false
 }
 export const isGithub = state => {
   let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.GithubAuthProvider.PROVIDER_ID || ret, false) : false
+  return user.providerData ? user.providerData.reduce(
+    (ret, cur) => cur.providerId === Firebase.auth.GithubAuthProvider.PROVIDER_ID || ret,
+    false
+  ) : false
 }
 export const isGoogle = state => {
   let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.GoogleAuthProvider.PROVIDER_ID || ret, false) : false
+  return user.providerData ? user.providerData.reduce(
+    (ret, cur) => cur.providerId === Firebase.auth.GoogleAuthProvider.PROVIDER_ID || ret,
+    false
+  ) : false
 }
 export const isTwitter = state => {
   let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce((ret, cur) => cur.providerId === Firebase.auth.TwitterAuthProvider.PROVIDER_ID || ret, false) : false
+  return user.providerData ? user.providerData.reduce(
+    (ret, cur) => cur.providerId === Firebase.auth.TwitterAuthProvider.PROVIDER_ID || ret,
+    false
+  ) : false
 }
 export const isLine = state => state.me && (!!state.me.data().lineUid)
 export const isEmail = state => !!state.firebase.auth().currentUser.email
 
-const formatDateTime = (state, tm, format) => Moment(tm).tz(state.me.data().timezone || state.service.status.timezone).format(format)
+const formatDateTime = (state, tm, format) => Moment(tm).tz(
+  state.me.data().timezone || state.service.status.timezone
+).format(format)
 export const longTimestamp = state => tm => formatDateTime(state, tm, state.conf.locales.longTimestamp)
 export const shortTimestamp = state => tm => formatDateTime(state, tm, state.conf.shortTimestamp)
 export const shortDate = state => tm => formatDateTime(state, tm, state.conf.shortDate)

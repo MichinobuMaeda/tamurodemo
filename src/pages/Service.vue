@@ -2,7 +2,7 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="cloud_circle" />
+        <q-icon name="fas fa-server" />
         Service
       </p>
 
@@ -25,7 +25,7 @@
           </q-markup-table>
           <q-btn
             color="primary"
-            icon="cloud_upload" label="Release"
+            icon="fas fa-cloud-upload-alt" label="Release"
             @click="releaseUiNewVersion"
             :disable="conf.version <= $store.state.service.status.version"
           />

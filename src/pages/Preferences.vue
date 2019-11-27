@@ -2,7 +2,7 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="settings_applications" />
+        <q-icon name="fas fa-user-cog" />
         {{ $t('preferences') }}
       </p>
 
@@ -15,67 +15,97 @@
           <q-btn
             v-if="conf.auth.line && isLine"
             class="q-my-md full-width" align="left" outline color="green"
-            icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'LINE' })"
+            icon="fab fa-line" :label="$t('removeProvider', { provider: 'LINE' })"
             @click="unlinkLine"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-minus-circle" />
+          </q-btn>
           <q-btn
             v-else-if="conf.auth.line"
             class="q-my-md full-width" align="left" outline color="green"
-            icon="add_circle_outline" :label="$t('addProvider', { provider: 'LINE' })"
+            icon="fab fa-line" :label="$t('addProvider', { provider: 'LINE' })"
             @click="linkWithLine"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-plus-circle" />
+          </q-btn>
 
           <q-btn
             v-if="conf.auth.facebook && isFacebook"
             class="q-my-md full-width" align="left" outline color="blue-10"
-            icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'Facebook' })"
+            icon="fas fa-minus-circle" :label="$t('removeProvider', { provider: 'Facebook' })"
             @click="unlinkFacebook"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-minus-circle" />
+          </q-btn>
           <q-btn
             v-else-if="conf.auth.facebook"
             class="q-my-md full-width" align="left" outline color="blue-10"
-            icon="add_circle_outline" :label="$t('addProvider', { provider: 'Facebook' })"
+            icon="fas fa-plus-circle" :label="$t('addProvider', { provider: 'Facebook' })"
             @click="linkWithFacebook"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-plus-circle" />
+          </q-btn>
 
           <q-btn
             v-if="conf.auth.github && isGithub"
             class="q-my-md full-width" align="left" outline color="black"
-            icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'GitHub' })"
+            icon="fas fa-minus-circle" :label="$t('removeProvider', { provider: 'GitHub' })"
             @click="unlinkGithub"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-minus-circle" />
+          </q-btn>
           <q-btn
             v-else-if="conf.auth.github"
             class="q-my-md full-width" align="left" outline color="black"
-            icon="add_circle_outline" :label="$t('addProvider', { provider: 'GitHub' })"
+            icon="fas fa-plus-circle" :label="$t('addProvider', { provider: 'GitHub' })"
             @click="linkWithGithub"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-plus-circle" />
+          </q-btn>
 
           <q-btn
             v-if="conf.auth.google && isGoogle"
             class="q-my-md full-width" align="left" outline color="red-10"
-            icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'Google' })"
+            icon="fas fa-minus-circle" :label="$t('removeProvider', { provider: 'Google' })"
             @click="unlinkGoogle"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-minus-circle" />
+          </q-btn>
           <q-btn
             v-else-if="conf.auth.google"
             class="q-my-md full-width" align="left" outline color="red-10"
-            icon="add_circle_outline" :label="$t('addProvider', { provider: 'Google' })"
+            icon="fas fa-plus-circle" :label="$t('addProvider', { provider: 'Google' })"
             @click="linkWithGoogle"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-plus-circle" />
+          </q-btn>
 
           <q-btn
             v-if="conf.auth.twitter && isTwitter"
             class="q-my-md full-width" align="left" outline color="light-blue"
-            icon="remove_circle_outline" :label="$t('removeProvider', { provider: 'Twitter' })"
+            icon="fab fa-twitter" :label="$t('removeProvider', { provider: 'Twitter' })"
             @click="unlinkTwitter"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-minus-circle" />
+          </q-btn>
           <q-btn
             v-else-if="conf.auth.twitter"
             class="q-my-md full-width" align="left" outline color="light-blue"
-            icon="add_circle_outline" :label="$t('addProvider', { provider: 'Twitter' })"
+            icon="fab fa-twitter" :label="$t('addProvider', { provider: 'Twitter' })"
             @click="linkWithTwitter"
-          />
+          >
+            <q-space />
+            <q-icon name="fas fa-plus-circle" />
+          </q-btn>
 
           <div v-if="(conf.auth.emailLink || conf.auth.password) && isEmail">
             <q-separator class="q-my-md" />
@@ -86,12 +116,12 @@
             <q-separator class="q-my-md" />
             <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')">
               <template v-slot:before>
-                <q-icon name="mail_outline" />
+                <q-icon name="far fa-envelope" />
               </template>
             </q-input>
             <q-btn
               class="full-width" align="left" outline color="brown"
-              icon="add_circle_outline" :label="$t('addProvider', { provider: $t('emailAddress') })"
+              icon="fas fa-plus-circle" :label="$t('addProvider', { provider: $t('emailAddress') })"
               :disable="!validateEmail(email)"
               @click="linkWithEmail(email)"
             />
@@ -124,7 +154,7 @@
             />
           </p>
           <p>
-            <q-btn outline color="negative" :label="$t('signout')" @click="signOut" />
+            <q-btn outline color="negative" icon="fas fa-sign-out-alt" :label="$t('signout')" @click="signOut" />
           </p>
         </div>
 

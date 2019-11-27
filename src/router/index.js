@@ -27,33 +27,33 @@ export default function ({ store } /* { store, ssrContext } */) {
     if (to.name === 'policy') {
       replace = null
     } else if (store.state.loading.length) {
-      replace = { name: 'loading' }
+      replace = router.resolve({ name: 'loading' }).route
     } else if ((!store.state.loading.length) && (to.name === 'loading')) {
-      replace = { name: 'top' }
+      replace = router.resolve({ name: 'top' }).route
     } else if (!store.getters.isValidAccount) {
-      replace = { name: 'signin' }
+      replace = router.resolve({ name: 'signin' }).route
     } else if (!store.getters.isSignInMethod) {
       replace = { name: 'preferences' }
     } else if ([ 'signin' ].includes(to.name)) {
-      replace = { name: 'top' }
+      replace = router.resolve({ name: 'top' }).route
     } else if ([
       'accounts',
       'properties'
     ].includes(to.name) && (!store.getters.isManager)) {
-      replace = { name: 'top' }
+      replace = router.resolve({ name: 'top' }).route
     } else if ([
       'service',
       'raw'
     ].includes(to.name) && (!store.getters.isAdmin)) {
-      replace = { name: 'top' }
+      replace = router.resolve({ name: 'top' }).route
     }
 
     // Call next() once exactly.
     if (!replace) {
       next()
-    } else if (replace.name === to.name) {
+    } else if (replace.path === to.path) {
       next()
-    } else if (replace.name === from.name) {
+    } else if (replace.path === from.path) {
       next(false)
     } else {
       next(replace)
