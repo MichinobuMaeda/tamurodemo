@@ -2,8 +2,21 @@ import Firebase from 'firebase'
 import Moment from 'moment-timezone'
 
 export const conf = state => state.conf
-export const group = state => id => state.groups.reduce((ret, cur) => cur.id === id ? cur : ret, null)
-export const user = state => id => state.users.reduce((ret, cur) => cur.id === id ? cur : ret, null)
+export const groups = state => state.groups.map(group => ({ id: group.id, ...group.data() }))
+export const group = state => id => state.groups.reduce(
+  (ret, cur) => cur.id === id ? { id, ...cur.data() } : ret,
+  {}
+)
+export const users = state => state.users.map(user => ({ id: user.id, ...user.data() }))
+export const user = state => id => state.users.reduce(
+  (ret, cur) => cur.id === id ? { id, ...cur.data() } : ret,
+  {}
+)
+export const accounts = state => state.accounts.map(account => ({ id: account.id, ...account.data() }))
+export const account = state => id => state.accounts.reduce(
+  (ret, cur) => cur.id === id ? { id, ...cur.data() } : ret,
+  {}
+)
 export const accountStatus = state => id => {
   let account = state.accounts.reduce((ret, cur) => cur.id === id ? cur : ret, null)
   return (account && account.data().valid) ? (
@@ -12,7 +25,7 @@ export const accountStatus = state => id => {
     )
   ) : 'fas fa-lock'
 }
-export const isValidAccount = state => state.me && state.me.data().valid
+export const isValid = state => state.me && state.me.data().valid
 export const isAdmin = state => state.me && state.me.data().valid && state.groups.reduce(
   (ret, cur) => (cur.id === 'admin') ? cur.data().members.filter(member => member === state.me.id).length : ret,
   false

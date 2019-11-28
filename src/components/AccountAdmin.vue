@@ -23,7 +23,7 @@
             {{ $t('accountInvited') }}
           </q-item-section>
           <q-item-section>
-            {{ longTimestamp(account.data().invitedAt.seconds * 1000) }}
+            {{ longTimestamp(account.invitedAt.seconds * 1000) }}
           </q-item-section>
         </q-item>
         <q-item>
@@ -31,7 +31,7 @@
             {{ $t('accountEntered') }}
           </q-item-section>
           <q-item-section>
-            {{ longTimestamp(account.data().enteredAt.seconds * 1000) }}
+            {{ longTimestamp(account.enteredAt.seconds * 1000) }}
           </q-item-section>
         </q-item>
         <q-item>
@@ -62,7 +62,7 @@ export default {
   props: [ 'account' ],
   data () {
     return {
-      paused: !this.account.data().valid,
+      paused: !this.account.valid,
       email: '',
       emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ]
     }
@@ -90,7 +90,7 @@ export default {
     },
     async toggleValid () {
       await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
-        valid: !this.account.data().valid
+        valid: !this.account.valid
       })
     }
   },

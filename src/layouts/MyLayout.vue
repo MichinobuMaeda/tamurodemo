@@ -7,7 +7,7 @@
         </q-avatar>
       </router-link>
       <q-toolbar-title :class="'text-' + conf.styles.headerText">
-        {{ group('top') && group('top').data().name }}
+        {{ group('top') && group('top').name }}
       </q-toolbar-title>
        <q-btn
         v-if="this.$route.name === 'top' && isAdminOrManager"
@@ -16,14 +16,20 @@
         @click="openNameEditor"
       />
     </q-toolbar>
-    <q-page-container>
+
+    <q-page-container v-if="$store.state.loading.length">
+      <Loading />
+    </q-page-container>
+    <q-page-container v-else>
       <router-view />
     </q-page-container>
+
     <div class="row">
       <div :class="'col q-pa-md bg-' + conf.styles.footerBg + ' text-' + conf.styles.footerText">
         Powerd by <a href="https://github.com/MichinobuMaeda/tamuro" target="_blank">Tamuro</a>
       </div>
     </div>
+
     <q-page-sticky :position="this.$store.state.menuPosition" :offset="[8, 8]">
       <q-fab
         icon="fas fa-bars" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
@@ -33,7 +39,7 @@
         @hide="hideToolChip"
       >
         <q-fab-action
-          v-if="isValidAccount"
+          v-if="isValid"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-home"
           :to="{ name: 'top' }"
         >
@@ -59,7 +65,7 @@
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
-          v-if="isValidAccount"
+          v-if="isValid"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-user-cog"
           :to="{ name: 'preferences' }"
         >
@@ -87,6 +93,7 @@
         </q-fab-action>
       </q-fab>
     </q-page-sticky>
+
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
@@ -100,17 +107,22 @@
         </q-card-section>
         <q-card-section class="row items-center">
           <q-space />
-          <q-btn color="primary" :label="$t('ok')" @click="saveName" :disable="(!name) || name === group('top').data().name" />
+          <q-btn color="primary" :label="$t('ok')" @click="saveName" :disable="(!name) || name === group('top').name" />
         </q-card-section>
       </q-card>
     </q-dialog>
+
   </q-layout>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import Loading from '../pages/Loading.vue'
 
 export default {
+  components: {
+    Loading
+  },
   name: 'MyLayout',
   data () {
     return {
@@ -129,7 +141,7 @@ export default {
   },
   methods: {
     openNameEditor () {
-      this.name = this.group('top').data().name
+      this.name = this.group('top').name
       this.nameEditor = true
     },
     async saveName () {
@@ -192,7 +204,7 @@ export default {
     ...mapGetters([
       'conf',
       'group',
-      'isValidAccount',
+      'isValid',
       'isAdminOrManager',
       'isAdmin',
       'isManager'

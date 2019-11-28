@@ -2,7 +2,7 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="fas fa-server" />
+        <q-avatar icon="fas fa-server" />
         Service
       </p>
 

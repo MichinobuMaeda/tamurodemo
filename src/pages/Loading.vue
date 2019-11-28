@@ -14,6 +14,10 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PageLoading',
+  data () {
+    return {
+    }
+  },
   computed: {
     ...mapGetters([
       'conf'

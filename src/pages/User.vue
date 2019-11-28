@@ -2,23 +2,20 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="fas fa-user" />
-        {{ user($route.params.id).data().name }}
+        <q-avatar icon="fas fa-user" />
+        {{ user($route.params.id).name }}
       </p>
-      <span v-for="group in $store.state.groups" v-bind:key="group.id">
+      <span v-for="g in groups" v-bind:key="g.id">
         <q-btn
-          v-if="group.data().members.includes($route.params.id)"
+          v-if="g.members.includes($route.params.id)"
           class="q-ma-xs" rounded
-          icon="fas fa-users" :label="group.data().name"
-          :to="{ name: 'group', params: { id: group.id } }"
+          icon="fas fa-users" :label="g.name"
+          :to="{ name: 'group', params: { id: g.id } }"
         />
       </span>
     </div>
     <div class="col col-12" v-if="isAdminOrManager">
-      <AccountAdmin v-bind:account="$store.state.accounts.reduce(
-        (ret, cur) => cur.id === $route.params.id ? cur : ret,
-        null
-      )" />
+      <AccountAdmin v-bind:account="account($route.params.id)" />
     </div>
   </q-page>
 </template>
@@ -36,6 +33,8 @@ export default {
     ...mapGetters([
       'conf',
       'user',
+      'groups',
+      'account',
       'isAdminOrManager'
     ])
   }

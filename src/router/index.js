@@ -23,22 +23,31 @@ export default function ({ store } /* { store, ssrContext } */) {
   })
 
   router.beforeEach((to, from, next) => {
+    if (from.name === 'policy') {
+      if (![ 'signin' ].includes(to.name)) {
+        store.state.reqPage = to
+        window.localStorage.setItem('reqPage', JSON.stringify({ name: to.name, params: to.params }))
+      }
+    } else {
+      if (![ 'signin', 'preferences' ].includes(to.name)) {
+        store.state.reqPage = to
+        window.localStorage.setItem('reqPage', JSON.stringify({ name: to.name, params: to.params }))
+      }
+    }
+
     var replace = null
     if (to.name === 'policy') {
-      replace = null
+      // pass thru
     } else if (store.state.loading.length) {
-      replace = router.resolve({ name: 'loading' }).route
-    } else if ((!store.state.loading.length) && (to.name === 'loading')) {
-      replace = router.resolve({ name: 'top' }).route
-    } else if (!store.getters.isValidAccount) {
-      replace = router.resolve({ name: 'signin' }).route
+      // pass thru
+    } else if (!store.getters.isValid) {
+      replace = (store.state.reqPage && store.state.reqPage.name === 'policy') ? store.state.reqPage : router.resolve({ name: 'signin' }).route
     } else if (!store.getters.isSignInMethod) {
       replace = { name: 'preferences' }
     } else if ([ 'signin' ].includes(to.name)) {
-      replace = router.resolve({ name: 'top' }).route
+      replace = store.state.reqPage || router.resolve({ name: 'top' }).route
     } else if ([
-      'accounts',
-      'properties'
+      'accounts'
     ].includes(to.name) && (!store.getters.isManager)) {
       replace = router.resolve({ name: 'top' }).route
     } else if ([

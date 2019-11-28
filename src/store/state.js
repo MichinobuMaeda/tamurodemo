@@ -9,10 +9,10 @@ const message = window.localStorage.getItem('message') ? JSON.parse(window.local
 
 export default {
   conf,
+  reqPage: null,
   firebase,
   db,
   loading: [ 'start' ],
-  landingRoute: null,
   message,
   me: null,
   groups: [],

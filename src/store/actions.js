@@ -143,6 +143,7 @@ const verifyRedirectFromLine = async ({ state, commit }) => {
 }
 
 const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
+  commit('setLoading', 'me')
   let me = await state.db.collection('accounts').doc(user.uid).get()
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
@@ -178,6 +179,7 @@ const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
   } else {
     await signOut({ state })
   }
+  commit('resetLoading', 'me')
 }
 
 const onSignOut = async ({ commit, state }, { i18n }) => {
@@ -197,6 +199,12 @@ const onSignOut = async ({ commit, state }, { i18n }) => {
 export const onAppCreated = async ({ commit, state, getters }, { router, i18n }) => {
   // Set defaults.
   state.firebase.auth().languageCode = 'ja'
+
+  try {
+    state.reqPage = router.resolve(JSON.parse(window.localStorage.getItem('reqPage'))).route
+  } catch (e) {
+    state.reqPage = null
+  }
 
   // Evaluate HTTP request path.
   if (window.location.href.includes('?signinwith=line')) {
@@ -225,11 +233,16 @@ export const onAppCreated = async ({ commit, state, getters }, { router, i18n })
       await verifyEmailLink({ state, commit })
     } else if (user) {
       await onSignIn({ commit, state, getters }, { user, i18n })
+      router.push(state.reqPage || { name: 'top' }).catch(e => {})
     } else if (state.me) {
       await onSignOut({ commit, state }, { i18n })
+      router.push({ name: 'signin' }).catch(e => {})
     }
-    commit('resetLoading', 'auth')
-    router.push(user ? { name: 'top' } : { name: 'signin' }).catch(() => {})
+    setTimeout(() => { commit('resetLoading', 'auth') }, 500)
   })
   commit('resetLoading', 'start')
+}
+
+// On loading completed
+export const onLoadingCompleted = async ({ commit, state }) => {
 }

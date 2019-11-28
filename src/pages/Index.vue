@@ -1,37 +1,37 @@
 <template>
   <q-page class="row">
     <div class="col q-pa-md">
-      <p class="text-body1" v-if="group('top') && group('top').data().desc || isAdminOrManager">
+      <p class="text-body1" v-if="group('top') && group('top').desc || isAdminOrManager">
         <q-icon name="far fa-comment-alt" class="q-mr-sm" />
-        <span v-if="group('top').data().desc">{{ group('top').data().desc }}</span>
+        <span v-if="group('top').desc">{{ group('top').desc }}</span>
         <span v-else>{{ $t('noDesc') }}</span>
         <q-btn flat raund icon="fas fa-edit" @click="openDescEditor" />
       </p>
       <p :class="conf.styles.pageTitle">
-        <q-icon name="fas fa-users" />
+        <q-avatar icon="fas fa-users" />
         {{ $t('groups') }}
         <q-btn flat raund icon="fas fa-plus-circle" @click="openNameEditor" />
       </p>
       <q-list>
-        <div v-for="group in $store.state.groups" v-bind:key="group.id">
+        <div v-for="g in groups" v-bind:key="g.id">
           <q-item
-            v-if="!['top', 'manager', 'admin'].includes(group.id) && (isAdminOrManager || (!group.data().deletedAt))"
-            clickable v-ripple :to="{ name: 'group', params: { id: group.id } }"
+            v-if="!['top', 'manager', 'admin'].includes(g.id) && (isAdminOrManager || (!g.deletedAt))"
+            clickable v-ripple :to="{ name: 'group', params: { id: g.id } }"
           >
             <q-item-section avatar>
-              <q-icon name="fas fa-minus-circle" v-if="group.data().deletedAt" />
+              <q-icon name="fas fa-minus-circle" v-if="g.deletedAt" />
               <q-icon name="fas fa-users" v-else />
             </q-item-section>
-            <q-item-section>{{ group.data().name }}</q-item-section>
+            <q-item-section>{{ g.name }}</q-item-section>
           </q-item>
         </div>
         <q-item clickable v-ripple :to="{ name: 'group', params: { id: 'manager' } }">
           <q-item-section avatar><q-icon name="fas fa-users" /></q-item-section>
-          <q-item-section>{{ group('manager') && group('manager').data().name }}</q-item-section>
+          <q-item-section>{{ group('manager') && group('manager').name }}</q-item-section>
         </q-item>
         <q-item clickable v-ripple :to="{ name: 'group', params: { id: 'admin' } }">
           <q-item-section avatar><q-icon name="fas fa-users" /></q-item-section>
-          <q-item-section>{{ group('admin') && group('admin').data().name }}</q-item-section>
+          <q-item-section>{{ group('admin') && group('admin').name }}</q-item-section>
         </q-item>
       </q-list>
     </div>
@@ -65,7 +65,7 @@
         </q-card-section>
         <q-card-section class="row items-center">
           <q-space />
-          <q-btn color="primary" :label="$t('ok')" @click="saveDesc" :disable="desc === (group('top') && group('top').data().desc)" />
+          <q-btn color="primary" :label="$t('ok')" @click="saveDesc" :disable="desc === (group('top') && group('top').desc)" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -122,6 +122,7 @@ export default {
     ...mapGetters([
       'conf',
       'group',
+      'groups',
       'isAdminOrManager'
     ])
   }

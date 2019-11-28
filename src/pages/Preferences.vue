@@ -2,7 +2,7 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="fas fa-user-cog" />
+        <q-avatar icon="fas fa-user-cog" />
         {{ $t('preferences') }}
       </p>
 
@@ -110,7 +110,7 @@
           <div v-if="(conf.auth.emailLink || conf.auth.password) && isEmail">
             <q-separator class="q-my-md" />
             <div>{{ $t('emailAddressSaved') }}</div>
-            <div>{{ $store.state.firebase.auth().currentUser.email }}</div>
+            <div>{{ $store.state.firebase.auth().currentUser && $store.state.firebase.auth().currentUser.email }}</div>
           </div>
           <div v-else-if="conf.auth.emailLink || conf.auth.password">
             <q-separator class="q-my-md" />

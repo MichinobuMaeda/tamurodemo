@@ -9,11 +9,11 @@ const routes = [
         name: 'top',
         component: () => import('pages/Index.vue')
       },
-      {
-        path: '/loading',
-        name: 'loading',
-        component: () => import('pages/Loading.vue')
-      },
+      // {
+      //   path: '/loading',
+      //   name: 'loading',
+      //   component: () => import('pages/Loading.vue')
+      // },
       {
         path: '/policy',
         name: 'policy',

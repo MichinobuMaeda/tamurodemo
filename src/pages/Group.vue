@@ -2,40 +2,40 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-icon name="fas fa-users" />
-        {{ group($route.params.id).data().name }}
+        <q-avatar icon="fas fa-users" />
+        {{ group($route.params.id).name }}
         <q-btn
           flat raund icon="fas fa-edit"
           @click="openNameEditor"
         />
         <q-btn
-          v-if="!group($route.params.id).data().deletedAt"
+          v-if="!group($route.params.id).deletedAt"
           flat raund icon="fas fa-minus-circle"
           @click="confirmDelete = true"
         />
       </p>
-      <p v-if="group($route.params.id).data().deletedAt" class="text-negative">
+      <p v-if="group($route.params.id).deletedAt" class="text-negative">
         <q-icon name="fas fa-minus-circle" class="q-mr-sm" />
         {{ $t('deleted') }}
         <q-btn flat raund icon="fas fa-trash-restore" @click="confirmRestore = true" />
       </p>
-      <p class="text-body1" v-if="group($route.params.id).data().desc || isManager">
+      <p class="text-body1" v-if="group($route.params.id).desc || isManager">
         <q-icon name="far fa-comment-alt" class="q-mr-sm" />
-        <span v-if="group($route.params.id).data().desc">{{ group($route.params.id).data().desc }}</span>
+        <span v-if="group($route.params.id).desc">{{ group($route.params.id).desc }}</span>
         <span v-else>{{ $t('noDesc') }}</span>
         <q-btn flat raund icon="fas fa-edit" @click="openDescEditor" />
       </p>
       <q-list>
-        <div v-for="user in ($store.state.users || [])" v-bind:key="user.id">
+        <div v-for="u in users" v-bind:key="u.id">
           <q-item
-            v-if="group($route.params.id).data().members.includes(user.id)"
-            clickable v-ripple :to="{ name: 'user', params: { id: user.id } }"
+            v-if="group($route.params.id).members.includes(u.id)"
+            clickable v-ripple :to="{ name: 'user', params: { id: u.id } }"
           >
             <q-item-section avatar><q-icon name="fas fa-user" /></q-item-section>
-            <q-item-section>{{ user.data().name }}</q-item-section>
+            <q-item-section>{{ u.name }}</q-item-section>
             <q-item-section avatar>
               <q-avatar v-if="isAdminOrManager">
-                <q-icon :name="accountStatus(user.id)" />
+                <q-icon :name="accountStatus(u.id)" />
               </q-avatar>
             </q-item-section>
           </q-item>
@@ -59,7 +59,7 @@
           <q-btn
             color="primary"
             :label="$t('ok')" @click="saveName"
-            :disable="(!name) || name === group($route.params.id).data().name"
+            :disable="(!name) || name === group($route.params.id).name"
           />
         </q-card-section>
       </q-card>
@@ -81,7 +81,7 @@
           <q-btn
             color="primary"
             :label="$t('ok')" @click="saveDesc"
-            :disable="desc === group($route.params.id).data().desc"
+            :disable="desc === group($route.params.id).desc"
           />
         </q-card-section>
       </q-card>
@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     openNameEditor () {
-      this.name = this.group(this.$route.params.id).data().name
+      this.name = this.group(this.$route.params.id).name
       this.nameEditor = true
     },
     async saveName () {
@@ -154,7 +154,7 @@ export default {
       })
     },
     openDescEditor () {
-      this.desc = this.group(this.$route.params.id).data().desc
+      this.desc = this.group(this.$route.params.id).desc
       this.descditor = true
     },
     async saveDesc () {
@@ -182,6 +182,7 @@ export default {
     ...mapGetters([
       'conf',
       'group',
+      'users',
       'accountStatus',
       'isAdminOrManager',
       'isManager'
