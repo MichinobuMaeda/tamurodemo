@@ -137,7 +137,7 @@ export const verifyEmailLink = async ({ state }) => {
         )
       } else {
         const credential = Firebase.auth.EmailAuthProvider.credentialWithLink(sessionState.email, window.location.href)
-        await state.currentUser.linkWithCredential(credential)
+        await state.firebase.auth().currentUser.linkWithCredential(credential)
       }
       window.localStorage.removeItem('sessionState')
       window.location.href = topUrl(state.conf.version)
@@ -146,6 +146,8 @@ export const verifyEmailLink = async ({ state }) => {
     }
   }
 }
+
+export const signOut = ({ state }) => state.firebase.auth().signOut()
 
 export const sendPasswordResetEmail = async ({ state, commit }, email) => {
   await state.firebase.auth().sendPasswordResetEmail(
@@ -156,6 +158,5 @@ export const sendPasswordResetEmail = async ({ state, commit }, email) => {
     }
   )
   commit('setMessage', 'sendEmailLink')
+  await signOut({ state })
 }
-
-export const signOut = ({ state }) => state.firebase.auth().signOut()
