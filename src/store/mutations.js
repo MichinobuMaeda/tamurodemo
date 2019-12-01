@@ -2,6 +2,8 @@ export const setService = (state, doc) => {
   state.service[doc.id] = doc.data()
   state.service = { ...state.service }
 }
+export const setCurrentUser = (state) => { state.currentUser = { ...state.firebase.auth().currentUser } }
+export const resetCurrentUser = (state) => { state.currentUser = null }
 export const setMe = (state, me) => {
   state.me = me
   state.menuPosition = (me && me.data().menuPosition) || state.menuPosition

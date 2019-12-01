@@ -6,6 +6,7 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
     commit('setMe', me)
+    commit('setCurrentUser')
     i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
     let admin = await state.db.collection('groups').doc('admin').get()
     let manager = await state.db.collection('groups').doc('manager').get()
@@ -49,6 +50,7 @@ export const onSignOut = async ({ commit, state }, { i18n }) => {
   commit('resetUsers')
   commit('resetGroups')
   commit('resetMe')
+  commit('resetCurrentUser')
   commit('resetMessage')
   i18n.locale = state.service.status.locale || i18n.locale
 }

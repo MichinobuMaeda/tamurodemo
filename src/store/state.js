@@ -15,6 +15,7 @@ export default {
   loading: [ 'start' ],
   message,
   me: null,
+  currentUser: null,
   groups: [],
   accounts: [],
   users: [],

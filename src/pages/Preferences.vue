@@ -110,7 +110,7 @@
           <div v-if="(conf.auth.emailLink || conf.auth.password) && isEmail">
             <q-separator class="q-my-md" />
             <div>{{ $t('emailAddressSaved') }}</div>
-            <div>{{ $store.state.firebase.auth().currentUser && $store.state.firebase.auth().currentUser.email }}</div>
+            <div>{{ $store.state.currentUser && $store.state.currentUser.email }}</div>
           </div>
           <div v-else-if="conf.auth.emailLink || conf.auth.password">
             <q-separator class="q-my-md" />

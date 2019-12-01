@@ -39,39 +39,33 @@ export const isAdminOrManager = state => state.me && state.me.data().valid && st
   false
 )
 export const isSignInMethod = state => {
-  let me = state.me
-  let user = state.firebase.auth().currentUser
-  return me && user && (me.data().lineUid || (user.providerData && user.providerData.length))
+  return state.me && state.currentUser && (state.me.data().line_me || (state.currentUser.providerData && state.currentUser.providerData.length))
 }
 export const isFacebook = state => {
-  let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce(
+  return state.currentUser.providerData ? state.currentUser.providerData.reduce(
     (ret, cur) => cur.providerId === Firebase.auth.FacebookAuthProvider.PROVIDER_ID || ret,
     false
   ) : false
 }
 export const isGithub = state => {
-  let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce(
+  return state.currentUser.providerData ? state.currentUser.providerData.reduce(
     (ret, cur) => cur.providerId === Firebase.auth.GithubAuthProvider.PROVIDER_ID || ret,
     false
   ) : false
 }
 export const isGoogle = state => {
-  let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce(
+  return state.currentUser.providerData ? state.currentUser.providerData.reduce(
     (ret, cur) => cur.providerId === Firebase.auth.GoogleAuthProvider.PROVIDER_ID || ret,
     false
   ) : false
 }
 export const isTwitter = state => {
-  let user = state.firebase.auth().currentUser
-  return user.providerData ? user.providerData.reduce(
+  return state.currentUser.providerData ? state.currentUser.providerData.reduce(
     (ret, cur) => cur.providerId === Firebase.auth.TwitterAuthProvider.PROVIDER_ID || ret,
     false
   ) : false
 }
-export const isLine = state => state.me && (!!state.me.data().lineUid)
+export const isLine = state => state.me && (!!state.me.data().line_me)
 export const isEmail = state => !!state.firebase.auth().currentUser.email
 
 const formatDateTime = (state, tm, format) => Moment(tm).tz(

@@ -62,7 +62,7 @@ export const verifyEmailLink = async ({ state }) => {
         )
       } else {
         const credential = Firebase.auth.EmailAuthProvider.credentialWithLink(sessionState.email, window.location.href)
-        await state.firebase.auth().currentUser.linkWithCredential(credential)
+        await state.currentUser.linkWithCredential(credential)
       }
       window.localStorage.removeItem('sessionState')
       window.location.href = topUrl(state.conf.version)

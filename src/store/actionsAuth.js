@@ -21,7 +21,7 @@ const redirectToLineAuth = async ({ commit, state }, link = null) => {
 }
 
 const removeProvider = ({ state }, provider) => state.db.collection('accounts').doc(state.me.id).update({
-  [provider]: null
+  [provider.replace('.', '_')]: null
 })
 
 const sendEmailLink = async ({ commit, state }, { link, email }) => {
@@ -60,13 +60,15 @@ export const linkProvider = async ({ state, commit }, { provider, email }) => {
   }
 }
 
-export const unlinkProvider = async ({ state }, { provider }) => {
+export const unlinkProvider = async ({ state, commit }, { provider }) => {
   if (provider === 'line.me') {
-    await removeProvider({ state }, 'lineUid')
+    await removeProvider({ state }, provider)
   } else if (provider === 'email') {
     return null
   } else {
     await state.firebase.auth().currentUser.unlink(provider.PROVIDER_ID)
+    await state.firebase.auth().currentUser.reload()
+    commit('setCurrentUser')
   }
 }
 

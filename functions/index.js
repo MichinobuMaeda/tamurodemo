@@ -177,7 +177,7 @@ exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
   return { url: shortUrl }
 })
 
-// HTTP Callable API: Unlink LINE
+// HTTP Callable API: Get email address
 exports.getAccountEmail = functions.https.onCall(async (data, context) => {
   if ((!(await isManager(context.auth.uid))) && (!(await isAdmin(context.auth.uid)))) {
     return { email: null }
@@ -187,7 +187,7 @@ exports.getAccountEmail = functions.https.onCall(async (data, context) => {
   return { email: (user ? user.email : null) }
 })
 
-// HTTP Callable API: Unlink LINE
+// HTTP Callable API: Set email address
 exports.setAccountEmail = functions.https.onCall(async (data, context) => {
   if ((!(await isManager(context.auth.uid))) && (!(await isAdmin(context.auth.uid)))) {
     return { email: null }
@@ -198,11 +198,6 @@ exports.setAccountEmail = functions.https.onCall(async (data, context) => {
   })
   let user = await admin.auth().getUser(data.id)
   return { email: (user ? user.email : null) }
-})
-
-// HTTP Callable API: Unlink LINE
-exports.unlinkLine = functions.https.onCall(async (data, context) => {
-  await admin.auth().setCustomUserClaims(context.auth.uid, { lineUid: null })
 })
 
 // HTTP Callable API: on Sing in with LINE
@@ -259,7 +254,7 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
     let user = await docRef.get()
     if (user && user.exists) {
       await docRef.update({
-        lineUid: payload.sub
+        line_me: payload.sub
       })
       console.info('link LINE: ' + link)
       return { token: null }
@@ -270,7 +265,7 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
   } else {
     // On sing in,
     // Get data of sub.
-    let snapshot = await db.collection('accounts').where('lineUid', '==', payload.sub).get()
+    let snapshot = await db.collection('accounts').where('line_me', '==', payload.sub).get()
     if (snapshot.size === 1) {
       // Return token.
       let user = snapshot.docs.reduce((ret, cur) => cur ? cur : ret, null)
