@@ -111,6 +111,15 @@
             <q-separator class="q-my-md" />
             <div>{{ $t('emailAddressSaved') }}</div>
             <div>{{ $store.state.currentUser && $store.state.currentUser.email }}</div>
+            <q-btn
+              v-if="conf.auth.password"
+              class="q-my-md full-width" align="left" outline color="brown"
+              icon="fas fa-key" :label="$t('resetPassword')"
+              @click="sendPasswordResetEmail($store.state.currentUser.email)"
+            >
+              <q-space />
+              <q-icon name="fas fa-reply" />
+            </q-btn>
           </div>
           <div v-else-if="conf.auth.emailLink || conf.auth.password">
             <q-separator class="q-my-md" />
@@ -122,7 +131,7 @@
             <q-btn
               class="full-width" align="left" outline color="brown"
               icon="fas fa-plus-circle" :label="$t('addProvider', { provider: $t('emailAddress') })"
-              :disable="!validateEmail(email)"
+              :disable="(!email) || (!conf.validators.email(email))"
               @click="linkProvider({ provider: conf.auth.emailLink, email })"
             />
           </div>
@@ -209,6 +218,7 @@ export default {
     ...mapActions([
       'linkProvider',
       'unlinkProvider',
+      'sendPasswordResetEmail',
       'signOut'
     ])
   },

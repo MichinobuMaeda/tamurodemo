@@ -3,7 +3,7 @@ import Firebase from 'firebase'
 // Set true or false.
 export default {
   emailLink: true && 'email',
-  // password: false && 'password',
+  password: true && 'password',
   google: false && Firebase.auth.GoogleAuthProvider,
   facebook: false && Firebase.auth.FacebookAuthProvider,
   twitter: true && Firebase.auth.TwitterAuthProvider,

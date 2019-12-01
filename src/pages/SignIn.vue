@@ -45,9 +45,36 @@
           <q-btn
             class="full-width" align="left" outline color="brown-9"
             :label="$t('getEmailLink')"
-            :disable="email && !conf.validators.email(email)"
+            :disable="(!email) || (!conf.validators.email(email))"
             @click="signInWithProvider({ provider: conf.auth.emailLink, email })"
+          >
+            <q-space />
+            <q-icon name="fas fa-reply" />
+          </q-btn>
+        </div>
+        <div v-if="conf.auth.password">
+          <q-separator class="q-my-md" />
+          <div class="q-my-md">{{ $t('signInWithEmailAndPassword') }}</div>
+          <q-input v-model="password" type="password" :rules="passwordRule" :label="$t('password')">
+            <template v-slot:before>
+              <q-icon name="fas fa-key" />
+            </template>
+          </q-input>
+          <q-btn
+            class="q-my-md full-width" align="left" outline color="brown"
+            :label="$t('signInWithPassword')"
+            :disable="(!email) || (!conf.validators.email(email)) || (!password) || (!conf.validators.password(password))"
+            @click="signInWithProvider({ provider: conf.auth.password, email, password })"
           />
+          <q-btn
+            class="q-my-md full-width" align="left" outline color="brown"
+            icon="fas fa-key" :label="$t('resetPassword')"
+            :disable="(!email) || (!conf.validators.email(email))"
+            @click="sendPasswordResetEmail(email)"
+          >
+            <q-space />
+            <q-icon name="fas fa-reply" />
+          </q-btn>
         </div>
         <q-separator class="q-my-md" />
         <div class="text-center">
@@ -73,12 +100,15 @@ export default {
   data () {
     return {
       email: '',
-      emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ]
+      emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ],
+      password: '',
+      passwordRule: [ v => (!v || this.conf.validators.password(v)) || this.$t('invalidPassword') ]
     }
   },
   methods: {
     ...mapActions([
-      'signInWithProvider'
+      'signInWithProvider',
+      'sendPasswordResetEmail'
     ])
   },
   computed: {
