@@ -5,6 +5,16 @@ import routes from './routes'
 
 Vue.use(VueRouter)
 
+const setReuestedRoute = ({ state }, to) => {
+  let { name, params } = to
+  try {
+    window.localStorage.setItem('reqPage', JSON.stringify({ name, params }))
+    state.reqPage = to
+  } catch (e) {
+    return null
+  }
+}
+
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation
@@ -25,13 +35,11 @@ export default function ({ store } /* { store, ssrContext } */) {
   router.beforeEach((to, from, next) => {
     if (from.name === 'policy') {
       if (![ 'signin' ].includes(to.name)) {
-        store.state.reqPage = to
-        window.localStorage.setItem('reqPage', JSON.stringify({ name: to.name, params: to.params }))
+        setReuestedRoute(store, to)
       }
     } else {
       if (![ 'signin', 'preferences' ].includes(to.name)) {
-        store.state.reqPage = to
-        window.localStorage.setItem('reqPage', JSON.stringify({ name: to.name, params: to.params }))
+        setReuestedRoute(store, to)
       }
     }
 

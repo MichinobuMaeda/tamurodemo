@@ -1,12 +1,15 @@
+import Firebase from 'firebase'
+
+// Set true or false.
 export default {
-  emailLink: true,
-  password: false,
-  google: false,
-  facebook: false,
-  twitter: true,
-  github: false,
-  microsoft: false,
-  line: true,
-  yahoojp: false,
-  mixi: false
+  emailLink: true && 'email',
+  // password: false && 'password',
+  google: false && Firebase.auth.GoogleAuthProvider,
+  facebook: false && Firebase.auth.FacebookAuthProvider,
+  twitter: true && Firebase.auth.TwitterAuthProvider,
+  github: false && Firebase.auth.GithubAuthProvider,
+  // microsoft: false && 'microsoft.com',
+  line: true && 'line.me'
+  // yahoojp: false && 'yahoo.co.jp',
+  // mixi: false && 'mixi.jp'
 }
