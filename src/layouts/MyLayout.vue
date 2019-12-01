@@ -1,12 +1,10 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-toolbar :class="'bg-' + conf.styles.headerBg">
-      <router-link :to="{ name: 'top' }">
-        <q-avatar rounded>
-          <img src="statics/app-logo-128x128.png">
-        </q-avatar>
-      </router-link>
-      <q-toolbar-title :class="'text-' + conf.styles.headerText">
+      <q-avatar rounded @click="goTop">
+        <img src="statics/app-logo-128x128.png">
+      </q-avatar>
+      <q-toolbar-title :class="'text-' + conf.styles.headerText" @click="goTop">
         {{ group('top') && group('top').name }}
       </q-toolbar-title>
        <q-btn
@@ -140,6 +138,15 @@ export default {
     }
   },
   methods: {
+    goTop () {
+      let to = this.isValid ? { name: 'top' } : { name: 'signin' }
+      if (this.$route.name !== to.name) {
+        if (this.isValid) {
+          window.localStorage.setItem('reqPage', JSON.stringify(to))
+        }
+        this.$router.push(to).catch(() => {})
+      }
+    },
     openNameEditor () {
       this.name = this.group('top').name
       this.nameEditor = true

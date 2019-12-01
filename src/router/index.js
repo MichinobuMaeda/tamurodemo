@@ -5,7 +5,15 @@ import routes from './routes'
 
 Vue.use(VueRouter)
 
-const setReuestedRoute = ({ state }, to) => {
+const getReuestedPage = ({ state }, router) => {
+  try {
+    state.reqPage = router.resolve(JSON.parse(window.localStorage.getItem('reqPage'))).route
+  } catch (e) {
+    state.reqPag = null
+  }
+}
+
+const setReuestedPage = ({ state }, to) => {
   let { name, params } = to
   try {
     window.localStorage.setItem('reqPage', JSON.stringify({ name, params }))
@@ -33,13 +41,14 @@ export default function ({ store } /* { store, ssrContext } */) {
   })
 
   router.beforeEach((to, from, next) => {
+    getReuestedPage(store, router)
     if (from.name === 'policy') {
       if (![ 'signin' ].includes(to.name)) {
-        setReuestedRoute(store, to)
+        setReuestedPage(store, to)
       }
     } else {
-      if (![ 'signin', 'preferences' ].includes(to.name)) {
-        setReuestedRoute(store, to)
+      if (![ 'top', 'signin', 'preferences' ].includes(to.name)) {
+        setReuestedPage(store, to)
       }
     }
 
@@ -49,7 +58,9 @@ export default function ({ store } /* { store, ssrContext } */) {
     } else if (store.state.loading.length) {
       // pass thru
     } else if (!store.getters.isValid) {
-      replace = (store.state.reqPage && store.state.reqPage.name === 'policy') ? store.state.reqPage : router.resolve({ name: 'signin' }).route
+      if (to.name !== 'signin') {
+        replace = (store.state.reqPage && store.state.reqPage.name === 'policy') ? store.state.reqPage : router.resolve({ name: 'signin' }).route
+      }
     } else if (!store.getters.isSignInMethod) {
       replace = { name: 'preferences' }
     } else if ([ 'signin' ].includes(to.name)) {

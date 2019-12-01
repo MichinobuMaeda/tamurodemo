@@ -7,21 +7,12 @@
 <script>
 import { mapActions } from 'vuex'
 
-const getReuestedRoute = () => {
-  try {
-    return this.$router.resolve(JSON.parse(window.localStorage.getItem('reqPage'))).route
-  } catch (e) {
-    return null
-  }
-}
-
 export default {
   name: 'App',
   async created () {
     let { state, commit } = this.$store
 
     state.firebase.auth().languageCode = 'ja'
-    state.reqPage = getReuestedRoute()
     await this.verifyRedirectFromLine()
     await this.verifyInvitationUrl()
     await this.getServiceStatus({ i18n: this.$root.$i18n })
