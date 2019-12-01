@@ -53,7 +53,12 @@ export const clearLoading = state => {
   state.loading = []
 }
 
-export const addUnsubscriber = (state, unsubscriber) => { state.unsubscribers.push(unsubscriber) }
+export const addUnsub = (state, { unsub, key }) => {
+  state.unsub[key] = state.unsub[key] || []
+  state.unsub[key].push(unsub)
+}
+export const resetUnsubs = state => { state.unsub = {} }
+
 export const setMessage = (state, message) => {
   state.message = message.key ? message : { key: message, params: {} }
   window.localStorage.setItem('message', JSON.stringify(state.message))
@@ -62,4 +67,3 @@ export const resetMessage = (state) => {
   state.message = { key: 'noMessage', params: {} }
   window.localStorage.setItem('message', JSON.stringify(state.message))
 }
-export const resetUnsubscribers = state => { state.unsubscribers = [] }

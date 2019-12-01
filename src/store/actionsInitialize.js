@@ -11,16 +11,25 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
     let admin = await state.db.collection('groups').doc('admin').get()
     let manager = await state.db.collection('groups').doc('manager').get()
     if (admin.data().members.includes(me.id) || manager.data().members.includes(me.id)) {
-      commit('addUnsubscriber', state.db.collection('accounts').onSnapshot(querySnapshot => {
-        commit('setAccounts', querySnapshot)
-      }))
+      commit('addUnsub', {
+        key: 'top',
+        unsub: state.db.collection('accounts').onSnapshot(querySnapshot => {
+          commit('setAccounts', querySnapshot)
+        })
+      })
     }
-    commit('addUnsubscriber', state.db.collection('groups').orderBy('name', 'asc').onSnapshot(querySnapshot => {
-      commit('setGroups', querySnapshot)
-    }))
-    commit('addUnsubscriber', state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
-      commit('setUsers', querySnapshot)
-    }))
+    commit('addUnsub', {
+      key: 'top',
+      unsub: state.db.collection('groups').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+        commit('setGroups', querySnapshot)
+      })
+    })
+    commit('addUnsub', {
+      key: 'top',
+      unsub: state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+        commit('setUsers', querySnapshot)
+      })
+    })
     if ((!me.data().enteredAt) && getters.isSignInMethod) {
       let ts = new Date()
       await state.db.collection('accounts').doc(user.uid).update({
@@ -28,13 +37,16 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
         updatedAt: ts
       })
     }
-    commit('addUnsubscriber', state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
-      commit('setMe', doc.exists ? doc : null)
-      i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
-      if (!(state.me && state.me.exists && state.me.data().valid)) {
-        await signOut({ state })
-      }
-    }))
+    commit('addUnsub', {
+      key: 'top',
+      unsub: state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
+        commit('setMe', doc.exists ? doc : null)
+        i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
+        if (!(state.me && state.me.exists && state.me.data().valid)) {
+          await signOut({ state })
+        }
+      })
+    })
   } else {
     await signOut({ state })
   }
@@ -45,7 +57,7 @@ export const onSignOut = async ({ commit, state }, { i18n }) => {
   state.unsubscribers.forEach(unsubscriber => {
     unsubscriber()
   })
-  commit('resetUnsubscribers')
+  commit('resetUnsubs')
   commit('resetAccounts')
   commit('resetUsers')
   commit('resetGroups')

@@ -28,7 +28,10 @@
       </div>
     </div>
 
-    <q-page-sticky :position="this.$store.state.menuPosition" :offset="[8, 8]">
+    <q-page-sticky
+      v-if="!$store.state.loading.length"
+      :position="this.$store.state.menuPosition" :offset="[8, 8]"
+    >
       <q-fab
         icon="fas fa-bars" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
         v-touch-swipe.mouse="handleSwipe"

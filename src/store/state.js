@@ -21,6 +21,6 @@ export default {
   users: [],
   profiles: {},
   service: {},
-  unsubscribers: [],
+  unsub: {},
   menuPosition: 'bottom-right'
 }
