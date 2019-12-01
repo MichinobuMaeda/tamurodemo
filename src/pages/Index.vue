@@ -35,6 +35,7 @@
         </q-item>
       </q-list>
     </div>
+
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
@@ -52,6 +53,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
     <q-dialog v-model="descditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
@@ -69,6 +71,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
   </q-page>
 </template>
 

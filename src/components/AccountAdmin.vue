@@ -23,7 +23,7 @@
             {{ $t('accountInvited') }}
           </q-item-section>
           <q-item-section>
-            {{ longTimestamp(account.invitedAt.seconds * 1000) }}
+            {{ longTimestamp(account.invitedAt ? account.invitedAt.seconds * 1000 : null) || '-' }}
           </q-item-section>
         </q-item>
         <q-item>
@@ -31,7 +31,7 @@
             {{ $t('accountEntered') }}
           </q-item-section>
           <q-item-section>
-            {{ longTimestamp(account.enteredAt.seconds * 1000) }}
+            {{ longTimestamp(account.enteredAt ? account.enteredAt.seconds * 1000 : null) || '-' }}
           </q-item-section>
         </q-item>
         <q-item>
@@ -69,7 +69,7 @@ export default {
   },
   async mounted () {
     let result = await this.$store.state.firebase.functions().httpsCallable('getAccountEmail')({
-      id: this.$store.state.me.id
+      id: this.account.id
     })
     this.email = result.data.email
   },
@@ -83,13 +83,13 @@ export default {
     },
     async setEmail () {
       let result = await this.$store.state.firebase.functions().httpsCallable('setAccountEmail')({
-        id: this.$store.state.me.id,
+        id: this.account.id,
         email: this.email
       })
       this.email = result.data.email
     },
     async toggleValid () {
-      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+      await this.$store.state.db.collection('accounts').doc(this.account.id).update({
         valid: !this.account.valid
       })
     }

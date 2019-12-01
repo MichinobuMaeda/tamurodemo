@@ -96,6 +96,28 @@ const setup = async () => {
   })
 }
 
+// Add a user
+const createUser = async (name, ts, status) => {
+  let user = await db.collection('users').add({
+    name,
+    createdAt: ts,
+    updatedAt: ts
+  })
+  await db.collection('profiles').doc(user.id).set({
+    createdAt: ts,
+    updatedAt: ts
+  })
+  await db.collection('accounts').doc(user.id).set({
+    menuPosition: status.data().menuPosition,
+    timezone: status.data().timezone,
+    locale: status.data().locale,
+    valid: true,
+    createdAt: ts,
+    updatedAt: ts
+  })
+  return user.id
+}
+
 // HTTP API: setup the service
 appTamuro.get('/setup', async (req, res) => {
   // Create basic docs.
@@ -113,35 +135,21 @@ appTamuro.get('/initialize', async (req, res) => {
     res.send('status: warn\nAlready initialized.\n')
   } else {
     const ts = new Date()
-    let user = await db.collection('users').add({
-      name: 'Administrator',
-      createdAt: ts,
-      updatedAt: ts
-    })
-    await db.collection('profiles').doc(user.id).set({
-      createdAt: ts,
-      updatedAt: ts
-    })
-    await db.collection('accounts').doc(user.id).set({
-      menuPosition: status.data().menuPosition,
-      timezone: status.data().timezone,
-      locale: status.data().locale,
-      valid: true,
-      invitedAt: ts,
-      createdAt: ts,
-      updatedAt: ts
-    })
+    const id = await createUser('Administrator', ts, status)
     await db.collection('groups').doc('admin').update({
-      members: [ user.id ],
+      members: [ id ],
       updatedAt: ts
     })
     await db.collection('groups').doc('manager').update({
-      members: [ user.id ],
+      members: [ id ],
       updatedAt: ts
     })
-    const token = await admin.auth().createCustomToken(user.id)
+    const token = await admin.auth().createCustomToken(id)
     const url = await getUiUrl()
     const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
+    await db.collection('accounts').doc(id).update({
+      invitedAt: ts
+    })
     res.send('status: ok\n' + shortUrl + '\n')
   }
 })
@@ -276,4 +284,22 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
       return { error: 'no data of sub: ' + payload.sub }
     }
   }
+})
+
+// HTTP Callable API: Create member
+exports.createMember = functions.https.onCall(async (data, context) => {
+  if (!(await isManager(context.auth.uid))) {
+    return null
+  }
+  console.info({ id: data.id, name: data.name })
+  const ts = new Date()
+  let status = await db.collection('service').doc('status').get()
+  const id = await createUser(data.name, ts, status)
+  const groupRef = db.collection('groups').doc(data.id)
+  const group = await groupRef.get()
+  await groupRef.update({
+    members: [ ...group.data().members, id ],
+    updatedAt: ts
+  })
+  return { id }
 })
