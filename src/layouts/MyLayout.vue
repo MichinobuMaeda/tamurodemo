@@ -25,7 +25,7 @@
     <div class="row">
       <div :class="'col q-pa-md bg-' + conf.styles.footerBg + ' text-' + conf.styles.footerText">
         Powerd by <a href="https://github.com/MichinobuMaeda/tamuro" target="_blank">Tamuro</a>
-        Ver. {{ $store.state.service.status.version }}
+        Ver. {{ $store.state.service.status ? $store.state.service.status.version : '' }}
       </div>
     </div>
 
