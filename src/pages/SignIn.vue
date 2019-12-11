@@ -43,7 +43,7 @@
             </template>
           </q-input>
           <q-btn
-            class="full-width" align="left" outline color="brown-9"
+            class="q-my-md full-width" align="left" outline color="brown-9"
             :label="$t('getEmailLink')"
             :disable="(!email) || (!conf.validators.email(email))"
             @click="signInWithProvider({ provider: conf.auth.emailLink, email })"

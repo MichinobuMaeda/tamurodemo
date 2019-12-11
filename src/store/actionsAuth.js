@@ -2,8 +2,8 @@ import crypto from 'crypto'
 import querystring from 'querystring'
 import Firebase from 'firebase'
 
-const topUrl = version => window.location.href.replace(/\?.*/, '').replace(/#.*/, '') + '?v=' + version + '#/'
-const signInUrl = version => window.location.href.replace(/\?.*/, '').replace(/#.*/, '') + '?v=' + version + '#/signin'
+const topUrl = () => window.location.href.replace(/\?.*/, '').replace(/#.*/, '#/')
+const signInUrl = () => window.location.href.replace(/\?.*/, '').replace(/#.*/, '#/signin')
 const generateRnadome = seed => crypto.createHash('sha256').update(seed).digest('base64').substr(0, 20)
 const generateState = seed => generateRnadome((new Date()).toISOString() + seed)
 const generateNonce = seed => generateRnadome(seed + (new Date()).toISOString())
@@ -83,7 +83,7 @@ export const verifyInvitationUrl = async ({ state, commit }) => {
     let token = window.location.href.replace(/.*&invitation=/, '').replace(/#\/.*/, '')
     await state.firebase.auth().signInWithCustomToken(token)
     commit('setMessage', 'oneOrMoreSignInMethod')
-    window.location.href = topUrl(state.conf.version)
+    window.location.href = topUrl()
   }
 }
 
@@ -99,16 +99,16 @@ export const verifyRedirectFromLine = async ({ state, commit }) => {
     let sessionState = savedSsessionState ? JSON.parse(savedSsessionState) : null
     // Validate parameters and session state.
     if (!sessionState) {
-      window.location.href = topUrl(state.conf.version)
+      window.location.href = topUrl()
     } else if (params.state !== sessionState.state) {
       commit('setMessage', { key: 'retryOAuth', param: { err: '11' } })
-      window.location.href = signInUrl(state.conf.version)
+      window.location.href = signInUrl()
     } else if (params['error']) {
       commit('setMessage', { key: 'retryOAuth', param: { err: '12' } })
-      window.location.href = signInUrl(state.conf.version)
+      window.location.href = signInUrl()
     } else if (!params['code']) {
       commit('setMessage', { key: 'retryOAuth', param: { err: '13' } })
-      window.location.href = signInUrl(state.conf.version)
+      window.location.href = signInUrl()
     } else {
       let result = await state.firebase.functions().httpsCallable('signInWithLine')({
         code: params.code,
@@ -120,7 +120,7 @@ export const verifyRedirectFromLine = async ({ state, commit }) => {
           await state.firebase.auth().signInWithCustomToken(result.data.token)
         } catch (err) { alert(err) }
       }
-      window.location.href = topUrl(state.conf.version)
+      window.location.href = topUrl()
     }
   }
 }
@@ -140,9 +140,9 @@ export const verifyEmailLink = async ({ state }) => {
         await state.firebase.auth().currentUser.linkWithCredential(credential)
       }
       window.localStorage.removeItem('sessionState')
-      window.location.href = topUrl(state.conf.version)
+      window.location.href = topUrl()
     } else {
-      window.location.href = signInUrl(state.conf.version)
+      window.location.href = signInUrl()
     }
   }
 }
@@ -153,7 +153,7 @@ export const sendPasswordResetEmail = async ({ state, commit }, email) => {
   await state.firebase.auth().sendPasswordResetEmail(
     email,
     {
-      url: state.me ? topUrl(state.conf.version) : signInUrl(state.conf.version),
+      url: state.me ? topUrl() : signInUrl(),
       handleCodeInApp: true
     }
   )

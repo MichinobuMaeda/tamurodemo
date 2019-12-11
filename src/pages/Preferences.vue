@@ -163,7 +163,11 @@
             />
           </p>
           <p>
-            <q-btn outline color="negative" icon="fas fa-sign-out-alt" :label="$t('signout')" @click="signOut" />
+            <q-btn
+              class="q-my-md"
+              outline color="negative"
+              icon="fas fa-sign-out-alt" :label="$t('signout')"
+              @click="signOut" />
           </p>
         </div>
 
