@@ -6,6 +6,7 @@ stages:
 cache:
   paths:
     - node_modules/
+    - functions/node_modules/
   key: "$CI_REPOSITORY_URL"
 
 deploy-prod:
