@@ -55,6 +55,11 @@ https://console.cloud.google.com
            * New members: allUsers
            * Role: Storage Object Viewer
 
+### Setup CI
+
+* [Using GitLab CI/CD with a GitHub repository](https://docs.gitlab.com/ee/ci/ci_cd_for_external_repos/github_integration.html)
+* [Firebase Hosting Deployment Automation with Gitlab CI](https://medium.com/@rambabusaravanan/firebase-hosting-deployment-automation-with-gitlab-ci-f3fad9130d62)
+
 ### Development environment
 
 Fork ``git@github.com:MichinobuMaeda/tamuro.git``
@@ -129,6 +134,3 @@ curl https://us-central1-[Project_ID].cloudfunctions.net/tamuro/initialize
 status: ok
 https://...
 ```
-
-* [Using GitLab CI/CD with a GitHub repository](https://docs.gitlab.com/ee/ci/ci_cd_for_external_repos/github_integration.html)
-* [Firebase Hosting Deployment Automation with Gitlab CI](https://medium.com/@rambabusaravanan/firebase-hosting-deployment-automation-with-gitlab-ci-f3fad9130d62)
