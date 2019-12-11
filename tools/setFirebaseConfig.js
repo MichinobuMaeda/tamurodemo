@@ -20,6 +20,6 @@ export default firebaseConfig
 .replace('MESSAGEING_SENDER_ID', process.env.MESSAGEING_SENDER_ID)
 .replace('APP_ID', process.env.APP_ID)
 
-fs.writeFile('src/conf/firebaset.js', text, (err) => {
+fs.writeFile(__dirname + '/../src/conf/firebaset.js', text, (err) => {
   if (err) throw err;
 })
