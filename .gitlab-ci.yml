@@ -1,0 +1,19 @@
+image: rambabusaravanan/firebase
+
+stages:
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+  key: "$CI_REPOSITORY_URL"
+
+deploy-prod:
+  stage: deploy
+  only:
+    - master
+  script:
+    - yarn
+    - yarn run build
+    - firebase use tamuro-test01 --token $FIREBASE_TOKEN
+    - firebase deploy -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN

@@ -23,7 +23,7 @@ export default {
   preferences: '設定いろう',
   privacyPolicy: 'プライバシーどないしよ',
   accountInvited: '呼んだとき',
-  accountEntered: 'おいでとき',
+  accountEntered: 'おいでたとき',
   accountPaused: 'あがられん',
   invitation: '呼ぶ',
   menuPosition: 'メニューはどこがええ？',
