@@ -97,13 +97,13 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {}, // only for NON InjectManifest
       manifest: {
-        // name: 'tamuro',
-        // short_name: 'tamuro',
+        name: 'Tamuro',
+        short_name: 'Tamuro',
         // description: 'tamuro',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#ffffff',
-        theme_color: '#027be3',
+        background_color: '#008080',
+        theme_color: '#008080',
         icons: [
           {
             'src': 'statics/icons/icon-128x128.png',
