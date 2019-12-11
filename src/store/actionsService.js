@@ -15,7 +15,7 @@ const onServiceStatusChanged = async ({ commit, state }, { doc, i18n }) => {
     }
     await axios.get(window.location.href, { headers })
     await axios.get(window.location.href.replace(/#.*/, '').replace(/\/[^/]*$/, '/service-worker.js'), { headers })
-    window.location.href = window.location.href
+    window.location.href = '' + window.location.href
   }
 }
 
