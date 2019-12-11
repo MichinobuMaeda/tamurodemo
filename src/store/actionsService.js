@@ -6,7 +6,7 @@ const onServiceStatusChanged = ({ commit, state }, { doc, i18n }) => {
   commit('setService', doc)
   i18n.locale = (state.service && state.service.status && state.service.status.locale) || i18n.locale
   if (state.service.status.version > state.conf.version) {
-    window.location.href = window.location.href.replace(/(\/\?ver=[^/]*|)\/#\//, '/?ver=' + state.service.status.version + '/#/')
+    window.location.reload(true)
   }
 }
 

@@ -54,8 +54,10 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
 }
 
 export const onSignOut = async ({ commit, state }, { i18n }) => {
-  state.unsubscribers.forEach(unsubscriber => {
-    unsubscriber()
+  Object.keys(state.unsub).forEach(key => {
+    state.unsub[key].forEach(unsub => {
+      unsub()
+    })
   })
   commit('resetUnsubs')
   commit('resetAccounts')

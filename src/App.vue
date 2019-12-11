@@ -22,11 +22,12 @@ export default {
       await this.verifyEmailLink()
       if (user) {
         await this.onSignIn({ user, i18n: this.$root.$i18n })
-        this.$router.push(state.reqPage || { name: 'top' }).catch(e => {})
       } else if (state.me) {
         await this.onSignOut({ i18n: this.$root.$i18n })
-        this.$router.push({ name: 'signin' }).catch(e => {})
+      } else {
+        await this.onSignOut({ i18n: this.$root.$i18n })
       }
+      this.$router.push(state.me ? (state.reqPage || { name: 'top' }) : { name: 'signin' }).catch(e => {})
       setTimeout(() => { commit('resetLoading', 'auth') }, 300)
     })
     commit('resetLoading', 'start')
