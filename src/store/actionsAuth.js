@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import querystring from 'querystring'
-import Firebase from 'firebase'
+import Firebase from 'firebase/app'
+import 'firebase/auth'
 
 const topUrl = () => window.location.href.replace(/\?.*/, '').replace(/#.*/, '#/')
 const signInUrl = () => window.location.href.replace(/\?.*/, '').replace(/#.*/, '#/signin')

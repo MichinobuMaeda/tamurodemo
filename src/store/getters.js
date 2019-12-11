@@ -1,4 +1,5 @@
-import Firebase from 'firebase'
+import Firebase from 'firebase/app'
+import 'firebase/auth'
 import Moment from 'moment-timezone'
 
 export const conf = state => state.conf
