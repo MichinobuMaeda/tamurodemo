@@ -12,16 +12,7 @@
     ],
     "headers": [
       {
-        "source": "service-worker.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=0"
-          }
-        ]
-      },
-      {
-        "source": "index.html",
+        "source": "**/*.@(js|html)",
         "headers": [
           {
             "key": "Cache-Control",

@@ -9,15 +9,60 @@ cache:
     - functions/node_modules/
   key: "$CI_REPOSITORY_URL"
 
+deploy-storage:
+  stage: deploy
+  only:
+    refs:
+      - master
+    changes:
+      - storage.rules
+  script:
+    - cd functions && npm i && cd ..
+    - firebase use $PROJECT_ID --token $FIREBASE_TOKEN
+    - firebase deploy --only storage -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
+
+deploy-firestore:
+  stage: deploy
+  only:
+    refs:
+      - master
+    changes:
+      - firestore.indexes.json
+      - firestore.rules
+  script:
+    - cd functions && npm i && cd ..
+    - firebase use $PROJECT_ID --token $FIREBASE_TOKEN
+    - firebase deploy --only firestore -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
+
+deploy-functions:
+  stage: deploy
+  only:
+    refs:
+      - master
+    changes:
+      - functions/**/*
+  script:
+    - cd functions && npm i && cd ..
+    - firebase use $PROJECT_ID --token $FIREBASE_TOKEN
+    - firebase deploy --only functions -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
+
 deploy-prod:
   stage: deploy
   only:
-    - master
+    refs:
+      - master
+    changes:
+      - src/**/*
+      - src-pwa/**/*
+      - package.json
+      - yarn.lock
+      - quasar.conf.js
+      - babel.config.js
+      - firebase.json
   script:
     - yarn
     - node ./tools/setFirebaseConfig.js
     - cat ./src/conf/firebase.js
     - yarn run build
-    - cd functions && npm i && cd ..
     - firebase use $PROJECT_ID --token $FIREBASE_TOKEN
-    - firebase deploy -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
+    - firebase deploy -only hosting -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
