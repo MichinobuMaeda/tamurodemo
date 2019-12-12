@@ -6,3 +6,6 @@ console.log('Set verison:' + version)
 fs.writeFile(__dirname + '/../src/conf/version.js', text, (err) => {
   if (err) throw err;
 })
+fs.writeFile(__dirname + '/version.json', '"' + version + '"', (err) => {
+  if (err) throw err;
+})

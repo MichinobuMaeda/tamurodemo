@@ -1,9 +1,16 @@
 const firebase = require("firebase/app")
 require("firebase/firestore")
-const conf = require('../src/conf')
 
-Promise.resolve(firebase.initializeApp(conf.firebase).firestore()).then(
-  db => db.collection('service').doc(status).update({
-    version: conf.version
-  })
+Promise.resolve(firebase.initializeApp({
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  databaseURL: process.env.DATABASE_URL,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STRAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGEING_SENDER_ID,
+  appId: process.env.APP_ID
+}).firestore()).then(
+  function (db) {
+    return db.collection('service').doc(status).update({ version: require('./version.json') })
+  }
 )
