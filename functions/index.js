@@ -160,6 +160,7 @@ appTamuro.get('/release/ui', async (req, res) => {
   await db.collection('service').doc('status').update({
     version: result.data
   })
+  res.send('version: ' + result.data + '\n')
 })
 
 // Setup HTTP API for tamuro
