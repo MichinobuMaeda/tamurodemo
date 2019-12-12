@@ -11,10 +11,6 @@
     "lint": "eslint --ext .js,.vue src",
     "build": "quasar build -m pwa",
     "test": "echo \"No test specified\" && exit 0",
-    "updateVersion": "node tools/updateVersion.js",
-    "deployFunctions": "firebase deploy --only functions",
-    "deployWithoutUI": "firebase deploy --only functions,firestore,storage",
-    "deployAll": "quasar build -m pwa && firebase deploy",
     "dev": "quasar dev -m pwa"
   },
   "dependencies": {

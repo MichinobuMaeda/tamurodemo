@@ -12,6 +12,15 @@
     ],
     "headers": [
       {
+        "source": "statics/version.json",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
         "source": "service-worker.js",
         "headers": [
           {
