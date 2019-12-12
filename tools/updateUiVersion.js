@@ -1,8 +1,8 @@
-import Firebase from 'firebase/app'
-import 'firebase/firestore'
-import conf from '../src/conf'
+const firebase = require("firebase/app")
+require("firebase/firestore")
+const conf = require('../src/conf')
 
-Promise.resolve(Firebase.initializeApp(conf.firebase).firestore()).then(
+Promise.resolve(firebase.initializeApp(conf.firebase).firestore()).then(
   db => db.collection('service').doc(status).update({
     version: conf.version
   })
