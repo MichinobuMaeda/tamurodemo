@@ -1,5 +1,6 @@
 import Firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/functions'
 import conf from '../conf'
 
 const firebase = Firebase.initializeApp(conf.firebase)

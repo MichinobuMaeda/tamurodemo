@@ -66,4 +66,4 @@ deploy-prod:
     - yarn run build
     - firebase use $PROJECT_ID --token $FIREBASE_TOKEN
     - firebase deploy --only hosting -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
-    - curl https://us-central1-${PROJECT_ID}.cloudfunctions.net/tamuro/release/ui
+    - node ./tools/updateUiVersion.js
