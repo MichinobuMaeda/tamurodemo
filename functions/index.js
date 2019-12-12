@@ -154,6 +154,14 @@ appTamuro.get('/initialize', async (req, res) => {
   }
 })
 
+// HTTP API: Release new version of the UI.
+appTamuro.get('/release/ui', async (req, res) => {
+  let result = await axios.get('https://' + projectId + '.web.app/statics/version.json')
+  await db.collection('service').doc('status').update({
+    version: result.data
+  })
+})
+
 // Setup HTTP API for tamuro
 exports.tamuro = functions.https.onRequest(appTamuro);
 
