@@ -1,4 +1,5 @@
 src/conf/firebase.js
+tools/version.json
 .firebaserc
 
 .quasar

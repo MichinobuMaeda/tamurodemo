@@ -11,6 +11,6 @@ Promise.resolve(firebase.initializeApp({
   appId: process.env.APP_ID
 }).firestore()).then(
   function (db) {
-    return db.collection('service').doc(status).update({ version: require('./version.json') })
+    return db.collection('service').doc('status').update({ version: require('./version.json') })
   }
 )
