@@ -30,5 +30,20 @@ export default {
       label: '左上',
       value: 'top-left'
     }
-  ]
+  ],
+  iconMenu: 'fas fa-bars',
+  iconAdd: 'fas fa-plus-circle',
+  iconRemove: 'fas fa-minus-circle',
+  iconRestore: 'fas fa-trash-restore',
+  iconEdit: 'fas fa-edit',
+  iconClose: 'fas fa-times',
+  iconDesc: 'far fa-comment-alt',
+  iconUser: 'fas fa-user',
+  iconAddUser: 'fas fa-user-plus',
+  iconGroup: 'fas fa-users',
+  iconBlocked: 'fas fa-lock',
+  iconInvited: 'far fa-paper-plane',
+  iconAccepted: 'far fa-check-circle',
+  defaultMenuPosition: 'bottom-right',
+  defaultLocale: 'ja-jp'
 }

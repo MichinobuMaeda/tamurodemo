@@ -75,7 +75,6 @@ export const unlinkProvider = async ({ state, commit }, { provider }) => {
   } else {
     await state.firebase.auth().currentUser.unlink(provider.PROVIDER_ID)
     await state.firebase.auth().currentUser.reload()
-    commit('setCurrentUser')
   }
 }
 

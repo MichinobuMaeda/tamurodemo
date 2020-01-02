@@ -55,8 +55,6 @@ export default function ({ store } /* { store, ssrContext } */) {
     var replace = null
     if (to.name === 'policy') {
       // pass thru
-    } else if (store.state.loading.length) {
-      // pass thru
     } else if (!store.getters.isValid) {
       if (to.name !== 'signin') {
         replace = (store.state.reqPage && store.state.reqPage.name === 'policy') ? store.state.reqPage : router.resolve({ name: 'signin' }).route

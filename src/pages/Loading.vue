@@ -1,7 +1,7 @@
 <template>
   <q-page class="row">
-    <div class="col text-center q-py-xl" style="font-size: 4em">
-      <q-spinner-ball :color="conf.styles.menuBg" size="3em" />
+    <div class="col text-center q-py-xl">
+      <q-spinner-ball :color="conf.styles.menuBg" size="6em" />
     </div>
   </q-page>
 </template>

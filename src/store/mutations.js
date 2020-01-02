@@ -1,69 +1,40 @@
-export const setService = (state, doc) => {
-  state.service[doc.id] = doc.data()
-  state.service = { ...state.service }
+const simplify = item => ({ id: item.id, ...item.data() })
+const saveMessage = (state, message) => {
+  state.message = message.key ? message : { key: message, params: {} }
+  window.localStorage.setItem('message', message)
 }
-export const setCurrentUser = (state) => { state.currentUser = { ...state.firebase.auth().currentUser } }
-export const resetCurrentUser = (state) => { state.currentUser = null }
-export const setMe = (state, me) => {
-  state.me = me
-  state.menuPosition = (me && me.data().menuPosition) || state.menuPosition
-}
+export const setMessage = (state, message) => saveMessage(state, message)
+export const resetMessage = state => saveMessage(state, '')
+export const setUnsub = (state, { unsub, key }) => { state.unsub[key] = [ ...(state.unsub[key] || []), unsub ] }
+export const resetUnsubs = state => { state.unsub = {} }
+export const startLoading = state => { state.loading = [ 'start' ] }
+export const setLoading = (state, key) => { state.loading = [ ...state.loading.filter(item => item !== key), key ] }
+export const resetLoading = (state, key) => { state.loading = [ ...state.loading.filter(item => item !== key) ] }
+export const clearLoading = state => { state.loading = [] }
+export const setService = (state, doc) => { state.service = { ...state.service, [doc.id]: doc.data() } }
+export const setMe = (state, me) => { state.me = (me && me.exists && me.data().valid) ? simplify(me) : null }
 export const resetMe = state => { state.me = null }
-export const setGroups = (state, querySnapshot) => { state.groups = querySnapshot.docs }
+export const setGroups = (state, querySnapshot) => { state.groups = querySnapshot.docs.map(item => simplify(item)) }
 export const resetGroups = (state) => { state.groups = [] }
+export const setAccounts = (state, querySnapshot) => { state.accounts = querySnapshot.docs.map(item => simplify(item)) }
+export const resetAccounts = (state) => { state.accounts = [] }
 export const setUsers = (state, querySnapshot) => {
-  if (state.users && state.users.length) {
-    let users = [ ...state.users ]
-    querySnapshot.docChanges().forEach(change => {
-      if (change.type === 'added') {
-        users.push(change.doc)
-        state.profiles[change.doc.id] = null
-      } else if (change.type === 'modified') {
-        users = users.map(user => change.doc.id === user.id ? change.doc : user)
-        state.profiles[change.doc.id] = null
-      } else if (change.type === 'removed') {
-        users = users.filter(user => change.doc.id !== user.id)
-        delete state.profiles[change.doc.id]
-      }
-    })
-    state.users = users
-  } else {
-    state.users = querySnapshot.docs
-    state.profiles = {}
-    state.users.forEach(user => { state.profiles[user.id] = null })
-  }
+  let users = [ ...(state.users || []) ]
+  querySnapshot.docChanges().forEach(change => {
+    if (change.type === 'added') {
+      users.push(simplify(change.doc))
+      state.profiles[change.doc.id] = {}
+    } else if (change.type === 'modified') {
+      users = users.map(user => change.doc.id === user.id ? simplify(change.doc) : user)
+      state.profiles[change.doc.id] = {}
+    } else if (change.type === 'removed') {
+      users = users.filter(user => change.doc.id !== user.id)
+      delete state.profiles[change.doc.id]
+    }
+  })
+  state.users = users
 }
 export const resetUsers = (state) => {
   state.users = []
   state.profiles = {}
-}
-export const setAccounts = (state, querySnapshot) => { state.accounts = querySnapshot.docs }
-export const resetAccounts = (state) => { state.accounts = [] }
-
-export const startLoading = state => {
-  state.loading = [ 'start' ]
-}
-export const setLoading = (state, key) => {
-  state.loading = [ ...state.loading.filter(item => item !== key), key ]
-}
-export const resetLoading = (state, key) => {
-  state.loading = [ ...state.loading.filter(item => item !== key) ]
-}
-export const clearLoading = state => {
-  state.loading = []
-}
-
-export const addUnsub = (state, { unsub, key }) => {
-  state.unsub[key] = state.unsub[key] || []
-  state.unsub[key].push(unsub)
-}
-export const resetUnsubs = state => { state.unsub = {} }
-
-export const setMessage = (state, message) => {
-  state.message = message.key ? message : { key: message, params: {} }
-  window.localStorage.setItem('message', JSON.stringify(state.message))
-}
-export const resetMessage = (state) => {
-  state.message = { key: 'noMessage', params: {} }
-  window.localStorage.setItem('message', JSON.stringify(state.message))
 }

@@ -1,6 +1,6 @@
 <template>
-  <q-page class="row">
-    <div class="col q-pa-md">
+  <q-page class="row justify-center">
+    <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
       <p :class="conf.styles.pageTitle">
         <q-avatar icon="fas fa-user-cog" />
         {{ $t('preferences') }}
@@ -19,7 +19,7 @@
             @click="unlinkProvider({ provider: conf.auth.line })"
           >
             <q-space />
-            <q-icon name="fas fa-minus-circle" />
+            <q-icon :name="conf.styles.iconRemove" />
           </q-btn>
           <q-btn
             v-else-if="{ provider: conf.auth.line }"
@@ -28,64 +28,64 @@
             @click="linkProvider({ provider: conf.auth.line })"
           >
             <q-space />
-            <q-icon name="fas fa-plus-circle" />
+            <q-icon :name="conf.styles.iconAdd" />
           </q-btn>
 
           <q-btn
             v-if="conf.auth.facebook && isFacebook"
             class="q-my-md full-width" align="left" outline color="blue-10"
-            icon="fas fa-minus-circle" :label="$t('removeProvider', { provider: 'Facebook' })"
+            :icon="conf.styles.iconRemove" :label="$t('removeProvider', { provider: 'Facebook' })"
             @click="unlinkProvider({ provider: conf.auth.facebook })"
           >
             <q-space />
-            <q-icon name="fas fa-minus-circle" />
+            <q-icon :name="conf.styles.iconRemove" />
           </q-btn>
           <q-btn
             v-else-if="conf.auth.facebook"
             class="q-my-md full-width" align="left" outline color="blue-10"
-            icon="fas fa-plus-circle" :label="$t('addProvider', { provider: 'Facebook' })"
+            :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: 'Facebook' })"
             @click="linkProvider({ provider: conf.auth.facebook })"
           >
             <q-space />
-            <q-icon name="fas fa-plus-circle" />
+            <q-icon :name="conf.styles.iconAdd" />
           </q-btn>
 
           <q-btn
             v-if="conf.auth.github && isGithub"
             class="q-my-md full-width" align="left" outline color="black"
-            icon="fas fa-minus-circle" :label="$t('removeProvider', { provider: 'GitHub' })"
+            :icon="conf.styles.iconRemove" :label="$t('removeProvider', { provider: 'GitHub' })"
             @click="unlinkProvider({ provider: conf.auth.github })"
           >
             <q-space />
-            <q-icon name="fas fa-minus-circle" />
+            <q-icon :name="conf.styles.iconRemove" />
           </q-btn>
           <q-btn
             v-else-if="conf.auth.github"
             class="q-my-md full-width" align="left" outline color="black"
-            icon="fas fa-plus-circle" :label="$t('addProvider', { provider: 'GitHub' })"
+            :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: 'GitHub' })"
             @click="linkProvider({ provider: conf.auth.github })"
           >
             <q-space />
-            <q-icon name="fas fa-plus-circle" />
+            <q-icon :name="conf.styles.iconAdd" />
           </q-btn>
 
           <q-btn
             v-if="conf.auth.google && isGoogle"
             class="q-my-md full-width" align="left" outline color="red-10"
-            icon="fas fa-minus-circle" :label="$t('removeProvider', { provider: 'Google' })"
+            :icon="conf.styles.iconRemove" :label="$t('removeProvider', { provider: 'Google' })"
             @click="unlinkProvider({ provider: conf.auth.google })"
           >
             <q-space />
-            <q-icon name="fas fa-minus-circle" />
+            <q-icon :name="conf.styles.iconRemove" />
           </q-btn>
           <q-btn
             v-else-if="conf.auth.google"
             class="q-my-md full-width" align="left" outline color="red-10"
-            icon="fas fa-plus-circle" :label="$t('addProvider', { provider: 'Google' })"
+            :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: 'Google' })"
             @click="linkProvider({ provider: conf.auth.google })"
           >
             <q-space />
-            <q-icon name="fas fa-plus-circle" />
+            <q-icon :name="conf.styles.iconAdd" />
           </q-btn>
 
           <q-btn
@@ -95,7 +95,7 @@
             @click="unlinkProvider({ provider: conf.auth.twitter })"
           >
             <q-space />
-            <q-icon name="fas fa-minus-circle" />
+            <q-icon :name="conf.styles.iconRemove" />
           </q-btn>
           <q-btn
             v-else-if="conf.auth.twitter"
@@ -104,18 +104,18 @@
             @click="linkProvider({ provider: conf.auth.twitter })"
           >
             <q-space />
-            <q-icon name="fas fa-plus-circle" />
+            <q-icon :name="conf.styles.iconAdd" />
           </q-btn>
 
           <div v-if="(conf.auth.emailLink || conf.auth.password) && isEmail">
             <q-separator class="q-my-md" />
             <div>{{ $t('emailAddressSaved') }}</div>
-            <div>{{ $store.state.currentUser && $store.state.currentUser.email }}</div>
+            <div>{{ currentUser && currentUser.email }}</div>
             <q-btn
               v-if="conf.auth.password"
               class="q-my-md full-width" align="left" outline color="brown"
               icon="fas fa-key" :label="$t('resetPassword')"
-              @click="sendPasswordResetEmail($store.state.currentUser.email)"
+              @click="sendPasswordResetEmail(currentUser.email)"
             >
               <q-space />
               <q-icon name="fas fa-reply" />
@@ -130,7 +130,7 @@
             </q-input>
             <q-btn
               class="full-width" align="left" outline color="brown"
-              icon="fas fa-plus-circle" :label="$t('addProvider', { provider: $t('emailAddress') })"
+              :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: $t('emailAddress') })"
               :disable="(!email) || (!conf.validators.email(email))"
               @click="linkProvider({ provider: conf.auth.emailLink, email })"
             />
@@ -190,31 +190,31 @@ export default {
       isPwd: true,
       emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ],
       menuPosition: this.$store.state.conf.styles.menuPositions.reduce(
-        (ret, cur) => cur.value === this.$store.state.me.data().menuPosition ? cur : ret,
+        (ret, cur) => cur.value === this.$store.getters.menuPosition ? cur : ret,
         null
       ),
-      timezone: this.$store.state.me.data().timezone,
+      timezone: this.$store.state.me || this.$store.state.me.timezone,
       locale: this.$store.state.conf.locales.locales.reduce(
-        (ret, cur) => cur.value === this.$store.state.me.data().locale ? cur : ret,
+        (ret, cur) => cur.value === this.$store.getters.locale ? cur : ret,
         null
       )
     }
   },
   methods: {
     async onMenuPositionChanged () {
-      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+      await this.$store.state.db.collection('accounts').doc(this.me.id).update({
         menuPosition: this.menuPosition.value,
         updatedAt: new Date()
       })
     },
     async onTimezoneChanged () {
-      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+      await this.$store.state.db.collection('accounts').doc(this.me.id).update({
         timezone: this.timezone,
         updatedAt: new Date()
       })
     },
     async onLocaleChanged () {
-      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
+      await this.$store.state.db.collection('accounts').doc(this.me.id).update({
         locale: this.locale.value,
         updatedAt: new Date()
       })
@@ -229,6 +229,8 @@ export default {
   computed: {
     ...mapGetters([
       'conf',
+      'me',
+      'currentUser',
       'isSignInMethod',
       'isLine',
       'isFacebook',

@@ -17,7 +17,7 @@
         label="me:"
         header-class="text-h6 bg-grey-3"
       >
-        <pre>{{ JSON.stringify($store.state.me.data(), 0, 2) }}</pre>
+        <pre>{{ JSON.stringify(me, 0, 2) }}</pre>
       </q-expansion-item>
 
       <q-expansion-item
@@ -32,7 +32,7 @@
         header-class="text-h6 bg-grey-3"
       >
         <div v-for="group in $store.state.groups" v-bind:key="group.id">
-          <pre>{{ group.id + ': ' + JSON.stringify(group.data(), 0, 2) }}</pre>
+          <pre>{{ JSON.stringify(group, 0, 2) }}</pre>
         </div>
       </q-expansion-item>
 
@@ -41,7 +41,7 @@
         header-class="text-h6 bg-grey-3"
       >
         <div v-for="account in $store.state.accounts" v-bind:key="account.id">
-          <pre>{{ account.id + ': ' + JSON.stringify(account.data(), 0, 2) }}</pre>
+          <pre>{{ JSON.stringify(account, 0, 2) }}</pre>
         </div>
       </q-expansion-item>
 
@@ -50,7 +50,7 @@
         header-class="text-h6 bg-grey-3"
       >
         <div v-for="user in $store.state.users" v-bind:key="user.id">
-          <pre>{{ user.id + ': ' + JSON.stringify(user.data(), 0, 2) }}</pre>
+          <pre>{{ JSON.stringify(user, 0, 2) }}</pre>
         </div>
       </q-expansion-item>
 
@@ -59,7 +59,7 @@
         header-class="text-h6 bg-grey-3"
       >
         <div v-for="id in Object.keys($store.state.profiles)" v-bind:key="id">
-          <pre>{{ id + ': ' + JSON.stringify($store.state.profiles[id] ? $store.state.profiles[id].data() : null, 0, 2) }}</pre>
+          <pre>{{ JSON.stringify($store.state.profiles[id], 0, 2) }}</pre>
         </div>
       </q-expansion-item>
 
@@ -80,7 +80,8 @@ export default {
   name: 'PageRawData',
   computed: {
     ...mapGetters([
-      'conf'
+      'conf',
+      'me'
     ])
   }
 }

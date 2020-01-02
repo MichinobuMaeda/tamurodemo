@@ -1,16 +1,16 @@
 <template>
-  <q-page class="row">
-    <div class="col q-pa-md">
+  <q-page class="row justify-center">
+    <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
       <p class="text-body1" v-if="group('top') && group('top').desc || isAdminOrManager">
-        <q-icon name="far fa-comment-alt" class="q-mr-sm" />
+        <q-icon :name="conf.styles.iconDesc" class="q-mr-sm" />
         <span v-if="group('top').desc">{{ group('top').desc }}</span>
         <span v-else>{{ $t('noDesc') }}</span>
-        <q-btn flat raund icon="fas fa-edit" @click="openDescEditor" />
+        <q-btn flat raund :icon="conf.styles.iconEdit" @click="openDescEditor" />
       </p>
       <p :class="conf.styles.pageTitle">
-        <q-avatar icon="fas fa-users" />
+        <q-avatar :icon="conf.styles.iconGroup" />
         {{ $t('groups') }}
-        <q-btn flat raund icon="fas fa-plus-circle" @click="openNameEditor" />
+        <q-btn flat raund :icon="conf.styles.iconAdd" @click="openNameEditor" />
       </p>
       <q-list>
         <div v-for="g in groups" v-bind:key="g.id">
@@ -19,18 +19,18 @@
             clickable v-ripple :to="{ name: 'group', params: { id: g.id } }"
           >
             <q-item-section avatar>
-              <q-icon name="fas fa-minus-circle" v-if="g.deletedAt" />
-              <q-icon name="fas fa-users" v-else />
+              <q-icon :name="conf.styles.iconRemove" v-if="g.deletedAt" />
+              <q-icon :name="conf.styles.iconGroup" v-else />
             </q-item-section>
             <q-item-section>{{ g.name }}</q-item-section>
           </q-item>
         </div>
         <q-item clickable v-ripple :to="{ name: 'group', params: { id: 'manager' } }">
-          <q-item-section avatar><q-icon name="fas fa-users" /></q-item-section>
+          <q-item-section avatar><q-icon :name="conf.styles.iconGroup" /></q-item-section>
           <q-item-section>{{ group('manager') && group('manager').name }}</q-item-section>
         </q-item>
         <q-item clickable v-ripple :to="{ name: 'group', params: { id: 'admin' } }">
-          <q-item-section avatar><q-icon name="fas fa-users" /></q-item-section>
+          <q-item-section avatar><q-icon :name="conf.styles.iconGroup" /></q-item-section>
           <q-item-section>{{ group('admin') && group('admin').name }}</q-item-section>
         </q-item>
       </q-list>
@@ -39,10 +39,10 @@
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-plus-circle" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconAdd" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('group') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus type="text" :label="$t('name')" v-model="name" />
@@ -57,10 +57,10 @@
     <q-dialog v-model="descditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('desc') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus outlined class="q-mt-sm" type="textarea" v-model="desc" />

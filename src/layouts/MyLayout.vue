@@ -7,10 +7,10 @@
       <q-toolbar-title :class="'text-' + conf.styles.headerText" @click="goTop">
         {{ group('top') && group('top').name }}
       </q-toolbar-title>
-       <q-btn
-        v-if="this.$route.name === 'top' && isAdminOrManager"
+      <q-btn
+        v-if="this.$route.name === 'top' && isManager"
         flat round dense :color="conf.styles.headerText" class="q-mr-sm"
-        icon="fas fa-edit"
+        :icon="conf.styles.iconEdit"
         @click="openNameEditor"
       />
     </q-toolbar>
@@ -31,65 +31,56 @@
 
     <q-page-sticky
       v-if="!$store.state.loading.length"
-      :position="this.$store.state.menuPosition" :offset="[8, 8]"
+      :position="menuPosition" :offset="[8, 8]"
     >
       <q-fab
-        icon="fas fa-bars" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
+        ref="menu"
+        :icon="conf.styles.iconMenu" :color="conf.styles.menuBg" :text-color="conf.styles.menuText"
         v-touch-swipe.mouse="handleSwipe"
-        :direction="(this.$store.state.menuPosition === 'bottom-right' || this.$store.state.menuPosition === 'bottom-left') ? 'up' : 'down'"
+        :direction="menuPosition.includes('bottom') ? 'up' : 'down'"
         @show="showToolChip"
         @hide="hideToolChip"
       >
         <q-fab-action
-          v-if="isValid"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-home"
-          :to="{ name: 'top' }"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" :icon="isValid ? 'fas fa-home' : 'fas fa-sign-in-alt'"
+          @click="goTop"
         >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['home']">
-            {{ $t('home') }}
-          </q-tooltip>
-        </q-fab-action>
-        <q-fab-action
-          v-else
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-sign-in-alt"
-          :to="{ name: 'signin' }"
-        >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['signin']">
-            {{ $t('signin') }}
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
+            {{ $t(isValid ? 'home': 'signin') }}
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-shield-alt"
-          :to="{ name: 'policy' }"
+          @click="goPage({ name: 'policy' })"
         >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['policy']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
             {{ $t('privacyPolicy') }}
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
           v-if="isValid"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-user-cog"
-          :to="{ name: 'preferences' }"
+          @click="goPage({ name: 'preferences' })"
         >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['preferences']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
             {{ $t('preferences') }}
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
           v-if="isAdmin"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-server"
-          :to="{ name: 'service' }"
+          @click="goPage({ name: 'service' })"
         >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['service']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
             Serivce
           </q-tooltip>
         </q-fab-action>
         <q-fab-action
           v-if="isAdmin"
           :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-microchip"
-          :to="{ name: 'raw' }"
+          @click="goPage({ name: 'raw' })"
         >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" v-model="toolChip['raw']">
+          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
             Raw data
           </q-tooltip>
         </q-fab-action>
@@ -99,10 +90,10 @@
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('title') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus type="text" v-model="name" />
@@ -118,7 +109,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Loading from '../pages/Loading.vue'
 
 export default {
@@ -130,26 +121,27 @@ export default {
     return {
       name: '',
       nameEditor: false,
-      toolChip: {
-        'home': false,
-        'signin': false,
-        'policy': false,
-        'preferences': false,
-        'service': false,
-        'raw': false
-      },
+      toolChip: false,
       toolChipTimer: null
+    }
+  },
+  watch: {
+    async 'meState' (newValue, oldValue) {
+      this.hideToolChip()
     }
   },
   methods: {
     goTop () {
-      let to = this.isValid ? { name: 'top' } : { name: 'signin' }
-      if (this.$route.name !== to.name) {
+      let next = this.isValid ? { name: 'top' } : { name: 'signin' }
+      if (this.$route.name !== next.name) {
         if (this.isValid) {
-          window.localStorage.setItem('reqPage', JSON.stringify(to))
+          window.localStorage.setItem('reqPage', JSON.stringify(next))
         }
-        this.$router.push(to).catch(() => {})
+        this.$router.push(next).catch(() => {})
       }
+    },
+    goPage (next) {
+      this.$router.push(next).catch(() => {})
     },
     openNameEditor () {
       this.name = this.group('top').name
@@ -163,63 +155,59 @@ export default {
       })
     },
     showToolChip () {
-      if (this.$q.platform.is.mobile) {
-        this.toolChipTimer = setTimeout(() => { Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = true }) }, 1500)
-      }
+      this.toolChip = false
+      this.toolChipTimer = setTimeout(() => { this.toolChip = true }, 500)
     },
     hideToolChip () {
-      if (this.$q.platform.is.mobile) {
-        if (this.toolChipTimer) {
-          clearTimeout(this.toolChipTimer)
-          this.toolChipTimer = null
-        }
-        Object.keys(this.toolChip).forEach(key => { this.toolChip[key] = false })
+      if (this.toolChipTimer) {
+        clearTimeout(this.toolChipTimer)
+        this.toolChipTimer = null
       }
+      this.toolChip = false
     },
     async handleSwipe ({ evt, ...info }) {
       this.hideToolChip()
-      if (this.$store.state.menuPosition === 'bottom-right') {
-        if (info.direction === 'left') {
-          this.$store.state.menuPosition = 'bottom-left'
-        } else if (info.direction === 'up') {
-          this.$store.state.menuPosition = 'top-right'
-        }
-      } else if (this.$store.state.menuPosition === 'top-right') {
-        if (info.direction === 'left') {
-          this.$store.state.menuPosition = 'top-left'
-        } else if (info.direction === 'down') {
-          this.$store.state.menuPosition = 'bottom-right'
-        }
-      } else if (this.$store.state.menuPosition === 'top-left') {
-        if (info.direction === 'right') {
-          this.$store.state.menuPosition = 'top-right'
-        } else if (info.direction === 'down') {
-          this.$store.state.menuPosition = 'bottom-left'
-        }
-      } else if (this.$store.state.menuPosition === 'bottom-left') {
-        if (info.direction === 'right') {
-          this.$store.state.menuPosition = 'bottom-right'
-        } else if (info.direction === 'up') {
-          this.$store.state.menuPosition = 'top-left'
-        }
+      this.$refs.menu.hide()
+      let currPosition = this.menuPosition
+      const setMenuPosition = async menuPosition => {
+        this.$store.state.preferences.menuPosition = menuPosition
+        await this.$store.state.db.collection('accounts').doc(this.me.id).update({ menuPosition })
       }
-      await this.$store.state.db.collection('accounts').doc(this.$store.state.me.id).update({
-        menuPosition: this.$store.state.menuPosition
-      })
-      this.showToolChip()
+      if (currPosition === 'bottom-right' && info.direction === 'left') {
+        await setMenuPosition('bottom-left')
+      } else if (currPosition === 'bottom-right' && info.direction === 'up') {
+        await setMenuPosition('top-right')
+      } else if (currPosition === 'top-right' && info.direction === 'left') {
+        await setMenuPosition('top-left')
+      } else if (currPosition === 'top-right' && info.direction === 'down') {
+        await setMenuPosition('bottom-right')
+      } else if (currPosition === 'top-left' && info.direction === 'right') {
+        await setMenuPosition('top-right')
+      } else if (currPosition === 'top-left' && info.direction === 'down') {
+        await setMenuPosition('bottom-left')
+      } else if (currPosition === 'bottom-left' && info.direction === 'right') {
+        await setMenuPosition('bottom-right')
+      } else if (currPosition === 'bottom-left' && info.direction === 'up') {
+        await setMenuPosition('top-left')
+      }
     }
   },
   computed: {
-    toolChipAnchor () { return this.$store.state.menuPosition.includes('left') ? 'center right' : 'center left' },
-    toolChipSelf () { return this.$store.state.menuPosition.includes('left') ? 'center left' : 'center right' },
+    toolChipAnchor () { return this.menuPosition.includes('left') ? 'center right' : 'center left' },
+    toolChipSelf () { return this.menuPosition.includes('left') ? 'center left' : 'center right' },
     ...mapGetters([
       'conf',
+      'menuPosition',
+      'me',
       'group',
       'isValid',
       'isAdminOrManager',
       'isAdmin',
       'isManager'
-    ])
+    ]),
+    ...mapState({
+      meState: 'me'
+    })
   }
 }
 </script>

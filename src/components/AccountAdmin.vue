@@ -9,7 +9,7 @@
           <q-btn :label="$t('update')" color="primary" @click="setEmail" />
         </div>
       </div>
-      <div class="row" v-if="account.id !== $store.state.me.id">
+      <div class="row" v-if="account.id !== me.id">
         <div class="col col-xs-4 col-sm-2 q-pa-md">
           <q-btn :label="$t('invitation')" color="primary" @click="invite" />
         </div>
@@ -43,7 +43,7 @@
               v-model="paused"
               :label="paused ? 'Yes' : 'No'"
               @input="toggleValid"
-              v-if="account.id !== $store.state.me.id"
+              v-if="account.id !== me.id"
             />
             <span v-else>
               {{ paused ? 'Yes' : 'No' }}
@@ -97,6 +97,7 @@ export default {
   computed: {
     ...mapGetters([
       'conf',
+      'me',
       'longTimestamp'
     ])
   }

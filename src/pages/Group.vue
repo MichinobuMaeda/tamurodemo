@@ -1,30 +1,30 @@
 <template>
-  <q-page class="row">
-    <div class="col q-pa-md">
+  <q-page class="row justify-center">
+    <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
       <p :class="conf.styles.pageTitle">
-        <q-avatar icon="fas fa-users" />
+        <q-avatar :icon="conf.styles.iconGroup" />
         {{ group($route.params.id).name }}
         <q-btn
           v-if="isManager"
-          flat raund icon="fas fa-edit"
+          flat raund :icon="conf.styles.iconEdit"
           @click="openNameEditor"
         />
         <q-btn
           v-if="isManager && !group($route.params.id).deletedAt"
-          flat raund icon="fas fa-minus-circle"
+          flat raund :icon="conf.styles.iconRemove"
           @click="confirmDelete = true"
         />
       </p>
       <p v-if="isManager && group($route.params.id).deletedAt" class="text-negative">
-        <q-icon name="fas fa-minus-circle" class="q-mr-sm" />
+        <q-icon :name="conf.styles.iconRemove" class="q-mr-sm" />
         {{ $t('deleted') }}
-        <q-btn flat raund icon="fas fa-trash-restore" @click="confirmRestore = true" />
+        <q-btn flat raund :icon="conf.styles.iconRestore" @click="confirmRestore = true" />
       </p>
       <p class="text-body1" v-if="group($route.params.id).desc || isManager">
-        <q-icon name="far fa-comment-alt" class="q-mr-sm" />
+        <q-icon :name="conf.styles.iconDesc" class="q-mr-sm" />
         <span v-if="group($route.params.id).desc">{{ group($route.params.id).desc }}</span>
         <span v-else>{{ $t('noDesc') }}</span>
-        <q-btn flat raund icon="fas fa-edit" @click="openDescEditor" />
+        <q-btn flat raund :icon="conf.styles.iconEdit" @click="openDescEditor" />
       </p>
       <q-list>
         <q-item
@@ -32,7 +32,7 @@
           clickable v-ripple @click="openMenberEditor"
           class="text-primary"
         >
-          <q-item-section avatar><q-icon name="fas fa-user-plus" /></q-item-section>
+          <q-item-section avatar><q-icon :name="conf.styles.iconAddUser" /></q-item-section>
           <q-item-section>{{ $t('addMember') }}</q-item-section>
         </q-item>
         <div v-for="u in users" v-bind:key="u.id">
@@ -41,8 +41,8 @@
             clickable v-ripple :to="{ name: 'user', params: { id: u.id } }"
           >
             <q-item-section avatar>
-              <q-icon name="fas fa-minus-circle" v-if="u.deletedAt" />
-              <q-icon name="fas fa-user" v-else />
+              <q-icon :name="conf.styles.iconRemove" v-if="u.deletedAt" />
+              <q-icon :name="conf.styles.iconUser" v-else />
             </q-item-section>
             <q-item-section>{{ u.name }}</q-item-section>
             <q-item-section avatar>
@@ -58,10 +58,10 @@
     <q-dialog v-model="nameEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('name') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus type="text" v-model="name" />
@@ -80,10 +80,10 @@
     <q-dialog v-model="descditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('desc') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus outlined class="q-mt-sm" type="textarea" v-model="desc" />
@@ -102,10 +102,10 @@
     <q-dialog v-model="memberEditor">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-edit" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('addMember') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
           <q-input autofocus type="text" :label="$t('name')" v-model="member" />
@@ -124,10 +124,10 @@
     <q-dialog v-model="confirmDelete">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-minus-circle" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconRemove" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('delete') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section glass="text-negative">
           {{ $t('confirmGroupDeletion') }}
@@ -142,10 +142,10 @@
     <q-dialog v-model="confirmRestore">
       <q-card :style="conf.styles.dlgCardStyle">
         <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar icon="fas fa-trash-restore" :text-color="conf.styles.dlgTitleIconColor" />
+          <q-avatar :icon="conf.styles.iconRestore" :text-color="conf.styles.dlgTitleIconColor" />
           <span :class="conf.styles.dlgTitleText">{{ $t('restore') }}</span>
           <q-space />
-          <q-btn icon="fas fa-times" flat round dense v-close-popup />
+          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section glass="text-negative">
           {{ $t('confirmGroupRestore') }}

@@ -6,43 +6,43 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
     commit('setMe', me)
-    commit('setCurrentUser')
-    i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
+    i18n.locale = state.me.locale || state.service.status.locale || i18n.locale
     let admin = await state.db.collection('groups').doc('admin').get()
     let manager = await state.db.collection('groups').doc('manager').get()
     if (admin.data().members.includes(me.id) || manager.data().members.includes(me.id)) {
-      commit('addUnsub', {
+      commit('setUnsub', {
         key: 'top',
         unsub: state.db.collection('accounts').onSnapshot(querySnapshot => {
           commit('setAccounts', querySnapshot)
         })
       })
     }
-    commit('addUnsub', {
+    commit('setUnsub', {
       key: 'top',
       unsub: state.db.collection('groups').orderBy('name', 'asc').onSnapshot(querySnapshot => {
         commit('setGroups', querySnapshot)
       })
     })
-    commit('addUnsub', {
+    commit('setUnsub', {
       key: 'top',
       unsub: state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
         commit('setUsers', querySnapshot)
       })
     })
-    if ((!me.data().enteredAt) && getters.isSignInMethod) {
+    if ((!getters.me.enteredAt) && getters.isSignInMethod) {
       let ts = new Date()
       await state.db.collection('accounts').doc(user.uid).update({
         enteredAt: ts,
         updatedAt: ts
       })
     }
-    commit('addUnsub', {
+    commit('setUnsub', {
       key: 'top',
-      unsub: state.db.collection('accounts').doc(me.id).onSnapshot(async doc => {
-        commit('setMe', doc.exists ? doc : null)
-        i18n.locale = state.me.data().locale || state.service.status.locale || i18n.locale
-        if (!(state.me && state.me.exists && state.me.data().valid)) {
+      unsub: state.db.collection('accounts').doc(me.id).onSnapshot(async me => {
+        if (me && me.exists && me.data().valid) {
+          commit('setMe', me)
+          i18n.locale = state.me.locale || state.service.status.locale || i18n.locale
+        } else if (state.me) {
           await signOut({ state })
         }
       })
@@ -64,7 +64,6 @@ export const onSignOut = async ({ commit, state }, { i18n }) => {
   commit('resetUsers')
   commit('resetGroups')
   commit('resetMe')
-  commit('resetCurrentUser')
   commit('resetMessage')
   i18n.locale = state.service.status.locale || i18n.locale
 }

@@ -1,6 +1,8 @@
 const https = require('https')
 
-https.get('https://us-central1-' + process.env.PROJECT_ID + '.cloudfunctions.net/tamuro/release/ui/' + process.env.WEB_API_KEY, (resp) => {
+const base = 'tamuro'
+
+https.get('https://us-central1-' + process.env.PROJECT_ID + '.cloudfunctions.net/' + base + '/release/ui/' + process.env.WEB_API_KEY, (resp) => {
   var data = '';
   resp.on('data', (chunk) => {
     data += chunk;

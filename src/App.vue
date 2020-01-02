@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'App',
@@ -22,12 +22,10 @@ export default {
       await this.verifyEmailLink()
       if (user) {
         await this.onSignIn({ user, i18n: this.$root.$i18n })
-      } else if (state.me) {
-        await this.onSignOut({ i18n: this.$root.$i18n })
       } else {
         await this.onSignOut({ i18n: this.$root.$i18n })
       }
-      this.$router.push(state.me ? (state.reqPage || { name: 'top' }) : { name: 'signin' }).catch(e => {})
+      this.$router.push(this.me ? (state.reqPage || { name: 'top' }) : { name: 'signin' }).catch(e => {})
       setTimeout(() => { commit('resetLoading', 'auth') }, 300)
     })
     commit('resetLoading', 'start')
@@ -40,6 +38,11 @@ export default {
       'getServiceStatus',
       'onSignIn',
       'onSignOut'
+    ])
+  },
+  computed: {
+    ...mapGetters([
+      'me'
     ])
   }
 }

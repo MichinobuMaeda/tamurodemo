@@ -16,12 +16,14 @@ export default {
   loading: [ 'start' ],
   message,
   me: null,
-  currentUser: null,
   groups: [],
   accounts: [],
   users: [],
   profiles: {},
   service: {},
   unsub: {},
-  menuPosition: 'bottom-right'
+  preferences: {
+    menuPosition: conf.styles.defaultMenuPosition,
+    locale: conf.styles.defaultLocale
+  }
 }
