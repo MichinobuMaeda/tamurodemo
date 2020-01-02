@@ -6,7 +6,7 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
   if (me && me.exists && me.data().valid) {
     commit('resetMessage')
     commit('setMe', me)
-    i18n.locale = state.me.locale || state.service.status.locale || i18n.locale
+    i18n.locale = state.me.locale || state.preferences.locale || i18n.locale
     let admin = await state.db.collection('groups').doc('admin').get()
     let manager = await state.db.collection('groups').doc('manager').get()
     if (admin.data().members.includes(me.id) || manager.data().members.includes(me.id)) {
@@ -41,7 +41,7 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
       unsub: state.db.collection('accounts').doc(me.id).onSnapshot(async me => {
         if (me && me.exists && me.data().valid) {
           commit('setMe', me)
-          i18n.locale = state.me.locale || state.service.status.locale || i18n.locale
+          i18n.locale = state.me.locale || state.preferences.locale || i18n.locale
         } else if (state.me) {
           await signOut({ state })
         }
@@ -65,5 +65,5 @@ export const onSignOut = async ({ commit, state }, { i18n }) => {
   commit('resetGroups')
   commit('resetMe')
   commit('resetMessage')
-  i18n.locale = state.service.status.locale || i18n.locale
+  i18n.locale = state.preferences.locale || state.service.status.locale || i18n.locale
 }

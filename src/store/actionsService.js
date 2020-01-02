@@ -1,12 +1,7 @@
 import version from '../conf/version'
 
-export const releaseUiNewVersion = ({ state }) => state.db.collection('service').doc('status').update({
-  version: state.conf.version
-})
-
-const onServiceStatusChanged = ({ commit, state }, { doc, i18n }) => {
+const onServiceStatusChanged = ({ commit, state }, { doc }) => {
   commit('setService', doc)
-  i18n.locale = (state.service && state.service.status && state.service.status.locale) || i18n.locale
   if (state.service.status.version > version) {
     const reloadPage = (path, cb) => {
       let req = new XMLHttpRequest()
@@ -40,8 +35,12 @@ const onServiceStatusChanged = ({ commit, state }, { doc, i18n }) => {
 }
 
 export const getServiceStatus = async ({ commit, state }, { i18n }) => {
-  await onServiceStatusChanged({ commit, state }, { doc: await state.db.collection('service').doc('status').get(), i18n })
+  let doc = await state.db.collection('service').doc('status').get()
+  state.preferences.menuPosition = doc.data().menuPosition || state.preferences.menuPosition
+  state.preferences.locale = doc.data().locale || state.preferences.locale
+  i18n.locale = state.preferences.locale
+  onServiceStatusChanged({ commit, state }, { doc })
   state.db.collection('service').doc('status').onSnapshot(async doc => {
-    await onServiceStatusChanged({ commit, state }, { doc, i18n })
+    onServiceStatusChanged({ commit, state }, { doc })
   })
 }

@@ -171,7 +171,9 @@ export default {
       let currPosition = this.menuPosition
       const setMenuPosition = async menuPosition => {
         this.$store.state.preferences.menuPosition = menuPosition
-        await this.$store.state.db.collection('accounts').doc(this.me.id).update({ menuPosition })
+        if (this.me && this.me.id) {
+          await this.$store.state.db.collection('accounts').doc(this.me.id).update({ menuPosition })
+        }
       }
       if (currPosition === 'bottom-right' && info.direction === 'left') {
         await setMenuPosition('bottom-left')

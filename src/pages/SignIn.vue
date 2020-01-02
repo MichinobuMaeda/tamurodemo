@@ -1,6 +1,6 @@
 <template>
   <q-page class="row justify-center">
-    <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
+    <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 q-pa-sm">
       <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
       <div class="q-my-md">{{ $t('signInWithSns') }}</div>
       <q-btn
@@ -33,8 +33,10 @@
         label="Twitter" icon="fab fa-twitter"
         @click="signInWithProvider({ provider: conf.auth.twitter })"
       />
+      <q-separator class="q-my-md" />
+    </div>
+    <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 q-pa-sm">
       <div v-if="conf.auth.emailLink">
-        <q-separator class="q-my-md" />
         <div class="q-my-md">{{ $t('passwordlessSignIn') }}</div>
         <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')">
           <template v-slot:before>

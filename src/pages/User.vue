@@ -23,9 +23,7 @@
           :to="{ name: 'group', params: { id: g.id } }"
         />
       </span>
-    </div>
-    <div class="col col-12" v-if="isAdminOrManager">
-      <AccountAdmin v-bind:account="account($route.params.id)" />
+      <AccountAdmin v-bind:account="account($route.params.id)" v-if="isAdminOrManager" />
     </div>
 
     <q-dialog v-model="confirmDelete">
