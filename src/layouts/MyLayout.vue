@@ -42,46 +42,12 @@
         @hide="hideToolChip"
       >
         <q-fab-action
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" :icon="isValid ? 'fas fa-home' : 'fas fa-sign-in-alt'"
-          @click="goTop"
+          v-for="(item, index) in menuItems" v-bind:key="index"
+          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" :icon="item.icon"
+          @click="item.onClick"
         >
           <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
-            {{ $t(isValid ? 'home': 'signin') }}
-          </q-tooltip>
-        </q-fab-action>
-        <q-fab-action
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-shield-alt"
-          @click="goPage({ name: 'policy' })"
-        >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
-            {{ $t('privacyPolicy') }}
-          </q-tooltip>
-        </q-fab-action>
-        <q-fab-action
-          v-if="isValid"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-user-cog"
-          @click="goPage({ name: 'preferences' })"
-        >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
-            {{ $t('preferences') }}
-          </q-tooltip>
-        </q-fab-action>
-        <q-fab-action
-          v-if="isAdmin"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-server"
-          @click="goPage({ name: 'service' })"
-        >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
-            Serivce
-          </q-tooltip>
-        </q-fab-action>
-        <q-fab-action
-          v-if="isAdmin"
-          :color="conf.styles.menuItemBg" :text-color="conf.styles.menuItemText" icon="fas fa-microchip"
-          @click="goPage({ name: 'raw' })"
-        >
-          <q-tooltip :anchor="toolChipAnchor" :self="toolChipSelf" no-parent-event v-model="toolChip">
-            Raw data
+            {{ item.label }}
           </q-tooltip>
         </q-fab-action>
       </q-fab>
@@ -141,7 +107,7 @@ export default {
       }
     },
     goPage (next) {
-      this.$router.push(next).catch(() => {})
+      return () => this.$router.push(next).catch(() => {})
     },
     openNameEditor () {
       this.name = this.group('top').name
@@ -195,12 +161,53 @@ export default {
     }
   },
   computed: {
+    menuItems () {
+      return this.isValid ? [
+        {
+          icon: this.conf.styles.iconTop,
+          label: this.$t('home'),
+          onClick: this.goTop
+        },
+        {
+          icon: this.conf.styles.iconPrivacyPolicy,
+          label: this.$t('privacyPolicy'),
+          onClick: this.goPage({ name: 'policy' })
+        },
+        {
+          icon: this.conf.styles.iconPreferences,
+          label: this.$t('preferences', { name: this.user(this.me.id).name }),
+          onClick: this.goPage({ name: 'preferences' })
+        },
+        {
+          icon: this.conf.styles.iconService,
+          label: 'Service',
+          onClick: this.goPage({ name: 'service' })
+        },
+        {
+          icon: this.conf.styles.iconRawData,
+          label: 'Raw data',
+          onClick: this.goPage({ name: 'raw' })
+        }
+      ] : [
+        {
+          icon: this.conf.styles.iconSignIn,
+          label: this.$t('signin'),
+          onClick: this.goTop
+        },
+        {
+          icon: this.conf.styles.iconPrivacyPolicy,
+          label: this.$t('privacyPolicy'),
+          onClick: this.goPage({ name: 'policy' })
+        }
+      ]
+    },
     toolChipAnchor () { return this.menuPosition.includes('left') ? 'center right' : 'center left' },
     toolChipSelf () { return this.menuPosition.includes('left') ? 'center left' : 'center right' },
     ...mapGetters([
       'conf',
       'menuPosition',
       'me',
+      'user',
       'group',
       'isValid',
       'isAdminOrManager',

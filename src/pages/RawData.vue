@@ -2,7 +2,7 @@
   <q-page class="row">
     <div class="col q-pa-md">
       <p :class="conf.styles.pageTitle">
-        <q-avatar icon="fas fa-microchip" />
+        <q-avatar :icon="conf.styles.iconRawData" />
         Raw data
       </p>
 

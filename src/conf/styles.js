@@ -32,7 +32,12 @@ export default {
     }
   ],
   iconMenu: 'fas fa-bars',
-  iconAdd: 'fas fa-plus-circle',
+  iconTop: 'fas fa-home',
+  iconSignIn: 'fas fa-sign-in-alt',
+  iconPrivacyPolicy: 'fas fa-shield-alt',
+  iconPreferences: 'fas fa-user-cog',
+  iconService: 'fas fa-server',
+  iconRawData: 'fas fa-microchip',
   iconRemove: 'fas fa-minus-circle',
   iconRestore: 'fas fa-trash-restore',
   iconEdit: 'fas fa-edit',
@@ -44,6 +49,8 @@ export default {
   iconBlocked: 'fas fa-lock',
   iconInvited: 'far fa-paper-plane',
   iconAccepted: 'far fa-check-circle',
+  iconTimezone: 'fas fa-globe',
+  iconLocale: 'fas fa-language',
   defaultMenuPosition: 'bottom-right',
   defaultLocale: 'ja-jp'
 }

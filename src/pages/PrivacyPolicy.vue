@@ -2,7 +2,7 @@
   <q-page class="row justify-center">
     <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
       <p :class="conf.styles.pageTitle">
-        <q-avatar icon="fas fa-shield-alt" />
+        <q-avatar :icon="conf.styles.iconPrivacyPolicy" />
         {{ $t('privacyPolicy') }}
       </p>
       <p>
