@@ -13,21 +13,21 @@ export default {
   menuText: 'white',
   menuItemBg: 'light-green-10',
   menuItemText: 'white',
-  menuPositions: [
+  menuPositions: locale => [
     {
-      label: '右下',
+      label: /ja-/i.test(locale) ? '右下' : 'bottom-right',
       value: 'bottom-right'
     },
     {
-      label: '左下',
+      label: /ja-/i.test(locale) ? '左下' : 'bottom-left',
       value: 'bottom-left'
     },
     {
-      label: '右上',
+      label: /ja-/i.test(locale) ? '右上' : 'top-right',
       value: 'top-right'
     },
     {
-      label: '左上',
+      label: /ja-/i.test(locale) ? '左上' : 'top-left',
       value: 'top-left'
     }
   ],

@@ -28,7 +28,7 @@ export default {
   accountPaused: '停止中',
   invitation: '招待',
   menuPosition: 'メニューの位置',
-  timezone: 'タイムゾーン',
+  timezone: 'Timezone',
   locale: '言語・地域',
   add: '追加',
   remove: '削除',

@@ -119,8 +119,8 @@
       <q-card-section>
         <q-select
           class="text-h6"
-          v-model="menuPosition"
-          :options="conf.styles.menuPositions"
+          v-model="menuPosition" map-options
+          :options="conf.styles.menuPositions($store.getters.locale)"
         >
           <template v-slot:before>
             {{ $t('menuPosition') }}
@@ -211,9 +211,9 @@ export default {
       emailRule: [ v => (!v || this.conf.validators.email(v)) || this.$t('invalidEmailAddress') ],
       name: '',
       nameRule: [ v => !!v || this.$t('required') ],
-      menuPosition: '',
-      timezone: '',
-      locale: ''
+      menuPosition: this.$store.getters.menuPosition,
+      timezone: this.$store.getters.timezone,
+      locale: this.$store.getters.locale
     }
   },
   methods: {
@@ -270,7 +270,7 @@ export default {
   },
   computed: {
     currMenuPosition () {
-      return this.conf.styles.menuPositions.reduce(
+      return this.conf.styles.menuPositions(this.$store.getters.locale).reduce(
         (ret, cur) => cur.value === this.me.menuPosition ? cur : ret,
         {}
       )

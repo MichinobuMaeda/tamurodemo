@@ -28,7 +28,7 @@ export default {
   accountPaused: 'あがられん',
   invitation: '呼ぶ',
   menuPosition: 'メニューはどこがええ？',
-  timezone: '時差があったら変えてや',
+  timezone: 'Timezone',
   locale: '自分のことば',
   add: '足す',
   remove: '消す',
