@@ -38,6 +38,7 @@ export default {
   iconPreferences: 'fas fa-user-cog',
   iconService: 'fas fa-server',
   iconRawData: 'fas fa-microchip',
+  iconAdd: 'fas fa-plus-circle',
   iconRemove: 'fas fa-minus-circle',
   iconRestore: 'fas fa-trash-restore',
   iconEdit: 'fas fa-edit',
@@ -46,11 +47,14 @@ export default {
   iconUser: 'fas fa-user',
   iconAddUser: 'fas fa-user-plus',
   iconGroup: 'fas fa-users',
-  iconBlocked: 'fas fa-lock',
-  iconInvited: 'far fa-paper-plane',
-  iconAccepted: 'far fa-check-circle',
   iconTimezone: 'fas fa-globe',
   iconLocale: 'fas fa-language',
+  accountStatus: {
+    blocked: 'fas fa-lock',
+    invited: 'far fa-paper-plane',
+    accepted: 'far fa-check-circle'
+  },
   defaultMenuPosition: 'bottom-right',
-  defaultLocale: 'ja-jp'
+  defaultLocale: 'ja-jp',
+  defaultTimezone: 'Asia/Tokyo'
 }

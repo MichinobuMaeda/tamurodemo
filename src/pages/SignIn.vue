@@ -3,36 +3,14 @@
     <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 q-pa-sm">
       <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
       <div class="q-my-md">{{ $t('signInWithSns') }}</div>
-      <q-btn
-        v-if="conf.auth.line"
-        class="q-my-md full-width" align="left" outline color="green"
-        label="Line" icon="fab fa-line"
-        @click="signInWithProvider({ provider: conf.auth.line })"
-      />
-      <q-btn
-        v-if="conf.auth.facebook"
-        class="q-my-md full-width" align="left" outline color="blue-10"
-        label="Facebook" icon="fab fa-facebook"
-        @click="signInWithProvider({ provider: conf.auth.facebook })"
-      />
-      <q-btn
-        v-if="conf.auth.github"
-        class="q-my-md full-width" align="left" outline color="black"
-        label="GitHub" icon="fab fa-github"
-        @click="signInWithProvider({ provider: conf.auth.github })"
-      />
-      <q-btn
-        v-if="conf.auth.google"
-        class="q-my-md full-width" align="left" outline color="red-10"
-        label="Google" icon="fab fa-google"
-        @click="signInWithProvider({ provider: conf.auth.google })"
-      />
-      <q-btn
-        v-if="conf.auth.twitter"
-        class="q-my-md full-width" align="left" outline color="light-blue"
-        label="Twitter" icon="fab fa-twitter"
-        @click="signInWithProvider({ provider: conf.auth.twitter })"
-      />
+      <div v-for="(item, index) in oauthProviders" v-bind:key="index">
+        <q-btn
+          v-if="item.id"
+          class="q-my-md full-width" align="left" outline no-caps :color="item.color"
+          :label="item.name" :icon="item.icon"
+          @click="signInWithProvider({ provider: item.id })"
+        />
+      </div>
       <q-separator class="q-my-md" />
     </div>
     <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 q-pa-sm">
@@ -44,7 +22,7 @@
           </template>
         </q-input>
         <q-btn
-          class="q-my-md full-width" align="left" outline color="brown-9"
+          class="q-my-md full-width" align="left" outline no-caps color="brown-9"
           :label="$t('getEmailLink')"
           :disable="(!email) || (!conf.validators.email(email))"
           @click="signInWithProvider({ provider: conf.auth.emailLink, email })"
@@ -62,13 +40,13 @@
           </template>
         </q-input>
         <q-btn
-          class="q-my-md full-width" align="left" outline color="brown"
+          class="q-my-md full-width" align="left" outline no-caps color="brown"
           :label="$t('signInWithPassword')"
           :disable="(!email) || (!conf.validators.email(email)) || (!password) || (!conf.validators.password(password))"
           @click="signInWithProvider({ provider: conf.auth.password, email, password })"
         />
         <q-btn
-          class="q-my-md full-width" align="left" outline color="brown"
+          class="q-my-md full-width" align="left" outline no-caps color="brown"
           icon="fas fa-key" :label="$t('resetPassword')"
           :disable="(!email) || (!conf.validators.email(email))"
           @click="sendPasswordResetEmail(email)"
@@ -113,7 +91,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'conf'
+      'conf',
+      'oauthProviders'
     ])
   }
 }

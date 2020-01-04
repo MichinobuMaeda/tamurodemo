@@ -38,6 +38,7 @@ export const getServiceStatus = async ({ commit, state }, { i18n }) => {
   let doc = await state.db.collection('service').doc('status').get()
   state.preferences.menuPosition = doc.data().menuPosition || state.preferences.menuPosition
   state.preferences.locale = doc.data().locale || state.preferences.locale
+  state.preferences.timezone = doc.data().timezone || state.preferences.timezone
   i18n.locale = state.preferences.locale
   onServiceStatusChanged({ commit, state }, { doc })
   state.db.collection('service').doc('status').onSnapshot(async doc => {

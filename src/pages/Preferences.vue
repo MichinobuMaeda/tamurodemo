@@ -10,100 +10,17 @@
       <q-separator class="q-my-md" />
       <div class="q-my-md">{{ $t('signInMethod') }}</div>
 
-      <q-btn
-        v-if="conf.auth.line && isLine"
-        class="q-my-md full-width" align="left" outline color="green"
-        icon="fab fa-line" :label="$t('removeProvider', { provider: 'LINE' })"
-        @click="unlinkProvider({ provider: conf.auth.line })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconRemove" />
-      </q-btn>
-      <q-btn
-        v-else-if="conf.auth.line"
-        class="q-my-md full-width" align="left" outline color="green"
-        icon="fab fa-line" :label="$t('addProvider', { provider: 'LINE' })"
-        @click="linkProvider({ provider: conf.auth.line })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconAdd" />
-      </q-btn>
-
-      <q-btn
-        v-if="conf.auth.facebook && isFacebook"
-        class="q-my-md full-width" align="left" outline color="blue-10"
-        :icon="conf.styles.iconRemove" :label="$t('removeProvider', { provider: 'Facebook' })"
-        @click="unlinkProvider({ provider: conf.auth.facebook })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconRemove" />
-      </q-btn>
-      <q-btn
-        v-else-if="conf.auth.facebook"
-        class="q-my-md full-width" align="left" outline color="blue-10"
-        :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: 'Facebook' })"
-        @click="linkProvider({ provider: conf.auth.facebook })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconAdd" />
-      </q-btn>
-
-      <q-btn
-        v-if="conf.auth.github && isGithub"
-        class="q-my-md full-width" align="left" outline color="black"
-        :icon="conf.styles.iconRemove" :label="$t('removeProvider', { provider: 'GitHub' })"
-        @click="unlinkProvider({ provider: conf.auth.github })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconRemove" />
-      </q-btn>
-      <q-btn
-        v-else-if="conf.auth.github"
-        class="q-my-md full-width" align="left" outline color="black"
-        :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: 'GitHub' })"
-        @click="linkProvider({ provider: conf.auth.github })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconAdd" />
-      </q-btn>
-
-      <q-btn
-        v-if="conf.auth.google && isGoogle"
-        class="q-my-md full-width" align="left" outline color="red-10"
-        :icon="conf.styles.iconRemove" :label="$t('removeProvider', { provider: 'Google' })"
-        @click="unlinkProvider({ provider: conf.auth.google })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconRemove" />
-      </q-btn>
-      <q-btn
-        v-else-if="conf.auth.google"
-        class="q-my-md full-width" align="left" outline color="red-10"
-        :icon="conf.styles.iconAdd" :label="$t('addProvider', { provider: 'Google' })"
-        @click="linkProvider({ provider: conf.auth.google })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconAdd" />
-      </q-btn>
-
-      <q-btn
-        v-if="conf.auth.twitter && isTwitter"
-        class="q-my-md full-width" align="left" outline color="light-blue"
-        icon="fab fa-twitter" :label="$t('removeProvider', { provider: 'Twitter' })"
-        @click="unlinkProvider({ provider: conf.auth.twitter })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconRemove" />
-      </q-btn>
-      <q-btn
-        v-else-if="conf.auth.twitter"
-        class="q-my-md full-width" align="left" outline color="light-blue"
-        icon="fab fa-twitter" :label="$t('addProvider', { provider: 'Twitter' })"
-        @click="linkProvider({ provider: conf.auth.twitter })"
-      >
-        <q-space />
-        <q-icon :name="conf.styles.iconAdd" />
-      </q-btn>
+      <div v-for="(item, index) in oauthProviders" v-bind:key="index">
+        <q-btn
+          v-if="item.id"
+          class="q-my-md full-width" align="left" outline no-caps :color="item.color"
+          :icon="item.icon" :label="$t(item.active ? 'removeProvider' : 'addProvider', { provider: item.name })"
+          @click="item.active ? unlinkProvider({ provider: item.id }) : linkProvider({ provider: item.id })"
+        >
+          <q-space />
+          <q-icon :name="item.active ? conf.styles.iconRemove : conf.styles.iconAdd" />
+        </q-btn>
+      </div>
 
       <div v-if="(conf.auth.emailLink || conf.auth.password) && isEmail">
         <q-separator class="q-my-md" />
@@ -134,44 +51,46 @@
         />
       </div>
 
+      <q-separator class="q-my-md" />
     </div>
     <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 q-pa-sm">
 
-      <div class="q-py-sm">
+      <div class="q-py-md">
         <q-btn
           color="primary" outline no-caps
           :icon="conf.styles.iconUser" :label="$t('editName')"
           @click="editName"
         />
       </div>
-      <div class="q-py-sm">
+      <div class="q-py-md">
         <q-btn
           color="primary" outline no-caps
           :icon="conf.styles.iconMenu" :label="$t('menuPosition') + ': ' + currMenuPosition.label"
           @click="editMenuPosition"
         />
       </div>
-      <div class="q-py-sm">
+      <div class="q-py-md">
         <q-btn
           color="primary" outline no-caps
           :icon="conf.styles.iconTimezone" :label="$t('timezone') + ': ' + me.timezone"
           @click="editTimezone"
         />
       </div>
-      <div class="q-py-sm">
+      <div class="q-py-md">
         <q-btn
           color="primary" outline no-caps
           :icon="conf.styles.iconLocale" :label="$t('locale') + ': ' + currLocale.label"
           @click="editLocale"
         />
       </div>
-      <p>
+      <q-separator class="q-my-md" />
+      <div>
         <q-btn
           class="q-my-md"
           outline color="negative"
           icon="fas fa-sign-out-alt" :label="$t('signout')"
           @click="signOut" />
-      </p>
+      </div>
     </div>
 
     <Dialog
@@ -368,12 +287,8 @@ export default {
       'user',
       'currentUser',
       'isSignInMethod',
-      'isLine',
-      'isFacebook',
-      'isGithub',
-      'isGoogle',
-      'isTwitter',
-      'isEmail'
+      'isEmail',
+      'oauthProviders'
     ])
   }
 }

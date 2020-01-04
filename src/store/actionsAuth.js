@@ -11,7 +11,7 @@ const generateNonce = seed => generateRnadome(seed + (new Date()).toISOString())
 
 const redirectToLineAuth = async ({ commit, state }, link = null) => {
   commit('startLoading')
-  const result = await state.firebase.functions().httpsCallable('getAuthIds')()
+  const result = await state.functions.httpsCallable('getAuthIds')()
   const request = {
     response_type: 'code',
     client_id: result.data.line.client_id,
@@ -110,7 +110,7 @@ export const verifyRedirectFromLine = async ({ state, commit }) => {
       commit('setMessage', { key: 'retryOAuth', param: { err: '13' } })
       window.location.href = signInUrl()
     } else {
-      let result = await state.firebase.functions().httpsCallable('signInWithLine')({
+      let result = await state.functions.httpsCallable('signInWithLine')({
         code: params.code,
         ...sessionState
       })

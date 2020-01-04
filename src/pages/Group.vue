@@ -47,7 +47,7 @@
             <q-item-section>{{ u.name }}</q-item-section>
             <q-item-section avatar>
               <q-avatar v-if="isAdminOrManager">
-                <q-icon :name="accountStatus(u.id)" />
+                <q-icon :name="conf.styles.accountStatus[accountStatus(u.id)]" />
               </q-avatar>
             </q-item-section>
           </q-item>
@@ -206,7 +206,7 @@ export default {
     },
     async saveMember () {
       this.memberEditor = false
-      await this.$store.state.firebase.functions().httpsCallable('createMember')({
+      await this.$store.state.functions.httpsCallable('createMember')({
         id: this.$route.params.id,
         name: this.member
       })

@@ -68,21 +68,21 @@ export default {
     }
   },
   async mounted () {
-    let result = await this.$store.state.firebase.functions().httpsCallable('getAccountEmail')({
+    let result = await this.$store.state.functions.httpsCallable('getAccountEmail')({
       id: this.account.id
     })
     this.email = result.data.email
   },
   methods: {
     async invite () {
-      let result = await this.$store.state.firebase.functions().httpsCallable('getInvitationUrl')({
+      let result = await this.$store.state.functions.httpsCallable('getInvitationUrl')({
         id: this.account.id
       })
       this.account.invitationURL = result.data.url
       this.$forceUpdate()
     },
     async setEmail () {
-      let result = await this.$store.state.firebase.functions().httpsCallable('setAccountEmail')({
+      let result = await this.$store.state.functions.httpsCallable('setAccountEmail')({
         id: this.account.id,
         email: this.email
       })

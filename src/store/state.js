@@ -5,7 +5,14 @@ import conf from '../conf'
 
 const firebase = Firebase.initializeApp(conf.firebase)
 const db = firebase.firestore()
-
+const functions = firebase.functions()
+// if (location.hostname === 'localhost') {
+//   db.settings({
+//     host: 'localhost:8080',
+//     ssl: false
+//   })
+//   functions.useFunctionsEmulator('http://localhost:5000')
+// }
 const message = window.localStorage.getItem('message') ? JSON.parse(window.localStorage.getItem('message')) : { key: 'noMessage', params: {} }
 
 export default {
@@ -13,6 +20,7 @@ export default {
   reqPage: null,
   firebase,
   db,
+  functions,
   loading: [ 'start' ],
   message,
   me: null,
@@ -24,6 +32,7 @@ export default {
   unsub: {},
   preferences: {
     menuPosition: conf.styles.defaultMenuPosition,
-    locale: conf.styles.defaultLocale
+    locale: conf.styles.defaultLocale,
+    timezone: conf.styles.defaultTimezone
   }
 }
