@@ -1,23 +1,82 @@
 <template>
   <q-page class="row justify-center">
     <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
-      <p :class="conf.styles.pageTitle">
-        <q-avatar :icon="conf.styles.iconUser" />
-        {{ user($route.params.id).name }}
+      <div :class="conf.styles.pageTitle + (user.deletedAt ? ' bg-grey-5' : '')">
+        <q-avatar :icon="user.deletedAt ? conf.styles.iconRemove : conf.styles.iconUser" />
+        {{ user.name }}
+
         <q-btn
-          v-if="isManager && ($route.params.id !== me.id) && !user($route.params.id).deletedAt"
-          flat raund :icon="conf.styles.iconRemove"
-          @click="confirmDelete = true"
+          v-if="isManager || user.id === me.id"
+          flat raund :icon="conf.styles.iconEdit"
+          @click="editName"
         />
-      </p>
-      <p v-if="isManager && ($route.params.id !== me.id) && user($route.params.id).deletedAt" class="text-negative">
-        <q-icon :name="conf.styles.iconRemove" class="q-mr-sm" />
-        {{ $t('deleted') }}
-        <q-btn flat raund :icon="conf.styles.iconRestore" @click="confirmRestore = true" />
-      </p>
+        <Dialog ref="name" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+          <q-card-section>
+            <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="primary" no-caps :label="$t('save')"
+              @click="saveName" :disable="!name || name === user.name"
+            />
+          </q-card-section>
+        </Dialog>
+
+        <q-btn
+          v-if="isManager && !user.deletedAt"
+          flat raund :icon="conf.styles.iconRemove"
+          @click="deleteThisUser"
+        />
+        <Dialog ref="delete" :color="'negative'" :icon="conf.styles.iconRemove" :title="$t('delete')">
+          <q-card-section>
+            <div>{{ $t('confirmUserDeletion') }}</div>
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="negative" no-caps :label="$t('ok')" @click="saveDeletion"
+            />
+          </q-card-section>
+        </Dialog>
+
+        <q-btn
+          v-if="isManager && user.deletedAt"
+          flat raund :icon="conf.styles.iconRestore"
+          @click="restoreThisUser"
+        />
+        <Dialog ref="restore" :color="'negative'" :icon="conf.styles.iconRestore" :title="$t('restore')">
+          <q-card-section>
+            <div>{{ $t('confirmUserRestore') }}</div>
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="negative" no-caps :label="$t('ok')" @click="saveRestoration"
+            />
+          </q-card-section>
+        </Dialog>
+
+      </div>
+
+      <q-banner class="bg-grey-3" v-if="user && user.desc || isManager">
+        <q-btn class="float-right" flat raund :icon="conf.styles.iconEdit" @click="editDesc" />
+        <Dialog ref="desc" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+          <q-card-section>
+            <q-input type="textarea" v-model="desc" :label="$t('desc')" />
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="primary" no-caps :label="$t('save')"
+              @click="saveDesc" :disable="desc === user.desc"
+            />
+          </q-card-section>
+        </Dialog>
+        <div v-if="user.desc">
+          <p v-for="(line, index) in user.desc.split('\n')" :key="index">{{ line }}</p>
+        </div>
+        <div v-else>{{ $t('noDesc') }}</div>
+      </q-banner>
+
       <span v-for="g in groups" v-bind:key="g.id">
         <q-btn
-          v-if="g.members.includes($route.params.id)"
           class="q-ma-xs" rounded
           :icon="conf.styles.iconGroup" :label="g.name"
           :to="{ name: 'group', params: { id: g.id } }"
@@ -26,85 +85,82 @@
       <AccountAdmin v-bind:account="account($route.params.id)" v-if="isAdminOrManager" />
     </div>
 
-    <q-dialog v-model="confirmDelete">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconRemove" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('delete') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section glass="text-negative">
-          {{ $t('confirmUserDeletion') }}
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn color="negative" :label="$t('delete')" @click="deleteThisUser" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="confirmRestore">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconRestore" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('restore') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section glass="text-negative">
-          {{ $t('confirmUserRestore') }}
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn color="negative" :label="$t('restore')" @click="restoreThisUser" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
   </q-page>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import AccountAdmin from '../components/AccountAdmin'
+import Dialog from '../components/Dialog'
 
 export default {
   name: 'PageUser',
+  components: {
+    AccountAdmin,
+    Dialog
+  },
   data () {
     return {
       name: '',
-      nameEditor: false,
-      desc: '',
-      descditor: false,
-      confirmDelete: false,
-      confirmRestore: false
+      nameRule: [ v => !!v || this.$t('required') ],
+      desc: ''
     }
   },
-  components: {
-    AccountAdmin
-  },
   methods: {
-    async deleteThisUser () {
-      this.confirmDelete = false
-      await this.$store.state.db.collection('users').doc(this.$route.params.id).update({
+    editName () {
+      this.name = this.user.name
+      this.$refs.name.$refs.dialog.show()
+    },
+    async saveName () {
+      this.$refs.name.$refs.dialog.hide()
+      await this.$store.state.db.collection('users').doc(this.user.id).update({
+        name: this.name ? this.name.trim() : '',
+        updatedAt: new Date()
+      })
+    },
+    editDesc () {
+      this.desc = this.user.desc || ''
+      this.$refs.desc.$refs.dialog.show()
+    },
+    async saveDesc () {
+      this.$refs.desc.$refs.dialog.hide()
+      await this.$store.state.db.collection('users').doc(this.user.id).update({
+        desc: this.desc ? this.desc.trim() : '',
+        updatedAt: new Date()
+      })
+    },
+    deleteThisUser () {
+      this.$refs.delete.$refs.dialog.show()
+    },
+    async saveDeletion () {
+      this.$refs.delete.$refs.dialog.hide()
+      await this.$store.state.db.collection('users').doc(this.user.id).update({
         deletedAt: new Date()
       })
     },
-    async restoreThisUser () {
-      this.confirmRestore = false
-      await this.$store.state.db.collection('users').doc(this.$route.params.id).update({
+    restoreThisUser () {
+      this.$refs.restore.$refs.dialog.show()
+    },
+    async saveRestoration () {
+      this.$refs.restore.$refs.dialog.hide()
+      await this.$store.state.db.collection('users').doc(this.user.id).update({
         deletedAt: null,
         updatedAt: new Date()
       })
     }
   },
   computed: {
+    user () {
+      return this.$store.getters.user(this.$route.params.id)
+    },
+    groups () {
+      return this.$store.getters.groups.filter(
+        group => group.members.includes(this.user.id) && (this.isAdminOrManager || (!this.user.deletedAt))
+      )
+    },
     ...mapGetters([
       'conf',
       'me',
-      'user',
-      'groups',
       'account',
       'isAdminOrManager',
       'isManager'

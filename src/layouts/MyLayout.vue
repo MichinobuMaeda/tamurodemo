@@ -11,8 +11,19 @@
         v-if="this.$route.name === 'top' && isManager"
         flat round dense :color="conf.styles.headerText" class="q-mr-sm"
         :icon="conf.styles.iconEdit"
-        @click="openNameEditor"
+        @click="editName"
       />
+      <Dialog ref="name" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+        <q-card-section>
+          <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
+        </q-card-section>
+        <q-card-section align="right">
+          <q-btn
+            color="primary" no-caps :label="$t('save')"
+            @click="saveName" :disable="!name || name === group('top').name"
+          />
+        </q-card-section>
+      </Dialog>
     </q-toolbar>
 
     <q-page-container v-if="$store.state.loading.length">
@@ -53,40 +64,24 @@
       </q-fab>
     </q-page-sticky>
 
-    <q-dialog v-model="nameEditor">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('title') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section>
-          <q-input autofocus type="text" v-model="name" />
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn color="primary" :label="$t('ok')" @click="saveName" :disable="(!name) || name === group('top').name" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
   </q-layout>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
 import Loading from '../pages/Loading.vue'
+import Dialog from '../components/Dialog'
 
 export default {
   components: {
-    Loading
+    Loading,
+    Dialog
   },
   name: 'MyLayout',
   data () {
     return {
       name: '',
-      nameEditor: false,
+      nameRule: [ v => !!v || this.$t('required') ],
       toolChip: false,
       toolChipTimer: null
     }
@@ -109,14 +104,14 @@ export default {
     goPage (next) {
       return () => this.$router.push(next).catch(() => {})
     },
-    openNameEditor () {
+    editName () {
       this.name = this.group('top').name
-      this.nameEditor = true
+      this.$refs.name.$refs.dialog.show()
     },
     async saveName () {
-      this.nameEditor = false
+      this.$refs.name.$refs.dialog.hide()
       await this.$store.state.db.collection('groups').doc('top').update({
-        name: this.name,
+        name: this.name ? this.name.trim() : '',
         updatedAt: new Date()
       })
     },

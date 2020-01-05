@@ -1,45 +1,103 @@
 <template>
   <q-page class="row justify-center">
     <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
-      <p :class="conf.styles.pageTitle">
-        <q-avatar :icon="conf.styles.iconGroup" />
-        {{ group($route.params.id).name }}
+      <div :class="conf.styles.pageTitle + (group.deletedAt ? ' bg-grey-5' : '')">
+        <q-avatar :icon="group.deletedAt ? conf.styles.iconRemove : conf.styles.iconGroup" />
+        {{ group.name }}
+
         <q-btn
           v-if="isManager"
           flat raund :icon="conf.styles.iconEdit"
-          @click="openNameEditor"
+          @click="editName"
         />
+        <Dialog ref="name" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+          <q-card-section>
+            <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="primary" no-caps :label="$t('save')"
+              @click="saveName" :disable="!name || name === group.name"
+            />
+          </q-card-section>
+        </Dialog>
+
         <q-btn
-          v-if="isManager && !group($route.params.id).deletedAt"
+          v-if="isManager && !group.deletedAt"
           flat raund :icon="conf.styles.iconRemove"
-          @click="confirmDelete = true"
+          @click="deleteThisGroup"
         />
-      </p>
-      <p v-if="isManager && group($route.params.id).deletedAt" class="text-negative">
-        <q-icon :name="conf.styles.iconRemove" class="q-mr-sm" />
-        {{ $t('deleted') }}
-        <q-btn flat raund :icon="conf.styles.iconRestore" @click="confirmRestore = true" />
-      </p>
-      <p class="text-body1" v-if="group($route.params.id).desc || isManager">
-        <q-icon :name="conf.styles.iconDesc" class="q-mr-sm" />
-        <span v-if="group($route.params.id).desc">{{ group($route.params.id).desc }}</span>
-        <span v-else>{{ $t('noDesc') }}</span>
-        <q-btn flat raund :icon="conf.styles.iconEdit" @click="openDescEditor" />
-      </p>
+        <Dialog ref="delete" :color="'negative'" :icon="conf.styles.iconRemove" :title="$t('delete')">
+          <q-card-section>
+            <div>{{ $t('confirmGroupDeletion') }}</div>
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="negative" no-caps :label="$t('ok')" @click="saveDeletion"
+            />
+          </q-card-section>
+        </Dialog>
+
+        <q-btn
+          v-if="isManager && group.deletedAt"
+          flat raund :icon="conf.styles.iconRestore"
+          @click="restoreThisGroup"
+        />
+        <Dialog ref="restore" :color="'negative'" :icon="conf.styles.iconRestore" :title="$t('restore')">
+          <q-card-section>
+            <div>{{ $t('confirmGroupRestore') }}</div>
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="negative" no-caps :label="$t('ok')" @click="saveRestoration"
+            />
+          </q-card-section>
+        </Dialog>
+
+      </div>
+
+      <q-banner class="bg-grey-3" v-if="group && group.desc || isManager">
+        <q-btn class="float-right" flat raund :icon="conf.styles.iconEdit" @click="editDesc" />
+        <Dialog ref="desc" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+          <q-card-section>
+            <q-input type="textarea" v-model="desc" :label="$t('desc')" />
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="primary" no-caps :label="$t('save')"
+              @click="saveDesc" :disable="desc === group.desc"
+            />
+          </q-card-section>
+        </Dialog>
+        <div v-if="group.desc">
+          <p v-for="(line, index) in group.desc.split('\n')" :key="index">{{ line }}</p>
+        </div>
+        <div v-else>{{ $t('noDesc') }}</div>
+      </q-banner>
+
       <q-list>
         <q-item
           v-if="isManager"
-          clickable v-ripple @click="openMenberEditor"
+          clickable v-ripple @click="createMember"
           class="text-primary"
         >
           <q-item-section avatar><q-icon :name="conf.styles.iconAddUser" /></q-item-section>
-          <q-item-section>{{ $t('addMember') }}</q-item-section>
+          <q-item-section>{{ $t('createMember') }}</q-item-section>
         </q-item>
+        <Dialog ref="createMember" :color="'primary'" :icon="conf.styles.iconAdd" :title="$t('createMember')">
+          <q-card-section>
+            <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="primary" no-caps :label="$t('save')"
+              @click="saveMember" :disable="!name"
+            />
+          </q-card-section>
+        </Dialog>
+
         <div v-for="u in users" v-bind:key="u.id">
-          <q-item
-            v-if="group($route.params.id).members.includes(u.id) && (isAdminOrManager || (!u.deletedAt))"
-            clickable v-ripple :to="{ name: 'user', params: { id: u.id } }"
-          >
+          <q-item clickable v-ripple :to="{ name: 'user', params: { id: u.id } }">
             <q-item-section avatar>
               <q-icon :name="conf.styles.iconRemove" v-if="u.deletedAt" />
               <q-icon :name="conf.styles.iconUser" v-else />
@@ -55,181 +113,90 @@
       </q-list>
     </div>
 
-    <q-dialog v-model="nameEditor">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('name') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section>
-          <q-input autofocus type="text" v-model="name" />
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn
-            color="primary"
-            :label="$t('ok')" @click="saveName"
-            :disable="(!name) || name === group($route.params.id).name"
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="descditor">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('desc') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section>
-          <q-input autofocus outlined class="q-mt-sm" type="textarea" v-model="desc" />
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn
-            color="primary"
-            :label="$t('ok')" @click="saveDesc"
-            :disable="desc === group($route.params.id).desc"
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="memberEditor">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconEdit" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('addMember') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section>
-          <q-input autofocus type="text" :label="$t('name')" v-model="member" />
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn
-            color="primary"
-            :label="$t('ok')" @click="saveMember"
-            :disable="!member"
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="confirmDelete">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconRemove" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('delete') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section glass="text-negative">
-          {{ $t('confirmGroupDeletion') }}
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn color="negative" :label="$t('delete')" @click="deleteThisGroup" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="confirmRestore">
-      <q-card :style="conf.styles.dlgCardStyle">
-        <q-card-section :class="conf.styles.dlgTitle">
-          <q-avatar :icon="conf.styles.iconRestore" :text-color="conf.styles.dlgTitleIconColor" />
-          <span :class="conf.styles.dlgTitleText">{{ $t('restore') }}</span>
-          <q-space />
-          <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section glass="text-negative">
-          {{ $t('confirmGroupRestore') }}
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <q-space />
-          <q-btn color="negative" :label="$t('restore')" @click="restoreThisGroup" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
   </q-page>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import Dialog from '../components/Dialog'
 
 export default {
   name: 'PageGroup',
+  components: {
+    Dialog
+  },
   data () {
     return {
       name: '',
-      nameEditor: false,
-      desc: '',
-      descditor: false,
-      confirmDelete: false,
-      confirmRestore: false,
-      member: '',
-      memberEditor: false
+      nameRule: [ v => !!v || this.$t('required') ],
+      desc: ''
     }
   },
   methods: {
-    openNameEditor () {
-      this.name = this.group(this.$route.params.id).name
-      this.nameEditor = true
+    editName () {
+      this.name = this.group.name
+      this.$refs.name.$refs.dialog.show()
     },
     async saveName () {
-      this.nameEditor = false
-      await this.$store.state.db.collection('groups').doc(this.$route.params.id).update({
-        name: this.name,
+      this.$refs.name.$refs.dialog.hide()
+      await this.$store.state.db.collection('groups').doc(this.group.id).update({
+        name: this.name ? this.name.trim() : '',
         updatedAt: new Date()
       })
     },
-    openDescEditor () {
-      this.desc = this.group(this.$route.params.id).desc
-      this.descditor = true
+    editDesc () {
+      this.desc = this.group.desc || ''
+      this.$refs.desc.$refs.dialog.show()
     },
     async saveDesc () {
-      this.descditor = false
-      await this.$store.state.db.collection('groups').doc(this.$route.params.id).update({
+      this.$refs.desc.$refs.dialog.hide()
+      await this.$store.state.db.collection('groups').doc(this.group.id).update({
         desc: this.desc ? this.desc.trim() : '',
         updatedAt: new Date()
       })
     },
-    openMenberEditor () {
-      this.member = ''
-      this.memberEditor = true
+    createMember () {
+      this.name = ''
+      this.$refs.createMember.$refs.dialog.show()
     },
     async saveMember () {
-      this.memberEditor = false
+      this.$refs.createMember.$refs.dialog.hide()
       await this.$store.state.functions.httpsCallable('createMember')({
         id: this.$route.params.id,
-        name: this.member
+        name: this.name
       })
     },
-    async deleteThisGroup () {
-      this.confirmDelete = false
-      await this.$store.state.db.collection('groups').doc(this.$route.params.id).update({
+    deleteThisGroup () {
+      this.$refs.delete.$refs.dialog.show()
+    },
+    async saveDeletion () {
+      this.$refs.delete.$refs.dialog.hide()
+      await this.$store.state.db.collection('groups').doc(this.group.id).update({
         deletedAt: new Date()
       })
     },
-    async restoreThisGroup () {
-      this.confirmRestore = false
-      await this.$store.state.db.collection('groups').doc(this.$route.params.id).update({
+    restoreThisGroup () {
+      this.$refs.restore.$refs.dialog.show()
+    },
+    async saveRestoration () {
+      this.$refs.restore.$refs.dialog.hide()
+      await this.$store.state.db.collection('groups').doc(this.group.id).update({
         deletedAt: null,
         updatedAt: new Date()
       })
     }
   },
   computed: {
+    group () {
+      return this.$store.getters.group(this.$route.params.id)
+    },
+    users () {
+      return this.$store.getters.users.filter(
+        user => this.group.members.includes(user.id) && (this.isAdminOrManager || (!user.deletedAt))
+      )
+    },
     ...mapGetters([
       'conf',
-      'group',
-      'users',
       'accountStatus',
       'isAdminOrManager',
       'isManager'

@@ -55,139 +55,105 @@
     </div>
     <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 q-pa-sm">
 
-      <div class="q-py-md">
-        <q-btn
-          color="primary" outline no-caps
-          :icon="conf.styles.iconUser" :label="$t('editName')"
-          @click="editName"
-        />
-      </div>
-      <div class="q-py-md">
-        <q-btn
-          color="primary" outline no-caps
-          :icon="conf.styles.iconMenu" :label="$t('menuPosition') + ': ' + currMenuPosition.label"
-          @click="editMenuPosition"
-        />
-      </div>
-      <div class="q-py-md">
-        <q-btn
-          color="primary" outline no-caps
-          :icon="conf.styles.iconTimezone" :label="$t('timezone') + ': ' + me.timezone"
-          @click="editTimezone"
-        />
-      </div>
-      <div class="q-py-md">
-        <q-btn
-          color="primary" outline no-caps
-          :icon="conf.styles.iconLocale" :label="$t('locale') + ': ' + currLocale.label"
-          @click="editLocale"
-        />
-      </div>
+      <q-btn
+        class="q-my-md full-width" align="left" color="primary" outline no-caps
+        :icon="conf.styles.iconUser" :label="$t('editName')"
+        @click="editName"
+      />
+      <Dialog ref="name" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+        <q-card-section>
+          <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
+        </q-card-section>
+        <q-card-section align="right">
+          <q-btn
+            color="primary" no-caps :label="$t('save')"
+            @click="saveName" :disable="!name || name === user(me.id).name"
+          />
+        </q-card-section>
+      </Dialog>
+
+      <q-btn
+        class="q-my-md full-width" align="left" color="primary" outline no-caps
+        :icon="conf.styles.iconMenu" :label="$t('menuPosition') + ': ' + currMenuPosition.label"
+        @click="editMenuPosition"
+      />
+      <Dialog ref="menuPosition" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+        <q-card-section>
+          <q-select
+            :label="$t('menuPosition')"
+            v-model="menuPosition" map-options
+            :options="conf.styles.menuPositions($store.getters.locale)"
+          />
+        </q-card-section>
+        <q-card-section align="right">
+          <q-btn
+            color="primary" no-caps :label="$t('save')"
+            @click="saveMenuPosition" :disable="menuPosition.value === me.menuPosition"
+          />
+        </q-card-section>
+      </Dialog>
+
+      <q-btn
+        class="q-my-md full-width" align="left" color="primary" outline no-caps
+        :icon="conf.styles.iconTimezone" :label="$t('timezone') + ': ' + me.timezone"
+        @click="editTimezone"
+      />
+      <Dialog ref="timezone" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+        <q-card-section>
+          <q-select
+            :label="$t('timezone')"
+            v-model="timezone"
+            :options="conf.locales.timezones"
+          />
+        </q-card-section>
+        <q-card-section align="right">
+          <q-btn
+            color="primary" no-caps :label="$t('save')"
+            @click="saveTimezone" :disable="timezone === me.timezone"
+          />
+        </q-card-section>
+      </Dialog>
+
+      <q-btn
+        class="q-my-md full-width" align="left" color="primary" outline no-caps
+        :icon="conf.styles.iconLocale" :label="$t('locale') + ': ' + currLocale.label"
+        @click="editLocale"
+      />
+      <Dialog ref="locale" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
+        <q-card-section>
+          <q-select
+            :label="$t('locale')"
+            v-model="locale"
+            :options="conf.locales.locales"
+          />
+        </q-card-section>
+        <q-card-section align="right">
+          <q-btn
+            color="primary" no-caps :label="$t('save')"
+            @click="saveLocale" :disable="locale === me.locale"
+          />
+        </q-card-section>
+      </Dialog>
+
       <q-separator class="q-my-md" />
-      <div>
-        <q-btn
-          class="q-my-md"
-          outline color="negative"
-          icon="fas fa-sign-out-alt" :label="$t('signout')"
-          @click="signOut" />
-      </div>
+
+      <q-btn
+        class="q-my-md full-width" align="left" outline color="negative"
+        icon="fas fa-sign-out-alt" :label="$t('signout')"
+        @click="$refs.signout.$refs.dialog.show()"
+      />
+      <Dialog ref="signout" :color="'negative'" :icon="conf.styles.iconWarn" :title="$t('confirm')">
+        <q-card-section>
+          <div>{{ $t('confirmSingOut') }}</div>
+        </q-card-section>
+        <q-card-section align="right">
+          <q-btn
+            color="negative" no-caps :label="$t('ok')"
+            @click="signOut"
+          />
+        </q-card-section>
+      </Dialog>
     </div>
-
-    <Dialog
-      ref="name"
-      v-bind:icon="conf.styles.iconEdit"
-      v-bind:title="$t('edit')"
-    >
-      <q-card-section>
-        <q-input class="text-h6" type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
-      </q-card-section>
-      <q-card-section class="row items-center">
-        <q-space />
-        <q-btn
-          color="primary" no-caps
-          :label="$t('save')" @click="saveName"
-          :disable="!name || name === user(me.id).name"
-        />
-      </q-card-section>
-    </Dialog>
-
-    <Dialog
-      ref="menuPosition"
-      v-bind:icon="conf.styles.iconEdit"
-      v-bind:title="$t('edit')"
-    >
-      <q-card-section>
-        <q-select
-          class="text-h6"
-          v-model="menuPosition" map-options
-          :options="conf.styles.menuPositions($store.getters.locale)"
-        >
-          <template v-slot:before>
-            {{ $t('menuPosition') }}
-          </template>
-        </q-select>
-      </q-card-section>
-      <q-card-section class="row items-center">
-        <q-space />
-        <q-btn
-          color="primary" no-caps
-          :label="$t('save')" @click="saveMenuPosition"
-          :disable="menuPosition.value === me.menuPosition"
-        />
-      </q-card-section>
-    </Dialog>
-
-    <Dialog
-      ref="timezone"
-      v-bind:icon="conf.styles.iconEdit"
-      v-bind:title="$t('edit')"
-    >
-      <q-card-section>
-        <q-select
-          class="text-h6"
-          v-model="timezone"
-          :options="conf.locales.timezones"
-        >
-          <template v-slot:before>
-            {{ $t('timezone') }}
-          </template>
-        </q-select>
-      </q-card-section>
-      <q-card-section class="row items-center">
-        <q-space />
-        <q-btn
-          color="primary" no-caps
-          :label="$t('save')" @click="saveTimezone"
-          :disable="timezone === me.timezone"
-        />
-      </q-card-section>
-    </Dialog>
-
-    <Dialog
-      ref="locale"
-      v-bind:icon="conf.styles.iconEdit"
-      v-bind:title="$t('edit')"
-    >
-      <q-card-section>
-        <q-select
-          class="text-h6"
-          v-model="locale"
-          :options="conf.locales.locales"
-        >
-          <template v-slot:before>
-            {{ $t('locale') }}
-          </template>
-        </q-select>
-      </q-card-section>
-      <q-card-section class="row items-center">
-        <q-space />
-        <q-btn
-          color="primary" no-caps
-          :label="$t('save')" @click="saveLocale"
-          :disable="locale === me.locale"
-        />
-      </q-card-section>
-    </Dialog>
 
   </q-page>
 </template>

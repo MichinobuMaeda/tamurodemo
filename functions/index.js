@@ -310,9 +310,8 @@ exports.createMember = functions.https.onCall(async (data, context) => {
   let status = await db.collection('service').doc('status').get()
   const id = await createUser(data.name, ts, status)
   const groupRef = db.collection('groups').doc(data.id)
-  const group = await groupRef.get()
   await groupRef.update({
-    members: [ ...group.data().members, id ],
+    members: firebase. firestore. FieldValue.arrayUnion([id]),
     updatedAt: ts
   })
   return { id }
