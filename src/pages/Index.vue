@@ -2,7 +2,7 @@
   <q-page class="row justify-center">
     <div :class="conf.styles.col1">
       <ItemDesc :item="group('top')" :collection="'groups'" />
-      <GroupChat :item="group('top')" :collection="'groups'" />
+      <GroupChat :item="group('top')" />
 
       <p :class="conf.styles.pageTitle">
         <q-avatar :icon="conf.styles.iconGroup" />

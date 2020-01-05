@@ -9,7 +9,7 @@
       </div>
 
       <ItemDesc :item="group" :collection="'groups'" />
-      <GroupChat :item="group" :collection="'groups'" v-if="group.members.includes(me.id)" />
+      <GroupChat :item="group" v-if="group.members.includes(me.id)" />
 
       <q-list>
         <q-item

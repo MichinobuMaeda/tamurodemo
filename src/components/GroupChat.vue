@@ -27,38 +27,15 @@
     </q-scroll-area>
     <div v-else-if="messages.length">
       <q-chat-message
-        v-if="messages.length > 2"
+        v-for="msg in messages.slice(-3)" :key="msg.id"
         text-sanitize
-        :name="user(messages[messages.length - 3].user) ? user(messages[messages.length - 3].user).name : 'unknown'"
-        :sent="messages[messages.length - 3].user === me.id"
-        :text="messages[messages.length - 3].text.split('\n')"
-        :stamp="messages[messages.length - 3].ts"
+        :name="user(msg.user) ? user(msg.user).name : 'unknown'"
+        :sent="msg.user === me.id"
+        :text="msg.text.split('\n')"
+        :stamp="msg.ts"
       >
-        <template v-slot:avatar v-if="messages[messages.length - 3].user === me.id">
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(messages[messages.length - 3].id)" />
-        </template>
-      </q-chat-message>
-      <q-chat-message
-        v-if="messages.length > 1"
-        text-sanitize
-        :name="user(messages[messages.length - 2].user) ? user(messages[messages.length - 2].user).name : 'unknown'"
-        :sent="messages[messages.length - 2].user === me.id"
-        :text="messages[messages.length - 2].text.split('\n')"
-        :stamp="messages[messages.length - 2].ts"
-      >
-        <template v-slot:avatar v-if="messages[messages.length - 2].user === me.id">
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(messages[messages.length - 2].id)" />
-        </template>
-      </q-chat-message>
-      <q-chat-message
-        text-sanitize
-        :name="user(messages[messages.length - 1].user) ? user(messages[messages.length - 1].user).name : 'unknown'"
-        :sent="messages[messages.length - 1].user === me.id"
-        :text="messages[messages.length - 1].text.split('\n')"
-        :stamp="messages[messages.length - 1].ts"
-      >
-        <template v-slot:avatar v-if="messages[messages.length - 1].user === me.id">
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(messages[messages.length - 1].id)" />
+        <template v-slot:avatar v-if="msg.user === me.id">
+          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" />
         </template>
       </q-chat-message>
       <q-input type="textarea" outlined v-model="text" autofocus style="height: 64px">
@@ -97,7 +74,7 @@ import Dialog from './Dialog'
 
 export default {
   name: 'GroupChat',
-  props: [ 'item', 'collection' ],
+  props: [ 'item' ],
   components: {
     Dialog
   },
@@ -112,7 +89,7 @@ export default {
     }
   },
   mounted () {
-    this.$store.state.db.collection(this.collection).doc(this.item.id).collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
+    this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
       this.messages = querySnapshot.docs.map(item => ({
         id: item.id,
         ...item.data()
@@ -127,7 +104,7 @@ export default {
       let text = this.text.trim()
       if (text) {
         const ts = new Date()
-        await this.$store.state.db.collection(this.collection).doc(this.item.id).collection('messages').add({
+        await this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').add({
           text,
           user: this.me.id,
           ts
@@ -144,11 +121,11 @@ export default {
     async saveEdited () {
       this.$refs.msg.$refs.dialog.hide()
       if (this.msgNew.trim()) {
-        await this.$store.state.db.collection(this.collection).doc(this.item.id).collection('messages').doc(this.msgId).update({
+        await this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').doc(this.msgId).update({
           text: this.msgNew
         })
       } else {
-        await this.$store.state.db.collection(this.collection).doc(this.item.id).collection('messages').doc(this.msgId).delete()
+        await this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').doc(this.msgId).delete()
       }
     }
   },
