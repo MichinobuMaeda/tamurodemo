@@ -15,9 +15,9 @@ export const setService = (state, doc) => { state.service = { ...state.service, 
 export const setMe = (state, me) => { state.me = (me && me.exists && me.data().valid) ? simplify(me) : null }
 export const resetMe = state => { state.me = null }
 export const setGroups = (state, querySnapshot) => { state.groups = querySnapshot.docs.map(item => simplify(item)) }
-export const resetGroups = (state) => { state.groups = [] }
+export const resetGroups = state => { state.groups = [] }
 export const setAccounts = (state, querySnapshot) => { state.accounts = querySnapshot.docs.map(item => simplify(item)) }
-export const resetAccounts = (state) => { state.accounts = [] }
+export const resetAccounts = state => { state.accounts = [] }
 export const setUsers = (state, querySnapshot) => {
   let users = [ ...(state.users || []) ]
   querySnapshot.docChanges().forEach(change => {
@@ -34,7 +34,8 @@ export const setUsers = (state, querySnapshot) => {
   })
   state.users = users
 }
-export const resetUsers = (state) => {
+export const resetUsers = state => {
   state.users = []
   state.profiles = {}
 }
+export const toggleLimitedPriv = state => { state.limitedPriv = !state.limitedPriv }

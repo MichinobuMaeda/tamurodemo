@@ -6,8 +6,8 @@
       </q-avatar>
       <q-toolbar-title :class="'text-' + conf.styles.headerText" @click="goTop">
         {{ group('top') && group('top').name }}
-        <ItemName :item="group('top')" :collection="'groups'" />
       </q-toolbar-title>
+      <ItemName :item="group('top')" :collection="'groups'" class="q-mr-xl" />
     </q-toolbar>
 
     <q-page-container v-if="$store.state.loading.length">
@@ -124,47 +124,61 @@ export default {
       } else if (currPosition === 'bottom-left' && info.direction === 'up') {
         await setMenuPosition('top-left')
       }
+    },
+    toggleLimitedPriv () {
+      this.$store.commit('toggleLimitedPriv')
     }
   },
   computed: {
     menuItems () {
-      return this.isValid ? [
-        {
-          icon: this.conf.styles.iconTop,
-          label: this.$t('home'),
-          onClick: this.goTop
-        },
-        {
-          icon: this.conf.styles.iconPrivacyPolicy,
-          label: this.$t('privacyPolicy'),
-          onClick: this.goPage({ name: 'policy' })
-        },
-        {
-          icon: this.conf.styles.iconPreferences,
-          label: this.$t('preferences', { name: this.user(this.me.id).name }),
-          onClick: this.goPage({ name: 'preferences' })
-        },
-        {
-          icon: this.conf.styles.iconService,
-          label: 'Service',
-          onClick: this.goPage({ name: 'service' })
-        },
-        {
-          icon: this.conf.styles.iconRawData,
-          label: 'Raw data',
-          onClick: this.goPage({ name: 'raw' })
-        }
-      ] : [
-        {
-          icon: this.conf.styles.iconSignIn,
-          label: this.$t('signin'),
-          onClick: this.goTop
-        },
+      return [
+        ...(this.isValid ? [
+          {
+            icon: this.conf.styles.iconTop,
+            label: this.$t('home'),
+            onClick: this.goTop
+          }
+        ] : [
+          {
+            icon: this.conf.styles.iconSignIn,
+            label: this.$t('signin'),
+            onClick: this.goTop
+          }
+        ]),
         {
           icon: this.conf.styles.iconPrivacyPolicy,
           label: this.$t('privacyPolicy'),
           onClick: this.goPage({ name: 'policy' })
-        }
+        },
+        ...(this.isValid ? [
+          {
+            icon: this.conf.styles.iconPreferences,
+            label: this.$t('preferences', { name: this.user(this.me.id).name }),
+            onClick: this.goPage({ name: 'preferences' })
+          }
+        ] : [
+        ]),
+        ...(this.isAdmin ? [
+          {
+            icon: this.conf.styles.iconService,
+            label: 'Service',
+            onClick: this.goPage({ name: 'service' })
+          },
+          {
+            icon: this.conf.styles.iconRawData,
+            label: 'Raw data',
+            onClick: this.goPage({ name: 'raw' })
+          }
+        ] : [
+        ]),
+        ...(this.isAdminOrManager || this.$store.state.limitedPriv ? [
+          {
+            icon: this.conf.styles.iconLimitedPriv,
+            label: this.$t('limitedPriviligeMode') + (this.$store.state.limitedPriv ? ': On' : ': Off'),
+            onClick: this.toggleLimitedPriv
+          }
+        ] : [
+        ])
       ]
     },
     toolChipAnchor () { return this.menuPosition.includes('left') ? 'center right' : 'center left' },

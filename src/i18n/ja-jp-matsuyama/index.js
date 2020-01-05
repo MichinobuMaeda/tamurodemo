@@ -27,7 +27,7 @@ export default {
   accountPaused: 'あがられん',
   invitation: '呼ぶ',
   menuPosition: 'メニューはどこがええ？',
-  timezone: 'Timezone',
+  timezone: 'タイムゾーン',
   locale: '自分のことば',
   create: '作る',
   add: '足す',
@@ -55,5 +55,6 @@ export default {
   confirmUserRestore: 'この削除したユーザは戻すん？',
   home: 'ホームじゃ',
   groups: 'グループ',
+  limitedPriviligeMode: '特別な権限無しの表示',
   signout: 'いんでこーわい'
 }

@@ -34,5 +34,6 @@ export default {
     menuPosition: null,
     locale: null,
     timezone: null
-  }
+  },
+  limitedPriv: false
 }

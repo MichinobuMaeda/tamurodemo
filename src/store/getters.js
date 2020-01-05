@@ -19,8 +19,8 @@ export const accountStatus = state => id => {
   return (valid && enteredAt) ? 'accepted' : ((valid && invitedAt) ? 'invited' : 'blocked')
 }
 export const isValid = state => state.me && state.me.valid
-export const isAdmin = state => isValid(state) && (group(state)('admin').members || []).some(member => member === state.me.id)
-export const isManager = state => isValid(state) && (group(state)('manager').members || []).some(member => member === state.me.id)
+export const isAdmin = state => isValid(state) && (group(state)('admin').members || []).some(member => member === state.me.id) && !state.limitedPriv
+export const isManager = state => isValid(state) && (group(state)('manager').members || []).some(member => member === state.me.id) && !state.limitedPriv
 export const isAdminOrManager = state => isAdmin(state) || isManager(state)
 export const isSignInMethod = state => state.me && currentUser(state) && (state.me.line_me || (currentUser(state).providerData || []).length)
 export const isEmail = state => currentUser(state) && currentUser(state).email

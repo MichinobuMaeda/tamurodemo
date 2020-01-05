@@ -55,5 +55,6 @@ export default {
   confirmUserRestore: 'Please, confirm to restore of this deleted user.',
   home: 'Home',
   groups: 'Groups',
+  limitedPriviligeMode: 'Limited Privilige Mode',
   signout: 'Sign-out'
 }
