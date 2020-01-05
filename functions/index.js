@@ -311,7 +311,7 @@ exports.createMember = functions.https.onCall(async (data, context) => {
   const id = await createUser(data.name, ts, status)
   const groupRef = db.collection('groups').doc(data.id)
   await groupRef.update({
-    members: firebase. firestore. FieldValue.arrayUnion([id]),
+    members: admin.firestore.FieldValue.arrayUnion(id),
     updatedAt: ts
   })
   return { id }

@@ -31,8 +31,8 @@ export default {
   service: {},
   unsub: {},
   preferences: {
-    menuPosition: conf.styles.defaultMenuPosition,
-    locale: conf.styles.defaultLocale,
-    timezone: conf.styles.defaultTimezone
+    menuPosition: null,
+    locale: null,
+    timezone: null
   }
 }

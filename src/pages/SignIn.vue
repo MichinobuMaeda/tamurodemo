@@ -1,6 +1,6 @@
 <template>
   <q-page class="row justify-center">
-    <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 q-pa-sm">
+    <div :class="conf.styles.col2">
       <div class="text-red">{{ $t($store.state.message.key, $store.state.message.params) }}</div>
       <div class="q-my-md">{{ $t('signInWithSns') }}</div>
       <div v-for="(item, index) in oauthProviders" v-bind:key="index">
@@ -13,7 +13,8 @@
       </div>
       <q-separator class="q-my-md" />
     </div>
-    <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 q-pa-sm">
+
+    <div :class="conf.styles.col2">
       <div v-if="conf.auth.emailLink">
         <div class="q-my-md">{{ $t('passwordlessSignIn') }}</div>
         <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')">

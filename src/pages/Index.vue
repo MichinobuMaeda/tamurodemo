@@ -1,24 +1,8 @@
 <template>
   <q-page class="row justify-center">
-    <div class="col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm">
-      <q-banner class="bg-grey-3" v-if="group('top') && group('top').desc || isAdminOrManager">
-        <q-btn class="float-right" flat raund :icon="conf.styles.iconEdit" @click="editDesc" />
-        <Dialog ref="desc" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
-          <q-card-section>
-            <q-input type="textarea" v-model="desc" :label="$t('desc')" />
-          </q-card-section>
-          <q-card-section align="right">
-            <q-btn
-              color="primary" no-caps :label="$t('save')"
-              @click="saveDesc" :disable="desc === group('top').desc"
-            />
-          </q-card-section>
-        </Dialog>
-        <div v-if="group('top').desc">
-          <p v-for="(line, index) in group('top').desc.split('\n')" :key="index">{{ line }}</p>
-        </div>
-        <div v-else>{{ $t('noDesc') }}</div>
-      </q-banner>
+    <div :class="conf.styles.col1">
+
+      <ItemDesc :item="group('top')" :collection="'groups'" />
 
       <p :class="conf.styles.pageTitle">
         <q-avatar :icon="conf.styles.iconGroup" />
@@ -67,11 +51,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import Dialog from '../components/Dialog'
+import ItemDesc from '../components/ItemDesc'
 
 export default {
   name: 'PageIndex',
   components: {
-    Dialog
+    Dialog,
+    ItemDesc
   },
   data () {
     return {
@@ -81,17 +67,6 @@ export default {
     }
   },
   methods: {
-    editDesc () {
-      this.desc = this.group('top').desc || ''
-      this.$refs.desc.$refs.dialog.show()
-    },
-    async saveDesc () {
-      this.$refs.desc.$refs.dialog.hide()
-      await this.$store.state.db.collection('groups').doc('top').update({
-        desc: this.desc ? this.desc.trim() : '',
-        updatedAt: new Date()
-      })
-    },
     createGroup () {
       this.name = ''
       this.$refs.create.$refs.dialog.show()

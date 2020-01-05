@@ -6,24 +6,8 @@
       </q-avatar>
       <q-toolbar-title :class="'text-' + conf.styles.headerText" @click="goTop">
         {{ group('top') && group('top').name }}
+        <ItemName :item="group('top')" :collection="'groups'" />
       </q-toolbar-title>
-      <q-btn
-        v-if="this.$route.name === 'top' && isManager"
-        flat round dense :color="conf.styles.headerText" class="q-mr-sm"
-        :icon="conf.styles.iconEdit"
-        @click="editName"
-      />
-      <Dialog ref="name" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
-        <q-card-section>
-          <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
-        </q-card-section>
-        <q-card-section align="right">
-          <q-btn
-            color="primary" no-caps :label="$t('save')"
-            @click="saveName" :disable="!name || name === group('top').name"
-          />
-        </q-card-section>
-      </Dialog>
     </q-toolbar>
 
     <q-page-container v-if="$store.state.loading.length">
@@ -70,18 +54,16 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import Loading from '../pages/Loading.vue'
-import Dialog from '../components/Dialog'
+import ItemName from '../components/ItemName'
 
 export default {
   components: {
     Loading,
-    Dialog
+    ItemName
   },
   name: 'MyLayout',
   data () {
     return {
-      name: '',
-      nameRule: [ v => !!v || this.$t('required') ],
       toolChip: false,
       toolChipTimer: null
     }
@@ -103,17 +85,6 @@ export default {
     },
     goPage (next) {
       return () => this.$router.push(next).catch(() => {})
-    },
-    editName () {
-      this.name = this.group('top').name
-      this.$refs.name.$refs.dialog.show()
-    },
-    async saveName () {
-      this.$refs.name.$refs.dialog.hide()
-      await this.$store.state.db.collection('groups').doc('top').update({
-        name: this.name ? this.name.trim() : '',
-        updatedAt: new Date()
-      })
     },
     showToolChip () {
       this.toolChip = false

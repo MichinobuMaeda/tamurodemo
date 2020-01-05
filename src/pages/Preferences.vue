@@ -1,6 +1,6 @@
 <template>
   <q-page class="row justify-center">
-    <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 q-pa-sm">
+    <div :class="conf.styles.col2">
       <p :class="conf.styles.pageTitle">
         <q-avatar :icon="conf.styles.iconPreferences" />
         {{ $t('preferences', { name: user(me.id).name }) }}
@@ -53,7 +53,7 @@
 
       <q-separator class="q-my-md" />
     </div>
-    <div class="col col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 q-pa-sm">
+    <div :class="conf.styles.col2">
 
       <q-btn
         class="q-my-md full-width" align="left" color="primary" outline no-caps

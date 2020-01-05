@@ -19,13 +19,13 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
     }
     commit('setUnsub', {
       key: 'top',
-      unsub: state.db.collection('groups').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+      unsub: state.db.collection('groups').orderBy('name').onSnapshot(querySnapshot => {
         commit('setGroups', querySnapshot)
       })
     })
     commit('setUnsub', {
       key: 'top',
-      unsub: state.db.collection('users').orderBy('name', 'asc').onSnapshot(querySnapshot => {
+      unsub: state.db.collection('users').orderBy('name').onSnapshot(querySnapshot => {
         commit('setUsers', querySnapshot)
       })
     })

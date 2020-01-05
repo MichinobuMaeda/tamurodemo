@@ -7,6 +7,8 @@ export default {
   footerText: 'teal-10',
   dlgCardStyle: 'width: 700px; max-width: 80vw;',
   dlgTitle: 'row items-center text-body1 text-white bg-',
+  col1: 'col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm',
+  col2: 'col col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 q-pa-sm',
   menuBg: 'teal-7',
   menuText: 'white',
   menuItemBg: 'light-green-10',
@@ -57,8 +59,5 @@ export default {
     blocked: 'fas fa-lock',
     invited: 'far fa-paper-plane',
     accepted: 'far fa-check-circle'
-  },
-  defaultMenuPosition: 'bottom-right',
-  defaultLocale: 'ja-jp',
-  defaultTimezone: 'Asia/Tokyo'
+  }
 }
