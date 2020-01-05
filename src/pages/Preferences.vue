@@ -153,6 +153,13 @@
           />
         </q-card-section>
       </Dialog>
+
+      <div v-if="isValid && !isManager">
+        <q-separator class="q-my-md" />
+        <p>{{ $t('contact', { name: group('manager').name }) }}</p>
+        <RequestChat :item="group('manager')" :from="me.id" />
+      </div>
+
     </div>
 
   </q-page>
@@ -164,11 +171,13 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Dialog from '../components/Dialog'
+import RequestChat from '../components/RequestChat'
 
 export default {
   name: 'PagePreferences',
   components: {
-    Dialog
+    Dialog,
+    RequestChat
   },
   data () {
     return {
@@ -250,8 +259,11 @@ export default {
     ...mapGetters([
       'conf',
       'me',
+      'group',
       'user',
       'currentUser',
+      'isValid',
+      'isManager',
       'isSignInMethod',
       'isEmail',
       'oauthProviders'

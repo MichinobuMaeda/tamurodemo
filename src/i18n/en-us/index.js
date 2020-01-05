@@ -54,6 +54,7 @@ export default {
   restore: 'Restore',
   confirmGroupRestore: 'Please, confirm to restore of this deleted group.',
   confirmUserRestore: 'Please, confirm to restore of this deleted user.',
+  contact: 'Contact {name}',
   home: 'Home',
   groups: 'Groups',
   limitedPriviligeMode: 'Limited Privilige Mode',

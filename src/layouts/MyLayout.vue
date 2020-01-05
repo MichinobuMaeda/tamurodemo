@@ -1,10 +1,10 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-toolbar :class="'bg-' + conf.styles.headerBg">
-      <q-avatar rounded @click="goTop">
+      <q-avatar rounded @click="goPage(isValid ? { name: 'top' } : { name: 'signin' })()">
         <img src="statics/app-logo-128x128.png">
       </q-avatar>
-      <q-toolbar-title :class="'text-' + conf.styles.headerText" @click="goTop">
+      <q-toolbar-title :class="'text-' + conf.styles.headerText" @click="goPage(isValid ? { name: 'top' } : { name: 'signin' })()">
         {{ group('top') && group('top').name }}
       </q-toolbar-title>
       <ItemName :item="group('top')" :collection="'groups'" class="q-mr-xl" />
@@ -136,13 +136,13 @@ export default {
           {
             icon: this.conf.styles.iconTop,
             label: this.$t('home'),
-            onClick: this.goTop
+            onClick: this.goPage({ name: 'top' })
           }
         ] : [
           {
             icon: this.conf.styles.iconSignIn,
             label: this.$t('signin'),
-            onClick: this.goTop
+            onClick: this.goPage({ name: 'signin' })
           }
         ]),
         {

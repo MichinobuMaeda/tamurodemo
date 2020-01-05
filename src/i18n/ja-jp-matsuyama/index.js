@@ -54,6 +54,7 @@ export default {
   restore: '復帰',
   confirmGroupRestore: 'この削除したグループは戻すん？',
   confirmUserRestore: 'この削除したユーザは戻すん？',
+  contact: '{name} に聞いてみる',
   home: 'ホームじゃ',
   groups: 'グループ',
   limitedPriviligeMode: '特別な権限無しの表示',

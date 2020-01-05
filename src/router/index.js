@@ -42,14 +42,8 @@ export default function ({ store } /* { store, ssrContext } */) {
 
   router.beforeEach((to, from, next) => {
     getReuestedPage(store, router)
-    if (from.name === 'policy') {
-      if (![ 'signin' ].includes(to.name)) {
-        setReuestedPage(store, to)
-      }
-    } else {
-      if (![ 'top', 'signin', 'preferences' ].includes(to.name)) {
-        setReuestedPage(store, to)
-      }
+    if (![ 'policy', 'signin', 'preferences' ].includes(to.name)) {
+      setReuestedPage(store, to)
     }
 
     var replace = null
