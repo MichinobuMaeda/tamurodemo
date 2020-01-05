@@ -23,52 +23,47 @@ export const isAdmin = state => isValid(state) && (group(state)('admin').members
 export const isManager = state => isValid(state) && (group(state)('manager').members || []).some(member => member === state.me.id)
 export const isAdminOrManager = state => isAdmin(state) || isManager(state)
 export const isSignInMethod = state => state.me && currentUser(state) && (state.me.line_me || (currentUser(state).providerData || []).length)
-const isProvider = (state, providerId) => ((currentUser(state) && currentUser(state).providerData) || []).some(item => item.providerId === providerId)
-export const isFacebook = state => isProvider(state, Firebase.auth.FacebookAuthProvider.PROVIDER_ID)
-export const isGithub = state => isProvider(state, Firebase.auth.GithubAuthProvider.PROVIDER_ID)
-export const isGoogle = state => isProvider(state, Firebase.auth.GoogleAuthProvider.PROVIDER_ID)
-export const isTwitter = state => isProvider(state, Firebase.auth.TwitterAuthProvider.PROVIDER_ID)
-export const isLine = state => state.me && (!!state.me.line_me)
 export const isEmail = state => currentUser(state) && currentUser(state).email
 const formatDateTime = (state, tm, format) => tm ? Moment(tm).tz(timezone(state)).format(format) : null
 export const longTimestamp = state => tm => formatDateTime(state, tm, state.conf.locales.longTimestamp)
 export const shortTimestamp = state => tm => formatDateTime(state, tm, state.conf.shortTimestamp)
 export const shortDate = state => tm => formatDateTime(state, tm, state.conf.shortDate)
 export const shortTime = state => tm => formatDateTime(state, tm, state.conf.shortTime)
+const isProviderId = (state, providerId) => ((currentUser(state) && currentUser(state).providerData) || []).some(item => item.providerId === providerId)
 export const oauthProviders = state => [
   {
     id: conf(state).auth.line,
-    active: isLine(state),
+    active: state.me && (!!state.me.line_me),
     color: 'green',
     name: 'LINE',
-    icon: 'fab fa-line'
+    icon: state.conf.styles.iconLine
   },
   {
     id: conf(state).auth.facebook,
-    active: isFacebook(state),
+    active: isProviderId(state, Firebase.auth.FacebookAuthProvider.PROVIDER_ID),
     color: 'blue-10',
     name: 'Facebook',
-    icon: 'fab fa-facebook'
+    icon: state.conf.styles.iconFacebook
   },
   {
     id: conf(state).auth.github,
-    active: isGithub(state),
+    active: isProviderId(state, Firebase.auth.GithubAuthProvider.PROVIDER_ID),
     color: 'black',
     name: 'Github',
-    icon: 'fab fa-github'
+    icon: state.conf.styles.iconGithub
   },
   {
     id: conf(state).auth.google,
-    active: isGoogle(state),
+    active: isProviderId(state, Firebase.auth.GoogleAuthProvider.PROVIDER_ID),
     color: 'red-10',
     name: 'Google',
-    icon: 'fab fa-google'
+    icon: state.conf.styles.iconGoogle
   },
   {
     id: conf(state).auth.twitter,
-    active: isTwitter(state),
+    active: isProviderId(state, Firebase.auth.TwitterAuthProvider.PROVIDER_ID),
     color: 'light-blue',
     name: 'Twitter',
-    icon: 'fab fa-twitter'
+    icon: state.conf.styles.iconTwitter
   }
 ]

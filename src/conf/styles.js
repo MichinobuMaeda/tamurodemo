@@ -49,6 +49,11 @@ export default {
   iconGroup: 'fas fa-users',
   iconTimezone: 'fas fa-globe',
   iconLocale: 'fas fa-language',
+  iconLine: 'fab fa-line',
+  iconFacebook: 'fab fa-facebook',
+  iconGithub: 'fab fa-github',
+  iconGoogle: 'fab fa-google',
+  iconTwitter: 'fab fa-twitter',
   accountStatus: {
     blocked: 'fas fa-lock',
     invited: 'far fa-paper-plane',
