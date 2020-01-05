@@ -9,6 +9,7 @@
       </div>
 
       <ItemDesc :item="group" :collection="'groups'" />
+      <GroupChat :item="group" :collection="'groups'" v-if="group.members.includes(me.id)" />
 
       <q-list>
         <q-item
@@ -57,6 +58,7 @@ import Dialog from '../components/Dialog'
 import ItemName from '../components/ItemName'
 import ItemDesc from '../components/ItemDesc'
 import ItemDeleteRemove from '../components/ItemDeleteRemove'
+import GroupChat from '../components/GroupChat'
 
 export default {
   name: 'PageGroup',
@@ -64,7 +66,8 @@ export default {
     Dialog,
     ItemName,
     ItemDesc,
-    ItemDeleteRemove
+    ItemDeleteRemove,
+    GroupChat
   },
   data () {
     return {
@@ -97,6 +100,7 @@ export default {
     },
     ...mapGetters([
       'conf',
+      'me',
       'accountStatus',
       'isAdminOrManager',
       'isManager'

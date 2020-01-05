@@ -10,9 +10,7 @@
         <div>{{ $t(this.collection === 'users' ? 'confirmUserDeletion' : 'confirmGroupDeletion') }}</div>
       </q-card-section>
       <q-card-section align="right">
-        <q-btn
-          color="negative" no-caps :label="$t('ok')" @click="saveDeletion"
-        />
+        <q-btn color="negative" no-caps :label="$t('ok')" @click="saveDeletion" />
       </q-card-section>
     </Dialog>
 
@@ -26,9 +24,7 @@
         <div>{{ $t(this.collection === 'users' ? 'confirmUserRestore' : 'confirmGroupRestore') }}</div>
       </q-card-section>
       <q-card-section align="right">
-        <q-btn
-          color="negative" no-caps :label="$t('ok')" @click="saveRestoration"
-        />
+        <q-btn color="negative" no-caps :label="$t('ok')" @click="saveRestoration" />
       </q-card-section>
     </Dialog>
   </span>

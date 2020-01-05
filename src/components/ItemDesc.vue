@@ -3,7 +3,7 @@
     <q-btn class="float-right" flat raund :icon="conf.styles.iconEdit" @click="editDesc" />
     <Dialog ref="desc" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
       <q-card-section>
-        <q-input type="textarea" v-model="desc" :label="$t('desc')" />
+        <q-input outlined type="textarea" v-model="desc" :label="$t('desc')" />
       </q-card-section>
       <q-card-section align="right">
         <q-btn

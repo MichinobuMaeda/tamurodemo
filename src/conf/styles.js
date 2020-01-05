@@ -45,6 +45,7 @@ export default {
   iconWarn: 'fas fa-exclamation-circle',
   iconEdit: 'fas fa-edit',
   iconClose: 'fas fa-times',
+  iconSend: 'fas fa-share',
   iconDesc: 'far fa-comment-alt',
   iconUser: 'fas fa-user',
   iconAddUser: 'fas fa-user-plus',

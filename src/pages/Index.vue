@@ -1,8 +1,8 @@
 <template>
   <q-page class="row justify-center">
     <div :class="conf.styles.col1">
-
       <ItemDesc :item="group('top')" :collection="'groups'" />
+      <GroupChat :item="group('top')" :collection="'groups'" />
 
       <p :class="conf.styles.pageTitle">
         <q-avatar :icon="conf.styles.iconGroup" />
@@ -52,12 +52,14 @@
 import { mapGetters } from 'vuex'
 import Dialog from '../components/Dialog'
 import ItemDesc from '../components/ItemDesc'
+import GroupChat from '../components/GroupChat'
 
 export default {
   name: 'PageIndex',
   components: {
     Dialog,
-    ItemDesc
+    ItemDesc,
+    GroupChat
   },
   data () {
     return {

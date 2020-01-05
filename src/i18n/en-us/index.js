@@ -44,6 +44,7 @@ export default {
   editName: 'Edit name',
   desc: 'Description',
   noDesc: '( No desctiption )',
+  noMessages: '( No message posted )',
   delete: 'Delete',
   deleted: 'Deleted',
   confirm: 'Confirm',

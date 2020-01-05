@@ -44,6 +44,7 @@ export default {
   editName: '表示名の変更',
   desc: '説明',
   noDesc: '( 説明はありません )',
+  noMessages: '( 投稿はありません )',
   delete: '削除',
   deleted: '削除されています',
   confirm: '確認',
