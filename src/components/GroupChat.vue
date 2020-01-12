@@ -5,17 +5,34 @@
       <q-chat-message
         v-for="msg in chats" :key="msg.id"
         class="q-ml-sm"
-        :name="user(msg.user) ? user(msg.user).name : 'unknown'"
+        :name="messageTitle(msg)"
         :sent="msg.user === me.id"
         :text="msg.text"
         :stamp="msg.ts"
       >
         <template v-slot:avatar>
-          <q-btn flat round size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" v-if="msg.user === me.id" />
-          <q-btn flat round size="sm" :icon="conf.styles.iconReply" @click="setReplyTo(replyTo)" v-if="msg.user !== me.id && msg.from" />
+          <q-btn
+            v-if="msg.user === me.id"
+            flat round size="sm" color="primary"
+            :icon="conf.styles.iconEdit"
+            @click="edit(msg.id)"
+          />
+          <q-btn
+            v-if="msg.user !== me.id && msg.from"
+            flat round size="sm" color="primary"
+            :icon="conf.styles.iconInquire"
+            @click="setReplyTo(msg.user)"
+          />
         </template>
       </q-chat-message>
-      <q-chip color="primary" text-color="white" :icon="conf.styles.iconReply" removable v-model="isReplyTo" @remove="resetReplyTo">{{ user(replyTo).name }}</q-chip>
+      <q-chip
+        color="primary" text-color="white"
+        :icon="conf.styles.iconInquire"
+        v-model="isReplyTo"
+        removable @remove="resetReplyTo"
+      >
+        {{ $t('replyTo', { name: user(replyTo).name }) }}
+      </q-chip>
       <q-input type="textarea" outlined v-model="text" autofocus style="height: 64px">
         <template v-slot:after>
           <q-btn round dense flat :icon="conf.styles.iconSend" color="primary" @click="publish" :disable="!text" />
@@ -41,8 +58,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import Dialog from './Dialog'
-
-const sanitizeChatMessage = str => (str || '').trim().replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br />')
 
 export default {
   name: 'GroupChat',
@@ -103,13 +118,20 @@ export default {
     resetReplyTo () {
       this.replyTo = ''
       this.isReplyTo = false
+    },
+    sanitize (str) {
+      return (str || '').trim().replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br />')
+    },
+    messageTitle (msg) {
+      const from = (msg.from && msg.from !== msg.user) ? this.sanitize(this.user(msg.from) ? this.user(msg.from).name : '') : ''
+      return (from ? (from + ' &laquo; ') : '') + this.sanitize(this.user(msg.user) ? this.user(msg.user).name : 'unknown')
     }
   },
   computed: {
     chats () {
       return (this.$store.state.chatRooms[this.id] || []).map(item => ({
         ...item,
-        text: [ sanitizeChatMessage(item.text) ],
+        text: [ this.sanitize(item.text) ],
         ts: this.longTimestamp(item.ts.seconds * 1000)
       }))
     },

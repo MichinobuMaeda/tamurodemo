@@ -61,6 +61,7 @@ export default {
   contactName: 'お名前',
   contactMeans: '連絡方法',
   contactMessage: '問合せ内容',
+  replyTo: '{name} に返信',
   contactReveived: '以下のお問い合わせを受け付けました。管理者からの返信をお待ちください。',
   home: 'ホーム',
   groups: 'グループ',

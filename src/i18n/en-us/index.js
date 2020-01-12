@@ -61,6 +61,7 @@ export default {
   contactName: 'Name',
   contactMeans: 'Contact means',
   contactMessage: 'Message',
+  replyTo: 'reply to {name}',
   contactReveived: 'We have received the following inquiries. Please wait for a reply from the manager.',
   home: 'Home',
   groups: 'Groups',
