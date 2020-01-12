@@ -7,6 +7,7 @@ export const setMessage = (state, message) => saveMessage(state, message)
 export const resetMessage = state => saveMessage(state, '')
 export const setUnsub = (state, { unsub, key }) => { state.unsub[key] = [ ...(state.unsub[key] || []), unsub ] }
 export const resetUnsubs = state => { state.unsub = {} }
+export const setLayoutSize = (state, size) => { state.layoutSize = size }
 export const startLoading = state => { state.loading = [ 'start' ] }
 export const setLoading = (state, key) => { state.loading = [ ...state.loading.filter(item => item !== key), key ] }
 export const resetLoading = (state, key) => { state.loading = [ ...state.loading.filter(item => item !== key) ] }

@@ -1,30 +1,38 @@
 <template>
   <q-page class="row justify-center">
-    <div :class="conf.styles.col1">
+    <div :class="conf.styles.col2">
+      <q-tabs
+        v-if="isTab"
+        ref="tabs" class="text-secondary" inline-label align="justify"
+        v-model="tab"
+      >
+        <q-tab name="list" :icon="conf.styles.iconInfo" :label="$t('info')" />
+        <q-tab name="chat" :icon="conf.styles.iconChat" :label="$t('chat')" />
+      </q-tabs>
       <ItemDesc :item="group('top')" :collection="'groups'" />
-      <GroupChat :id="'top'" />
-
-      <p :class="conf.styles.pageTitle">
-        <q-avatar :icon="conf.styles.iconGroup" />
-        {{ $t('groups') }}
-        <q-btn flat raund :icon="conf.styles.iconAdd" @click="createGroup" />
-      </p>
-      <Dialog ref="create" :color="'primary'" :icon="conf.styles.iconAdd" :title="$t('add')">
-        <q-card-section>
-          <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
-        </q-card-section>
-        <q-card-section align="right">
-          <q-btn
-            color="primary" no-caps :label="$t('save')"
-            @click="saveGroup" :disable="!name || name === user(me.id).name"
-          />
-        </q-card-section>
-      </Dialog>
-
-      <q-list>
+      <q-list v-if="tabState !== 'chat'">
+        <q-item
+          v-if="isManager"
+          clickable v-ripple @click="createGroup"
+          class="text-primary"
+        >
+          <q-item-section avatar><q-icon :name="conf.styles.iconAddGroup" /></q-item-section>
+          <q-item-section>{{ $t('createGroup') }}</q-item-section>
+        </q-item>
+        <Dialog ref="create" :color="'primary'" :icon="conf.styles.iconAddGroup" :title="$t('createGroup')">
+          <q-card-section>
+            <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
+          </q-card-section>
+          <q-card-section align="right">
+            <q-btn
+              color="primary" no-caps :label="$t('save')"
+              @click="saveGroup" :disable="!name || name === user(me.id).name"
+            />
+          </q-card-section>
+        </Dialog>
         <div v-for="g in groups" v-bind:key="g.id">
           <q-item
-            v-if="!['top', 'manager', 'admin'].includes(g.id) && (isAdminOrManager || (!g.deletedAt))"
+            v-if="!['top', 'manager', 'admin'].includes(g.id) && (isManager || (!g.deletedAt))"
             clickable v-ripple :to="{ name: 'group', params: { id: g.id } }"
           >
             <q-item-section avatar>
@@ -43,6 +51,9 @@
           <q-item-section>{{ group('admin') && group('admin').name }}</q-item-section>
         </q-item>
       </q-list>
+    </div>
+    <div :class="conf.styles.col2" v-if="tabState !== 'list'">
+      <GroupChat :id="'top'" />
     </div>
 
   </q-page>
@@ -63,6 +74,7 @@ export default {
   },
   data () {
     return {
+      tab: 'chat',
       name: '',
       nameRule: [ v => !!v || this.$t('required') ],
       desc: ''
@@ -91,11 +103,15 @@ export default {
     }
   },
   computed: {
+    tabState () {
+      return this.isTab ? this.tab : 'all'
+    },
     ...mapGetters([
       'conf',
+      'isTab',
       'group',
       'groups',
-      'isAdminOrManager'
+      'isManager'
     ])
   }
 }

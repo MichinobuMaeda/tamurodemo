@@ -1,17 +1,23 @@
 <template>
   <q-page class="row justify-center">
-    <div :class="conf.styles.col1">
+    <div :class="group.members.includes(me.id) ? conf.styles.col2 : conf.styles.col1">
       <div :class="conf.styles.pageTitle + (group.deletedAt ? ' bg-grey-5' : '')">
         <q-avatar :icon="group.deletedAt ? conf.styles.iconRemove : conf.styles.iconGroup" />
         {{ group.name }}
         <ItemName :item="group" :collection="'groups'" />
         <ItemDeleteRemove :item="group" :collection="'groups'" />
       </div>
+      <q-tabs
+        v-if="isTab && this.group.members.includes(this.me.id)"
+        ref="tabs" class="text-secondary" inline-label align="justify"
+        v-model="tab"
+      >
+        <q-tab name="list" :icon="conf.styles.iconInfo" :label="$t('info')" />
+        <q-tab name="chat" :icon="conf.styles.iconChat" :label="$t('chat')" />
+      </q-tabs>
 
-      <ItemDesc :item="group" :collection="'groups'" />
-      <GroupChat :id="group.id" v-if="group.members.includes(me.id)" />
-
-      <q-list>
+      <ItemDesc :item="group" :collection="'groups'" v-if="tabState !== 'chat'" />
+      <q-list v-if="tabState !== 'chat'">
         <q-item
           v-if="isManager"
           clickable v-ripple @click="createMember"
@@ -20,7 +26,7 @@
           <q-item-section avatar><q-icon :name="conf.styles.iconAddUser" /></q-item-section>
           <q-item-section>{{ $t('createMember') }}</q-item-section>
         </q-item>
-        <Dialog ref="createMember" :color="'primary'" :icon="conf.styles.iconAdd" :title="$t('createMember')">
+        <Dialog ref="createMember" :color="'primary'" :icon="conf.styles.iconAddUser" :title="$t('createMember')">
           <q-card-section>
             <q-input type="text" v-model="name" :label="$t('name')" :rules="nameRule" />
           </q-card-section>
@@ -48,6 +54,9 @@
         </div>
       </q-list>
     </div>
+    <div :class="conf.styles.col2" v-if="group.members.includes(me.id)">
+      <GroupChat :id="group.id" v-if="tabState !== 'list'" />
+    </div>
 
   </q-page>
 </template>
@@ -71,6 +80,7 @@ export default {
   },
   data () {
     return {
+      tab: 'chat',
       name: '',
       nameRule: [ v => !!v || this.$t('required') ],
       desc: ''
@@ -98,8 +108,12 @@ export default {
         user => this.group.members.includes(user.id) && (this.isAdminOrManager || (!user.deletedAt))
       )
     },
+    tabState () {
+      return (this.group.members.includes(this.me.id) && this.isTab) ? this.tab : 'all'
+    },
     ...mapGetters([
       'conf',
+      'isTab',
       'me',
       'accountStatus',
       'isAdminOrManager',

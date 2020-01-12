@@ -1,22 +1,18 @@
 <template>
   <div>
-    <q-btn
-      v-if="chats.length > 3"
-      outline class="full-width q-my-sm" size="sm" color="secondary"
-      :icon="expand ? 'fas fa-chevron-down' : 'fas fa-chevron-up'"
-      @click="expand = !expand"
-    />
-    <q-scroll-area force-on-mobile style="height: 480px" class="q-mx-sm q-pr-sm" v-if="expand" >
+    <q-scroll-area force-on-mobile :style="'height: ' + ($store.state.layoutSize.height - 256) + 'px'" class="q-pr-sm">
+      <p v-if="!chats.length">{{ $t('noMessages') }}</p>
       <q-chat-message
         v-for="msg in chats" :key="msg.id"
+        class="q-ml-sm"
         :name="user(msg.user) ? user(msg.user).name : 'unknown'"
         :sent="msg.user === me.id"
         :text="msg.text"
         :stamp="msg.ts"
       >
         <template v-slot:avatar>
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" v-if="msg.user === me.id" />
-          <q-btn flat size="sm" :icon="conf.styles.iconReply" @click="setReplyTo(replyTo)" v-if="msg.user !== me.id && msg.from" />
+          <q-btn flat round size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" v-if="msg.user === me.id" />
+          <q-btn flat round size="sm" :icon="conf.styles.iconReply" @click="setReplyTo(replyTo)" v-if="msg.user !== me.id && msg.from" />
         </template>
       </q-chat-message>
       <q-chip color="primary" text-color="white" :icon="conf.styles.iconReply" removable v-model="isReplyTo" @remove="resetReplyTo">{{ user(replyTo).name }}</q-chip>
@@ -26,41 +22,6 @@
         </template>
       </q-input>
     </q-scroll-area>
-    <div v-else-if="chats.length">
-      <q-chat-message
-        v-for="msg in chats.slice(-3)" :key="msg.id"
-        :name="user(msg.user) ? user(msg.user).name : 'unknown'"
-        :sent="msg.user === me.id"
-        :text="msg.text"
-        :stamp="msg.ts"
-      >
-        <template v-slot:avatar>
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" v-if="msg.user === me.id" />
-          <q-btn flat size="sm" :icon="conf.styles.iconReply" @click="setReplyTo(msg.from)" v-if="msg.user !== me.id && msg.from" />
-        </template>
-      </q-chat-message>
-      <q-chip
-        color="primary" text-color="white"
-        :icon="conf.styles.iconReply"
-        v-model="isReplyTo"
-        removable  @remove="resetReplyTo"
-      >
-        {{ user(replyTo).name }}
-      </q-chip>
-      <q-input type="textarea" outlined v-model="text" autofocus style="height: 64px">
-        <template v-slot:after>
-          <q-btn round dense flat :icon="conf.styles.iconSend" color="primary" @click="publish" :disable="!text" />
-        </template>
-      </q-input>
-    </div>
-    <div v-else class="text-center">
-      <p>{{ $t('noMessages') }}</p>
-      <q-input type="textarea" outlined v-model="text" autofocus style="height: 64px">
-        <template v-slot:after>
-          <q-btn round dense flat :icon="conf.styles.iconSend" color="primary" @click="publish" :disable="!text" />
-        </template>
-      </q-input>
-    </div>
 
     <Dialog ref="msg" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
       <q-card-section>
@@ -91,7 +52,6 @@ export default {
   },
   data () {
     return {
-      expand: false,
       messages: [],
       text: '',
       msgId: '',

@@ -316,3 +316,16 @@ exports.createMember = functions.https.onCall(async (data, context) => {
   })
   return { id }
 })
+
+// HTTP Callable API: Receive contact message
+exports.receiveContactMessage = functions.https.onCall(async (data, context) => {
+  await db.collection('groups').doc('manager').collection('messages').add({
+    text: [
+      'from: ' + data.contactName,
+      'reply: ' + data.contactMeans,
+      data.contactMessage
+    ].join('\n'),
+    user: null,
+    ts: new Date()
+  })
+})

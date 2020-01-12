@@ -1,6 +1,6 @@
 <template>
   <q-banner class="bg-grey-3 q-my-sm" v-if="item && item.desc || isManager || (collection === 'users' && item.id === me.id)">
-    <q-btn class="float-right" flat raund :icon="conf.styles.iconEdit" @click="editDesc" />
+    <q-btn class="float-right" flat round :icon="conf.styles.iconEdit" @click="editDesc" />
     <Dialog ref="desc" :color="'primary'" :icon="conf.styles.iconEdit" :title="$t('edit')">
       <q-card-section>
         <q-input outlined type="textarea" v-model="desc" :label="$t('desc')" />

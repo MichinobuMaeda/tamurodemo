@@ -3,6 +3,7 @@ import 'firebase/auth'
 import Moment from 'moment-timezone'
 
 export const conf = state => state.conf
+export const isTab = state => state.layoutSize.width < 1024
 export const menuPosition = state => (state.me && state.me.menuPosition) || state.preferences.menuPosition
 export const locale = state => (state.me && state.me.locale) || state.preferences.locale
 export const timezone = state => (state.me && state.me.timezone) || state.preferences.timezone

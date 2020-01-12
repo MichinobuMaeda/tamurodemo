@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" @resize="onResize">
     <q-toolbar :class="'bg-' + conf.styles.headerBg">
       <q-avatar rounded @click="goPage(isValid ? { name: 'top' } : { name: 'signin' })()">
         <img src="statics/app-logo-128x128.png">
@@ -74,6 +74,9 @@ export default {
     }
   },
   methods: {
+    onResize (size) {
+      this.$store.commit('setLayoutSize', size)
+    },
     goTop () {
       let next = this.isValid ? { name: 'top' } : { name: 'signin' }
       if (this.$route.name !== next.name) {
@@ -153,7 +156,7 @@ export default {
         ...(this.isValid ? [
           {
             icon: this.conf.styles.iconPreferences,
-            label: this.$t('preferences', { name: this.user(this.me.id).name }),
+            label: this.$t('myPreferences', { name: this.user(this.me.id).name }),
             onClick: this.goPage({ name: 'preferences' })
           }
         ] : [

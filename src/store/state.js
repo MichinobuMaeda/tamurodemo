@@ -17,6 +17,7 @@ const message = window.localStorage.getItem('message') ? JSON.parse(window.local
 
 export default {
   conf,
+  layoutSize: {},
   reqPage: null,
   firebase,
   db,

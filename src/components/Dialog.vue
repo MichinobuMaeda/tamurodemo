@@ -5,7 +5,7 @@
         <q-avatar :icon="icon" />
         {{ title }}
         <q-space />
-        <q-btn icon="fas fa-times" flat round dense v-close-popup />
+        <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
       </q-card-section>
       <q-separator />
       <slot />
