@@ -46,6 +46,7 @@ export default {
   iconEdit: 'fas fa-edit',
   iconClose: 'fas fa-times',
   iconSend: 'fas fa-share',
+  iconReply: 'fas fa-share-square',
   iconDesc: 'far fa-comment-alt',
   iconUser: 'fas fa-user',
   iconAddUser: 'fas fa-user-plus',

@@ -25,6 +25,7 @@ export default {
   message,
   me: null,
   groups: [],
+  chatRooms: {},
   messages: {},
   accounts: [],
   users: [],

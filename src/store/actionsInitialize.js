@@ -21,6 +21,14 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
       key: 'top',
       unsub: state.db.collection('groups').orderBy('name').onSnapshot(querySnapshot => {
         commit('setGroups', querySnapshot)
+        state.groups.filter(group => group.members.includes(state.me.id)).forEach(group => {
+          commit('setUnsub', {
+            key: 'group:' + group.id,
+            unsub: state.db.collection('groups').doc(group.id).collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
+              commit('setChatRooms', { id: group.id, querySnapshot })
+            })
+          })
+        })
       })
     })
     commit('setUnsub', {
@@ -36,6 +44,18 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
         updatedAt: ts
       })
     }
+    commit('setUnsub', {
+      key: 'top',
+      unsub: state.db.collection('groups').doc('top').collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
+        commit('setChatRooms', { id: 'top', querySnapshot })
+      })
+    })
+    commit('setUnsub', {
+      key: 'top',
+      unsub: state.db.collection('groups').doc('manager').collection('messages').where('from', '==', me.id).orderBy('ts').onSnapshot(querySnapshot => {
+        commit('setChatRooms', { id: 'request', querySnapshot })
+      })
+    })
     commit('setUnsub', {
       key: 'top',
       unsub: state.db.collection('accounts').doc(me.id).onSnapshot(async me => {
@@ -60,6 +80,7 @@ export const onSignOut = async ({ commit, state }, { i18n }) => {
     })
   })
   commit('resetUnsubs')
+  commit('resetChatRooms')
   commit('resetAccounts')
   commit('resetUsers')
   commit('resetGroups')

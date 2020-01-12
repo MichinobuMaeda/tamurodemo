@@ -1,43 +1,52 @@
 <template>
   <div>
     <q-btn
-      v-if="messages.length > 3"
+      v-if="chats.length > 3"
       outline class="full-width q-my-sm" size="sm" color="secondary"
       :icon="expand ? 'fas fa-chevron-down' : 'fas fa-chevron-up'"
       @click="expand = !expand"
     />
-    <q-scroll-area force-on-mobile style="height: 480px" class="q-mx-sm q-pr-md" v-if="expand" >
+    <q-scroll-area force-on-mobile style="height: 480px" class="q-mx-sm q-pr-sm" v-if="expand" >
       <q-chat-message
-        v-for="msg in messages" :key="msg.id"
-        text-sanitize
+        v-for="msg in chats" :key="msg.id"
         :name="user(msg.user) ? user(msg.user).name : 'unknown'"
         :sent="msg.user === me.id"
-        :text="msg.text.split('\n')"
+        :text="msg.text"
         :stamp="msg.ts"
       >
-        <template v-slot:avatar v-if="msg.user === me.id">
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" />
+        <template v-slot:avatar>
+          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" v-if="msg.user === me.id" />
+          <q-btn flat size="sm" :icon="conf.styles.iconReply" @click="setReplyTo(replyTo)" v-if="msg.user !== me.id && msg.from" />
         </template>
       </q-chat-message>
+      <q-chip color="primary" text-color="white" :icon="conf.styles.iconReply" removable v-model="isReplyTo" @remove="resetReplyTo">{{ user(replyTo).name }}</q-chip>
       <q-input type="textarea" outlined v-model="text" autofocus style="height: 64px">
         <template v-slot:after>
           <q-btn round dense flat :icon="conf.styles.iconSend" color="primary" @click="publish" :disable="!text" />
         </template>
       </q-input>
     </q-scroll-area>
-    <div v-else-if="messages.length">
+    <div v-else-if="chats.length">
       <q-chat-message
-        v-for="msg in messages.slice(-3)" :key="msg.id"
-        text-sanitize
+        v-for="msg in chats.slice(-3)" :key="msg.id"
         :name="user(msg.user) ? user(msg.user).name : 'unknown'"
         :sent="msg.user === me.id"
-        :text="msg.text.split('\n')"
+        :text="msg.text"
         :stamp="msg.ts"
       >
-        <template v-slot:avatar v-if="msg.user === me.id">
-          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" />
+        <template v-slot:avatar>
+          <q-btn flat size="sm" :icon="conf.styles.iconEdit" @click="edit(msg.id)" v-if="msg.user === me.id" />
+          <q-btn flat size="sm" :icon="conf.styles.iconReply" @click="setReplyTo(msg.from)" v-if="msg.user !== me.id && msg.from" />
         </template>
       </q-chat-message>
+      <q-chip
+        color="primary" text-color="white"
+        :icon="conf.styles.iconReply"
+        v-model="isReplyTo"
+        removable  @remove="resetReplyTo"
+      >
+        {{ user(replyTo).name }}
+      </q-chip>
       <q-input type="textarea" outlined v-model="text" autofocus style="height: 64px">
         <template v-slot:after>
           <q-btn round dense flat :icon="conf.styles.iconSend" color="primary" @click="publish" :disable="!text" />
@@ -72,9 +81,11 @@
 import { mapGetters } from 'vuex'
 import Dialog from './Dialog'
 
+const sanitizeChatMessage = str => (str || '').trim().replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br />')
+
 export default {
   name: 'GroupChat',
-  props: [ 'item' ],
+  props: [ 'id' ],
   components: {
     Dialog
   },
@@ -85,51 +96,63 @@ export default {
       text: '',
       msgId: '',
       msgOrg: '',
-      msgNew: ''
+      msgNew: '',
+      replyTo: '',
+      isReplyTo: false
     }
-  },
-  mounted () {
-    this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
-      this.messages = querySnapshot.docs.map(item => ({
-        id: item.id,
-        ...item.data()
-      })).map(item => ({
-        ...item,
-        ts: this.longTimestamp(item.ts.seconds * 1000)
-      }))
-    })
   },
   methods: {
     async publish () {
-      let text = this.text.trim()
+      let text = this.text
       if (text) {
+        const docRef = this.$store.state.db.collection('groups').doc(this.id === 'request' ? 'manager' : this.id)
         const ts = new Date()
-        await this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').add({
+        let data = {
           text,
           user: this.me.id,
           ts
-        })
+        }
+        if (this.replyTo) {
+          data['from'] = this.replyTo
+        }
+        await docRef.collection('messages').add(data)
       }
       this.text = ''
     },
     edit (id) {
       this.msgId = id
-      this.msgOrg = this.messages.reduce((ret, cur) => cur.id === id ? cur.text : ret, '')
+      this.msgOrg = this.chats.reduce((ret, cur) => cur.id === id ? cur.text : ret, '')
       this.msgNew = this.msgOrg
       this.$refs.msg.$refs.dialog.show()
     },
     async saveEdited () {
       this.$refs.msg.$refs.dialog.hide()
+      const docRef = this.$store.state.db.collection('groups').doc(this.id === 'request' ? 'manager' : this.id)
       if (this.msgNew.trim()) {
-        await this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').doc(this.msgId).update({
-          text: this.msgNew
+        await docRef.collection('messages').doc(this.msgId).update({
+          text: this.msgNew.trim()
         })
       } else {
-        await this.$store.state.db.collection('groups').doc(this.item.id).collection('messages').doc(this.msgId).delete()
+        await docRef.collection('messages').doc(this.msgId).delete()
       }
+    },
+    setReplyTo (id) {
+      this.replyTo = id
+      this.isReplyTo = true
+    },
+    resetReplyTo () {
+      this.replyTo = ''
+      this.isReplyTo = false
     }
   },
   computed: {
+    chats () {
+      return (this.$store.state.chatRooms[this.id] || []).map(item => ({
+        ...item,
+        text: [ sanitizeChatMessage(item.text) ],
+        ts: this.longTimestamp(item.ts.seconds * 1000)
+      }))
+    },
     ...mapGetters([
       'conf',
       'me',

@@ -63,6 +63,21 @@
         </div>
       </q-expansion-item>
 
+      <q-expansion-item
+        :label="'chatRooms: {...} (' + Object.keys($store.state.chatRooms).length + ')'"
+        header-class="text-h6 bg-grey-3"
+      >
+        <q-expansion-item
+          v-for="id in Object.keys($store.state.chatRooms)" v-bind:key="id"
+          :label="id + ': [...] (' + ($store.state.chatRooms[id] ? $store.state.chatRooms[id].length: 0) + ')'"
+          header-class="text-body1 bg-grey-4"
+        >
+          <div v-for="msg in $store.state.chatRooms[id]" v-bind:key="msg.id">
+            <pre>{{ JSON.stringify(msg, 0, 2) }}</pre>
+          </div>
+        </q-expansion-item>
+      </q-expansion-item>
+
     </div>
   </q-page>
 </template>

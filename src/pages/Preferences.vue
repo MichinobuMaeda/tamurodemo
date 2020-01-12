@@ -157,7 +157,7 @@
       <div v-if="isValid && !isManager">
         <q-separator class="q-my-md" />
         <p>{{ $t('contact', { name: group('manager').name }) }}</p>
-        <RequestChat :item="group('manager')" :from="me.id" />
+        <GroupChat :id="'request'" v-if="!isManager" />
       </div>
 
     </div>
@@ -171,13 +171,13 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Dialog from '../components/Dialog'
-import RequestChat from '../components/RequestChat'
+import GroupChat from '../components/GroupChat'
 
 export default {
   name: 'PagePreferences',
   components: {
     Dialog,
-    RequestChat
+    GroupChat
   },
   data () {
     return {
