@@ -29,7 +29,7 @@
         <q-btn
           v-if="conf.auth.password"
           class="q-my-md full-width" align="left" outline color="brown"
-          icon="fas fa-key" :label="$t('resetPassword')"
+          :icon="conf.styles.iconPassword" :label="$t('resetPassword')"
           @click="sendPasswordResetEmail(currentUser.email)"
         >
           <q-space />
@@ -139,7 +139,7 @@
 
       <q-btn
         class="q-my-md full-width" align="left" outline color="negative"
-        icon="fas fa-sign-out-alt" :label="$t('signout')"
+        :icon="conf.styles.iconSignOut" :label="$t('signout')"
         @click="$refs.signout.$refs.dialog.show()"
       />
       <Dialog ref="signout" :color="'negative'" :icon="conf.styles.iconWarn" :title="$t('confirm')">

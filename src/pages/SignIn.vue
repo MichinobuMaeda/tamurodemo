@@ -19,7 +19,7 @@
         <div class="q-my-md">{{ $t('passwordlessSignIn') }}</div>
         <q-input v-model="email" type="email" :rules="emailRule" :label="$t('emailAddress')">
           <template v-slot:before>
-            <q-icon name="far fa-envelope" />
+            <q-icon :name="conf.styles.iconEmail" />
           </template>
         </q-input>
         <q-btn
@@ -29,7 +29,7 @@
           @click="signInWithProvider({ provider: conf.auth.emailLink, email })"
         >
           <q-space />
-          <q-icon name="fas fa-reply" />
+          <q-icon :name="conf.styles.iconReply" />
         </q-btn>
       </div>
       <div v-if="conf.auth.password">
@@ -37,7 +37,7 @@
         <div class="q-my-md">{{ $t('signInWithEmailAndPassword') }}</div>
         <q-input v-model="password" type="password" :rules="passwordRule" :label="$t('password')">
           <template v-slot:before>
-            <q-icon name="fas fa-key" />
+            <q-icon :name="conf.styles.iconPassword" />
           </template>
         </q-input>
         <q-btn
@@ -48,19 +48,19 @@
         />
         <q-btn
           class="q-my-md full-width" align="left" outline no-caps color="brown"
-          icon="fas fa-key" :label="$t('resetPassword')"
+          :icon="conf.styles.iconPassword" :label="$t('resetPassword')"
           :disable="(!email) || (!conf.validators.email(email))"
           @click="sendPasswordResetEmail(email)"
         >
           <q-space />
-          <q-icon name="fas fa-reply" />
+          <q-icon :name="conf.styles.iconReply" />
         </q-btn>
       </div>
       <q-separator class="q-my-md" />
       <div class="text-center">
         <q-btn
           flat rounded class="q-my-md" color="light-green-10"
-          icon="fas fa-shield-alt" :label="$t('privacyPolicy')"
+          :icon="conf.styles.iconPrivacyPolicy" :label="$t('privacyPolicy')"
           :to="{ name: 'policy' }"
         />
       </div>
