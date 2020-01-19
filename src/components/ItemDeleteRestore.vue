@@ -35,7 +35,7 @@ import { mapGetters } from 'vuex'
 import Dialog from './Dialog'
 
 export default {
-  name: 'ItemDeleteRemove',
+  name: 'ItemDeleteRestore',
   props: [ 'item', 'collection' ],
   components: {
     Dialog

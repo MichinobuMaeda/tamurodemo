@@ -7,7 +7,6 @@
         <q-space />
         <q-btn :icon="conf.styles.iconClose" flat round dense v-close-popup />
       </q-card-section>
-      <q-separator />
       <slot />
     </q-card>
   </q-dialog>

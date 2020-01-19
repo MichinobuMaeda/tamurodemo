@@ -70,5 +70,7 @@ export default {
   chat: 'メッセージ',
   info: '情報',
   limitedPriviligeMode: '特別な権限無しの表示',
+  pageNotFound: 'お探しのページは無いぞなもし。',
+  goBack: '戻る',
   signout: 'いんでこーわい'
 }

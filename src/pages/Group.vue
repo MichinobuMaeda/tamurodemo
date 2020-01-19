@@ -5,7 +5,7 @@
         <q-avatar :icon="group.deletedAt ? conf.styles.iconRemove : conf.styles.iconGroup" />
         {{ group.name }}
         <ItemName :item="group" :collection="'groups'" />
-        <ItemDeleteRemove :item="group" :collection="'groups'" />
+        <ItemDeleteRestore :item="group" :collection="'groups'" />
       </div>
       <q-tabs
         v-if="isTab && this.group.members.includes(this.me.id)"
@@ -66,7 +66,7 @@ import { mapGetters } from 'vuex'
 import Dialog from '../components/Dialog'
 import ItemName from '../components/ItemName'
 import ItemDesc from '../components/ItemDesc'
-import ItemDeleteRemove from '../components/ItemDeleteRemove'
+import ItemDeleteRestore from '../components/ItemDeleteRestore'
 import GroupChat from '../components/GroupChat'
 
 export default {
@@ -75,7 +75,7 @@ export default {
     Dialog,
     ItemName,
     ItemDesc,
-    ItemDeleteRemove,
+    ItemDeleteRestore,
     GroupChat
   },
   data () {

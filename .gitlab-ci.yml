@@ -63,6 +63,7 @@ deploy-prod:
   script:
     - node ./tools/setFirebaseConfig.js
     - node ./tools/updateVersion.js
+    - yarn run test
     - yarn run build
     - firebase deploy --only hosting -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID @ Hash ${CI_COMMIT_SHA:0:7}" --token $FIREBASE_TOKEN
     - node ./tools/updateUiVersion.js

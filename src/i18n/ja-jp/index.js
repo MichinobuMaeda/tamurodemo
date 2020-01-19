@@ -70,5 +70,7 @@ export default {
   chat: 'メッセージ',
   info: '情報',
   limitedPriviligeMode: '一般ユーザモード',
+  pageNotFound: 'お探しのページが見つかりません。',
+  goBack: '戻る',
   signout: 'ログアウト'
 }

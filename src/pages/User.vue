@@ -5,7 +5,7 @@
         <q-avatar :icon="user.deletedAt ? conf.styles.iconRemove : conf.styles.iconUser" />
         {{ user.name }}
         <ItemName :item="user" :collection="'users'" />
-        <ItemDeleteRemove :item="user" :collection="'users'" />
+        <ItemDeleteRestore :item="user" :collection="'users'" />
       </div>
 
       <ItemDesc :item="user" :collection="'users'" />
@@ -28,7 +28,7 @@ import { mapGetters } from 'vuex'
 import AccountAdmin from '../components/AccountAdmin'
 import ItemName from '../components/ItemName'
 import ItemDesc from '../components/ItemDesc'
-import ItemDeleteRemove from '../components/ItemDeleteRemove'
+import ItemDeleteRestore from '../components/ItemDeleteRestore'
 
 export default {
   name: 'PageUser',
@@ -36,7 +36,7 @@ export default {
     AccountAdmin,
     ItemName,
     ItemDesc,
-    ItemDeleteRemove
+    ItemDeleteRestore
   },
   data () {
     return {

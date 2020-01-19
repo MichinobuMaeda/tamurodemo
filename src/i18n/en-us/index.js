@@ -70,5 +70,7 @@ export default {
   chat: 'Message',
   info: 'Information',
   limitedPriviligeMode: 'Limited Privilige Mode',
+  pageNotFound: 'Sorry, nothing here...',
+  goBack: 'Go back',
   signout: 'Sign-out'
 }
