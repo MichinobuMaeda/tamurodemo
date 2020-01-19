@@ -31,6 +31,7 @@ export default {
       value: 'top-left'
     }
   ],
+  blankImage: 'statics/blank.png',
   iconMenu: 'menu',
   iconTop: 'home',
   iconSignIn: 'how_to_reg',
@@ -48,6 +49,7 @@ export default {
   iconClose: 'close',
   iconSend: 'send',
   iconReply: 'reply',
+  iconUploadImage: 'add_photo_alternate',
   iconDesc: 'description',
   iconUser: 'person',
   iconAddUser: 'person_add',
@@ -59,6 +61,8 @@ export default {
   iconPassword: 'vpn_key',
   iconChat: 'message',
   iconInquire: 'question_answer',
+  iconFav: 'favorite',
+  iconLike: 'thumb_up',
   iconInfo: 'list',
   iconLine: 'fab fa-line',
   iconFacebook: 'fab fa-facebook',

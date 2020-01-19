@@ -78,6 +78,15 @@
         </q-expansion-item>
       </q-expansion-item>
 
+      <q-expansion-item
+        :label="'chatImages: {...} (' + Object.keys($store.state.chatImages).length + ')'"
+        header-class="text-h6 bg-grey-3"
+      >
+        <div v-for="id in Object.keys($store.state.chatImages)" v-bind:key="id">
+          <pre>{{ id }} : {{ JSON.stringify($store.state.chatImages[id], 0, 2) }}</pre>
+        </div>
+      </q-expansion-item>
+
     </div>
   </q-page>
 </template>

@@ -37,6 +37,8 @@ export default {
   update: '更新',
   edit: '編集',
   save: '保存',
+  send: '送信',
+  upload: 'アップロード',
   ok: 'OK',
   cancel: 'キャンセル',
   group: 'グループ',

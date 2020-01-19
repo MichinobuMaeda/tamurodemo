@@ -34,12 +34,18 @@ const onServiceStatusChanged = ({ commit, state }, { doc }) => {
   }
 }
 
-export const getServiceStatus = async ({ commit, state }, { i18n }) => {
+export const getServiceConf = async ({ commit, state }) => {
+  let doc = await state.db.collection('service').doc('conf').get()
+  commit('setService', doc)
+  state.preferences = doc.data()
+  state.firebase.auth().languageCode = state.preferences.locale.replace(/.*-/, '')
+  state.db.collection('service').doc('conf').onSnapshot(async doc => {
+    commit('setService', doc)
+  })
+}
+
+export const getServiceStatus = async ({ commit, state }) => {
   let doc = await state.db.collection('service').doc('status').get()
-  state.preferences.menuPosition = doc.data().menuPosition || state.preferences.menuPosition
-  state.preferences.locale = doc.data().locale || state.preferences.locale
-  state.preferences.timezone = doc.data().timezone || state.preferences.timezone
-  i18n.locale = state.preferences.locale
   onServiceStatusChanged({ commit, state }, { doc })
   state.db.collection('service').doc('status').onSnapshot(async doc => {
     onServiceStatusChanged({ commit, state }, { doc })

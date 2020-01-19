@@ -1,6 +1,6 @@
 <template>
   <q-page class="row justify-center">
-    <div :class="group.members.includes(me.id) ? conf.styles.col2 : conf.styles.col1">
+    <div :class="(group.members || []).includes(me.id) ? conf.styles.col2 : conf.styles.col1">
       <div :class="conf.styles.pageTitle + (group.deletedAt ? ' bg-grey-5' : '')">
         <q-avatar :icon="group.deletedAt ? conf.styles.iconRemove : conf.styles.iconGroup" />
         {{ group.name }}
@@ -54,7 +54,7 @@
         </div>
       </q-list>
     </div>
-    <div :class="conf.styles.col2" v-if="group.members.includes(me.id)">
+    <div :class="conf.styles.col2" v-if="(group.members || []).includes(me.id)">
       <GroupChat :id="group.id" v-if="tabState !== 'list'" />
     </div>
 
@@ -105,11 +105,11 @@ export default {
     },
     users () {
       return this.$store.getters.users.filter(
-        user => this.group.members.includes(user.id) && (this.isAdminOrManager || (!user.deletedAt))
+        user => (this.group.members || []).includes(user.id) && (this.isAdminOrManager || (!user.deletedAt))
       )
     },
     tabState () {
-      return (this.group.members.includes(this.me.id) && this.isTab) ? this.tab : 'all'
+      return ((this.group.members || []).includes(this.me.id) && this.isTab) ? this.tab : 'all'
     },
     ...mapGetters([
       'conf',

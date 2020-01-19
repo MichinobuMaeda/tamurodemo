@@ -37,6 +37,8 @@ export default {
   update: 'Update',
   edit: 'Edit',
   save: 'Save',
+  send: 'Send',
+  upload: 'Upload',
   ok: 'OK',
   cancel: 'Cancel',
   group: 'Group',

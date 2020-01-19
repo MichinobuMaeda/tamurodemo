@@ -17,8 +17,20 @@ export const setMe = (state, me) => { state.me = (me && me.exists && me.data().v
 export const resetMe = state => { state.me = null }
 export const setGroups = (state, querySnapshot) => { state.groups = querySnapshot.docs.map(item => simplify(item)) }
 export const resetGroups = state => { state.groups = [] }
-export const setChatRooms = (state, { id, querySnapshot }) => { state.chatRooms = { ...state.chatRooms, [id]: querySnapshot.docs.map(item => simplify(item)) } }
+export const setChatRooms = (state, { id, querySnapshot }) => {
+  state.chatRooms = {
+    ...state.chatRooms,
+    [id]: querySnapshot.docs.map(item => ({ ...simplify(item), url: state.conf.styles.blankImage }))
+  }
+  state.chatRooms[id].filter(
+    msg => msg.path && !state.chatImages[id + ':' + msg.id]
+  ).forEach(msg => {
+    state.chatImages[id + ':' + msg.id] = state.conf.styles.blankImage
+  })
+}
 export const resetChatRooms = state => { state.chatRooms = {} }
+export const setChatImage = (state, { id, url }) => { state.chatImages = { ...state.chatImages, [id]: url } }
+export const resetChatImages = (state) => { state.chatImages = {} }
 export const setAccounts = (state, querySnapshot) => { state.accounts = querySnapshot.docs.map(item => simplify(item)) }
 export const resetAccounts = state => { state.accounts = [] }
 export const setUsers = (state, querySnapshot) => {

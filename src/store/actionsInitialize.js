@@ -1,5 +1,17 @@
 import { signOut } from './actionsAuth'
 
+const updateChatImageUrl = ({ commit, state }) => Promise.all(
+  Object.keys(state.chatImages).filter(
+    id => state.chatImages[id] === state.conf.styles.blankImage
+  ).map(async id => {
+    let msg = state.chatRooms[id.replace(/:.*/, '')].reduce(
+      (ret, cur) => cur.id === id.replace(/.*:/, '') ? cur : ret, {}
+    )
+    const url = await state.storage.ref().child(msg.path).getDownloadURL()
+    commit('setChatImage', { id, url })
+  })
+)
+
 export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
   commit('setLoading', 'me')
   let me = await state.db.collection('accounts').doc(user.uid).get()
@@ -26,6 +38,7 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
             key: 'group:' + group.id,
             unsub: state.db.collection('groups').doc(group.id).collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
               commit('setChatRooms', { id: group.id, querySnapshot })
+              Promise.resolve(true).then(ret => updateChatImageUrl({ commit, state }))
             })
           })
         })
@@ -48,12 +61,14 @@ export const onSignIn = async ({ commit, state, getters }, { user, i18n }) => {
       key: 'top',
       unsub: state.db.collection('groups').doc('top').collection('messages').orderBy('ts').onSnapshot(querySnapshot => {
         commit('setChatRooms', { id: 'top', querySnapshot })
+        Promise.resolve(true).then(ret => updateChatImageUrl({ commit, state }))
       })
     })
     commit('setUnsub', {
       key: 'top',
       unsub: state.db.collection('groups').doc('manager').collection('messages').where('from', '==', me.id).orderBy('ts').onSnapshot(querySnapshot => {
         commit('setChatRooms', { id: 'request', querySnapshot })
+        Promise.resolve(true).then(ret => updateChatImageUrl({ commit, state }))
       })
     })
     commit('setUnsub', {
@@ -81,6 +96,7 @@ export const onSignOut = async ({ commit, state }, { i18n }) => {
   })
   commit('resetUnsubs')
   commit('resetChatRooms')
+  commit('resetChatImages')
   commit('resetAccounts')
   commit('resetUsers')
   commit('resetGroups')

@@ -12,10 +12,11 @@ export default {
   async created () {
     let { state, commit } = this.$store
 
-    state.firebase.auth().languageCode = 'ja'
     await this.verifyRedirectFromLine()
     await this.verifyInvitationUrl()
-    await this.getServiceStatus({ i18n: this.$root.$i18n })
+    await this.getServiceConf()
+    this.$root.$i18n.locale = state.preferences.locale
+    await this.getServiceStatus()
 
     state.firebase.auth().onAuthStateChanged(async user => {
       commit('setLoading', 'auth')
@@ -35,6 +36,7 @@ export default {
       'verifyRedirectFromLine',
       'verifyInvitationUrl',
       'verifyEmailLink',
+      'getServiceConf',
       'getServiceStatus',
       'onSignIn',
       'onSignOut'

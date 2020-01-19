@@ -114,7 +114,7 @@
         />
         <q-btn
           class="q-ma-sm float-right" no-caps color="primary"
-          :label="$t('ok')"
+          :label="$t('send')"
           @click="sendContactMessage"
           :disable="!contactName.trim() || !contactMeans.trim() || !contactMessage.trim()"
         />
