@@ -14,7 +14,7 @@ export const user = state => id => state.users.reduce((ret, cur) => cur.id === i
 export const accounts = state => state.accounts.map(item => ({ ...item }))
 export const account = state => id => state.accounts.reduce((ret, cur) => cur.id === id ? { ...cur } : ret, {})
 export const accountStatus = state => id => {
-  let { valid, enteredAt, invitedAt } = account(state)(id) || {}
+  let { valid, enteredAt, invitedAt } = account(state)(id)
   return (valid && enteredAt) ? 'accepted' : ((valid && invitedAt) ? 'invited' : 'blocked')
 }
 export const me = state => state.me
@@ -23,13 +23,15 @@ export const isAdmin = state => isValid(state) && (group(state)('admin').members
 export const isManager = state => isValid(state) && (group(state)('manager').members || []).some(member => member === state.me.id) && !state.limitedPriv
 export const isAdminOrManager = state => isAdmin(state) || isManager(state)
 export const currentUser = state => state.firebase.auth().currentUser
-export const isSignInMethod = state => state.me && currentUser(state) && (state.me.line_me || (currentUser(state).providerData || []).length)
+export const isSignInMethod = state => state.me && currentUser(state) && (
+  state.me.line_me || state.me.yahoo_co_jp || state.me.mexi_jp || (currentUser(state).providerData || []).length
+)
 export const isEmail = state => currentUser(state) && currentUser(state).email
 const formatDateTime = (state, tm, format) => tm ? Moment(tm).tz(timezone(state)).format(format) : null
 export const longTimestamp = state => tm => formatDateTime(state, tm, state.conf.locales.longTimestamp)
-export const shortTimestamp = state => tm => formatDateTime(state, tm, state.conf.shortTimestamp)
-export const shortDate = state => tm => formatDateTime(state, tm, state.conf.shortDate)
-export const shortTime = state => tm => formatDateTime(state, tm, state.conf.shortTime)
+export const shortTimestamp = state => tm => formatDateTime(state, tm, state.conf.locales.shortTimestamp)
+export const shortDate = state => tm => formatDateTime(state, tm, state.conf.locales.shortDate)
+export const shortTime = state => tm => formatDateTime(state, tm, state.conf.locales.shortTime)
 const isProviderId = (state, providerId) => ((currentUser(state) && currentUser(state).providerData) || []).some(item => item.providerId === providerId)
 export const oauthProviders = state => [
   {

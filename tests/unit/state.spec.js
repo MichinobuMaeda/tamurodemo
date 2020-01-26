@@ -1,3 +1,6 @@
+import Moment from 'moment-timezone'
+import Firebase from 'firebase/app'
+import 'firebase/auth'
 import store from '../../src/store'
 import conf from  '../../src/conf'
 
@@ -93,48 +96,6 @@ test('getter.timezone is the system defaut or user chosen value.', () => {
     })
   })
   expect(store.getters.timezone).toEqual('America/Los_Angeles')
-})
-
-test('getter.me is valid account signed in', () => {
-  store.commit('resetMe')
-  expect(store.getters.me).toBeNull()
-
-  store.commit('setMe', {
-    id: 'test-id',
-    exists: true,
-    data: () => ({
-      name: 'test-name',
-      valid: true
-    })
-  })
-  expect(store.getters.me).toEqual({
-    id: 'test-id',
-    name: 'test-name',
-    valid: true
-  })
-
-  store.commit('resetMe')
-  expect(store.getters.me).toBeNull()
-
-  store.commit('setMe', {
-    id: 'test-id',
-    exists: false,
-    data: () => ({
-      name: 'test-name',
-      valid: true
-    })
-  })
-  expect(store.getters.me).toBeNull()
-
-  store.commit('setMe', {
-    id: 'test-id',
-    exists: true,
-    data: () => ({
-      name: 'test-name',
-      valid: false
-    })
-  })
-  expect(store.getters.me).toBeNull()
 })
 
 test('getter.groups is the list of groups', () => {
@@ -409,4 +370,453 @@ test('getter.accountStatus is one of "accepted", "invited", "blocked"', () => {
   expect(store.getters.accountStatus('account5')).toEqual('blocked')
   expect(store.getters.accountStatus('account6')).toEqual('blocked')
   expect(store.getters.accountStatus('account7')).toEqual('blocked')
+})
+
+test('getter.me is valid account signed in', () => {
+  store.commit('resetMe')
+  expect(store.getters.me).toBeNull()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.me).toEqual({
+    id: 'test-id',
+    name: 'test-name',
+    valid: true
+  })
+
+  store.commit('resetMe')
+  expect(store.getters.me).toBeNull()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: false,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.me).toBeNull()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: false
+    })
+  })
+  expect(store.getters.me).toBeNull()
+})
+
+test('getter.isValid is that the signed-in user is valid.', () => {
+  expect(store.getters.isValid).toBeFalsy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: false
+    })
+  })
+  expect(store.getters.isValid).toBeFalsy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.isValid).toBeTruthy()
+})
+
+test('getter.isAdmin is that the signed-in user belongs to the admin group.', () => {
+  expect(store.getters.isAdmin).toBeFalsy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.isAdmin).toBeFalsy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: []
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: [ 'test-id' ]
+        })
+      }
+    ]
+  })
+  expect(store.getters.isAdmin).toBeFalsy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: [ 'test-id' ]
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: []
+        })
+      }
+    ]
+  })
+  expect(store.getters.isAdmin).toBeTruthy()
+
+  store.commit('toggleLimitedPriv')
+  expect(store.getters.isAdmin).toBeFalsy()
+})
+
+test('getter.isManager is that the signed-in user belongs to the manager group.', () => {
+  expect(store.getters.isManager).toBeFalsy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.isManager).toBeFalsy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: [ 'test-id' ]
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: []
+        })
+      }
+    ]
+  })
+  expect(store.getters.isManager).toBeFalsy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: []
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: [ 'test-id' ]
+        })
+      }
+    ]
+  })
+  expect(store.getters.isManager).toBeTruthy()
+
+  store.commit('toggleLimitedPriv')
+  expect(store.getters.isManager).toBeFalsy()
+})
+
+test('getter.isAdminOrManager is that the signed-in user belongs to the admin group or the manager group.', () => {
+  expect(store.getters.isAdminOrManager).toBeFalsy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.isAdminOrManager).toBeFalsy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: []
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: [ 'test-id' ]
+        })
+      }
+    ]
+  })
+  expect(store.getters.isAdminOrManager).toBeTruthy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: [ 'test-id' ]
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: []
+        })
+      }
+    ]
+  })
+  expect(store.getters.isAdminOrManager).toBeTruthy()
+
+  store.commit('setGroups', {
+    docs: [
+      {
+        id: 'admin',
+        data: () => ({
+          name: 'Group 1',
+          members: [ 'test-id' ]
+        })
+      },
+      {
+        id: 'manager',
+        data: () => ({
+          name: 'Group 2',
+          members: [ 'test-id' ]
+        })
+      }
+    ]
+  })
+  expect(store.getters.isAdminOrManager).toBeTruthy()
+
+  store.commit('toggleLimitedPriv')
+  expect(store.getters.isAdminOrManager).toBeFalsy()
+})
+
+test('getter.currentUser is the signed-in user.', () => {
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: null
+    })
+  }
+  expect(store.getters.currentUser).toBeNull()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id'
+      }
+    })
+  }
+  expect(store.getters.currentUser).toEqual({
+    uid: 'test-id'
+  })
+})
+
+test('getter.isSignInMethod is that the signed-in user has any sign-in method.', () => {
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: null
+    })
+  }
+  expect(store.getters.isSignInMethod).toBeFalsy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true
+    })
+  })
+  expect(store.getters.isSignInMethod).toBeFalsy()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id'
+      }
+    })
+  }
+  expect(store.getters.isSignInMethod).toBeFalsy()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id',
+        providerData: []
+      }
+    })
+  }
+  expect(store.getters.isSignInMethod).toBeFalsy()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id',
+        providerData: [ 'a method' ]
+      }
+    })
+  }
+  expect(store.getters.isSignInMethod).toBeTruthy()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id',
+        providerData: []
+      }
+    })
+  }
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true,
+      line_me: 'id'
+    })
+  })
+  expect(store.getters.isSignInMethod).toBeTruthy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true,
+      yahoo_co_jp: 'id'
+    })
+  })
+  expect(store.getters.isSignInMethod).toBeTruthy()
+
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true,
+      mexi_jp: 'id'
+    })
+  })
+  expect(store.getters.isSignInMethod).toBeTruthy()
+})
+
+test('getter.isEmail is that the signed-in user has registered e-mail.', () => {
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: null
+    })
+  }
+  expect(store.getters.isEmail).toBeFalsy()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id'
+      }
+    })
+  }
+  expect(store.getters.isEmail).toBeFalsy()
+
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id',
+        email: 'abc@def.com'
+      }
+    })
+  }
+  expect(store.getters.isEmail).toBeTruthy()
+})
+
+test('getter.longTimestamp is formatted timestamp.', () => {
+  store.commit('setPreferences', { timezone: 'Europe/Berlin' })
+  const tm = (new Date()).getTime()
+  expect(store.getters.longTimestamp(tm)).toEqual(Moment(tm).tz(store.getters.timezone).format(conf.locales.longTimestamp))
+
+  expect(store.getters.longTimestamp(null)).toBeNull()
+})
+
+test('getter.shortTimestamp is formatted timestamp.', () => {
+  store.commit('setPreferences', { timezone: 'Europe/Berlin' })
+  const tm = (new Date()).getTime()
+  expect(store.getters.shortTimestamp(tm)).toEqual(Moment(tm).tz(store.getters.timezone).format(conf.locales.shortTimestamp))
+})
+
+test('getter.shortDate is formatted timestamp.', () => {
+  store.commit('setPreferences', { timezone: 'Europe/Berlin' })
+  const tm = (new Date()).getTime()
+  expect(store.getters.shortDate(tm)).toEqual(Moment(tm).tz(store.getters.timezone).format(conf.locales.shortDate))
+})
+
+test('getter.shortTime is formatted timestamp.', () => {
+  store.commit('setPreferences', { timezone: 'Europe/Berlin' })
+  const tm = (new Date()).getTime()
+  expect(store.getters.shortTime(tm)).toEqual(Moment(tm).tz(store.getters.timezone).format(conf.locales.shortTime))
+})
+
+test('getter.oauthProviders is the list of OAuth providers for UI.', () => {
+  store.commit('setMe', {
+    id: 'test-id',
+    exists: true,
+    data: () => ({
+      name: 'test-name',
+      valid: true,
+      line_me: 'id'
+    })
+  })
+  store.state.firebase = {
+    auth: () => ({
+      currentUser: {
+        uid: 'test-id',
+        providerData: [
+          {
+            providerId: Firebase.auth.TwitterAuthProvider.PROVIDER_ID
+          }
+        ]
+      }
+    })
+  }
+  expect(store.getters.oauthProviders[0].name).toEqual('LINE')
+  expect(store.getters.oauthProviders[0].active).toBeTruthy()
+  const lastIndex = store.getters.oauthProviders.length - 1
+  expect(store.getters.oauthProviders[lastIndex].name).toEqual('Twitter')
+  expect(store.getters.oauthProviders[lastIndex].active).toBeTruthy()
 })
