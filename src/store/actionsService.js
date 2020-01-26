@@ -37,7 +37,7 @@ const onServiceStatusChanged = ({ commit, state }, { doc }) => {
 export const getServiceConf = async ({ commit, state }) => {
   let doc = await state.db.collection('service').doc('conf').get()
   commit('setService', doc)
-  state.preferences = doc.data()
+  commit('setPreferences', doc.data())
   state.firebase.auth().languageCode = state.preferences.locale.replace(/.*-/, '')
   state.db.collection('service').doc('conf').onSnapshot(async doc => {
     commit('setService', doc)

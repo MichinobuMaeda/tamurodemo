@@ -41,7 +41,10 @@
     "collectCoverageFrom": [
       "src/store/*.js"
     ],
-    "preset": "@vue/cli-plugin-unit-jest/presets/no-babel"
+    "preset": "@vue/cli-plugin-unit-jest/presets/no-babel",
+    "setupFiles": [
+      "<rootDir>/tests/unit/setEnvVars.js"
+    ]
   },
   "capacitorId": "",
   "cordovaId": "org.cordova.quasar.app",

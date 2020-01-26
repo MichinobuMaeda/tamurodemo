@@ -9,6 +9,7 @@ export default {
   dlgTitle: 'row items-center text-body1 text-white bg-',
   col1: 'col col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 q-pa-sm',
   col2: 'col col-xs-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 q-pa-sm',
+  showTabMaxWidth: 1024,
   menuBg: 'teal-7',
   menuText: 'white',
   menuItemBg: 'light-green-10',

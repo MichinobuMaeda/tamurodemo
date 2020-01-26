@@ -13,6 +13,8 @@ export const setLoading = (state, key) => { state.loading = [ ...state.loading.f
 export const resetLoading = (state, key) => { state.loading = [ ...state.loading.filter(item => item !== key) ] }
 export const clearLoading = state => { state.loading = [] }
 export const setService = (state, doc) => { state.service = { ...state.service, [doc.id]: doc.data() } }
+export const setPreferences = (state, data) => { state.preferences = { ...data } }
+export const setMenuPosition = (state, menuPosition) => { setPreferences(state, { ...state.preferences, menuPosition }) }
 export const setMe = (state, me) => { state.me = (me && me.exists && me.data().valid) ? simplify(me) : null }
 export const resetMe = state => { state.me = null }
 export const setGroups = (state, querySnapshot) => { state.groups = querySnapshot.docs.map(item => simplify(item)) }
@@ -40,7 +42,11 @@ export const setUsers = (state, querySnapshot) => {
       users.push(simplify(change.doc))
       state.profiles[change.doc.id] = {}
     } else if (change.type === 'modified') {
-      users = users.map(user => change.doc.id === user.id ? simplify(change.doc) : user)
+      users = users.some(
+        user => change.doc.id === user.id
+      ) ? users.map(
+          user => change.doc.id === user.id ? simplify(change.doc) : user
+        ) : [ ...users, simplify(change.doc) ]
       state.profiles[change.doc.id] = {}
     } else if (change.type === 'removed') {
       users = users.filter(user => change.doc.id !== user.id)
