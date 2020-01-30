@@ -55,9 +55,17 @@ const addDocIfNotExist = async (db, collection, name, data) => {
 const setup = async () => {
   const ts = new Date()
   await addDocIfNotExist(db, 'service', 'status', {
-    version: '0000000000',
+    version: '0000000000'
+  })
+  await addDocIfNotExist(db, 'service', 'conf', {
+    locale: 'ja-jp',
+    menuPosition: 'bottom-right',
     timezone: 'Asia/Tokyo',
-    locale: 'ja-jp'
+    uploadMimeType: [
+      'image/jpeg',
+      'image/png'
+    ],
+    uploadSize: 1024 * 1024 * 100
   })
   await addDocIfNotExist(db, 'service', 'ui', {
     url: 'https://' + projectId + '.web.app/',
