@@ -5,7 +5,20 @@
         <q-avatar :icon="conf.styles.iconPrivacyPolicy" />
         {{ $t('privacyPolicy') }}
       </p>
-      <VueMarkdown>{{ $store.state.service.conf.privacyPolicy }}</VueMarkdown>
+      <q-form ref="main" v-if="edit">
+        <q-input outlined type="textarea" v-model="desc" />
+        <q-btn class="q-ma-md" color="primary" :label="$t('save')" @click="savePolicy" />
+        <q-btn class="q-ma-md" :label="$t('cancel')" @click="edit = false" />
+      </q-form>
+      <div v-else>
+        <q-btn
+          v-if="isManager"
+          flat round dense :color="conf.styles.headerText" class="q-mr-sm float-right"
+          :icon="conf.styles.iconEdit"
+          @click="editPolicy"
+        />
+        <VueMarkdown>{{ $store.state.service.conf.privacyPolicy }}</VueMarkdown>
+      </div>
     </div>
   </q-page>
 </template>
@@ -22,8 +35,30 @@ export default {
   components: {
     VueMarkdown
   },
+  data () {
+    return {
+      edit: false,
+      desc: ''
+    }
+  },
+  methods: {
+    editPolicy () {
+      this.desc = this.$store.state.service.conf.privacyPolicy
+      this.edit = true
+    },
+    async savePolicy () {
+      this.edit = false
+      this.desc = this.desc.trim()
+      await this.$store.state.db.collection('service').doc('conf').update({
+        privacyPolicy: this.desc
+      })
+    }
+  },
   computed: {
-    ...mapGetters([ 'conf' ])
+    ...mapGetters([
+      'conf',
+      'isManager'
+    ])
   }
 }
 </script>
