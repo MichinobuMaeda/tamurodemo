@@ -5,14 +5,7 @@
         <q-avatar :icon="conf.styles.iconPrivacyPolicy" />
         {{ $t('privacyPolicy') }}
       </p>
-      <p>
-        This site is the test site for <a href="https://github.com/MichinobuMaeda/tamuro">Tamuro</a> project.
-        Please don't post your personal information.
-      </p>
-      <p>
-        このサイトは <a href="https://github.com/MichinobuMaeda/tamuro">Tamuro</a> プロジェクトのテストサイトです。
-        個人情報を入力しないでください。
-      </p>
+      <VueMarkdown>{{ $store.state.service.conf.privacyPolicy }}</VueMarkdown>
     </div>
   </q-page>
 </template>
@@ -22,9 +15,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import VueMarkdown from 'vue-markdown'
 
 export default {
   name: 'PagePrivacyPolicy',
+  components: {
+    VueMarkdown
+  },
   computed: {
     ...mapGetters([ 'conf' ])
   }

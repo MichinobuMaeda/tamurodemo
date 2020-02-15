@@ -65,7 +65,8 @@ const setup = async () => {
       'image/jpeg',
       'image/png'
     ],
-    uploadSize: 1024 * 1024 * 100
+    uploadSize: 1024 * 1024 * 100,
+    privacyPolicy: 'Privacy policy'
   })
   await addDocIfNotExist(db, 'service', 'ui', {
     url: 'https://' + projectId + '.web.app/',
