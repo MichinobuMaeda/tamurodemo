@@ -127,38 +127,48 @@ const createUser = async (name, ts, status) => {
 }
 
 // HTTP API: setup the service
-appTamuro.get('/setup', async (req, res) => {
-  // Create basic docs.
-  await setup()
-  res.send('status: ok\n')
+appTamuro.get('/setup/:webApiKey', async (req, res) => {
+  let ui = await db.collection('service').doc('ui').get()
+  if (ui.data().webApiKey !== req.params.webApiKey) {
+    res.send('status: error\n')
+  } else {
+    // Create basic docs.
+    await setup()
+    res.send('status: ok\n')
+  }
 })
 
 // HTTP API: initialize the primary user and groups
-appTamuro.get('/initialize', async (req, res) => {
-  // Create basic docs.
-  await setup()
-  let status = await db.collection('service').doc('status').get()
-  let accounts = await db.collection('accounts').get()
-  if (accounts.size) {
-    res.send('status: warn\nAlready initialized.\n')
+appTamuro.get('/initialize/:webApiKey', async (req, res) => {
+  let ui = await db.collection('service').doc('ui').get()
+  if (ui.data().webApiKey !== req.params.webApiKey) {
+    res.send('status: error\n')
   } else {
-    const ts = new Date()
-    const id = await createUser('Administrator', ts, status)
-    await db.collection('groups').doc('admin').update({
-      members: [ id ],
-      updatedAt: ts
-    })
-    await db.collection('groups').doc('manager').update({
-      members: [ id ],
-      updatedAt: ts
-    })
-    const token = await admin.auth().createCustomToken(id)
-    const url = await getUiUrl()
-    const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
-    await db.collection('accounts').doc(id).update({
-      invitedAt: ts
-    })
-    res.send('status: ok\n' + shortUrl + '\n')
+    // Create basic docs.
+    await setup()
+    let status = await db.collection('service').doc('status').get()
+    let accounts = await db.collection('accounts').get()
+    if (accounts.size) {
+      res.send('status: warn\nAlready initialized.\n')
+    } else {
+      const ts = new Date()
+      const id = await createUser('Administrator', ts, status)
+      await db.collection('groups').doc('admin').update({
+        members: [ id ],
+        updatedAt: ts
+      })
+      await db.collection('groups').doc('manager').update({
+        members: [ id ],
+        updatedAt: ts
+      })
+      const token = await admin.auth().createCustomToken(id)
+      const url = await getUiUrl()
+      const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
+      await db.collection('accounts').doc(id).update({
+        invitedAt: ts
+      })
+      res.send('status: ok\n' + shortUrl + '\n')
+    }
   }
 })
 
