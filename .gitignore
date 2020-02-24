@@ -1,5 +1,5 @@
 src/conf/firebase.js
-tools/version.json
+tests/unit/setEnvVars.js 
 .firebaserc
 
 .quasar
