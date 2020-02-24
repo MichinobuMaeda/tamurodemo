@@ -55,10 +55,38 @@ https://console.cloud.google.com
            * New members: allUsers
            * Role: Storage Object Viewer
 
+### Setup initialize key
+
+```
+$ firebase functions:config:set initialize.key=.....
+$ firebase functions:config:get
+{
+  "initialize": {
+    "key": "....."
+  }
+}
+$ vi tests/unit/setEnvVars.js
+$ cat tests/unit/setEnvVars.js
+process.env.FUNCTIONS_INITIALIZE_KEY = '....'
+```
+
 ### Setup CI
 
 * [Using GitLab CI/CD with a GitHub repository](https://docs.gitlab.com/ee/ci/ci_cd_for_external_repos/github_integration.html)
 * [Firebase Hosting Deployment Automation with Gitlab CI](https://medium.com/@rambabusaravanan/firebase-hosting-deployment-automation-with-gitlab-ci-f3fad9130d62)
+
+* Settings
+  * Variables
+    * API_KEY:
+    * APP_ID:
+    * AUTH_DOMAIN: 
+    * DATABASE_URL:
+    * FIREBASE_TOKEN: 
+    * MESSAGEING_SENDER_ID:
+    * PROJECT_ID:
+    * STRAGE_BUCKET:
+    * WEB_API_KEY:
+    * FUNCTIONS_INITIALIZE_KEY: .....
 
 ### Development environment
 

@@ -6,7 +6,7 @@
   "author": "Michinobu Maeda <michinobumaeda@gmail.com>",
   "scripts": {
     "build": "quasar build -m pwa",
-    "test": "jest",
+    "test": "firebase emulators:exec --only firestore,functions jest",
     "lint": "eslint --ext .js,.vue src",
     "dev": "quasar dev -m pwa",
     "test:unit": "vue-cli-service test:unit"
@@ -27,6 +27,7 @@
     "@vue/cli-plugin-unit-jest": "^4.1.2",
     "@vue/eslint-config-standard": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
+    "axios": "^0.19.2",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.9.0",
     "eslint": "^5.10.0",
@@ -40,7 +41,8 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/store/*.js"
+      "src/store/*.js",
+      "functions/index.js"
     ],
     "preset": "@vue/cli-plugin-unit-jest/presets/no-babel",
     "setupFiles": [

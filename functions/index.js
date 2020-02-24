@@ -9,11 +9,134 @@ const crypto = require('crypto')
 // Setup Firebase admin user connection
 admin.initializeApp()
 const db = admin.firestore()
+if (process.env.FIRESTORE_EMULATOR_HOST && process.env.FIRESTORE_EMULATOR_HOST.startsWith('localhost')) {
+  db.settings({
+    servicePath: process.env.FIRESTORE_EMULATOR_HOST,
+    ssl: false
+  })
+}
 const projectId = admin.instanceId().app.options.projectId
-const dyanmicLinkGenerator = 'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key='
+const initKey = functions.config().init.key
+
+const initialDocs = () => {
+  const ts = new Date()
+  return [
+    {
+      collection: 'service',
+      id: 'status',
+      data: {
+        version: '0000000000'
+      }
+    },
+    {
+      collection: 'service',
+      id: 'conf',
+      data: {
+        locale: 'ja-jp',
+        menuPosition: 'bottom-right',
+        timezone: 'Asia/Tokyo',
+        uploadMimeType: [
+          'image/jpeg',
+          'image/png'
+        ],
+        uploadSize: 1024 * 1024 * 100,
+        privacyPolicy: 'Privacy policy'
+      }
+    },
+    {
+      collection: 'service',
+      id: 'ui',
+      data: {
+        url: 'https://' + projectId + '.web.app/',
+        webApiKey: '',
+        shortLinkPrefix: ''
+      }
+    },
+    {
+      collection: 'service',
+      id: 'line',
+      data: {
+        grant_type: 'authorization_code',
+        client_id: '',
+        client_secret: '',
+        scope: 'profile openid',
+        iss: 'https://access.line.me',
+        auth_url: 'https://access.line.me/oauth2/v2.1/authorize',
+        token_url: 'https://api.line.me/oauth2/v2.1/token'
+      }
+    },
+    {
+      collection: 'groups',
+      id: 'top',
+      data: {
+        name: 'Tamuro',
+        members: [],
+        subGroups: [ 'admin', 'manager' ],
+        createdAt: ts,
+        updatedAt: ts
+      }
+    },
+    {
+      collection: 'groups',
+      id: 'admin',
+      data: {
+        name: 'Tamuro',
+        members: [],
+        subGroups: [],
+        createdAt: ts,
+        updatedAt: ts
+      }
+    },
+    {
+      collection: 'groups',
+      id: 'manager',
+      data: {
+        name: 'Tamuro',
+        members: [],
+        subGroups: [],
+        createdAt: ts,
+        updatedAt: ts
+      }
+    }
+  ]
+}
+
+// Create basic docs.
+const setup = async () => {
+  await Promise.all(initialDocs().map(async initial => {
+    let ref = db.collection(initial.collection).doc(initial.id)
+    let doc = await ref.get()
+    if (!(doc && doc.exists)) {
+      await ref.set(initial.data)
+    } else {
+      let comp = { ...initial.data }
+      Object.keys(doc.data()).forEach(key => {
+        delete comp[key]
+      })
+      if (Object.keys(comp).length) {
+        await ref.update({
+          ...comp,
+          updatedAt: new Date()
+        })
+      }
+    }
+  }))
+}
 
 // Get URL of UI
 const getUiUrl = () => db.collection('service').doc('ui').get().then(ui => ui.data().url)
+
+// Get the account of the ID is manager or not.
+const isManager = async id => {
+  let manager = await db.collection('groups').doc('manager').get()
+  return manager.data().members.includes(id)
+}
+
+// Get the account of the ID is admin or not.
+const isAdmin = async id => {
+  let admin = await db.collection('groups').doc('admin').get()
+  return admin.data().members.includes(id)
+}
 
 // Initialize HTTP API for tamuro
 const appTamuro = express();
@@ -23,86 +146,13 @@ appTamuro.use(express.json())
 // Shorten URL
 const shortenURL = async url => {
   let ui = await db.collection('service').doc('ui').get()
-  let result = await axios.post(dyanmicLinkGenerator + ui.data().webApiKey, {
+  let result = await axios.post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + ui.data().webApiKey, {
     dynamicLinkInfo: {
       domainUriPrefix: ui.data().shortLinkPrefix,
       link: url
     }
   })
   return result.data.shortLink
-}
-
-const isManager = async id => {
-  let manager = await db.collection('groups').doc('manager').get()
-  return manager.data().members.includes(id)
-}
-
-const isAdmin = async id => {
-  let admin = await db.collection('groups').doc('admin').get()
-  return admin.data().members.includes(id)
-}
-
-// Add the doc if it's not exists.
-const addDocIfNotExist = async (db, collection, name, data) => {
-  let ref = db.collection(collection).doc(name)
-  let doc = await ref.get()
-  if (!(doc && doc.exists)) {
-    await ref.set(data)
-  }
-}
-
-// Create basic docs.
-const setup = async () => {
-  const ts = new Date()
-  await addDocIfNotExist(db, 'service', 'status', {
-    version: '0000000000'
-  })
-  await addDocIfNotExist(db, 'service', 'conf', {
-    locale: 'ja-jp',
-    menuPosition: 'bottom-right',
-    timezone: 'Asia/Tokyo',
-    uploadMimeType: [
-      'image/jpeg',
-      'image/png'
-    ],
-    uploadSize: 1024 * 1024 * 100,
-    privacyPolicy: 'Privacy policy'
-  })
-  await addDocIfNotExist(db, 'service', 'ui', {
-    url: 'https://' + projectId + '.web.app/',
-    webApiKey: '',
-    shortLinkPrefix: ''
-  })
-  await addDocIfNotExist(db, 'service', 'line', {
-    grant_type: 'authorization_code',
-    client_id: '',
-    client_secret: '',
-    scope: 'profile openid',
-    iss: 'https://access.line.me',
-    auth_url: 'https://access.line.me/oauth2/v2.1/authorize',
-    token_url: 'https://api.line.me/oauth2/v2.1/token'
-  })
-  await addDocIfNotExist(db, 'groups', 'top', {
-    name: 'Tamuro',
-    members: [],
-    subGroups: [ 'admin', 'manager' ],
-    createdAt: ts,
-    updatedAt: ts
-  })
-  await addDocIfNotExist(db, 'groups', 'admin', {
-    name: 'Administrators',
-    members: [],
-    subGroups: [],
-    createdAt: ts,
-    updatedAt: ts
-  })
-  await addDocIfNotExist(db, 'groups', 'manager', {
-    name: 'Managers',
-    members: [],
-    subGroups: [],
-    createdAt: ts,
-    updatedAt: ts
-  })
 }
 
 // Add a user
@@ -128,9 +178,9 @@ const createUser = async (name, ts, status) => {
 }
 
 // HTTP API: setup the service
-appTamuro.get('/setup/:webApiKey', async (req, res) => {
+appTamuro.get('/setup/:initKey', async (req, res) => {
   let ui = await db.collection('service').doc('ui').get()
-  if (ui.data().webApiKey !== req.params.webApiKey) {
+  if (initKey !== req.params.initKey) {
     res.send('status: error\n')
   } else {
     // Create basic docs.
@@ -140,9 +190,9 @@ appTamuro.get('/setup/:webApiKey', async (req, res) => {
 })
 
 // HTTP API: initialize the primary user and groups
-appTamuro.get('/initialize/:webApiKey', async (req, res) => {
+appTamuro.get('/initialize/:initKey', async (req, res) => {
   let ui = await db.collection('service').doc('ui').get()
-  if (ui.data().webApiKey !== req.params.webApiKey) {
+  if (initKey !== req.params.initKey) {
     res.send('status: error\n')
   } else {
     // Create basic docs.
@@ -174,9 +224,9 @@ appTamuro.get('/initialize/:webApiKey', async (req, res) => {
 })
 
 // HTTP API: Release new version of the UI.
-appTamuro.get('/release/ui/:webApiKey', async (req, res) => {
+appTamuro.get('/release/ui/:initKey', async (req, res) => {
   let ui = await db.collection('service').doc('ui').get()
-  if (ui.data().webApiKey !== req.params.webApiKey) {
+  if (initKey !== req.params.initKey) {
     res.send('status: error\n')
   } else {
     let result = await axios.get('https://' + projectId + '.web.app/statics/version.json')
@@ -185,6 +235,11 @@ appTamuro.get('/release/ui/:webApiKey', async (req, res) => {
     })
     res.send('version: ' + result.data + '\n')
   }
+})
+
+// HTTP API: Test.
+appTamuro.get('/test', async (req, res) => {
+  res.send('status: ok')
 })
 
 // Setup HTTP API for tamuro
