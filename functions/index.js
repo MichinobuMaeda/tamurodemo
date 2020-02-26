@@ -6,17 +6,11 @@ const axios = require('axios')
 const querystring = require('querystring')
 const crypto = require('crypto')
 
+const TEST_DB = (process.env.FIRESTORE_EMULATOR_HOST || '').startsWith('localhost')
+
 // Setup Firebase admin user connection
 admin.initializeApp()
 const db = admin.firestore()
-if (process.env.FIRESTORE_EMULATOR_HOST && process.env.FIRESTORE_EMULATOR_HOST.startsWith('localhost')) {
-  db.settings({
-    servicePath: process.env.FIRESTORE_EMULATOR_HOST,
-    ssl: false
-  })
-}
-const projectId = admin.instanceId().app.options.projectId
-const initKey = functions.config().init.key
 
 const initialDocs = () => {
   const ts = new Date()
@@ -41,15 +35,6 @@ const initialDocs = () => {
         ],
         uploadSize: 1024 * 1024 * 100,
         privacyPolicy: 'Privacy policy'
-      }
-    },
-    {
-      collection: 'service',
-      id: 'ui',
-      data: {
-        url: 'https://' + projectId + '.web.app/',
-        webApiKey: '',
-        shortLinkPrefix: ''
       }
     },
     {
@@ -80,7 +65,7 @@ const initialDocs = () => {
       collection: 'groups',
       id: 'admin',
       data: {
-        name: 'Tamuro',
+        name: 'System Administrator',
         members: [],
         subGroups: [],
         createdAt: ts,
@@ -91,7 +76,7 @@ const initialDocs = () => {
       collection: 'groups',
       id: 'manager',
       data: {
-        name: 'Tamuro',
+        name: 'Manager',
         members: [],
         subGroups: [],
         createdAt: ts,
@@ -123,9 +108,6 @@ const setup = async () => {
   }))
 }
 
-// Get URL of UI
-const getUiUrl = () => db.collection('service').doc('ui').get().then(ui => ui.data().url)
-
 // Get the account of the ID is manager or not.
 const isManager = async id => {
   let manager = await db.collection('groups').doc('manager').get()
@@ -138,6 +120,9 @@ const isAdmin = async id => {
   return admin.data().members.includes(id)
 }
 
+// Get custom token of given ID.
+const customToken = id => TEST_DB ? `test_token_for_${id}` : admin.auth().createCustomToken(id)
+
 // Initialize HTTP API for tamuro
 const appTamuro = express();
 appTamuro.use(cors({ origin: true }))
@@ -145,91 +130,96 @@ appTamuro.use(express.json())
 
 // Shorten URL
 const shortenURL = async url => {
-  let ui = await db.collection('service').doc('ui').get()
-  let result = await axios.post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + ui.data().webApiKey, {
+  return TEST_DB ? url : (await axios.post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + functions.config().short_links.key, {
     dynamicLinkInfo: {
-      domainUriPrefix: ui.data().shortLinkPrefix,
+      domainUriPrefix: functions.config().short_links.prefix,
       link: url
     }
-  })
-  return result.data.shortLink
+  })).data.shortLink
 }
 
 // Add a user
-const createUser = async (name, ts, status) => {
-  let user = await db.collection('users').add({
+const createUser = async (name, ts, conf, id = null) => {
+  let userData = {
     name,
     createdAt: ts,
     updatedAt: ts
-  })
-  await db.collection('profiles').doc(user.id).set({
+  }
+  let user = id ? (await db.collection('users').doc(id).set(userData)) : (await db.collection('users').add(userData))
+  const userId = id || user.id
+  await db.collection('profiles').doc(userId).set({
     createdAt: ts,
     updatedAt: ts
   })
-  await db.collection('accounts').doc(user.id).set({
-    menuPosition: status.data().menuPosition,
-    timezone: status.data().timezone,
-    locale: status.data().locale,
+  await db.collection('accounts').doc(userId).set({
+    menuPosition: conf.data().menuPosition,
+    timezone: conf.data().timezone,
+    locale: conf.data().locale,
     valid: true,
     createdAt: ts,
     updatedAt: ts
   })
-  return user.id
+  return userId
 }
 
 // HTTP API: setup the service
 appTamuro.get('/setup/:initKey', async (req, res) => {
-  let ui = await db.collection('service').doc('ui').get()
-  if (initKey !== req.params.initKey) {
+  if (req.params.initKey !== functions.config().init.key) {
     res.send('status: error\n')
   } else {
-    // Create basic docs.
-    await setup()
-    res.send('status: ok\n')
+    try {
+      // Create basic docs.
+      await setup()
+      res.send('status: ok\n')
+    } catch (e) {
+      res.send('status: ' + e)
+    }
   }
 })
 
 // HTTP API: initialize the primary user and groups
 appTamuro.get('/initialize/:initKey', async (req, res) => {
-  let ui = await db.collection('service').doc('ui').get()
-  if (initKey !== req.params.initKey) {
+  if (req.params.initKey !== functions.config().init.key) {
     res.send('status: error\n')
   } else {
     // Create basic docs.
     await setup()
     let status = await db.collection('service').doc('status').get()
+    let conf = await db.collection('service').doc('conf').get()
     let accounts = await db.collection('accounts').get()
     if (accounts.size) {
       res.send('status: warn\nAlready initialized.\n')
     } else {
-      const ts = new Date()
-      const id = await createUser('Administrator', ts, status)
-      await db.collection('groups').doc('admin').update({
-        members: [ id ],
-        updatedAt: ts
-      })
-      await db.collection('groups').doc('manager').update({
-        members: [ id ],
-        updatedAt: ts
-      })
-      const token = await admin.auth().createCustomToken(id)
-      const url = await getUiUrl()
-      const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
-      await db.collection('accounts').doc(id).update({
-        invitedAt: ts
-      })
-      res.send('status: ok\n' + shortUrl + '\n')
+      try {
+        const ts = new Date()
+        const id = await createUser('Administrator', ts, conf, TEST_DB ? 'testprimaryuser' : null)
+        await db.collection('groups').doc('admin').update({
+          members: [ id ],
+          updatedAt: ts
+        })
+        await db.collection('groups').doc('manager').update({
+          members: [ id ],
+          updatedAt: ts
+        })
+        const token = await customToken(id)
+        const shortUrl = await shortenURL(functions.config().ui.url + '?v=' + status.data().version + '&invitation=' + token)
+        await db.collection('accounts').doc(id).update({
+          invitedAt: ts
+        })
+        res.send('status: ok\n' + shortUrl + '\n')
+      } catch (e) {
+        res.send('status: ' + e)
+      }
     }
   }
 })
 
 // HTTP API: Release new version of the UI.
 appTamuro.get('/release/ui/:initKey', async (req, res) => {
-  let ui = await db.collection('service').doc('ui').get()
-  if (initKey !== req.params.initKey) {
+  if (req.params.initKey !== functions.config().init.key) {
     res.send('status: error\n')
   } else {
-    let result = await axios.get('https://' + projectId + '.web.app/statics/version.json')
+    let result = await axios.get(functions.config().ui.url + 'statics/version.json')
     await db.collection('service').doc('status').update({
       version: result.data
     })
@@ -237,20 +227,14 @@ appTamuro.get('/release/ui/:initKey', async (req, res) => {
   }
 })
 
-// HTTP API: Test.
-appTamuro.get('/test', async (req, res) => {
-  res.send('status: ok')
-})
-
 // Setup HTTP API for tamuro
 exports.tamuro = functions.https.onRequest(appTamuro);
 
 // HTTP Callable API: Get auth ids for clients.
 exports.getAuthIds = functions.https.onCall(async (data, context) => {
-  const url = await getUiUrl()
   let line = await db.collection('service').doc('line').get()
   return {
-    ui: { url },
+    ui: { url:functions.config().ui.url },
     line: {
       auth_url: line.data().auth_url,
       client_id: line.data().client_id,
@@ -266,9 +250,8 @@ exports.getInvitationUrl = functions.https.onCall(async (data, context) => {
   }
   console.info({ uid: context.auth.uid, target: data.id })
   let status = await db.collection('service').doc('status').get()
-  const token = await admin.auth().createCustomToken(data.id)
-  const url = await getUiUrl()
-  const shortUrl = await shortenURL(url + '?v=' + status.data().version + '&invitation=' + token)
+  const token = await customToken(data.id)
+  const shortUrl = await shortenURL(functions.config().ui.url + '?v=' + status.data().version + '&invitation=' + token)
   await db.collection('accounts').doc(data.id).update({ invitedAt: new Date() })
   return { url: shortUrl }
 })
@@ -366,7 +349,7 @@ exports.signInWithLine = functions.https.onCall(async (data, context) => {
       // Return token.
       let user = snapshot.docs.reduce((ret, cur) => cur ? cur : ret, null)
       console.info('Return token: ' + user.id)
-      return { token: await admin.auth().createCustomToken(user.id) }
+      return { token: await customToken(user.id) }
     } else {
       console.error('no data of sub: ' + payload.sub)
       return { error: 'no data of sub: ' + payload.sub }
@@ -381,8 +364,8 @@ exports.createMember = functions.https.onCall(async (data, context) => {
   }
   console.info({ id: data.id, name: data.name })
   const ts = new Date()
-  let status = await db.collection('service').doc('status').get()
-  const id = await createUser(data.name, ts, status)
+  let conf = await db.collection('service').doc('conf').get()
+  const id = await createUser(data.name, ts, conf)
   const groupRef = db.collection('groups').doc(data.id)
   await groupRef.update({
     members: admin.firestore.FieldValue.arrayUnion(id),

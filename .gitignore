@@ -1,6 +1,7 @@
 src/conf/firebase.js
 tests/unit/setEnvVars.js 
 .firebaserc
+functions/.runtimeconfig.json
 
 .quasar
 .DS_Store

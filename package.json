@@ -6,7 +6,7 @@
   "author": "Michinobu Maeda <michinobumaeda@gmail.com>",
   "scripts": {
     "build": "quasar build -m pwa",
-    "test": "firebase emulators:exec --only firestore,functions jest",
+    "test": "FIRESTORE_EMULATOR_HOST=localhost:8088 firebase emulators:exec --only firestore,functions jest",
     "lint": "eslint --ext .js,.vue src",
     "dev": "quasar dev -m pwa",
     "test:unit": "vue-cli-service test:unit"
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
+    "@firebase/testing": "^0.16.11",
     "@quasar/app": "^1.0.0",
     "@vue/cli-plugin-unit-jest": "^4.1.2",
     "@vue/eslint-config-standard": "^4.0.0",
@@ -41,13 +42,9 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/store/*.js",
-      "functions/index.js"
+      "src/store/*.js"
     ],
-    "preset": "@vue/cli-plugin-unit-jest/presets/no-babel",
-    "setupFiles": [
-      "<rootDir>/tests/unit/setEnvVars.js"
-    ]
+    "preset": "@vue/cli-plugin-unit-jest/presets/no-babel"
   },
   "capacitorId": "",
   "cordovaId": "org.cordova.quasar.app",

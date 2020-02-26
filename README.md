@@ -55,19 +55,27 @@ https://console.cloud.google.com
            * New members: allUsers
            * Role: Storage Object Viewer
 
-### Setup initialize key
+### Setup keys
 
 ```
 $ firebase functions:config:set initialize.key=.....
+$ firebase functions:config:set short_links.key=[Web API Key]
+$ firebase functions:config:set short_links.prefix=[https://...]
+$ firebase functions:config:set ui.url=[https://.../]
 $ firebase functions:config:get
 {
-  "initialize": {
+  "init": {
     "key": "....."
+  },
+  "short_links": {
+    "key": "[Web API Key]",
+    "prefix": "[https://...]"
+  },
+  "ui": {
+    "url": "[https://.../]"
   }
 }
-$ vi tests/unit/setEnvVars.js
-$ cat tests/unit/setEnvVars.js
-process.env.FUNCTIONS_INITIALIZE_KEY = '....'
+$ firebase functions:config:get > functions/.runtimeconfig.json
 ```
 
 ### Setup CI
