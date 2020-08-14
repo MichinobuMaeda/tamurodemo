@@ -1,57 +1,52 @@
 {
   "name": "tamuro",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
-  "description": "tamuro",
-  "author": "Michinobu Maeda <michinobumaeda@gmail.com>",
   "scripts": {
-    "build": "quasar build -m pwa",
-    "test": "FIRESTORE_EMULATOR_HOST=localhost:8088 firebase emulators:exec --only firestore,functions jest",
-    "lint": "eslint --ext .js,.vue src",
-    "dev": "quasar dev -m pwa",
-    "test:unit": "vue-cli-service test:unit"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
-    "firebase": "^7.2.3",
-    "firebaseui": "^4.2.0",
-    "moment-timezone": "^0.5.27",
-    "quasar": "^1.0.0",
-    "vue-i18n": "^8.15.0",
-    "vue-markdown": "^2.2.4"
+    "core-js": "^3.6.5",
+    "vue": "^2.6.11",
+    "vue-i18n": "^8.17.3",
+    "vue-router": "^3.2.0",
+    "vuetify": "^2.2.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
-    "@firebase/testing": "^0.16.11",
-    "@quasar/app": "^1.0.0",
-    "@vue/cli-plugin-unit-jest": "^4.1.2",
-    "@vue/eslint-config-standard": "^4.0.0",
-    "@vue/test-utils": "1.0.0-beta.29",
-    "axios": "^0.19.2",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.9.0",
-    "eslint": "^5.10.0",
-    "eslint-loader": "^2.1.1",
-    "eslint-plugin-vue": "^5.0.0",
-    "jest": "^24.9.0"
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "sass": "^1.19.0",
+    "sass-loader": "^8.0.0",
+    "vue-cli-plugin-i18n": "~1.0.1",
+    "vue-cli-plugin-vuetify": "~2.0.7",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.3.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
   },
   "browserslist": [
-    "last 1 version, not dead, ie >= 11"
-  ],
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/store/*.js"
-    ],
-    "preset": "@vue/cli-plugin-unit-jest/presets/no-babel"
-  },
-  "capacitorId": "",
-  "cordovaId": "org.cordova.quasar.app",
-  "engines": {
-    "node": ">= 8.9.0",
-    "npm": ">= 5.6.0",
-    "yarn": ">= 1.6.0"
-  },
-  "productName": "tamuro"
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

@@ -3,58 +3,35 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "functions": {
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint"
+    ]
+  },
   "hosting": {
-    "public": "dist/pwa",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "headers": [
-      {
-        "source": "statics/version.json",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=0, must-revalidate"
-          }
-        ]
-      },
-      {
-        "source": "service-worker.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=0, must-revalidate"
-          }
-        ]
-      },
-      {
-        "source": "index.html",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=0, must-revalidate"
-          }
-        ]
-      }
     ]
   },
   "storage": {
     "rules": "storage.rules"
   },
   "emulators": {
-    "firestore": {
-      "port": "8088"
-    },
     "functions": {
-      "port": "5001"
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8081
     },
     "pubsub": {
-      "port": "8085"
+      "port": 8085
     },
-    "hosting": {
-      "port": "5000"
+    "ui": {
+      "enabled": true,
+      "port": 8089
     }
   }
 }
