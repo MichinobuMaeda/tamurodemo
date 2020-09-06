@@ -2,59 +2,66 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
-      dark
+      color="light-blue lighten-5"
+      dense
+      hide-on-scroll
+      elevation="0"
+      @click="goPage(state, $router, 'top')"
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+      <img style="width: 40px;" src="img/icons/apple-touch-icon-120x120.png" alt="Sanno" />
+      <v-toolbar-title
+        class="light-blue--text text--darken-4 text-h5 ml-2"
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+        Tamuro
+      </v-toolbar-title>
     </v-app-bar>
 
-    <v-main>
-      <HelloWorld/>
+    <v-main class="ma-3" v-if="!(state.service.status && state.service.status.version)">
+      <Loading />
     </v-main>
+    <v-main class="ma-3" v-else>
+      <router-view />
+    </v-main>
+
+    <v-footer
+      color="light-blue lighten-5 black--text"
+      class="light-blue--text text--darken-4"
+      height="48px"
+    >
+      <span>Ver.</span>
+    </v-footer>
+
+    <Menu />
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Menu from './components/Menu'
+import Loading from './components/Loading.vue'
+import store from './plugins/composition-api'
+// import store from './plugins/composition-api'
+// import { onMounted } from '@vue/composition-api'
 
 export default {
   name: 'App',
-
   components: {
-    HelloWorld,
+    Menu,
+    Loading
   },
-
-  data: () => ({
-    //
-  }),
-};
+  setup (/* props, context */) {
+    // 保持データのストアを供給する。
+    store.provideStore(store)
+    // onMounted(async function () {
+    //   // サービスの状態を取得する。
+    //   await store.initCommonService(store.state)
+    //   // 保存されているステータスメッセージを取得する。
+    //   store.state.authMessage = window.localStorage.getItem('spacemoniAuthMessage') || ''
+    //   // 初期データを取得する。
+    //   await store.initStore(store.state)
+    // })
+    // 保持データのストアを使用する。
+    const rootStore = store.useStore()
+    return rootStore
+  }
+}
 </script>

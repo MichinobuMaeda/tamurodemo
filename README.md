@@ -49,6 +49,8 @@ $ vue add router
 ? Use history mode for router? no
 $ vue add i18n
 $ vue add vuetify
+$ vue add pwa
+$ vue add unit-jest
 $ firebase login
 $ firebase init
 ? Which Firebase CLI features do you want to set up for this folder?
@@ -56,3 +58,7 @@ $ firebase init
 ? Select a default Firebase project for this directory:
     Using project tamuro-test01
 ```
+
+* Vue.js: https://vuejs.org/
+* Vuetify: https://vuetifyjs.com/
+* Firebase: https://firebase.google.com/

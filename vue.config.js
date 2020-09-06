@@ -9,5 +9,25 @@ module.exports = {
   },
   "transpileDependencies": [
     "vuetify"
-  ]
+  ],
+  pwa: {
+    name: 'Tamuro',
+    themeColor: '#33691e',
+    msTileColor: '#f1f8e9',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+    manifestOptions: {
+      display: 'standalone',
+      orientation: 'portrait-primary',
+      background_color: '#f1f8e9'
+    },
+
+    // configure the workbox plugin
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      // swSrc is required in InjectManifest mode.
+      swSrc: 'dev/sw.js'
+      // ...other Workbox options...
+    }
+  }
 }
