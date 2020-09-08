@@ -23,7 +23,6 @@ https://console.firebase.google.com/
     - Storage -> Get started
     - Hosting -> Get started
     - Functions -> Get started
-    - Dynamic Links -> Get started
 
 https://console.cloud.google.com
 
@@ -57,8 +56,33 @@ $ firebase init
     Firestore, Functions, Hosting, Storage, Emulators
 ? Select a default Firebase project for this directory:
     Using project tamuro-test01
+$ echo "export default 'development'" > src/store/version.js
+$ echo "export default 'Web API Key'" > src/plugins/firebase-api-key.js
 ```
 
-* Vue.js: https://vuejs.org/
-* Vuetify: https://vuetifyjs.com/
-* Firebase: https://firebase.google.com/
+https://console.firebase.google.com/
+
+- [Project ID]
+    - Project settings
+        - Service accounts
+            - Firebase Admin SDK
+                - Generate new private key
+
+```
+$ mv ~/Downloads/tamuro-test01-firebase-adminsdk-q49yg-xxxxxxxx.json ./tamuro-test01-firebase-adminsdk.json
+```
+
+### Initialize
+
+```
+$ node ./tools/setupService.js                                                                                                           [0:09:31]
+✔ Display name: … Michinobu Maeda
+✔ E-mail: … michinobumaeda@gmail.com
+✔ Password: … ********
+```
+
+## Links
+
+- Vue.js: https://vuejs.org/
+- Vuetify: https://vuetifyjs.com/
+- Firebase: https://firebase.google.com/
