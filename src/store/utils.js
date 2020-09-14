@@ -1,4 +1,5 @@
-// Firestore のドキュメントプロパティだけの形にする。
+// { id, data() } => { id, ...data }
+// Firestore Timestamp => Date
 export const simplifyDoc = doc => ({
   id: doc.id,
   ...Object.keys(doc.data()).reduce(
@@ -8,13 +9,11 @@ export const simplifyDoc = doc => ({
     }), ({}))
 })
 
-// 指定されたIDの要素を取得する。
-export const getById = (list, id) => list.reduce(
+export const getById = (list, id) => (list ||[]).reduce(
   (ret, cur) => cur.id === id ? { ...cur } : ret,
   {}
 )
 
-// 改行区切りで入力された値を配列に変換する。
 export const linesToArray = lines => (lines || '').split('\n').map(
   line => (line || '').trim()
 ).filter(
@@ -40,21 +39,8 @@ export const fixPoint2 = (n, def = '') => (n || n === 0) ? n.toFixed(2) : def
 
 export const longDate = dt => (new Date((new Date(dt)).getTime() + 9 * 3600 * 1000)).toISOString().slice(0, 10).replace(/-/g, '/')
 
-export const tasks2 = state => ({
-  compDate: '上棟日',
-  prodDate: '搬入日',
-  appdDate: '承認',
-  dataDate: 'データ',
-  matlDate: '材納',
-  ...state.tasks.filter(task => !task.disabled).reduce((ret, cur) => ({
-    ...ret,
-    [cur.id]: '機' + cur.name,
-    ['t' + cur.id.slice(1)]: '手' + cur.name
-  }), ({}))
-})
-
-// 保持データをテスト用表示の構造に変換する。
-export const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
+// state to tree for Raw Page
+const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
   ? {
     id: `${parent}_${key}`,
     name: key,
@@ -118,3 +104,7 @@ export const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
               name: key,
               value: '{ }'
             }
+
+export const rawTree = state => [...Object.keys(state)].sort().map(
+  key => obj2RawTree('top', key, JSON.parse(JSON.stringify(state))[key])
+)

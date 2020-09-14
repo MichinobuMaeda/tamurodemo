@@ -41,20 +41,35 @@ const setupService = async () => {
     }
   ])
   const defaults = await db.collection('service').doc('defaults').get()
-  const user = await db.collection('accounts').add({
-    name,
+  const account = await db.collection('accounts').add({
     email,
-    admin: true,
-    manager: true,
     ...defaults.data(),
     createdAt: ts,
     updatedAt: ts
   })
-  console.log(`Create: accounts.${user.id}`)
+  const uid = account.id
+  await db.collection('users').doc(uid).set({
+    name,
+    createdAt: ts,
+    updatedAt: ts
+  })
+  await db.collection('profiles').doc(uid).set({
+    createdAt: ts,
+    updatedAt: ts
+  })
+  console.log(`Create: accounts.${uid}`)
   await admin.auth().createUser({
-    uid: user.id,
+    uid,
     email,
     password
+  })
+  console.log(`Add memeber: accounts.${uid} to groups.admins`)
+  await db.collection('groups').doc('admins').update({
+    members: admin.firestore.FieldValue.arrayUnion(uid)
+  })
+  console.log(`Add memeber: accounts.${uid} to groups.managers`)
+  await db.collection('groups').doc('managers').update({
+    members: admin.firestore.FieldValue.arrayUnion(uid)
   })
 }
 

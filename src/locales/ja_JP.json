@@ -1,3 +1,6 @@
 {
-  "message": "hello i18n !!"
+  "Sign in": "ログイン",
+  "Privacy policy": "プライバシー・ポリシー",
+  "Invalid email or password": "メールアドレスかパスワードが間違っています。",
+  "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。"
 }

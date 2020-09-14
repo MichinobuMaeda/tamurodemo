@@ -24,9 +24,7 @@ export default {
     PageTitle
   },
   setup () {
-    // 保持データのストアを使用する。
-    const rootStore = store.useStore()
-    return rootStore
+    return store.useStore()
   }
 }
 </script>

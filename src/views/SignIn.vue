@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col sm="10" md="8" lg="6" xl="5">
-      <PageTitle title="Tamuro" icon="home" />
+      <PageTitle :title="$t('Sign in')" icon="account_circle" />
     </v-col>
   </v-row>
 </template>
@@ -11,7 +11,7 @@ import store from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
 
 export default {
-  name: 'PageIndex',
+  name: 'SignInPolicy',
   components: {
     PageTitle
   },

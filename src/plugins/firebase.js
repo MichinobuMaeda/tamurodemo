@@ -14,22 +14,16 @@ const firebase = Firebase.initializeApp({
   appId: '1:1051588852085:web:c88694ba93327e24137b3c'
 })
 
-const auth = firebase.auth()
-const db = firebase.firestore()
-const functions = firebase.functions()
-
-if (location.hostname === 'localhost') {
-  db.settings({
+if (process.env.NODE_ENV === 'test') {
+  firebase.firestore().settings({
     host: 'localhost:8080',
     ssl: false
   });
-  functions.useFunctionsEmulator(
+  firebase.functions().useFunctionsEmulator(
     'http://localhost:5001'
   )
 }
 
-export default {
-  auth,
-  db,
-  functions
-}
+export const auth = firebase.auth()
+export const db = firebase.firestore()
+export const functions = firebase.functions()

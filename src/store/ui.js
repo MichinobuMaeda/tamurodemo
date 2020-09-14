@@ -1,19 +1,4 @@
-import firebase from '../plugins/firebase'
-
-const { db } = firebase
-
-export const uiState = {
-  loading: true,
-  toolChip: false,
-  toolChipTimer: null,
-  waitUpdate: false,
-  history: [],
-  spacesExpanded: {},
-  locale: 'ja_JP',
-  menuOpened: false,
-  menuPosition: 'bottom-right',
-  timezone: 'Asia/Tokyo'
-}
+import { db } from '../plugins/firebase'
 
 export const clearUi = state => {
   state.loading = true
@@ -21,10 +6,8 @@ export const clearUi = state => {
   state.toolChipTimer = null
   state.waitUpdate = false
   state.history = []
-  state.spacesExpanded = {}
-  state.locale = 'ja-jp'
+  state.menuOpened = false
   state.menuPosition = 'bottom-right'
-  state.timezone = 'Asia/Tokyo'
 }
 
 export const initUi = async () => {}
@@ -100,7 +83,7 @@ export const handleMenuSwipe = (state, menu) => async info => {
 const setPage = (state, router, route) => {
   router.push(route).catch(() => {})
   if (!['signin', 'preferences', 'raw', 'devices'].includes(route.name)) {
-    window.localStorage.setItem('spacemoniPage', JSON.stringify(route))
+    window.localStorage.setItem('tamuroPage', JSON.stringify(route))
   }
 }
 
@@ -115,17 +98,3 @@ export const backPage = (state, router) => {
   const route = state.history.length ? state.history[state.history.length - 1] : { name: 'top' }
   setPage(state, router, route)
 }
-
-// メニュー項目
-export const menuItems = (state, router) => [
-  {
-    label: 'Top',
-    icon: 'home',
-    action: () => { goPage(state, router, 'top') }
-  },
-  {
-    label: 'Raw Data',
-    icon: 'memory',
-    action: () => { goPage(state, router, 'raw') }
-  }
-]

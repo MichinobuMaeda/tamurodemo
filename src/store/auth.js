@@ -1,26 +1,15 @@
-import firebase from 'boot/firebase'
-import { clearStore, initStore } from './index'
+import { auth, db } from '../plugins/firebase'
 import * as utils from './utils'
+import { clearUserData, initUserData } from './init'
+import store from "@/plugins/composition-api";
 
-const { auth, db } = firebase
-const topUrl = () => window.location.href.replace(/\?.*/, '').replace(/#.*/, '#/')
-const signInUrl = () => window.location.href.replace(/\?.*/, '').replace(/#.*/, '#/signin')
+const topUrl = () => window.location.href
+  .replace(/\?.*/, '')
+  .replace(/#.*/, '#/')
+const signInUrl = () => window.location.href
+  .replace(/\?.*/, '')
+  .replace(/#.*/, '#/signin')
 
-// 保持データ
-export const authState = {
-  // ログインユーザ
-  me: {},
-  // 認証情報
-  credential: {},
-  // 切断対象の Firestore リアルタイム更新セッション
-  unsubscribers: {},
-  // ログアウトを確認する。
-  confirmLogout: false,
-  // ステータスメッセージ
-  authMessage: ''
-}
-
-// 保持データをクリアする。
 export const clearAuth = state => {
   state.me = {}
   state.credential = {}
@@ -29,93 +18,82 @@ export const clearAuth = state => {
   state.authMessage = ''
 }
 
-// ログアウトする。
-export const logout = () => auth.signOut()
-
-// 保持データを設定する。
-export const initAuth = async state => {
-  if (state.me && state.me.id) {
-    state.unsubscribers.me = db.collection('accounts').doc(state.me.id).onSnapshot(async doc => {
-      if (doc && doc.exists && doc.data().valid) {
-        state.me = utils.simplifyDoc(doc)
-      } else {
-        // 無効なユーザになった場合、ログアウトする。
-        await logout()
-      }
-    })
-  }
-}
-
-// E-mail アドレスの入力値をチェックする。
 export const validateEmail = str => (!str) || /^(\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+|none)$/.test(str)
-
-// パスワードの入力値をチェックする。
 export const validatePassword = str => (!str) || (str.length >= 8)
 
-// ログイン時の処理。
-const onLogin = async (state, me) => {
+export const isValid = state => state.me && state.me.valid
+export const isMemberOf = (state, groupId) => isValid(state) &&
+  (state.groups || []).some(
+    group => group.id === groupId && group.members.includes(state.me.id)
+  )
+export const isAdmin = state => isMemberOf(state, 'admins')
+export const isManager = state => isMemberOf(state, 'managers')
+export const isTester = state => isMemberOf(state, 'testers')
+export const myPriv = state => ({
+  guest: !isValid(state),
+  user: isValid(state),
+  admin: isAdmin(state),
+  manager: isManager(state),
+  tester: isTester(state)
+})
+
+export const signOut = async () => {
+  await auth.signOut()
+  window.location.href = signInUrl()
+}
+
+const onSignIn = async (state, me) => {
   state.authMessage = ''
-  window.localStorage.setItem('spacemoniAuthMessage', '')
-  // リアルタイム更新のデータを受信するまでアカウント情報を保持する。
+  window.localStorage.setItem('tamuroAuthMessage', '')
   state.me = utils.simplifyDoc(me)
-  // ストアを初期化する。
-  await initStore(state)
+  await initUserData(state)
 }
 
-// ログアウト時の処理。
-const onLogout = (state) => {
-  // ストアをクリアする。
-  clearStore(state)
+const onSignOut = state => {
+  clearUserData(state)
 }
 
-// ユーザ認証の状態を確認する。
+const validateEmailLink = async () => {
+  const email = window.localStorage.getItem('tamuroEmailLinkRequest')
+  window.localStorage.setItem('tamuroEmailLinkRequest', '')
+  window.localStorage.setItem('tamuroAuthMessage', '')
+  if (email) {
+    await auth.signInWithEmailLink(
+      email,
+      window.location.href
+    )
+  }
+  window.location.href = topUrl()
+}
+
 export const checkAuthStatus = async (state) => {
+  store.state.authMessage = window.localStorage.getItem('tamuroAuthMessage') || ''
   auth.onAuthStateChanged(async user => {
-    // E-mail リンクでログインの URL の場合、
     if (auth.isSignInWithEmailLink(window.location.href)) {
-      const email = window.localStorage.getItem('spacemoniEmailLinkRequest')
-      window.localStorage.setItem('spacemoniEmailLinkRequest', '')
-      window.localStorage.setItem('spacemoniAuthMessage', '')
-      if (email) {
-        // リンクを要求した E-mail アドレスが保存されている場合、
-        // E-mail リンクによるでログインを要求する。
-        await auth.signInWithEmailLink(
-          email,
-          window.location.href
-        )
-      }
-      window.location.href = topUrl()
+      await validateEmailLink(user)
     } else if (user) {
-      // 認証済みの場合、
-      // ログインユーザの情報を取得する。
       const me = await db.collection('accounts').doc(user.uid).get()
       if (me && me.exists && me.data().valid) {
-        // 正当なユーザの場合、ログインする。
-        await onLogin(state, me)
+        await onSignIn(state, me)
       } else {
-        // 無効なユーザの場合、ログアウトする。
-        await logout()
-        window.location.href = signInUrl()
+        await signOut()
       }
     } else {
-      // 認証されていない場合、ログアウト時の処理をする。
-      onLogout(state)
+      onSignOut(state)
     }
     setTimeout(() => { state.loading = false }, 500)
   })
 }
 
-// E-mail リンクでログインする。
 export const signInWithEmailLink = async state => {
   await auth.sendSignInLinkToEmail(state.credential.email, {
     url: window.location.href,
     handleCodeInApp: true
   })
-  window.localStorage.setItem('spacemoniEmailLinkRequest', state.credential.email)
-  state.authMessage = '入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。'
+  window.localStorage.setItem('tamuroEmailLinkRequest', state.credential.email)
+  state.authMessage = 'Sent message'
 }
 
-// パスワードでログインする。
 export const signInWithPassword = async state => {
   try {
     await auth.signInWithEmailAndPassword(
@@ -123,11 +101,10 @@ export const signInWithPassword = async state => {
       state.credential.password
     )
   } catch (e) {
-    state.authMessage = 'メールアドレスかパスワードが間違っています。'
+    state.authMessage = 'Invalid email or password'
   }
 }
 
-// パスワードリセットする。
 export const resetPassword = state => async () => {
   await auth.sendPasswordResetEmail(
     state.me.id ? state.me.email : state.credential.email,
@@ -136,38 +113,18 @@ export const resetPassword = state => async () => {
       handleCodeInApp: true
     }
   )
-  state.authMessage = '入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。'
-  window.localStorage.setItem('spacemoniAuthMessage', '')
+  state.authMessage = 'Sent message'
+  window.localStorage.setItem('tamuroAuthMessage', '')
 }
 
-// アクセス権制御
-export const guard = (me, route, router) => {
-  if (!route.name) {
-    // nothing to do
-  } else if (me && me.valid) {
-    if (route.name === 'signin') {
-      const pageSaved = window.localStorage.getItem('spacemoniPage')
-      window.localStorage.setItem('spacemoniPage', '')
-      const page = pageSaved ? JSON.parse(pageSaved) : { name: 'top' }
-      router.push(page).catch(() => {})
-    } else if (!(me.admin || me.tester)) {
-      if (['raw'].includes(route.name)) {
-        const next = { name: 'top' }
-        window.localStorage.setItem('spacemoniPage', JSON.stringify(next))
-        router.push(next).catch(() => {})
+export const initAuth = async state => {
+  if (state.me && state.me.id) {
+    state.unsubscribers.me = db.collection('accounts').doc(state.me.id).onSnapshot(async doc => {
+      if (doc && doc.exists && doc.data().valid) {
+        state.me = utils.simplifyDoc(doc)
+      } else {
+        await signOut()
       }
-    } else if (!me.admin) {
-      if (['brands', 'spaces', 'accounts', 'devices'].includes(route.name)) {
-        const next = { name: 'top' }
-        window.localStorage.setItem('spacemoniPage', JSON.stringify(next))
-        router.push(next).catch(() => {})
-      }
-    }
-  } else {
-    if (route.name !== 'signin') {
-      router.push({ name: 'signin' }).catch(() => {})
-    }
+    })
   }
 }
-
-export const isAdmin = state => state.me && state.me.valid && state.me.admin

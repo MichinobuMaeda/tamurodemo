@@ -72,7 +72,7 @@ https://console.firebase.google.com/
 $ mv ~/Downloads/tamuro-test01-firebase-adminsdk-q49yg-xxxxxxxx.json ./tamuro-test01-firebase-adminsdk.json
 ```
 
-### Initialize
+### Setup service
 
 ```
 $ node ./tools/setupService.js                                                                                                           [0:09:31]

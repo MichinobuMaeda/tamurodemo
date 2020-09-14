@@ -1,37 +1,15 @@
-// import axios from 'axios'
-import firebase from '../plugins/firebase'
-import * as utils from './utils'
+import { db } from '../plugins/firebase'
 import version from './version'
 
-const { db } = firebase
-
-// 保持データ
-export const serviceState = {
-  service: {},
-  version
-}
-
-const docsForAdmin = [
-  'ftp'
-]
-
-// status 以外の保持データをクリアする。
 export const clearService = state => {
-  docsForAdmin.forEach(doc => {
-    state.service = { ...state.service, [doc]: {} }
-  })
+  state.version = version
+  state.service = {}
 }
 
-// status 以外の保持データを設定する。
 export const initService = async state => {
-  if (state.me && state.me.valid && state.me.admin) {
-    docsForAdmin.forEach(doc => {
-      state.unsubscribers.accounts = db.collection('service').doc(doc)
-        .onSnapshot(async doc => {
-          const { id, ...data } = utils.simplifyDoc(doc)
-          state.service = { ...state.service, [id]: data }
-        })
-    })
+  state.service = {
+    ...(await db.collection('service').get()).docs
+      .reduce((ret, cur) => ({ ...ret, [cur.id]: cur.data() }), {})
   }
 }
 
@@ -48,17 +26,4 @@ export const updateApp = state => async () => {
     registration.unregister()
   })
   setTimeout(() => document.location.reload(true), 1000)
-}
-
-// 保持データを設定する。
-export const initCommonService = async state => {
-  const { id, ...data } = utils.simplifyDoc(
-    await db.collection('service').doc('status').get()
-  )
-  state.service[id] = data
-  db.collection('service').doc('status')
-    .onSnapshot(async doc => {
-      const { id, ...data } = utils.simplifyDoc(doc)
-      state.service = { ...state.service, [id]: data }
-    })
 }

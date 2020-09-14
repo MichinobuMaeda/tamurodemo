@@ -7,7 +7,10 @@ const initialData = ts => [
     id: 'conf',
     data: {
       version: moment.tz(ts, tz).format('SSSssmmHHDDMMYYYY'),
-      name: 'Tamuro'
+      name: 'Tamuro',
+      policy: `Privacy policy
+========
+`
     }
   },
   {
@@ -16,6 +19,22 @@ const initialData = ts => [
     data: {
       tz,
       locale: 'ja_JP'
+    }
+  },
+  {
+    collection: 'groups',
+    id: 'admins',
+    data: {
+      name: 'System admins',
+      members: []
+    }
+  },
+  {
+    collection: 'groups',
+    id: 'managers',
+    data: {
+      name: 'Managers',
+      members: []
     }
   }
 ]

@@ -4,7 +4,7 @@
       <v-progress-circular
         indeterminate
         size="96"
-        color="blue darken-2"
+        color="light-green darken-2"
       />
     </v-layout>
   </v-container>
