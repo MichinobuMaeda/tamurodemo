@@ -1,6 +1,8 @@
 {
+  "Top": "Home",
   "Sign in": "Sign in",
   "Privacy policy": "Privacy policy",
+  "Raw data": "Raw data",
   "Invalid email or password": "The email address or password is incorrect.",
   "Sent message": "Information has been sent to the email address you entered. Please close this page."
 }

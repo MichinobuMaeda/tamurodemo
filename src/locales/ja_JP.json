@@ -1,6 +1,8 @@
 {
+  "Top": "ホーム",
   "Sign in": "ログイン",
   "Privacy policy": "プライバシー・ポリシー",
+  "Raw data": "Raw data",
   "Invalid email or password": "メールアドレスかパスワードが間違っています。",
   "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。"
 }

@@ -2,36 +2,43 @@
   <v-app>
     <v-app-bar
       app
-      color="lime lighten-5"
+      :color="state.color.headerBg"
       dense
       hide-on-scroll
       elevation="0"
-      @click="goPage(state, $router, 'top')"
+      @click="$router.push({ name: 'top' }).catch(() => {})"
     >
       <img style="width: 40px;" src="img/icons/apple-touch-icon-120x120.png" alt="Sanno" />
       <v-toolbar-title
-        class="lime--text text--darken-4 text-h5 ml-2"
+        :class="state.color.headerText + ' text-h5 ml-2'"
       >
         Tamuro
       </v-toolbar-title>
     </v-app-bar>
 
     <v-main class="ma-3" v-if="state.loading">
-      <Loading />
+      <Loading :color="state.color.theme1" />
     </v-main>
     <v-main class="ma-3" v-else>
       <router-view />
     </v-main>
 
     <v-footer
-      color="lime lighten-5 black--text"
-      class="lime--text text--darken-4"
+      :color="state.color.footerBg"
+      :class="state.color.footerText"
       height="48px"
     >
       <span>Ver.</span>
     </v-footer>
 
-    <Menu />
+    <Menu
+      v-if="!state.loading"
+      :menu-color="state.color.theme1"
+      :menu-item-color="state.color.theme2"
+      :menuItems="menuItems(state, $router)"
+      :on-menu-moved="onMenuMoved(state)"
+      :position="state.menuPosition"
+    />
   </v-app>
 </template>
 

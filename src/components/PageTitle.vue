@@ -1,20 +1,28 @@
 <template>
-  <div class="light-green--text text--darken-3 text-h5 mb-4">
-    <v-icon color="light-green darken-3">{{ icon }}</v-icon>
+  <div :class="textColor + ' text-h5 mb-4'">
+    <v-icon :color="iconColor" large>{{ icon }}</v-icon>
     {{ title }}
   </div>
 </template>
 
 <script>
-import store from '../plugins/composition-api'
-
 export default {
   name: 'Loading',
-  props: ['icon', 'title'],
-  setup () {
-    // 保持データのストアを使用する。
-    const rootStore = store.useStore()
-    return rootStore
+  props: {
+    title: {
+      type: String
+    },
+    icon: {
+      type: String
+    },
+    textColor: {
+      type: String,
+      default: 'blue--text text--darken-3'
+    },
+    iconColor: {
+      type: String,
+      default: 'blue darken-3'
+    }
   }
 }
 </script>

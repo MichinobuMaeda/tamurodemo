@@ -1,5 +1,5 @@
-import { goPage } from "./ui";
-import { myPriv } from "./auth";
+import { myPriv } from './auth';
+import icon from './icons'
 
 const routePermission = (router, currentPriv, name) => {
   const route = router.match({ name })
@@ -10,34 +10,34 @@ const routePermission = (router, currentPriv, name) => {
   )
 }
 
-const menuItems = (state, router) => {
+const menuItems = (state, router) => () => {
   const currentPriv = myPriv(state)
   return [
     {
       label: 'Top',
-      icon: 'home',
+      icon: icon('Top'),
       visible: routePermission(router, currentPriv, 'top'),
-      action: () => { goPage(state, router, 'top') }
+      action: () => { router.push({ name: 'top' }).catch(() => {}) }
     },
     {
       label: 'Sign in',
-      icon: 'account_circle',
+      icon: icon('Sign in'),
       visible: routePermission(router, currentPriv, 'signin'),
-      action: () => { goPage(state, router, 'signin') }
+      action: () => { router.push({ name: 'signin' }).catch(() => {}) }
     },
     {
       label: 'Privacy policy',
-      icon: 'privacy_tip',
+      icon: icon('Privacy policy'),
       visible: routePermission(router, currentPriv, 'policy'),
-      action: () => { goPage(state, router, 'policy') }
+      action: () => { router.push({ name: 'policy' }).catch(() => {}) }
     },
     {
       label: 'Raw Data',
-      icon: 'memory',
+      icon: icon('Raw Data'),
       visible: routePermission(router, currentPriv, 'raw'),
-      action: () => { goPage(state, router, 'raw') }
+      action: () => { router.push({ name: 'raw' }).catch(() => {}) }
     }
-  ]
+  ].filter(item => item.visible)
 }
 
 export default menuItems

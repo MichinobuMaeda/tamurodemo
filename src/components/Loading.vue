@@ -4,21 +4,20 @@
       <v-progress-circular
         indeterminate
         size="96"
-        color="light-green darken-2"
+        :color="color"
       />
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import store from '../plugins/composition-api'
-
 export default {
   name: 'Loading',
-  setup () {
-    // 保持データのストアを使用する。
-    const rootStore = store.useStore()
-    return rootStore
+  props: {
+    color: {
+      type: String,
+      default: 'blue darken-2'
+    }
   }
 }
 </script>

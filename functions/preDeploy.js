@@ -8,8 +8,20 @@ const initialData = ts => [
     data: {
       version: moment.tz(ts, tz).format('SSSssmmHHDDMMYYYY'),
       name: 'Tamuro',
-      policy: `Privacy policy
-========
+      policy: `
+## h2
+
+p
+
+### h3
+
+- item
+- item
+
+p
+
+1. item
+2. item
 `
     }
   },
@@ -18,7 +30,8 @@ const initialData = ts => [
     id: 'defaults',
     data: {
       tz,
-      locale: 'ja_JP'
+      locale: 'ja_JP',
+      menuPosition: 'br'
     }
   },
   {

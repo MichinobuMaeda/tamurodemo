@@ -2,6 +2,7 @@ import { db } from '../plugins/firebase'
 import * as service from './service'
 import * as auth from './auth'
 import * as ui from './ui'
+import colors from './colors'
 import * as utils from './utils'
 
 export const clearUserData = state => {
@@ -11,6 +12,7 @@ export const clearUserData = state => {
   })
   auth.clearAuth(state)
   ui.clearUi(state)
+  state.color = colors
 }
 
 export const clearState = state => {

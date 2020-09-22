@@ -1,7 +1,12 @@
 <template>
   <v-row justify="center">
     <v-col sm="10" md="8" lg="6" xl="5">
-      <PageTitle title="Tamuro" icon="home" />
+      <PageTitle
+        :text-color="state.color.pageTitle"
+        :icon-color="state.color.pageIcon"
+        :title="$t('Top')"
+        :icon="icon('Top')"
+      />
     </v-col>
   </v-row>
 </template>

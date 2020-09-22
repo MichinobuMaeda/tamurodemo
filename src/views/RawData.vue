@@ -1,7 +1,12 @@
 <template>
   <v-row>
     <v-col col="12">
-      <PageTitle title="Raw data" icon="memory" />
+      <PageTitle
+        :text-color="state.color.pageTitle"
+        :icon-color="state.color.pageIcon"
+        :title="$t('Raw data')"
+        :icon="icon('Raw data')"
+      />
       <v-treeview
         :items="rawTree(state)"
         dense
