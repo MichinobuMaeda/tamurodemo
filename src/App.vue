@@ -6,7 +6,7 @@
       dense
       hide-on-scroll
       elevation="0"
-      @click="$router.push({ name: 'top' }).catch(() => {})"
+      @click="goPage($router, { name: 'top' })"
     >
       <img style="width: 40px;" src="img/icons/apple-touch-icon-120x120.png" alt="Sanno" />
       <v-toolbar-title

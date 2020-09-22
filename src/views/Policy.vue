@@ -7,6 +7,7 @@
         :title="$t('Privacy policy')"
         :icon="icon('Privacy policy')"
       />
+      <div v-html="compiledMarkdown(state.service.conf.policy)"></div>
     </v-col>
   </v-row>
 </template>

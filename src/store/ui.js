@@ -3,7 +3,6 @@ import { db } from '../plugins/firebase'
 export const clearUi = state => {
   state.loading = true
   state.waitUpdate = false
-  state.menuPosition = 'br'
 }
 
 export const initUi = async () => {}
