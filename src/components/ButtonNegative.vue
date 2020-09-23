@@ -3,7 +3,7 @@
     color="red"
     :icon="icon"
     :label="label"
-    @action="$emit('action')"
+    @click="$emit('click')"
     :disabled="disabled"
   />
 </template>
@@ -12,10 +12,10 @@
 import ButtonBase from './ButtonBase'
 
 export default {
-  name: 'ButtonPrimary',
+  name: 'ButtonNegative',
   components: {
     ButtonBase
   },
-  props: ['icon', 'label', 'action', 'disabled']
+  props: ['icon', 'label', 'click', 'disabled']
 }
 </script>

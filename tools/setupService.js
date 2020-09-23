@@ -1,6 +1,7 @@
 const prompts = require('prompts')
 const admin = require('firebase-admin')
 const preDeploy = require('../functions/preDeploy')
+const accounts = require('../functions/accounts')
 
 const serviceAccount = require('../tamuro-test01-firebase-adminsdk.json')
 
@@ -11,12 +12,11 @@ admin.initializeApp({
 
 const setupService = async () => {
   const db = admin.firestore()
-  const ts = new Date()
-  await preDeploy(db, ts)
+  const auth = admin.auth()
+  await preDeploy(db)
 
   // Create primary user.
-  const accounts = await db.collection('accounts').get()
-  if (accounts.docs.length) {
+  if ((await db.collection('accounts').get()).docs.length) {
     return true
   }
   const { name, email, password } = await prompts([
@@ -40,29 +40,13 @@ const setupService = async () => {
       hidden: true
     }
   ])
-  const defaults = await db.collection('service').doc('defaults').get()
-  const account = await db.collection('accounts').add({
-    email,
-    ...defaults.data(),
-    createdAt: ts,
-    updatedAt: ts
-  })
-  const uid = account.id
-  await db.collection('users').doc(uid).set({
-    name,
-    createdAt: ts,
-    updatedAt: ts
-  })
-  await db.collection('profiles').doc(uid).set({
-    createdAt: ts,
-    updatedAt: ts
-  })
-  console.log(`Create: accounts.${uid}`)
-  await admin.auth().createUser({
-    uid,
-    email,
-    password
-  })
+  const uid = await accounts.createAccount(db, auth, name)
+  if (email) {
+    await accounts.setEmail(db, auth, uid, email)
+  }
+  if (password) {
+    await accounts.setPassword(db, auth, uid, password)
+  }
   console.log(`Add memeber: accounts.${uid} to groups.admins`)
   await db.collection('groups').doc('admins').update({
     members: admin.firestore.FieldValue.arrayUnion(uid)

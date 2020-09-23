@@ -45,8 +45,9 @@
 <script>
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
-import store from './plugins/composition-api'
-import { onMounted } from '@vue/composition-api'
+import { initStore, useStore } from './plugins/composition-api'
+import { onMounted, watchEffect } from '@vue/composition-api'
+import guard from './router/guard'
 
 export default {
   name: 'App',
@@ -54,13 +55,16 @@ export default {
     Menu,
     Loading
   },
-  setup (/* props, context */) {
-    store.provideStore(store)
-    onMounted(async function () {
+  setup (props, context) {
+    const store = initStore()
+    onMounted(async () => {
       await store.initService(store.state)
       await store.checkAuthStatus(store.state)
     })
-    return store.useStore()
+    watchEffect(() => {
+      guard(context.root.$router, context.root.$route, store.state)
+    })
+    return useStore()
   }
 }
 </script>

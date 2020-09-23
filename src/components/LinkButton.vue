@@ -1,23 +1,19 @@
 <template>
   <v-btn
-    class="ma-2"
-    :rounded="!!label"
-    :outlined="!!label"
-    :fab="!label"
-    :small="!label"
-    :dark="!label"
+    class="ma-1"
+    text
     :color="color"
     @click="$emit('click')"
     :disabled="disabled"
   >
-    <v-icon v-if="icon" :class="label ? 'mr-2' : ''">{{ icon }}</v-icon>
-    {{ label }}
+    <v-icon small v-if="icon" :class="label ? 'mr-1' : ''">{{ icon }}</v-icon>
+    <span class="text-decoration-underline">{{ label }}</span>
   </v-btn>
 </template>
 
 <script>
 export default {
-  name: 'ButtonBase',
+  name: 'LinkButton',
   props: {
     icon: {
       type: String,
@@ -37,7 +33,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'secondary'
+      default: 'primary'
     }
   }
 }

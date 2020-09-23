@@ -1,4 +1,3 @@
-import state from '../plugins/composition-api'
 import { myPriv } from '../store/auth'
 
 const defaultPageForUser = { name: 'top' }
@@ -17,31 +16,27 @@ const getRequestedPage = () => {
   }
 }
 
-const guard = (to, from, next) => {
+const guard = (router, route, state) => {
   const currentPriv = myPriv(state)
   const lastPage = getRequestedPage()
   if (currentPriv.user && lastPage) {
     window.localStorage.setItem('tamuroRequestedPage', '')
-    if (to.path !== lastPage.path) {
-      next(lastPage)
-    } else {
-      next()
+    if (route.path !== lastPage.path) {
+      router.push(lastPage).catch(() => {})
     }
   } else if (Object.keys(currentPriv).some(
-    priv => currentPriv[priv] && to.matched.some(
+    priv => currentPriv[priv] && route.matched.some(
       record => record.meta.privs.includes(priv)
     )
   )) {
-    next()
+    // to do nothing
   } else {
     const target = currentPriv.user ? defaultPageForUser : defaultPageForGuest
-    if (to.path !== target.path) {
+    if (route.path !== target.path) {
       if (currentPriv.guest) {
-        window.localStorage.setItem('tamuroRequestedPage', JSON.stringify(to.path))
+        window.localStorage.setItem('tamuroRequestedPage', JSON.stringify(route.path))
       }
-      next(target)
-    } else {
-      next()
+      router.push(target).catch(() => {})
     }
   }
 }

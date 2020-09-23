@@ -1,12 +1,3 @@
-import marked from 'marked'
-import sanitizeHtml from 'sanitize-html'
-
-export const compiledMarkdown = md => sanitizeHtml(marked(md), {
-  allowedTags: ['h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-    'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div',
-    'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
-})
-
 export const goPage = (router, route) => {
   if (!['signin', 'policy'].includes(route.name)) {
     window.localStorage.setItem('tamuroRequestedPage', JSON.stringify(route))

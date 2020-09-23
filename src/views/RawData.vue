@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import store from '../plugins/composition-api'
+import { useStore } from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
 
 export default {
@@ -29,7 +29,7 @@ export default {
     PageTitle
   },
   setup () {
-    return store.useStore()
+    return useStore()
   }
 }
 </script>

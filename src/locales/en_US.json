@@ -1,8 +1,22 @@
 {
+  "OK": "OK",
+  "Cancel": "Cancel",
   "Top": "Home",
   "Sign in": "Sign in",
+  "Sign out": "Sign out",
+  "Confirm sign out": "Do you really want to sign out?",
+  "My profile": "{user}'s profile",
   "Privacy policy": "Privacy policy",
   "Raw data": "Raw data",
   "Invalid email or password": "The email address or password is incorrect.",
-  "Sent message": "Information has been sent to the email address you entered. Please close this page."
+  "Sent message": "Information has been sent to the email address you entered. Please close this page.",
+  "E-mail": "E-mail",
+  "Password": "Password",
+  "Select sign-in method without password": "You can use a login method that does not use a password.",
+  "Get sign-in link": "Receive a link to Sign-in",
+  "Sign-in with password": "Sign-in with password",
+  "Forgot password?": "Forgot password?",
+  "Reset password": "Reset password",
+  "Invalid E-mail format": "Please enter your email address in the correct format.",
+  "Invalid password": "Please enter a password of at least 8 characters."
 }

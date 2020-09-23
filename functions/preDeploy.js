@@ -9,19 +9,20 @@ const initialData = ts => [
       version: moment.tz(ts, tz).format('SSSssmmHHDDMMYYYY'),
       name: 'Tamuro',
       policy: `
-## h2
+## Headings level 2
 
-p
+### Headings level 3
 
-### h3
+- list item without number
+- list item without number
 
-- item
-- item
+paragraph paragraph paragraph paragraph paragraph paragraph
+paragraph paragraph paragraph paragraph paragraph paragraph.
+paragraph paragraph paragraph paragraph paragraph paragraph
+paragraph paragraph paragraph paragraph paragraph paragraph.
 
-p
-
-1. item
-2. item
+1. list item with number
+2. list item with number
 `
     }
   },
@@ -52,7 +53,8 @@ p
   }
 ]
 
-const preDeploy = async (db, ts) => {
+const preDeploy = async db => {
+  const ts = new Date()
   await Promise.all(
     initialData(ts).map(async item => {
       const { collection, id, data } = item

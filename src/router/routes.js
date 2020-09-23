@@ -12,6 +12,12 @@ const routes = [
     meta: { privs: ['user', 'guest'] }
   },
   {
+    path: '/me',
+    name: 'myprofile',
+    component: () => import('../views/MyProfile.vue'),
+    meta: { privs: ['user'] }
+  },
+  {
     path: '/signin',
     name: 'signin',
     component: () => import('../views/SignIn.vue'),

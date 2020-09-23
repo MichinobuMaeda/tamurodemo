@@ -5,11 +5,11 @@ import store from '../store'
 Vue.use(VueCompositionApi)
 
 const RootStoreSymbol = Symbol('rootStore')
-const state = {}
 
-export default {
-  state: reactive(store.clearState(state)),
-  provideStore: store => { provide(RootStoreSymbol, store) },
-  useStore: () => inject(RootStoreSymbol),
-  ...store
+export const initStore = () => {
+  store.state = reactive(store.clearState({}))
+  provide(RootStoreSymbol, store)
+  return store
 }
+
+export const useStore = () => inject(RootStoreSymbol)

@@ -23,7 +23,7 @@ export const clearState = state => {
 
 export const initUserData = async state => {
   const priv = auth.myPriv(state)
-  if (!priv.valid) {
+  if (priv.guest) {
     clearUserData(state)
   } else {
     state.groups = (

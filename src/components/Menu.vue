@@ -39,7 +39,7 @@
             <v-icon>{{ item.icon }}</v-icon>
           </v-btn>
         </template>
-        <span>{{ $t(item.label) }}</span>
+        <span>{{ Array.isArray(item.label) ? $t(item.label[0], item.label[1]) : $t(item.label) }}</span>
       </v-tooltip>
     </div>
     <v-btn

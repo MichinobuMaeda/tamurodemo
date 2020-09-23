@@ -7,22 +7,24 @@
         :title="$t('Privacy policy')"
         :icon="icon('Privacy policy')"
       />
-      <div v-html="compiledMarkdown(state.service.conf.policy)"></div>
+      <Markdown :src="state.service.conf.policy" />
     </v-col>
   </v-row>
 </template>
 
 <script>
-import store from '../plugins/composition-api'
+import { useStore } from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
+import Markdown from '../components/Markdown'
 
 export default {
   name: 'PagePolicy',
   components: {
-    PageTitle
+    PageTitle,
+    Markdown
   },
   setup () {
-    return store.useStore()
+    return useStore()
   }
 }
 </script>

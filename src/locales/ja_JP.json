@@ -1,8 +1,22 @@
 {
+  "OK": "OK",
+  "Cancel": "取り消す",
   "Top": "ホーム",
   "Sign in": "ログイン",
+  "Sign out": "ログアウト",
+  "Confirm sign out": "本当にログアウトしますか？",
+  "My profile": "{user} さんの設定",
   "Privacy policy": "プライバシー・ポリシー",
   "Raw data": "Raw data",
+  "E-mail": "メールアドレス",
+  "Password": "パスワード",
+  "Select sign-in method without password": "パスワードを使わないログイン方法を利用できます。",
+  "Get sign-in link": "ログインするためのリンクを受け取る",
+  "Sign-in with password": "パスワードでログインする",
+  "Forgot password?": "パスワードを忘れた場合...",
+  "Reset password": "パスワードを再設定する",
+  "Invalid E-mail format": "メールアドレスを正しい書式で記入してください。",
+  "Invalid password": "8文字以上のパスワードを入力してください。",
   "Invalid email or password": "メールアドレスかパスワードが間違っています。",
   "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。"
 }

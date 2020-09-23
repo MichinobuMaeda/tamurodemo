@@ -3,7 +3,7 @@
     color="primary"
     :icon="icon"
     :label="label"
-    @action="$emit('action')"
+    @click="$emit('click')"
     :disabled="disabled"
   />
 </template>
@@ -16,6 +16,6 @@ export default {
   components: {
     ButtonBase
   },
-  props: ['icon', 'label', 'action', 'disabled']
+  props: ['icon', 'label', 'click', 'disabled']
 }
 </script>

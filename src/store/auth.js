@@ -1,7 +1,7 @@
 import { auth, db } from '../plugins/firebase'
 import * as utils from './utils'
 import { clearUserData, initUserData } from './init'
-import store from "@/plugins/composition-api";
+import {getById} from "./utils";
 
 const topUrl = () => window.location.href
   .replace(/\?.*/, '')
@@ -14,8 +14,9 @@ export const clearAuth = state => {
   state.me = {}
   state.credential = {}
   state.unsubscribers = {}
-  state.confirmLogout = false
+  state.confirmSginOut = false
   state.authMessage = ''
+  state.showPassword = false
 }
 
 export const validateEmail = str => (!str) || /^(\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+|none)$/.test(str)
@@ -36,9 +37,11 @@ export const myPriv = state => ({
   manager: isManager(state),
   tester: isTester(state)
 })
+export const myName = state => getById(state.users, state.me.id).name || 'Guest'
 
-export const signOut = async () => {
+export const signOut = async state => {
   await auth.signOut()
+  state.confirmSginOut = false
   window.location.href = signInUrl()
 }
 
@@ -67,7 +70,7 @@ const validateEmailLink = async () => {
 }
 
 export const checkAuthStatus = async (state) => {
-  store.state.authMessage = window.localStorage.getItem('tamuroAuthMessage') || ''
+  state.authMessage = window.localStorage.getItem('tamuroAuthMessage') || ''
   auth.onAuthStateChanged(async user => {
     if (auth.isSignInWithEmailLink(window.location.href)) {
       await validateEmailLink(user)
@@ -105,7 +108,8 @@ export const signInWithPassword = async state => {
   }
 }
 
-export const resetPassword = state => async () => {
+export const resetPassword = async state => {
+  console.info('resetPassword')
   await auth.sendPasswordResetEmail(
     state.me.id ? state.me.email : state.credential.email,
     {
@@ -117,14 +121,14 @@ export const resetPassword = state => async () => {
   window.localStorage.setItem('tamuroAuthMessage', '')
 }
 
-export const initAuth = async state => {
-  if (state.me && state.me.id) {
-    state.unsubscribers.me = db.collection('accounts').doc(state.me.id).onSnapshot(async doc => {
-      if (doc && doc.exists && doc.data().valid) {
-        state.me = utils.simplifyDoc(doc)
-      } else {
-        await signOut()
-      }
-    })
-  }
-}
+// export const initAuth = async state => {
+//   if (state.me && state.me.id) {
+//     state.unsubscribers.me = db.collection('accounts').doc(state.me.id).onSnapshot(async doc => {
+//       if (doc && doc.exists && doc.data().valid) {
+//         state.me = utils.simplifyDoc(doc)
+//       } else {
+//         await signOut()
+//       }
+//     })
+//   }
+// }
