@@ -4,6 +4,10 @@ jobs:
   build:
     runs-on: michinobumaeda/firebase-tools
     steps:
-      - uses: actions/checkout@v2
-      - name: Build all
-      - run: cd functions && yarn & cd
+    - uses: actions/checkout@v2
+    - name: Build all
+    - run: cd functions
+    - run: yarn
+    - run: cd
+    - run: yarn
+    - run: yarn build
