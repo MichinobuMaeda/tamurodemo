@@ -16,8 +16,11 @@ jobs:
     - name: Set Firebase API Key
       env:
         API_KEY: ${{ secrets.API_KEY_TAMURO_TEST01 }}
-      run: echo "export default '$API_KEY'" > ${GITHUB_WORKSPACE}/src/plugins/firebase-api-key.js
+      working-directory: ${{ github.workspace }}
+      run: echo "export default '$API_KEY'" > src/plugins/firebase-api-key.js
     - name: UI version
-      run: echo "export default '`git rev-parse --short HEAD`'" > ${GITHUB_WORKSPACE}/src/store/version.js
+      working-directory: ${{ github.workspace }}
+      run: echo "export default '`git rev-parse --short HEAD`'" > src/store/version.js
     - name: Build UI
+      working-directory: ${{ github.workspace }}
       run: yarn build
