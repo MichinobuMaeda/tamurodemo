@@ -6,8 +6,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build all
-      - run: cd functions
-      - run: yarn
-      - run: cd ..
-      - run: yarn
-      - run: yarn build
+      - run: cd functions && yarn & cd
