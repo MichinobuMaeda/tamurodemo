@@ -2,12 +2,16 @@ name: Firebase CI/CD
 on: [push]
 jobs:
   build:
-    runs-on: michinobumaeda/firebase-tools
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build all
-    - run: cd functions
-    - run: yarn
-    - run: cd
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+    - name: Install dependencies
+    - run: npm -g i yarn
+    - name: Build UI
     - run: yarn
     - run: yarn build
