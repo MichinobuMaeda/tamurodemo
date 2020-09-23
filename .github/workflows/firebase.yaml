@@ -5,13 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build all
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
         node-version: '10.x'
     - name: Install dependencies
-    - run: npm -g i yarn
+      run: npm -g i yarn
+    - name: Install Packages of UI
+      run: yarn
     - name: Build UI
-    - run: yarn
-    - run: yarn build
+      run: yarn build
