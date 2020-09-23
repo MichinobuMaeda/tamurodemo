@@ -10,8 +10,14 @@ jobs:
       with:
         node-version: '10.x'
     - name: Install dependencies
-      run: npm -g i yarn
+      run: npm -g i yarn firebase-tools
     - name: Install Packages of UI
       run: yarn
+    - name: Set Firebase API Key
+      env:
+        API_KEY: ${{ secrets.API_KEY_TAMURO_TEST01 }}
+      run: echo "export default '$API_KEY'" > ./src/plugins/fireabse-api-key.js
+    - name: UI version
+      run: echo "export default '`git rev-parse --short HEAD`'" > ./src/store/version.js
     - name: Build UI
       run: yarn build
