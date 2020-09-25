@@ -87,8 +87,9 @@ const updateVersion = async db => {
   const confRef = db.collection('service').doc('conf')
   const conf = await confRef.get()
   const response = await axios.get(`${conf.data().hosting}/version.json`)
+  const version = response.data.version
   if (conf.data().version !== response.data.version) {
-    console.log(`update from ${conf.data().version} to ${response.data.version}`)
+    console.log(`update from ${conf.data().version} to ${version}`)
     await updateService(db)
     await confRef.update({ version })
   }
