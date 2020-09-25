@@ -34,9 +34,6 @@ jobs:
       working-directory: ${{ github.workspace }}/functions
       run: yarn --frozen-lockfile
 
-    - name: Set version to Functions
-      run: echo "module.exports = '`git rev-parse --short HEAD`'" > functions/version.js
-
     - name: Deploy
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
