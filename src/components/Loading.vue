@@ -1,12 +1,14 @@
 <template>
-  <v-container fluid fill-height>
-    <v-layout align-center justify-center>
-      <v-progress-circular
-        indeterminate
-        size="96"
-        :color="color"
-      />
-    </v-layout>
+  <v-container fill-height>
+    <v-row justify="center">
+      <v-col class="text-center">
+        <v-progress-circular
+          indeterminate
+          :size="size"
+          :color="color"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -17,6 +19,10 @@ export default {
     color: {
       type: String,
       default: 'blue darken-2'
+    },
+    size: {
+      type: Number,
+      default: 64
     }
   }
 }

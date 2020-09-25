@@ -28,8 +28,8 @@ const menuItems = (state, router) => () => {
       action: () => { goPage(router,{ name: 'signin' }) }
     },
     {
-      label: ['My profile', { user: myName(state) }],
-      icon: icon('My profile'),
+      label: ['Profile and Settings', { user: myName(state) }],
+      icon: icon('Profile and Settings'),
       visible: routePermission(router, currentPriv, 'myprofile'),
       action: () => { goPage(router,{ name: 'myprofile' }) }
     },
@@ -38,6 +38,12 @@ const menuItems = (state, router) => () => {
       icon: icon('Privacy policy'),
       visible: routePermission(router, currentPriv, 'policy'),
       action: () => { goPage(router,{ name: 'policy' }) }
+    },
+    {
+      label: 'Service settings',
+      icon: icon('Service settings'),
+      visible: routePermission(router, currentPriv, 'service'),
+      action: () => { goPage(router,{ name: 'service' }) }
     },
     {
       label: 'Raw data',

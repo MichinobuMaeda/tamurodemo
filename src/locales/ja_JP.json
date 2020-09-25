@@ -1,12 +1,20 @@
 {
   "OK": "OK",
   "Cancel": "取り消す",
+  "Create": "新規作成",
+  "Edit": "編集",
+  "Save": "保存",
+  "Delete": "削除",
+  "Update": "更新",
+  "Add to": "{container} に追加する",
+  "Remove from": "{container} から削除する",
   "Top": "ホーム",
   "Sign in": "ログイン",
   "Sign out": "ログアウト",
   "Confirm sign out": "本当にログアウトしますか？",
-  "My profile": "{user} さんの設定",
+  "Profile and Settings": "{user} さんの設定",
   "Privacy policy": "プライバシー・ポリシー",
+  "Service settings": "サービスの設定",
   "Raw data": "Raw data",
   "E-mail": "メールアドレス",
   "Password": "パスワード",
@@ -18,5 +26,6 @@
   "Invalid E-mail format": "メールアドレスを正しい書式で記入してください。",
   "Invalid password": "8文字以上のパスワードを入力してください。",
   "Invalid email or password": "メールアドレスかパスワードが間違っています。",
-  "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。"
+  "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。",
+  "Update app": "アプリを更新してください"
 }

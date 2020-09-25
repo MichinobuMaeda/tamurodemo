@@ -56,7 +56,7 @@ $ firebase init
     Firestore, Functions, Hosting, Storage, Emulators
 ? Select a default Firebase project for this directory:
     Using project tamuro-test01
-$ echo "export default 'development'" > src/store/version.js
+$ node tools/resetTestVersion.js
 $ echo "export default 'Web API Key'" > src/plugins/firebase-api-key.js
 ```
 

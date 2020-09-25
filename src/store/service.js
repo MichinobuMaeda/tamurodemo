@@ -1,4 +1,4 @@
-import { db } from '../plugins/firebase'
+import { db, functions } from '../plugins/firebase'
 import version from './version'
 
 export const clearService = state => {
@@ -9,28 +9,20 @@ export const clearService = state => {
   state.tz = 'Asia/Tokyo'
 }
 
-export const initService = async state => {
-  state.service = {
-    ...(await db.collection('service').get()).docs
-      .reduce((ret, cur) => ({ ...ret, [cur.id]: cur.data() }), {})
-  }
+const onServiceUpdate = (state, querySnapshot) => {
+  const service = {}
+  querySnapshot.forEach(doc => service[doc.id] = doc.data())
+  state.service = service
   if (state.service.defaults) {
     const keys = ['menuPosition', 'locale', 'tz']
     keys.forEach(key => { state[key] = state.service.defaults[key] || state[key] })
   }
 }
-
-export const updateAvailable = state =>
-  // version !== 'development' &&
-  state.service.status &&
-  state.service.status.version &&
-  state.service.status.version !== state.version
-
-export const updateApp = state => async () => {
-  state.loading = true
-  const registrations = await navigator.serviceWorker.getRegistrations()
-  registrations.forEach(registration => {
-    registration.unregister()
-  })
-  setTimeout(() => document.location.reload(true), 1000)
+export const initService = async state => {
+  onServiceUpdate(state, await db.collection('service').get())
+  db.collection('service').onSnapshot(
+    querySnapshot => onServiceUpdate(state, querySnapshot)
+  )
 }
+
+export const updateServiceVersion = () => functions.httpsCallable("updateServiceVersion").call()

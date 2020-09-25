@@ -7,14 +7,10 @@
         :title="$t('Raw data')"
         :icon="icon('Raw data')"
       />
-      <v-treeview
-        :items="rawTree(state)"
-        dense
-      >
-        <template v-slot:label="{ item }">
-          <span class="light-green--text text--darken-3">{{ item.name }}:</span> {{ item.value }}
-        </template>
-      </v-treeview>
+      <RawDataTree
+        :text-color="state.color.pageTitle"
+        :state="state"
+      />
     </v-col>
   </v-row>
 </template>
@@ -22,11 +18,13 @@
 <script>
 import { useStore } from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
+import RawDataTree from '../components/RawDataTree'
 
 export default {
-  name: 'RawData',
+  name: 'PageRawData',
   components: {
-    PageTitle
+    PageTitle,
+    RawDataTree
   },
   setup () {
     return useStore()

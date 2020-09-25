@@ -17,9 +17,15 @@
     </v-app-bar>
 
     <v-main class="ma-3" v-if="state.loading">
-      <Loading :color="state.color.theme1" />
+      <Loading :color="state.color.theme1" :size="96" />
     </v-main>
     <v-main class="ma-3" v-else>
+      <AppUpdater
+        v-if="state.service.conf && state.service.conf.version !== state.version"
+        color="orange darken-4"
+        :label="$t('Update app')"
+        :icon="icon('Update app')"
+      />
       <router-view />
     </v-main>
 
@@ -28,7 +34,7 @@
       :class="state.color.footerText"
       height="48px"
     >
-      <span>Ver.</span>
+      <span>Ver. {{ state.version }}</span>
     </v-footer>
 
     <Menu
@@ -42,9 +48,14 @@
   </v-app>
 </template>
 
+<style lang="scss">
+@import 'sass/index.scss';
+</style>
+
 <script>
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
+import AppUpdater from './components/AppUpdater'
 import { initStore, useStore } from './plugins/composition-api'
 import { onMounted, watchEffect } from '@vue/composition-api'
 import guard from './router/guard'
@@ -53,7 +64,8 @@ export default {
   name: 'App',
   components: {
     Menu,
-    Loading
+    Loading,
+    AppUpdater
   },
   setup (props, context) {
     const store = initStore()

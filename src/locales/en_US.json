@@ -1,12 +1,20 @@
 {
   "OK": "OK",
   "Cancel": "Cancel",
+  "Create": "Create",
+  "Edit": "Edit",
+  "Save": "Save",
+  "Delete": "Delete",
+  "Update": "Update",
+  "Add to": "Add to {container}",
+  "Remove from": "Remove from {container}",
   "Top": "Home",
   "Sign in": "Sign in",
   "Sign out": "Sign out",
   "Confirm sign out": "Do you really want to sign out?",
-  "My profile": "{user}'s profile",
+  "Profile and Settings": "{user}'s settings",
   "Privacy policy": "Privacy policy",
+  "Service settings": "Service settings",
   "Raw data": "Raw data",
   "Invalid email or password": "The email address or password is incorrect.",
   "Sent message": "Information has been sent to the email address you entered. Please close this page.",
@@ -18,5 +26,6 @@
   "Forgot password?": "Forgot password?",
   "Reset password": "Reset password",
   "Invalid E-mail format": "Please enter your email address in the correct format.",
-  "Invalid password": "Please enter a password of at least 8 characters."
+  "Invalid password": "Please enter a password of at least 8 characters.",
+  "Update app": "Please update this app"
 }

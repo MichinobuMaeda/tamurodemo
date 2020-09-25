@@ -16,6 +16,23 @@ export default {
   components: {
     ButtonBase
   },
-  props: ['icon', 'label', 'click', 'disabled']
+  props: {
+    icon: {
+      type: String,
+      default: null
+    },
+    label: {
+      type: String,
+      default: null
+    },
+    click: {
+      type: Function,
+      default: () => {}
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  }
 }
 </script>

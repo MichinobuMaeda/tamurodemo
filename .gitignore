@@ -1,4 +1,5 @@
 /functions/.runtimeconfig.json
+/functions/version.js
 /src/plugins/firebase-api-key.js
 /src/store/version.js
 /dist

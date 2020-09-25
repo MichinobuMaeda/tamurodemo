@@ -1,6 +1,6 @@
 const prompts = require('prompts')
 const admin = require('firebase-admin')
-const preDeploy = require('../functions/preDeploy')
+const { updateService } = require('../functions/service')
 const accounts = require('../functions/accounts')
 
 const serviceAccount = require('../tamuro-test01-firebase-adminsdk.json')
@@ -13,7 +13,7 @@ admin.initializeApp({
 const setupService = async () => {
   const db = admin.firestore()
   const auth = admin.auth()
-  await preDeploy(db)
+  await updateService(db)
 
   // Create primary user.
   if ((await db.collection('accounts').get()).docs.length) {

@@ -4,8 +4,8 @@
       <PageTitle
         :text-color="state.color.pageTitle"
         :icon-color="state.color.pageIcon"
-        :title="$t('My profile', { user: myName(state) })"
-        :icon="icon('My profile')"
+        :title="$t('Profile and Settings', { user: myName(state) })"
+        :icon="icon('Profile and Settings')"
       />
       <div v-if="!state.confirmSginOut">
         <ButtonNegative

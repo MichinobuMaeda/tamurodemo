@@ -1,7 +1,7 @@
 <template>
   <div
     class="pa-2"
-    :style="menuStyle"
+    :style="state.menuStyle"
   >
     <v-btn
       v-if="position.slice(0, 1) === 't'"
@@ -9,23 +9,23 @@
       fab
       :color="menuColor"
       @click="onMenuClick"
-      @mousedown="mouseDown = true"
-      @mouseup="mouseDown = false"
-      @mouseleave="mouseDown = false"
-      @mousemove="menuSwipe"
+      @mousedown="state.mouseDown = true"
+      @mouseup="state.mouseDown = false"
+      @mouseleave="state.mouseDown = false"
+      @mousemove="onMenuSwipe"
     >
-      <v-icon v-if="menuOpen">close</v-icon>
+      <v-icon v-if="state.menuOpen">close</v-icon>
       <v-icon v-else>menu</v-icon>
     </v-btn>
     <div
-      v-for="(item, index) in items" :key="index"
+      v-for="(item, index) in state.items" :key="index"
       class="text-center py-2"
     >
       <v-tooltip
-        :left="toolChipLeft"
-        :right="toolChipRight"
-        v-if="menuOpen"
-        :value="toolChip"
+        :left="state.toolChipLeft"
+        :right="state.toolChipRight"
+        v-if="state.menuOpen"
+        :value="state.toolChip"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -34,7 +34,7 @@
             fab
             small
             :color="menuItemColor"
-            @click="menuOpen = !menuOpen; item.action()"
+            @click="state.menuOpen = !state.menuOpen; item.action()"
           >
             <v-icon>{{ item.icon }}</v-icon>
           </v-btn>
@@ -48,18 +48,20 @@
       fab
       :color="menuColor"
       @click="onMenuClick"
-      @mousedown="mouseDown = true"
-      @mouseup="mouseDown = false"
-      @mouseleave="mouseDown = false"
-      @mousemove="menuSwipe"
+      @mousedown="state.mouseDown = true"
+      @mouseup="state.mouseDown = false"
+      @mouseleave="state.mouseDown = false"
+      @mousemove="onMenuSwipe"
     >
-      <v-icon v-if="menuOpen">close</v-icon>
+      <v-icon v-if="state.menuOpen">close</v-icon>
       <v-icon v-else>menu</v-icon>
     </v-btn>
   </div>
 </template>
 
 <script>
+import { reactive, computed } from '@vue/composition-api'
+
 const menuStyles = {
   tl: {
     position: 'fixed',
@@ -111,90 +113,77 @@ export default {
       default: null
     },
   },
-  data () {
-    return  {
+  setup(props) {
+    const isTop = () => props.position.slice(0, 1) === 't'
+    const isBottom = () => props.position.slice(0, 1) === 'b'
+    const isLeft = () => props.position.slice(1) === 'l'
+    const isRight = () => props.position.slice(1) === 'r'
+
+    const state = reactive({
       menuOpen: false,
       toolChip: false,
       toolChipTimer: null,
-      mouseDown: false
+      mouseDown: false,
+      menuStyle: computed(() => menuStyles[props.position]),
+      toolChipLeft: computed(isRight),
+      toolChipRight: computed(isLeft),
+      items: computed(() => isBottom() ? [...props.menuItems()].reverse() : [...props.menuItems()])
+    })
+
+    const openMenu = () => {
+      state.menuOpen = true
+      state.toolChip = false
+      state.toolChipTimer = setTimeout(() => { state.toolChip = true }, 300)
     }
-  },
-  methods: {
-    openMenu () {
-      this.menuOpen = true
-      this.toolChip = false
-      this.toolChipTimer = setTimeout(() => { this.toolChip = true }, 300)
-    },
-    closeMenu () {
-      this.menuOpen = false
-      this.toolChip = false
-      this.toolChipTimer = null
-    },
-    onMenuClick () {
-      if (this.menuOpen) {
-        this.closeMenu()
+
+    const closeMenu = () => {
+      state.menuOpen = false
+      state.toolChip = false
+      state.toolChipTimer = null
+    }
+
+    const onMenuClick = () => {
+      if (state.menuOpen) {
+        closeMenu()
       } else {
-        this.openMenu()
+        openMenu()
       }
-    },
-    isTop () {
-      return this.position.slice(0, 1) === 't'
-    },
-    isBottom () {
-      return this.position.slice(0, 1) === 'b'
-    },
-    isLeft () {
-      return this.position.slice(1) === 'l'
-    },
-    isRight () {
-      return this.position.slice(1) === 'r'
-    },
-    menuSwipe (event) {
-      if (!this.mouseDown) {
+    }
+
+    const onMenuSwipe = event => {
+      if (!state.mouseDown) {
         return
       }
-      var position = this.position
+      var position = props.position
       if (event.movementX < -2) {
-        if (this.isRight()) {
+        if (isRight()) {
           position = position.slice(0, 1) + 'l'
         }
       } else if (event.movementX > 2) {
-        if (this.isLeft()) {
+        if (isLeft()) {
           position = position.slice(0, 1) + 'r'
         }
       } else if (event.movementY < -2) {
-        if (this.isBottom()) {
+        if (isBottom()) {
           position = 't' + position.slice(1)
         }
       } else if (event.movementY > 2) {
-        if (this.isTop()) {
+        if (isTop()) {
           position = 'b' + position.slice(1)
         }
       }
-      if (position !== this.position) {
-        this.closeMenu()
-        if (this.onMenuMoved) {
-          this.onMenuMoved(position)
+      if (position !== props.position) {
+        closeMenu()
+        if (props.onMenuMoved) {
+          props.onMenuMoved(position)
         }
       }
     }
-  },
-  computed: {
-    menuStyle () {
-      return menuStyles[this.position]
-    },
-    toolChipLeft () {
-      return this.isRight()
-    },
-    toolChipRight () {
-      return this.isLeft()
-    },
-    items () {
-      const items = this.menuItems()
-      if (this.isBottom()) {
-        items.reverse()
-      }
-      return items
+
+    return {
+      state,
+      onMenuClick,
+      onMenuSwipe
     }
   }
 }

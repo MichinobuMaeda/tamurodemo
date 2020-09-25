@@ -1,4 +1,5 @@
 const moment = require('moment-timezone')
+const version = require('./version')
 
 const tz = 'Asia/Tokyo'
 const initialData = ts => [
@@ -6,7 +7,7 @@ const initialData = ts => [
     collection: 'service',
     id: 'conf',
     data: {
-      version: moment.tz(ts, tz).format('SSSssmmHHDDMMYYYY'),
+      version: '0000000',
       name: 'Tamuro',
       policy: `
 ## Headings level 2
@@ -53,7 +54,7 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
   }
 ]
 
-const preDeploy = async db => {
+const updateService = async db => {
   const ts = new Date()
   await Promise.all(
     initialData(ts).map(async item => {
@@ -81,4 +82,17 @@ const preDeploy = async db => {
   )
 }
 
-module.exports = preDeploy
+const updateVersion = async db => {
+  const confRef = db.collection('service').doc('conf')
+  const conf = await confRef.get()
+  if (conf.data().versoin !== version) {
+    await updateService(db)
+    await confRef.update({ version })
+  }
+  return version
+}
+
+module.exports = {
+  updateService,
+  updateVersion
+}

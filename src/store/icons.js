@@ -7,7 +7,7 @@ const iconList = {
   'Privacy policy': 'privacy_tip',
   'Group': 'people',
   'User': 'person',
-  'My profile': 'contact_page',
+  'Profile and Settings': 'contact_page',
   'Service': 'settings',
   'Edit': 'edit',
   'Add': 'add',
@@ -16,6 +16,9 @@ const iconList = {
   'Visible': 'visibility',
   'Invisible': 'visibility_off',
   'Send': 'send',
+  'Update app': 'system_update_alt',
+  'Update service': 'system_update_alt',
+  'Service settings': 'settings',
   'Raw data': 'memory'
 }
 

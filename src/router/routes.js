@@ -6,6 +6,12 @@ const routes = [
     meta: { privs: ['user'] }
   },
   {
+    path: '/signin',
+    name: 'signin',
+    component: () => import('../views/SignIn.vue'),
+    meta: { privs: ['guest'] }
+  },
+  {
     path: '/policy',
     name: 'policy',
     component: () => import('../views/Policy.vue'),
@@ -14,14 +20,14 @@ const routes = [
   {
     path: '/me',
     name: 'myprofile',
-    component: () => import('../views/MyProfile.vue'),
+    component: () => import('../views/Me.vue'),
     meta: { privs: ['user'] }
   },
   {
-    path: '/signin',
-    name: 'signin',
-    component: () => import('../views/SignIn.vue'),
-    meta: { privs: ['guest'] }
+    path: '/service',
+    name: 'service',
+    component: () => import('../views/Service.vue'),
+    meta: { privs: ['admin'] }
   },
   {
     path: '/raw',
