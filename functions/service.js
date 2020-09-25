@@ -1,5 +1,5 @@
 const moment = require('moment-timezone')
-const version = require('./version')
+const axios = require('axios')
 
 const tz = 'Asia/Tokyo'
 const initialData = ts => [
@@ -9,6 +9,7 @@ const initialData = ts => [
     data: {
       version: '0000000',
       name: 'Tamuro',
+      hosting: 'https://tamuro-test01.web.app',
       policy: `
 ## Headings level 2
 
@@ -85,7 +86,9 @@ const updateService = async db => {
 const updateVersion = async db => {
   const confRef = db.collection('service').doc('conf')
   const conf = await confRef.get()
-  if (conf.data().versoin !== version) {
+  const response = await axios.get(`${conf.data().hosting}/version.json`)
+  if (conf.data().version !== response.data.version) {
+    console.log(`update from ${conf.data().version} to ${response.data.version}`)
     await updateService(db)
     await confRef.update({ version })
   }

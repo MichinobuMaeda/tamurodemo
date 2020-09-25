@@ -47,6 +47,9 @@ jobs:
     - name: Build UI
       run: yarn build
 
+    - name: Set version to Hosting
+      run: echo "{\"version\":\"`git rev-parse --short HEAD`\"}" > dist/version.json
+
     - name: Deploy UI
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}

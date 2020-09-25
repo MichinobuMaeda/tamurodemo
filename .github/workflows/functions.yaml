@@ -26,7 +26,7 @@ jobs:
       id: yarn-cache
       with:
         path: ${{ steps.yarn-functions-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-functions-${{ hashFiles('**/yarn.lock') }}
+        key: ${{ runner.os }}-yarn-functions-${{ hashFiles('functions/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-functions-
 
