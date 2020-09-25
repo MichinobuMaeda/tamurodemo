@@ -32,6 +32,8 @@ jobs:
       env:
         API_KEY: ${{ secrets.API_KEY_TAMURO_TEST01 }}
       run: echo "export default '$API_KEY'" > src/plugins/firebase-api-key.js
+    - name: Set version to Functions
+      run: echo "module.exports = '`git rev-parse --short HEAD`'" > functions/version.js
     - name: Set version to UI
       run: echo "export default '`git rev-parse --short HEAD`'" > src/store/version.js
     - name: Build UI
@@ -41,5 +43,3 @@ jobs:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
       working-directory: ${{ github.workspace }}
       run: firebase deploy --token "$FIREBASE_TOKEN"
-    - name: Set version to functions
-      run: echo "export default '`git rev-parse --short HEAD`'" > functions/version.js
