@@ -15,7 +15,7 @@
           <v-list-item-action>
             <ButtonPrimary
               :icon="icon('Update service')"
-              @click="updateServiceVersion"
+              @click="waitUpdateForProc(state, updateServiceVersion)"
             />
           </v-list-item-action>
         </v-list-item>
