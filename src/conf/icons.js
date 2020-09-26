@@ -12,6 +12,7 @@ const iconList = {
   'Edit': 'edit',
   'Add': 'add',
   'Delete': 'delete',
+  'Save': 'save_alt',
   'E-mail': 'mail',
   'Visible': 'visibility',
   'Invisible': 'visibility_off',

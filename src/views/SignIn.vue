@@ -33,7 +33,7 @@
             :icon="icon('E-mail')"
             :label="$t('Get sign-in link')"
             :disabled="state.waitUpdate || !state.credential.valid || !state.credential.email"
-            @click="waitUpdateForProc(state, () => signInWithEmailLink(state))"
+            @click="waitProc(state, () => signInWithEmailLink(state))"
           />
         </div>
         <v-text-field
@@ -51,7 +51,7 @@
             :icon="icon('Sign in')"
             :label="$t('Sign-in with password')"
             :disabled="state.waitUpdate || !state.credential.valid || !state.credential.email || !state.credential.password"
-            @click="waitUpdateForProc(state, () => signInWithPassword(state))"
+            @click="waitProc(state, () => signInWithPassword(state))"
           />
         </div>
         <div>
@@ -62,7 +62,7 @@
             :icon="icon('E-mail')"
             :label="$t('Reset password')"
             :disabled="state.waitUpdate || !state.credential.valid || !state.credential.email"
-            @click="waitUpdateForProc(state, () => resetPassword(state))"
+            @click="waitProc(state, () => resetPassword(state))"
           />
         </div>
       </v-form>

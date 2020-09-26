@@ -1,7 +1,7 @@
 import { myPriv } from './auth';
 import { goPage } from './utils'
-import { myName } from './auth'
-import icon from './icons'
+import { myName, isAdmin, isTester } from './auth'
+import icon from '../conf/icons'
 
 const routePermission = (router, currentPriv, name) => {
   const route = router.match({ name })
@@ -30,8 +30,8 @@ const menuItems = (state, router) => () => {
     {
       label: ['Profile and Settings', { user: myName(state) }],
       icon: icon('Profile and Settings'),
-      visible: routePermission(router, currentPriv, 'myprofile'),
-      action: () => { goPage(router,{ name: 'myprofile' }) }
+      visible: routePermission(router, currentPriv, 'me'),
+      action: () => { goPage(router,{ name: 'me' }) }
     },
     {
       label: 'Privacy policy',
@@ -48,8 +48,8 @@ const menuItems = (state, router) => () => {
     {
       label: 'Raw data',
       icon: icon('Raw data'),
-      visible: routePermission(router, currentPriv, 'raw'),
-      action: () => { goPage(router,{ name: 'raw' }) }
+      visible: isAdmin(state) || isTester(state),
+      action: () => { state.rawData = true }
     }
   ].filter(item => item.visible)
 }

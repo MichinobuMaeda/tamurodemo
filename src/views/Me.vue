@@ -30,7 +30,7 @@
             <ButtonNegative
               :label="$t('Sign out')"
               :icon="icon('Sign out')"
-              @click="waitUpdateForProc(state, () => signOut(state))"
+              @click="waitProc(state, () => signOut(state))"
             />
           </v-col>
         </v-row>

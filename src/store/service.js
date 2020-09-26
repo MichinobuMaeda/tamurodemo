@@ -18,6 +18,7 @@ const onServiceUpdate = (state, querySnapshot) => {
     keys.forEach(key => { state[key] = state.service.defaults[key] || state[key] })
   }
 }
+
 export const initService = async state => {
   onServiceUpdate(state, await db.collection('service').get())
   db.collection('service').onSnapshot(
@@ -25,4 +26,19 @@ export const initService = async state => {
   )
 }
 
-export const updateServiceVersion = () => functions.httpsCallable("updateServiceVersion").call()
+export const updateServiceVersion =
+  () => functions.httpsCallable("updateServiceVersion").call()
+
+export const updateServiceConf =
+  (name, val) => db.collection('service')
+    .doc('conf').update({
+      [name]: val,
+      updatedAt: new Date()
+    })
+
+export const updateServiceDefaults =
+  (name, val) => db.collection('service')
+    .doc('defaults').update({
+      [name]: val,
+      updatedAt: new Date()
+    })

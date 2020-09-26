@@ -13,6 +13,7 @@
       @mouseup="state.mouseDown = false"
       @mouseleave="state.mouseDown = false"
       @mousemove="onMenuSwipe"
+      @focusout="onFocusOut"
     >
       <v-icon v-if="state.menuOpen">close</v-icon>
       <v-icon v-else>menu</v-icon>
@@ -52,6 +53,7 @@
       @mouseup="state.mouseDown = false"
       @mouseleave="state.mouseDown = false"
       @mousemove="onMenuSwipe"
+      @focusout="onFocusOut"
     >
       <v-icon v-if="state.menuOpen">close</v-icon>
       <v-icon v-else>menu</v-icon>
@@ -91,7 +93,15 @@ const menuStyles = {
 
 export default {
   name: 'Menu',
+  model: {
+    prop: 'position',
+    event: 'move'
+  },
   props: {
+    position: {
+      type: String,
+      default: 'br'
+    },
     menuColor: {
       type: String,
       default: 'blue darken-2'
@@ -100,20 +110,12 @@ export default {
       type: String,
       default: 'blue darken-4'
     },
-    position: {
-      type: String,
-      default: 'br'
-    },
     menuItems: {
       type: Function,
       default: null
-    },
-    onMenuMoved: {
-      type: Function,
-      default: null
-    },
+    }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const isTop = () => props.position.slice(0, 1) === 't'
     const isBottom = () => props.position.slice(0, 1) === 'b'
     const isLeft = () => props.position.slice(1) === 'l'
@@ -154,36 +156,39 @@ export default {
       if (!state.mouseDown) {
         return
       }
-      var position = props.position
+      var changed = props.position
       if (event.movementX < -2) {
         if (isRight()) {
-          position = position.slice(0, 1) + 'l'
+          changed = props.position.slice(0, 1) + 'l'
         }
       } else if (event.movementX > 2) {
         if (isLeft()) {
-          position = position.slice(0, 1) + 'r'
+          changed = props.position.slice(0, 1) + 'r'
         }
       } else if (event.movementY < -2) {
         if (isBottom()) {
-          position = 't' + position.slice(1)
+          changed = 't' + props.position.slice(1)
         }
       } else if (event.movementY > 2) {
         if (isTop()) {
-          position = 'b' + position.slice(1)
+          changed = 'b' + props.position.slice(1)
         }
       }
-      if (position !== props.position) {
+      if (props.position !== changed) {
         closeMenu()
-        if (props.onMenuMoved) {
-          props.onMenuMoved(position)
-        }
+        emit('move', changed)
       }
+    }
+
+    const onFocusOut = () => {
+      setTimeout(closeMenu, 300)
     }
 
     return {
       state,
       onMenuClick,
-      onMenuSwipe
+      onMenuSwipe,
+      onFocusOut
     }
   }
 }

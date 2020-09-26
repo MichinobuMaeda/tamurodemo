@@ -16,8 +16,10 @@
   "Privacy policy": "Privacy policy",
   "Service settings": "Service settings",
   "Raw data": "Raw data",
-  "Invalid email or password": "The email address or password is incorrect.",
-  "Sent message": "Information has been sent to the email address you entered. Please close this page.",
+  "Top Left": "Top Left",
+  "Top Right": "Top Right",
+  "Bottom Left": "Bottom Left",
+  "Bottom Right": "Bottom Right",
   "E-mail": "E-mail",
   "Password": "Password",
   "Select sign-in method without password": "You can use a login method that does not use a password.",
@@ -27,5 +29,7 @@
   "Reset password": "Reset password",
   "Invalid E-mail format": "Please enter your email address in the correct format.",
   "Invalid password": "Please enter a password of at least 8 characters.",
+  "Invalid email or password": "The email address or password is incorrect.",
+  "Sent message": "Information has been sent to the email address you entered. Please close this page.",
   "Update app": "Please update this app"
 }

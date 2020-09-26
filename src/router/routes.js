@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: '/me',
-    name: 'myprofile',
+    name: 'me',
     component: () => import('../views/Me.vue'),
     meta: { privs: ['user'] }
   },
@@ -28,12 +28,6 @@ const routes = [
     name: 'service',
     component: () => import('../views/Service.vue'),
     meta: { privs: ['admin'] }
-  },
-  {
-    path: '/raw',
-    name: 'raw',
-    component: () => import('../views/RawData.vue'),
-    meta: { privs: ['tester', 'admin'] }
   }
 ]
 

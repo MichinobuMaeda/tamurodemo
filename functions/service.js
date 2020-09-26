@@ -10,7 +10,9 @@ const initialData = ts => [
       version: '0000000',
       name: 'Tamuro',
       hosting: 'https://tamuro-test01.web.app',
-      policy: `
+      policy: {
+        type: 'markdown',
+        data: `
 ## Headings level 2
 
 ### Headings level 3
@@ -26,6 +28,7 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
 1. list item with number
 2. list item with number
 `
+      }
     }
   },
   {

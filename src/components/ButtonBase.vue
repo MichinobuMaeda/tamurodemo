@@ -1,16 +1,15 @@
 <template>
   <v-btn
-    class="ma-2"
+    class="my-1 mx-2"
     :rounded="!!label"
     :outlined="!!label"
     :fab="!label"
     :small="!label"
-    :dark="!label"
     :color="color"
     @click="$emit('click')"
     :disabled="disabled"
   >
-    <v-icon v-if="icon" :class="label ? 'mr-2' : ''">{{ icon }}</v-icon>
+    <v-icon v-if="icon" :class="label ? 'mr-1' : ''">{{ icon }}</v-icon>
     {{ label }}
   </v-btn>
 </template>
@@ -26,10 +25,6 @@ export default {
     label: {
       type: String,
       default: null
-    },
-    click: {
-      type: Function,
-      default: () => {}
     },
     disabled: {
       type: Boolean,

@@ -7,7 +7,14 @@
         :title="$t('Privacy policy')"
         :icon="icon('Privacy policy')"
       />
-      <Markdown :src="state.service.conf.policy" />
+      <RichText
+        v-model="state.service.conf.policy"
+        :editable="isManager(state)"
+        :icon-edit="icon('Edit')"
+        :cancel-text="$t('Cancel')"
+        :save-text="$t('Save')"
+        @save="val => waitProc(state, () => updateServiceConf('policy', val))"
+      />
     </v-col>
   </v-row>
 </template>
@@ -15,13 +22,13 @@
 <script>
 import { useStore } from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
-import Markdown from '../components/Markdown'
+import RichText from '../components/RichText'
 
 export default {
   name: 'PagePolicy',
   components: {
     PageTitle,
-    Markdown
+    RichText
   },
   setup () {
     return useStore()

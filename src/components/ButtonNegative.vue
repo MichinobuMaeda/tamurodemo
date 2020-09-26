@@ -25,10 +25,6 @@ export default {
       type: String,
       default: null
     },
-    click: {
-      type: Function,
-      default: () => {}
-    },
     disabled: {
       type: Boolean,
       default: false

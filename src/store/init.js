@@ -2,7 +2,7 @@ import { db } from '../plugins/firebase'
 import * as service from './service'
 import * as auth from './auth'
 import * as ui from './ui'
-import colors from './colors'
+import colors from '../conf/colors'
 import * as utils from './utils'
 
 export const clearUserData = state => {
@@ -21,34 +21,46 @@ export const clearState = state => {
   return state
 }
 
+const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) => {
+  state[propName] = (await queryRef.get()).docs.map(doc => utils.simplifyDoc(doc))
+  onChange && onChange(state)
+  state.unsubscribers[propName] = queryRef.onSnapshot(querySnapshot => {
+    state[propName] = querySnapshot.docs.map(doc => utils.simplifyDoc(doc))
+    onChange && onChange(state)
+  })
+}
+
 export const initUserData = async state => {
-  const priv = auth.myPriv(state)
-  if (priv.guest) {
+  if (!state.me || !state.me.valid) {
     clearUserData(state)
   } else {
-    state.groups = (
-      await db.collection('groups')
-        .orderBy('name', 'asc')
-        .get()
-    ).docs.map(doc => utils.simplifyDoc(doc))
-    state.users = (
-      await db.collection('users')
-        .orderBy('name', 'asc')
-        .get()
-    ).docs.map(doc => utils.simplifyDoc(doc))
+    await getInitialAndRealtimeData(
+      state,
+      'groups',
+      db.collection('groups').orderBy('name', 'asc')
+    )
+    const priv = auth.myPriv(state)
+    await getInitialAndRealtimeData(
+      state,
+      'users',
+      db.collection('users').orderBy('name', 'asc')
+    )
     if (priv.admin) {
-      state.accounts = (
-        await db.collection('accounts')
-          .get()
-      ).docs.map(doc => utils.simplifyDoc(doc))
+      await getInitialAndRealtimeData(
+        state,
+        'accounts',
+        db.collection('accounts'),
+        (state) => {
+          state.me = utils.getById(state.accounts, state.me.id)
+        }
+      )
     } else {
-      state.accounts = [
-        utils.simplifyDoc(
-          await db.collection('accounts')
-            .doc(state.me.id)
-            .get()
-        )
-      ]
+      const meQueryRef = db.collection('accounts').doc(state.me.id)
+      state.accounts = [utils.simplifyDoc(await meQueryRef.get())]
+      state.unsubscribers.accounts = meQueryRef.onSnapshot(doc => {
+        state.accounts = [utils.simplifyDoc(doc)]
+        state.me = utils.simplifyDoc(doc)
+      })
     }
   }
 }

@@ -42,9 +42,20 @@
       :menu-color="state.color.theme1"
       :menu-item-color="state.color.theme2"
       :menuItems="menuItems(state, $router)"
-      :on-menu-moved="onMenuMoved(state)"
-      :position="state.menuPosition"
+      v-model="state.menuPosition"
+      @move="pos => onMenuMoved(state, pos)"
     />
+
+    <RawDataTree
+      v-model="state.rawData"
+      :icon="icon('Raw data')"
+      :title="$t('Raw data')"
+      :icon-color="state.color.pageIcon"
+      :title-color="state.color.pageTitle"
+      :text-color="state.color.pageTitle"
+      :items="state"
+    />
+
   </v-app>
 </template>
 
@@ -56,6 +67,7 @@
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
 import AppUpdater from './components/AppUpdater'
+import RawDataTree from './components/RawDataTree'
 import { initStore, useStore } from './plugins/composition-api'
 import { onMounted, watchEffect } from '@vue/composition-api'
 import guard from './router/guard'
@@ -65,7 +77,8 @@ export default {
   components: {
     Menu,
     Loading,
-    AppUpdater
+    AppUpdater,
+    RawDataTree
   },
   setup (props, context) {
     const store = initStore()

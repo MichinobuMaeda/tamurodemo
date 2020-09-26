@@ -3,11 +3,12 @@ import { db } from '../plugins/firebase'
 export const clearUi = state => {
   state.loading = true
   state.waitUpdate = false
+  state.rawData = false
 }
 
 export const initUi = async () => {}
 
-export const waitUpdateForProc = async (state, proc, next = null) => {
+export const waitProc = async (state, proc, next = null) => {
   state.waitUpdate = true
   try {
     await proc()
@@ -17,11 +18,11 @@ export const waitUpdateForProc = async (state, proc, next = null) => {
   }
 }
 
-export const onMenuMoved = state => position => {
-  state.menuPosition = position
+export const onMenuMoved = async (state, pos) => {
   if (state.me && state.me.valid) {
-    db.collection('accounts').doc(state.me.id).update({
-      menuPosition: position
+    await db.collection('accounts').doc(state.me.id).update({
+      menuPosition: pos,
+      updatedAt: new Date()
     })
   }
 }
