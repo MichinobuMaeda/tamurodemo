@@ -1,7 +1,6 @@
 import { auth, db } from '../plugins/firebase'
-import * as utils from './utils'
 import { clearUserData, initUserData } from './init'
-import {getById} from "./utils";
+import { simplifyDoc, getById } from "./utils";
 
 const topUrl = () => window.location.href
   .replace(/\?.*/, '')
@@ -18,9 +17,6 @@ export const clearAuth = state => {
   state.authMessage = ''
   state.showPassword = false
 }
-
-export const validateEmail = str => (!str) || /^(\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+|none)$/.test(str)
-export const validatePassword = str => (!str) || (str.length >= 8)
 
 export const isValid = state => state.me && state.me.valid
 export const isMemberOf = (state, groupId) => isValid(state) &&
@@ -48,7 +44,7 @@ export const signOut = async state => {
 const onSignIn = async (state, me) => {
   state.authMessage = ''
   window.localStorage.setItem('tamuroAuthMessage', '')
-  state.me = utils.simplifyDoc(me)
+  state.me = simplifyDoc(me)
   await initUserData(state)
 }
 
@@ -120,15 +116,3 @@ export const resetPassword = async state => {
   state.authMessage = 'Sent message'
   window.localStorage.setItem('tamuroAuthMessage', '')
 }
-
-// export const initAuth = async state => {
-//   if (state.me && state.me.id) {
-//     state.unsubscribers.me = db.collection('accounts').doc(state.me.id).onSnapshot(async doc => {
-//       if (doc && doc.exists && doc.data().valid) {
-//         state.me = utils.simplifyDoc(doc)
-//       } else {
-//         await signOut()
-//       }
-//     })
-//   }
-// }

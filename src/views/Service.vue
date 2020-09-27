@@ -1,121 +1,107 @@
 <template>
   <v-row justify="center">
-    <v-col sm="10" md="8" lg="6" xl="5">
+    <v-col sm="10" md="8">
       <PageTitle
         :text-color="state.color.pageTitle"
         :icon-color="state.color.pageIcon"
         :title="$t('Service settings')"
         :icon="icon('Service settings')"
       />
-      <v-list>
+      <v-row>
+        <v-col :class="state.color.pageTitle + ' col-4'">Version</v-col>
+        <v-col class="col-6">{{ state.service.conf.version }}</v-col>
+        <v-col class="col-2 text-right">
+          <MiniButton
+            v-if="isAdmin(state)"
+            :icon="icon('Update service')"
+            @click="waitProc(state, updateServiceVersion)"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+      <v-row>
+        <v-col :class="state.color.pageTitle + ' col-4'">URL</v-col>
+        <v-col class="col-8">
+          <EditableText
+            :icon-edit="icon('Edit')"
+            :icon-cancel="icon('Cancel')"
+            :icon-save="icon('Save')"
+            :editable="isAdmin(state)"
+            v-model="state.service.conf.hosting"
+            :rules="[
+              v => !!v || $t('Required'),
+              v => validateURL(v) || $t('Invalid URL format')
+            ]"
+            @save="val => waitProc(state, () => updateServiceConf('hosting', val))"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+      <v-row>
+        <v-col :class="state.color.pageTitle + ' col-4'">{{ $t('Site name') }}</v-col>
+        <v-col class="col-8">
+          <EditableText
+            :icon-edit="icon('Edit')"
+            :icon-cancel="icon('Cancel')"
+            :icon-save="icon('Save')"
+            :editable="isManager(state)"
+            v-model="state.service.conf.name"
+            :rules="[v => !!v || $t('Required')]"
+            @save="val => waitProc(state, () => updateServiceConf('name', val))"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+      <p :class="state.color.pageTitle + ' text-h6 pt-6'">
+        <v-icon :color="state.color.pageIcon">{{ icon('Defaults') }}</v-icon>
+        {{ $t('Defaults') }}
+      </p>
+      <v-row>
+        <v-col :class="state.color.pageTitle + ' col-4'">{{ $t('Menu position') }}</v-col>
+        <v-col class="col-8">
+          <EditableSelect
+            :icon-edit="icon('Edit')"
+            :icon-cancel="icon('Cancel')"
+            :icon-save="icon('Save')"
+            :editable="isManager(state)"
+            v-model="state.service.defaults.menuPosition"
+            :items="menuPositions.map(item => ({ ...item, text: $t(item.text) }))"
+            @save="val => waitProc(state, () => updateServiceDefaults('menuPosition', val))"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+      <v-row>
+        <v-col :class="state.color.pageTitle + ' col-4'">{{ $t('Locale') }}</v-col>
+        <v-col class="col-8">
+          <EditableSelect
+            :icon-edit="icon('Edit')"
+            :icon-cancel="icon('Cancel')"
+            :icon-save="icon('Save')"
+            :editable="isManager(state)"
+            v-model="state.service.defaults.locale"
+            :items="locales"
+            @save="val => waitProc(state, () => updateServiceDefaults('locale', val))"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+      <v-row>
+        <v-col :class="state.color.pageTitle + ' col-4'">{{ $t('Timezone') }}</v-col>
+        <v-col class="col-8">
+          <EditableSelect
+            :icon-edit="icon('Edit')"
+            :icon-cancel="icon('Cancel')"
+            :icon-save="icon('Save')"
+            :editable="isManager(state)"
+            v-model="state.service.defaults.tz"
+            :items="timezones"
+            @save="val => waitProc(state, () => updateServiceDefaults('tz', val))"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
 
-        <v-list-item>
-          <v-list-item-content>
-            Ver. {{ state.service.conf.version }}
-          </v-list-item-content>
-          <v-list-item-action>
-            <ButtonPrimary
-              :icon="icon('Update service')"
-              @click="waitProc(state, updateServiceVersion)"
-            />
-          </v-list-item-action>
-        </v-list-item>
-
-        <v-list-item>
-          <v-list-item-content>
-            <v-text-field label="Site name" v-model="temp.name" />
-          </v-list-item-content>
-          <v-list-item-action>
-            <ButtonPrimary
-              :icon="icon('Save')"
-              :disabled="temp.name === state.service.conf.name"
-              @click="waitProc(state, () => updateServiceConf('name', temp.name))"
-            />
-          </v-list-item-action>
-        </v-list-item>
-
-        <v-list-item>
-          <v-list-item-content>
-            <v-text-field label="URL" v-model="temp.hosting" />
-          </v-list-item-content>
-          <v-list-item-action>
-            <ButtonPrimary
-              :icon="icon('Save')"
-              :disabled="temp.hosting === state.service.conf.hosting"
-              @click="waitProc(state, () => updateServiceConf('hosting', temp.hosting))"
-            />
-          </v-list-item-action>
-        </v-list-item>
-
-        <v-list-item>
-          <v-list-item-content>
-            <v-select
-              label="Default menu position"
-              v-model="temp.menuPosition"
-              :items="[
-                {
-                  text: $t('Top Left'),
-                  value: 'tl'
-                },
-                {
-                  text: $t('Top Right'),
-                  value: 'tr'
-                },
-                {
-                  text: $t('Bottom Left'),
-                  value: 'bl'
-                },
-                {
-                  text: $t('Bottom Right'),
-                  value: 'br'
-                }
-              ]"
-            />
-          </v-list-item-content>
-          <v-list-item-action>
-            <ButtonPrimary
-              :icon="icon('Save')"
-              :disabled="temp.menuPosition === state.service.defaults.menuPosition"
-              @click="waitProc(state, () => updateServiceDefaults('menuPosition', temp.menuPosition))"
-            />
-          </v-list-item-action>
-        </v-list-item>
-
-        <v-list-item>
-          <v-list-item-content>
-            <v-select
-              label="Default locale"
-              v-model="temp.locale"
-              :items="locales"
-            />
-          </v-list-item-content>
-          <v-list-item-action>
-            <ButtonPrimary
-              :icon="icon('Save')"
-              :disabled="temp.locale === state.service.defaults.locale"
-              @click="waitProc(state, () => updateServiceDefaults('locale', temp.locale))"
-            />
-          </v-list-item-action>
-        </v-list-item>
-
-        <v-list-item>
-          <v-list-item-content>
-            <v-select
-              label="Default timezone"
-              v-model="temp.tz"
-              :items="timezones"
-            />
-          </v-list-item-content>
-          <v-list-item-action>
-            <ButtonPrimary
-              :icon="icon('Save')"
-              :disabled="temp.tz === state.service.defaults.tz"
-              @click="waitProc(state, () => updateServiceDefaults('tz', temp.tz))"
-            />
-          </v-list-item-action>
-        </v-list-item>
-
-      </v-list>
     </v-col>
   </v-row>
 </template>
@@ -124,15 +110,20 @@
 import { reactive } from '@vue/composition-api'
 import { useStore } from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
-import ButtonPrimary from '../components/ButtonPrimary'
-import timezones from '../conf/timezones'
+import MiniButton from '../components/MiniButton'
+import EditableText from '../components/EditableText'
+import EditableSelect from '../components/EditableSelect'
+import menuPositions from '../conf/menuPositions'
 import locales from '../conf/locales'
+import timezones from '../conf/timezones'
 
 export default {
   name: 'PageService',
   components: {
     PageTitle,
-    ButtonPrimary
+    MiniButton,
+    EditableText,
+    EditableSelect
   },
   setup() {
     const store = useStore()
@@ -147,8 +138,9 @@ export default {
     return {
       temp,
       ...store,
-      timezones,
-      locales
+      menuPositions,
+      locales,
+      timezones
     }
   }
 }

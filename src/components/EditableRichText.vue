@@ -3,7 +3,6 @@
     <div v-if="editable">
       <div v-if="state.edit">
         <div>
-
           <v-textarea
             outlined
             v-model="state.data"
@@ -50,7 +49,7 @@ const allowedTags = ['h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul',
   'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
 
 export default {
-  name: 'Markdown',
+  name: 'EditableRichText',
   components: {
     ButtonPrimary,
     ButtonSecondary

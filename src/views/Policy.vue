@@ -7,7 +7,7 @@
         :title="$t('Privacy policy')"
         :icon="icon('Privacy policy')"
       />
-      <RichText
+      <EditableRichText
         v-model="state.service.conf.policy"
         :editable="isManager(state)"
         :icon-edit="icon('Edit')"
@@ -22,13 +22,13 @@
 <script>
 import { useStore } from '../plugins/composition-api'
 import PageTitle from '../components/PageTitle'
-import RichText from '../components/RichText'
+import EditableRichText from '../components/EditableRichText'
 
 export default {
   name: 'PagePolicy',
   components: {
     PageTitle,
-    RichText
+    EditableRichText
   },
   setup () {
     return useStore()

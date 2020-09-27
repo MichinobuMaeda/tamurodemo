@@ -12,7 +12,7 @@
       <v-toolbar-title
         :class="state.color.headerText + ' text-h5 ml-2'"
       >
-        Tamuro
+        {{ (state.service.conf && state.service.conf.name) || 'Tamuro' }}
       </v-toolbar-title>
     </v-app-bar>
 

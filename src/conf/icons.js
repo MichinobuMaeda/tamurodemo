@@ -12,13 +12,14 @@ const iconList = {
   'Edit': 'edit',
   'Add': 'add',
   'Delete': 'delete',
-  'Save': 'save_alt',
+  'Save': 'done',
   'E-mail': 'mail',
   'Visible': 'visibility',
   'Invisible': 'visibility_off',
   'Send': 'send',
+  'Defaults': 'settings_applications',
   'Update app': 'system_update_alt',
-  'Update service': 'system_update_alt',
+  'Update service': 'sync',
   'Service settings': 'settings',
   'Raw data': 'memory'
 }
