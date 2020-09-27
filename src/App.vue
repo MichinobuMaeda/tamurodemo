@@ -21,7 +21,7 @@
     </v-main>
     <v-main class="ma-3" v-else>
       <AppUpdater
-        v-if="state.service.conf && state.service.conf.version !== state.version"
+        v-if="state.service.conf && state.service.conf.version !== version"
         color="orange darken-4"
         :label="$t('Update app')"
         :icon="icon('Update app')"
