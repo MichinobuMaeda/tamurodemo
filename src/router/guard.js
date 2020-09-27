@@ -1,40 +1,30 @@
-import { myPriv } from '../store/auth'
+import {
+  eraseRequestedRoute,
+  storeRequestedRoute,
+  restoreRequestedRoute
+} from '@/helpers'
 
-const defaultPageForUser = { name: 'top' }
-const defaultPageForGuest = { name: 'signin' }
+const defaultRouteForUser = { name: 'top' }
+const defaultRouteForGuest = { name: 'signin' }
 
-const getRequestedPage = () => {
-  const saved = window.localStorage.getItem('tamuroRequestedPage')
-  if (saved) {
-    try {
-      return JSON.parse(saved)
-    } catch (e) {
-      return defaultPageForUser
-    }
-  } else {
-    return null
-  }
-}
-
-const guard = (router, route, state) => {
-  const currentPriv = myPriv(state)
-  const lastPage = getRequestedPage()
-  if (currentPriv.user && lastPage) {
-    window.localStorage.setItem('tamuroRequestedPage', '')
+const guard = (router, route, priv) => {
+  const lastPage = restoreRequestedRoute(defaultRouteForUser)
+  if (priv.user && lastPage) {
+    eraseRequestedRoute()
     if (route.path !== lastPage.path) {
       router.push(lastPage).catch(() => {})
     }
-  } else if (Object.keys(currentPriv).some(
-    priv => currentPriv[priv] && route.matched.some(
-      record => record.meta.privs.includes(priv)
+  } else if (Object.keys(priv).some(
+    key => priv[key] && route.matched.some(
+      record => record.meta.privs.includes(key)
     )
   )) {
     // to do nothing
   } else {
-    const target = currentPriv.user ? defaultPageForUser : defaultPageForGuest
+    const target = priv.user ? defaultRouteForUser : defaultRouteForGuest
     if (route.path !== target.path) {
-      if (currentPriv.guest) {
-        window.localStorage.setItem('tamuroRequestedPage', JSON.stringify(route.path))
+      if (priv.guest) {
+        storeRequestedRoute(route)
       }
       router.push(target).catch(() => {})
     }

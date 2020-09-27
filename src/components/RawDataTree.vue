@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="state.dialog" scrollable max-width="1024px">
+  <v-dialog
+    scrollable max-width="1024px"
+    v-model="dialog"
+    @click:outside="$emit('dialogChange', false)"
+    @keydown="$emit('dialogChange', false)"
+  >
     <v-card>
       <v-card-title>
           <span :class="titleColor + ' text-h5'">
@@ -14,7 +19,7 @@
       <v-divider />
       <v-card-text style="height: 640px;">
         <v-treeview
-          :items="state.items"
+          :items="tree"
           dense
         >
           <template v-slot:label="{ item }">
@@ -27,7 +32,7 @@
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 
 const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
   ? {
@@ -122,14 +127,10 @@ export default {
     }
   },
   setup(props) {
-    const state = reactive({
-      dialog: computed(() => props.dialog),
-      items: computed(() => [...Object.keys(props.items || {})].sort().map(
+    return {
+      tree: computed(() => [...Object.keys(props.items || {})].sort().map(
         key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])
       ))
-    })
-    return {
-      state
     }
   }
 }

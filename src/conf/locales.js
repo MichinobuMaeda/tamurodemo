@@ -1,4 +1,4 @@
-const locales = [
+export const locales = [
   {
     text: 'English(US)',
     value: 'en_US'
@@ -8,5 +8,3 @@ const locales = [
     value: 'ja_JP'
   }
 ]
-
-export default locales

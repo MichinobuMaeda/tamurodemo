@@ -1,4 +1,4 @@
-const timezones = [
+export const timezones = [
   'Africa/Abidjan',
   'Africa/Accra',
   'Africa/Addis_Ababa',
@@ -538,5 +538,3 @@ const timezones = [
   'W-SU',
   'Zulu'
 ]
-
-export default timezones

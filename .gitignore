@@ -1,7 +1,7 @@
 /functions/.runtimeconfig.json
 /functions/version.js
 /src/plugins/firebase-api-key.js
-/src/store/version.js
+/src/conf/version.js
 /dist
 tamuro-test01-firebase-adminsdk.json
 

@@ -1,7 +1,7 @@
 const base1 = 'lime'
 const base2 = 'light-green'
 
-const colors = {
+export const color = {
   headerBg: `${base1} lighten-5`,
   headerText: `${base1}--text text--darken-4`,
   footerBg: `${base1} lighten-5`,
@@ -11,5 +11,3 @@ const colors = {
   pageTitle: `${base2}--text text--darken-3`,
   pageIcon: `${base2} darken-3`
 }
-
-export default colors

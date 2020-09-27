@@ -2,16 +2,16 @@
   <v-row justify="center">
     <v-col sm="10" md="8" lg="6" xl="5">
       <PageTitle
-        :text-color="state.color.pageTitle"
-        :icon-color="state.color.pageIcon"
-        :title="$t('Profile and Settings', { user: myName(state) })"
+        :text-color="color.pageTitle"
+        :icon-color="color.pageIcon"
+        :title="$t('Profile and Settings', { user: myName })"
         :icon="icon('Profile and Settings')"
       />
-      <div v-if="!state.confirmSginOut">
+      <div v-if="!page.confirmSginOut">
         <ButtonNegative
           :label="$t('Sign out')"
           :icon="icon('Sign out')"
-          @click="() => { state.confirmSginOut = true }"
+          @click="() => { page.confirmSginOut = true }"
         />
       </div>
       <div v-else>
@@ -23,14 +23,14 @@
             <ButtonSecondary
               :label="$t('Cancel')"
               :icon="icon('Cancel')"
-              @click="() => { state.confirmSginOut = false }"
+              @click="() => { page.confirmSginOut = false }"
             />
           </v-col>
           <v-col class="text-right">
             <ButtonNegative
               :label="$t('Sign out')"
               :icon="icon('Sign out')"
-              @click="waitProc(state, () => signOut(state))"
+              @click="signOut"
             />
           </v-col>
         </v-row>
@@ -40,10 +40,11 @@
 </template>
 
 <script>
-import { useStore } from '../plugins/composition-api'
-import PageTitle from '../components/PageTitle'
-import ButtonSecondary from '../components/ButtonSecondary'
-import ButtonNegative from '../components/ButtonNegative'
+import { reactive } from "@vue/composition-api";
+import * as helpers from '@/helpers'
+import PageTitle from '@/components/PageTitle'
+import ButtonSecondary from '@/components/ButtonSecondary'
+import ButtonNegative from '@/components/ButtonNegative'
 
 export default {
   name: 'PageMyProfile',
@@ -53,7 +54,25 @@ export default {
     ButtonNegative
   },
   setup () {
-    return useStore()
+    const { useStore, signInUrl, setProcForWait } = helpers
+    const store = useStore()
+    const page = reactive({
+      confirmSginOut: false,
+      waitProc: false
+    })
+
+    const signOut = async (auth, page) => {
+      await auth.signOut()
+      page.confirmSginOut = false
+      window.location.href = signInUrl()
+    }
+
+    return {
+      ...store,
+      page,
+      signOut: () => setProcForWait(page, () => signOut(store.auth, page)),
+      ...helpers
+    }
   }
 }
 </script>

@@ -42,7 +42,7 @@ jobs:
       run: echo "export default '$API_KEY'" > src/plugins/firebase-api-key.js
 
     - name: Set version to UI
-      run: echo "export default '`git rev-parse --short HEAD`'" > src/store/version.js
+      run: echo "export default '`git rev-parse --short HEAD`'" > src/conf/version.js
 
     - name: Build UI
       run: yarn build

@@ -2,8 +2,8 @@
   <v-row justify="center">
     <v-col sm="10" md="8" lg="6" xl="5">
       <PageTitle
-        :text-color="state.color.pageTitle"
-        :icon-color="state.color.pageIcon"
+        :text-color="color.pageTitle"
+        :icon-color="color.pageIcon"
         :title="$t('Top')"
         :icon="icon('Top')"
       />
@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import { useStore } from '../plugins/composition-api'
-import PageTitle from '../components/PageTitle'
+import * as helpers from '@/helpers'
+import PageTitle from '@/components/PageTitle'
 
 export default {
   name: 'PageIndex',
@@ -21,7 +21,12 @@ export default {
     PageTitle
   },
   setup () {
-    return useStore()
+    const { useStore } = helpers
+    const store = useStore()
+    return {
+      ...store,
+      ...helpers
+    }
   }
 }
 </script>

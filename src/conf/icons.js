@@ -24,6 +24,4 @@ const iconList = {
   'Raw data': 'memory'
 }
 
-const icons = name => iconList[name] || 'description'
-
-export default icons
+export const icon = name => iconList[name] || 'description'

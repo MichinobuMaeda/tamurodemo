@@ -2,13 +2,17 @@
   <v-row justify="center">
     <v-col sm="8" md="6" lg="5" xl="4">
       <PageTitle
-        :text-color="state.color.pageTitle"
-        :icon-color="state.color.pageIcon"
+        :text-color="color.pageTitle"
+        :icon-color="color.pageIcon"
         :title="$t('Sign in')"
         :icon="icon('Sign in')"
       />
-      <v-alert type="success" dense outlined v-if="state.authMessage">
-        {{ $t(state.authMessage) }}
+      <v-alert
+        v-if="page.result.type"
+        dense outlined
+        :type="page.result.type"
+      >
+        {{ $t(page.result.desc) }}
       </v-alert>
       <div class="text-right">
         <LinkButton
@@ -17,41 +21,41 @@
           @click="() => goPage($router, { name: 'policy' })"
         />
       </div>
-      <v-form ref="form" v-model="state.credential.valid">
+      <v-form ref="form" v-model="page.valid">
         <v-text-field
-          v-model="state.credential.email"
+          v-model="page.email"
           :rules="[
             v => validateEmail(v) || $t('Invalid E-mail format')
           ]"
           :label="$t('E-mail')"
         ></v-text-field>
-        <div :class="state.credential.valid && state.credential.email ? 'primary--text' : 'grey--text'">
+        <div :class="page.valid && page.email ? 'primary--text' : 'grey--text'">
           {{ $t('Select sign-in method without password') }}
         </div>
         <div class="text-right">
           <ButtonPrimary
             :icon="icon('E-mail')"
             :label="$t('Get sign-in link')"
-            :disabled="state.waitUpdate || !state.credential.valid || !state.credential.email"
-            @click="waitProc(state, () => signInWithEmailLink(state))"
+            :disabled="page.waitProc || !page.valid || !page.email"
+            @click="signInWithEmailLink"
           />
         </div>
         <v-text-field
-          v-model="state.credential.password"
-          :type="state.showPassword ? 'text' : 'password'"
+          v-model="page.password"
+          :type="page.showPassword ? 'text' : 'password'"
           :rules="[
             v => validatePassword(v) || $t('Invalid password')
           ]"
           :label="$t('Password')"
-          :append-icon="state.showPassword ? icon('Visible') : icon('Invisible')"
-          @click:append="state.showPassword = !state.showPassword"
+          :append-icon="page.showPassword ? icon('Visible') : icon('Invisible')"
+          @click:append="page.showPassword = !page.showPassword"
         ></v-text-field>
         <div class="text-right">
           <ButtonPrimary
             :icon="icon('Sign in')"
             :label="$t('Sign-in with password')"
-            :disabled="state.waitUpdate || !state.credential.valid || !state.credential.email || !state.credential.password"
-            @click="waitProc(state, () => signInWithPassword(state))"
+            :disabled="page.waitProc || !page.valid || !page.email || !page.password"
+            @click="signInWithPassword"
           />
         </div>
         <div>
@@ -61,8 +65,8 @@
           <ButtonSecondary
             :icon="icon('E-mail')"
             :label="$t('Reset password')"
-            :disabled="state.waitUpdate || !state.credential.valid || !state.credential.email"
-            @click="waitProc(state, () => resetPassword(state))"
+            :disabled="page.waitProc || !page.valid || !page.email"
+            @click="resetPassword"
           />
         </div>
       </v-form>
@@ -71,14 +75,22 @@
 </template>
 
 <script>
-import { useStore } from '../plugins/composition-api'
-import PageTitle from '../components/PageTitle'
-import ButtonPrimary from '../components/ButtonPrimary'
-import ButtonSecondary from '../components/ButtonSecondary'
-import LinkButton from '../components/LinkButton'
+import { auth } from '@/plugins/firebase'
+import { reactive } from '@vue/composition-api'
+import * as helpers from '@/helpers'
+import PageTitle from '@/components/PageTitle'
+import ButtonPrimary from '@/components/ButtonPrimary'
+import ButtonSecondary from '@/components/ButtonSecondary'
+import LinkButton from '@/components/LinkButton'
+
+const {
+  setProcForWait,
+  topUrl,
+  storeRequestedEmail
+} = helpers
 
 export default {
-  name: 'SignInPolicy',
+  name: 'SignInPage',
   components: {
     PageTitle,
     ButtonPrimary,
@@ -86,7 +98,55 @@ export default {
     LinkButton
   },
   setup () {
-    return useStore()
+
+    const page = reactive({
+      result: {},
+      valid: true,
+      email: '',
+      password: '',
+      showPassword: false,
+      waitProc: false
+    })
+
+    const signInWithEmailLink = () => setProcForWait(page, async () => {
+      await auth.sendSignInLinkToEmail(page.email, {
+        url: window.location.href,
+        handleCodeInApp: true
+      })
+      storeRequestedEmail(page.email)
+      page.result = { type: 'success', desc: 'Sent message' }
+    })
+
+    const signInWithPassword = () => setProcForWait(page, async () => {
+      try {
+        await auth.signInWithEmailAndPassword(
+          page.email,
+          page.password
+        )
+      } catch (e) {
+        page.result = { type: 'error', desc: 'Invalid email or password' }
+      }
+    })
+
+    const resetPassword = () => setProcForWait(page, async () => {
+      await auth.sendPasswordResetEmail(
+        page.email,
+        {
+          url: topUrl(),
+          handleCodeInApp: true
+        }
+      )
+      page.result = { type: 'success', desc: 'Sent message' }
+      // window.localStorage.setItem('tamuroAuthMessage', '')
+    })
+
+    return {
+      page,
+      signInWithEmailLink,
+      signInWithPassword,
+      resetPassword,
+      ...helpers
+    }
   }
 }
 </script>

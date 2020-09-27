@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      :color="state.color.headerBg"
+      :color="color.headerBg"
       dense
       hide-on-scroll
       elevation="0"
@@ -10,14 +10,14 @@
     >
       <img style="width: 40px;" src="img/icons/apple-touch-icon-120x120.png" alt="Sanno" />
       <v-toolbar-title
-        :class="state.color.headerText + ' text-h5 ml-2'"
+        :class="color.headerText + ' text-h5 ml-2'"
       >
         {{ (state.service.conf && state.service.conf.name) || 'Tamuro' }}
       </v-toolbar-title>
     </v-app-bar>
 
-    <v-main class="ma-3" v-if="state.loading">
-      <Loading :color="state.color.theme1" :size="96" />
+    <v-main class="ma-3" v-if="page.loading">
+      <Loading :color="color.theme1" :size="96" />
     </v-main>
     <v-main class="ma-3" v-else>
       <AppUpdater
@@ -30,32 +30,31 @@
     </v-main>
 
     <v-footer
-      :color="state.color.footerBg"
-      :class="state.color.footerText"
+      :color="color.footerBg"
+      :class="color.footerText"
       height="48px"
     >
-      <span>Ver. {{ state.version }}</span>
+      <span>Ver. {{ version }}</span>
     </v-footer>
 
     <Menu
-      v-if="!state.loading"
-      :menu-color="state.color.theme1"
-      :menu-item-color="state.color.theme2"
-      :menuItems="menuItems(state, $router)"
+      v-if="!page.loading"
+      :menu-color="color.theme1"
+      :menu-item-color="color.theme2"
+      :menuItems="menuItems"
       v-model="state.menuPosition"
-      @move="pos => onMenuMoved(state, pos)"
+      @move="pos => onMenuMoved(pos)"
     />
 
     <RawDataTree
-      v-model="state.rawData"
+      v-model="page.rawData"
       :icon="icon('Raw data')"
       :title="$t('Raw data')"
-      :icon-color="state.color.pageIcon"
-      :title-color="state.color.pageTitle"
-      :text-color="state.color.pageTitle"
+      :icon-color="color.pageIcon"
+      :title-color="color.pageTitle"
+      :text-color="color.pageTitle"
       :items="state"
     />
-
   </v-app>
 </template>
 
@@ -64,13 +63,18 @@
 </style>
 
 <script>
-import Menu from './components/Menu'
-import Loading from './components/Loading.vue'
-import AppUpdater from './components/AppUpdater'
-import RawDataTree from './components/RawDataTree'
-import { initStore, useStore } from './plugins/composition-api'
-import { onMounted, watchEffect } from '@vue/composition-api'
-import guard from './router/guard'
+import { createStore, syncServiceData, syncUserData } from '@/init'
+import { reactive, computed, onMounted, watchEffect } from '@vue/composition-api'
+import menuItems from '@/router/menuItems'
+import guard from '@/router/guard'
+import version from '@/conf/version'
+import * as helpers from '@/helpers'
+import Menu from '@/components/Menu'
+import Loading from '@/components/Loading.vue'
+import AppUpdater from '@/components/AppUpdater'
+import RawDataTree from '@/components/RawDataTree'
+
+const { getMyPriv, getMyName } = helpers
 
 export default {
   name: 'App',
@@ -80,16 +84,46 @@ export default {
     AppUpdater,
     RawDataTree
   },
-  setup (props, context) {
-    const store = initStore()
+  setup (props, { root }) {
+
+    const page = reactive({
+      loading: true,
+      rawData: false
+    })
+
+    const store = createStore()
+
     onMounted(async () => {
-      await store.initService(store.state)
-      await store.checkAuthStatus(store.state)
+      await syncServiceData(store)
+      await syncUserData(store, page)
     })
+
     watchEffect(() => {
-      guard(context.root.$router, context.root.$route, store.state)
+      guard(root.$router, root.$route, getMyPriv(store.state))
     })
-    return useStore()
+
+    const onMenuMoved = ({ db, state }) => async pos => {
+      if (state.me && state.me.valid) {
+        await db.collection('accounts').doc(state.me.id).update({
+          menuPosition: pos,
+          updatedAt: new Date()
+        })
+      }
+    }
+
+    return {
+      ...store,
+      page,
+      menuItems: computed(() => menuItems(
+        getMyPriv(store.state),
+        getMyName(store.state),
+        page,
+        root.$router)
+      ),
+      onMenuMoved: onMenuMoved(store),
+      version,
+      ...helpers
+    }
   }
 }
 </script>

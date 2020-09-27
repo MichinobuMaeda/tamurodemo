@@ -1,15 +1,4 @@
 import Vue from 'vue'
-import VueCompositionApi, { reactive, inject, provide } from '@vue/composition-api'
-import store from '../store'
+import VueCompositionApi from '@vue/composition-api'
 
 Vue.use(VueCompositionApi)
-
-const RootStoreSymbol = Symbol('rootStore')
-
-export const initStore = () => {
-  store.state = reactive(store.clearState({}))
-  provide(RootStoreSymbol, store)
-  return store
-}
-
-export const useStore = () => inject(RootStoreSymbol)

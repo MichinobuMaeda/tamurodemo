@@ -1,4 +1,4 @@
-const menuPositions = [
+export const menuPositions = [
   {
     text: 'Top Left',
     value: 'tl'
@@ -16,5 +16,3 @@ const menuPositions = [
     value: 'br'
   }
 ]
-
-export default menuPositions

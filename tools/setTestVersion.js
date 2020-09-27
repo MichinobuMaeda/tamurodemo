@@ -9,7 +9,7 @@ proc.stdout.on('data', (chunk) => {
 })
 proc.on('exit', () => {
   fs.writeFileSync(
-    path.join(__dirname, '..', 'src', 'store', 'version.js'),
+    path.join(__dirname, '..', 'src', 'conf', 'version.js'),
     `export default '${version.trim()}'\n`
   )
 })
