@@ -10,6 +10,10 @@ const initialData = ts => [
       version: '0000000',
       name: 'Tamuro',
       hosting: 'https://tamuro-test01.web.app',
+      desc: {
+        type: 'markdown',
+        data: '',
+      },
       policy: {
         type: 'markdown',
         data: `

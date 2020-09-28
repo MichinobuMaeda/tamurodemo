@@ -13,7 +13,8 @@
         :icon-edit="icon('Edit')"
         :cancel-text="$t('Cancel')"
         :save-text="$t('Save')"
-        @save="val => updateStoreService('conf', { policy: val})"
+        @save="val => set('service', 'conf', { policy: val })"
+        :disabled="!!state.waitProc"
       />
     </v-col>
   </v-row>
@@ -23,7 +24,8 @@
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableRichText from '@/components/EditableRichText'
-import {reactive} from "@vue/composition-api";
+
+const { useStore } = helpers
 
 export default {
   name: 'PagePolicy',
@@ -32,20 +34,10 @@ export default {
     EditableRichText
   },
   setup () {
-    const { useStore, setProcForWait } = helpers
     const store = useStore()
-    const { updateStore } = store
 
-    const page = reactive({
-      waitProc: false
-    })
     return {
       ...store,
-      page,
-      updateStoreService: (id, data) => setProcForWait(
-        page,
-        () => updateStore('service', id, data)
-      ),
       ...helpers
     }
   }

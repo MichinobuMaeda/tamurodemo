@@ -1,5 +1,5 @@
 import { computed, provide, reactive } from '@vue/composition-api'
-import * as firebase from '@/plugins/firebase'
+import { db, functions, auth } from '@/plugins/firebase'
 import { StoreSymbol, getMyPriv, getMyName,
   topUrl, signInUrl, simplifyDoc, getById,
   restoreRequestedEmail, eraseRequestedEmail
@@ -7,14 +7,26 @@ import { StoreSymbol, getMyPriv, getMyName,
 
 const defaultsKeys = ['menuPosition', 'locale', 'tz']
 
-export const createStore = () => {
+const createState = () => {
   const state = {}
   clearServiceData(state)
   clearUserData(state)
+  state.waitProc = null
+  return reactive(state)
+}
+
+export const createStore = () => {
+  const state = createState()
   const store = {
-    state: reactive(state),
-    ...firebase,
-    updateStore: updateStore(firebase.db)
+    state,
+    db,
+    functions,
+    auth,
+    setProcForWait: setProcForWait(state),
+    add: (collection, data) => setProcForWait(state)(() => add(db, collection, data)),
+    set: (collection, id, data) => setProcForWait(state)(() => set(db, collection, id, data)),
+    del: (collection, id) => setProcForWait(state)(() => del(db, collection, id)),
+    restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id)),
   }
   store.priv = computed(() => getMyPriv(store.state))
   store.myName = computed(() => getMyName(store.state))
@@ -50,10 +62,49 @@ export const syncUserData = async ({ db, auth, state }, page) => {
   })
 }
 
-const updateStore = db => (collection, id, data) => db.collection(collection)
+export const setProcForWait = state => async (proc, next = null) => {
+  const ts = new Date().getTime()
+  state.waitProc = ts
+  setTimeout(
+    () => {
+      if (state.waitProc === ts) {
+        state.waitProc = null
+      }
+    },
+    10 * 1000
+  )
+  try {
+    await proc()
+    if (next) { await next() }
+  } finally {
+    state.waitProc = null
+  }
+}
+
+const add = (db, collection, data) => {
+  const ts = new Date()
+  return db.collection(collection)
+    .add({
+      ...data,
+      createdAt: ts,
+      updatedAt: ts
+    })
+}
+
+const set = (db, collection, id, data) => db.collection(collection)
   .doc(id).update({
     ...data,
     updatedAt: new Date()
+  })
+
+const del = (db, collection, id) => db.collection(collection)
+  .doc(id).update({
+    deletedAt: new Date()
+  })
+
+const restore = (db, collection, id) => db.collection(collection)
+  .doc(id).update({
+    deletedAt: null
   })
 
 const clearServiceData = state => {
@@ -74,6 +125,7 @@ const clearUserData = state => {
   state.users = []
   state.profiles = []
   state.groups = []
+  state.categories = []
 }
 
 const onServiceUpdate = (state, querySnapshot) => {
@@ -108,6 +160,11 @@ const onValidAccount = async (db, auth, state, me) => {
     state,
     'groups',
     db.collection('groups').orderBy('name', 'asc')
+  )
+  await getInitialAndRealtimeData(
+    state,
+    'categories',
+    db.collection('categories').orderBy('seq', 'asc')
   )
   await getInitialAndRealtimeData(
     state,

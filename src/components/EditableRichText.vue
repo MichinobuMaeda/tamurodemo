@@ -6,6 +6,7 @@
           <v-textarea
             outlined
             v-model="state.data"
+            :rules="rules"
           />
         </div>
         <v-row>
@@ -24,7 +25,7 @@
             <ButtonPrimary
               :label="saveText"
               @click="onSave"
-              :disabled="state.type === src.type && state.data === src.data"
+              :disabled="disabled || (state.type === src.type && state.data === src.data) || !evalRules(rules, state.value)"
             />
           </v-col>
         </v-row>
@@ -33,7 +34,7 @@
         <v-icon @click="onEdit" color="primary">{{ iconEdit }}</v-icon>
       </div>
     </div>
-    <div class="compiled-markdown" v-html="state.edit ? compile(state) : state.compiled"></div>
+    <div class="rightext" v-html="state.edit ? compile(state) : state.compiled"></div>
   </div>
 </template>
 
@@ -41,10 +42,11 @@
 import { reactive, computed } from '@vue/composition-api'
 import sanitizeHtml from 'sanitize-html'
 import marked from 'marked'
+import { evalRules } from './helper'
 import ButtonPrimary from './ButtonPrimary'
 import ButtonSecondary from './ButtonSecondary'
 
-const allowedTags = ['h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+const allowedTags = ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
   'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div',
   'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
 
@@ -66,7 +68,12 @@ export default {
         data: ''
       })
     },
+    rules: Array,
     editable: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     },
@@ -124,7 +131,8 @@ export default {
       onEdit,
       onCancel,
       onSave,
-      compile
+      compile,
+      evalRules
     }
   }
 }

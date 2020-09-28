@@ -9,22 +9,13 @@ const LS_REQ_ROUTE = `${product}RequestedRoute`
 const LS_REQ_EMAIL = `${product}tamuroEmailLinkRequest`
 
 // UI
+export * from '@/components/helper'
 export { color } from '@/conf/colors'
 export { icon } from '@/conf/icons'
 export { locales } from '@/conf/locales'
 export { menuPositions } from '@/conf/menuPositions'
 export { timezones } from '@/conf/timezones'
 export * from '@/conf/validators'
-
-export const setProcForWait = async (state, proc, next = null) => {
-  state.waitProc = true
-  try {
-    await proc()
-    if (next) { await next() }
-  } finally {
-    state.waitProc = false
-  }
-}
 
 // Route
 export const topUrl = () => window.location.href

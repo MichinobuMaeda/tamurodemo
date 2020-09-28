@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'Loading',
+  name: 'PageTitle',
   props: {
     title: {
       type: String

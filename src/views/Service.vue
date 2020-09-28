@@ -14,6 +14,7 @@
           <MiniButton
             v-if="priv.admin"
             :icon="icon('Update service')"
+            :disabled="!!state.waitProc"
             @click="updateServiceVersion"
           />
         </v-col>
@@ -27,12 +28,10 @@
             :icon-cancel="icon('Cancel')"
             :icon-save="icon('Save')"
             :editable="priv.admin"
+            :disabled="!!state.waitProc"
             v-model="state.service.conf.hosting"
-            :rules="[
-              v => !!v || $t('Required'),
-              v => validateURL(v) || $t('Invalid URL format')
-            ]"
-            @save="val => updateStoreService('conf', { hosting: val })"
+            :rules="rulesURL"
+            @save="val => set('service', 'conf', { hosting: val })"
           />
         </v-col>
       </v-row>
@@ -45,15 +44,16 @@
             :icon-cancel="icon('Cancel')"
             :icon-save="icon('Save')"
             :editable="priv.manager"
+            :disabled="!!state.waitProc"
             v-model="state.service.conf.name"
-            :rules="[v => !!v || $t('Required')]"
-            @save="val => updateStoreService('conf', { name: val })"
+            :rules="rulesName"
+            @save="val => set('service', 'conf', { name: val })"
           />
         </v-col>
       </v-row>
       <v-divider />
-      <p :class="color.pageTitle + ' text-h6 pt-6'">
-        <v-icon :color="color.pageIcon">{{ icon('Defaults') }}</v-icon>
+      <p :class="color.level2Title + ' text-h6 pt-6'">
+        <v-icon :color="color.level2Icon">{{ icon('Defaults') }}</v-icon>
         {{ $t('Defaults') }}
       </p>
       <v-row>
@@ -64,9 +64,10 @@
             :icon-cancel="icon('Cancel')"
             :icon-save="icon('Save')"
             :editable="priv.manager"
+            :disabled="!!state.waitProc"
             v-model="state.service.defaults.menuPosition"
             :items="menuPositions.map(item => ({ ...item, text: $t(item.text) }))"
-            @save="val => updateStoreService('defaults', { menuPosition: val })"
+            @save="val => set('service', 'defaults', { menuPosition: val })"
           />
         </v-col>
       </v-row>
@@ -79,9 +80,10 @@
             :icon-cancel="icon('Cancel')"
             :icon-save="icon('Save')"
             :editable="priv.manager"
+            :disabled="!!state.waitProc"
             v-model="state.service.defaults.locale"
             :items="locales"
-            @save="val => updateStoreService('defaults', { locale: val })"
+            @save="val => set('service', 'defaults', { locale: val })"
           />
         </v-col>
       </v-row>
@@ -94,9 +96,10 @@
             :icon-cancel="icon('Cancel')"
             :icon-save="icon('Save')"
             :editable="priv.manager"
+            :disabled="!!state.waitProc"
             v-model="state.service.defaults.tz"
             :items="timezones"
-            @save="val => updateStoreService('defaults', { tz: val })"
+            @save="val => set('service', 'defaults', { tz: val })"
           />
         </v-col>
       </v-row>
@@ -114,6 +117,8 @@ import MiniButton from '@/components/MiniButton'
 import EditableText from '@/components/EditableText'
 import EditableSelect from '@/components/EditableSelect'
 
+const { useStore, validateURL } = helpers
+
 export default {
   name: 'PageService',
   components: {
@@ -122,30 +127,30 @@ export default {
     EditableText,
     EditableSelect
   },
-  setup() {
-    const { useStore, setProcForWait } = helpers
+  setup(prop, { root }) {
     const store = useStore()
-    const { updateStore, functions } = store
+    const { functions, setProcForWait } = store
 
     const page = reactive({
       name: store.state.service.conf.name,
       hosting: store.state.service.conf.hosting,
       locale: store.state.service.defaults.locale,
       menuPosition: store.state.service.defaults.menuPosition,
-      tz: store.state.service.defaults.tz,
-      waitProc: false
+      tz: store.state.service.defaults.tz
     })
 
     return {
       ...store,
       page,
+      rulesURL: [
+        v => !!v || root.$i18n.t('Required'),
+        v => validateURL(v) || root.$i18n.t('Invalid URL format')
+      ],
+      rulesName: [
+        v => !!v || root.$i18n.t('Required')
+      ],
       updateServiceVersion: () => setProcForWait(
-        page,
         () => functions.httpsCallable("updateServiceVersion").call()
-      ),
-      updateStoreService: (id, data) => setProcForWait(
-        page,
-        () => updateStore('service', id, data)
       ),
       ...helpers
     }

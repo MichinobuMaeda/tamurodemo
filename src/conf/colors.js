@@ -9,5 +9,8 @@ export const color = {
   theme1: `${base2} darken-2`,
   theme2: `${base2} darken-4`,
   pageTitle: `${base2}--text text--darken-3`,
-  pageIcon: `${base2} darken-3`
+  pageIcon: `${base2} darken-3`,
+  level2Title: `${base1}--text text--darken-4`,
+  level2Icon: `${base1} darken-3`,
+  deletedRow: 'grey lighten-1'
 }

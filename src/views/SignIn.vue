@@ -36,7 +36,7 @@
           <ButtonPrimary
             :icon="icon('E-mail')"
             :label="$t('Get sign-in link')"
-            :disabled="page.waitProc || !page.valid || !page.email"
+            :disabled="!!state.waitProc || !page.valid || !page.email"
             @click="signInWithEmailLink"
           />
         </div>
@@ -54,7 +54,7 @@
           <ButtonPrimary
             :icon="icon('Sign in')"
             :label="$t('Sign-in with password')"
-            :disabled="page.waitProc || !page.valid || !page.email || !page.password"
+            :disabled="!!state.waitProc || !page.valid || !page.email || !page.password"
             @click="signInWithPassword"
           />
         </div>
@@ -65,7 +65,7 @@
           <ButtonSecondary
             :icon="icon('E-mail')"
             :label="$t('Reset password')"
-            :disabled="page.waitProc || !page.valid || !page.email"
+            :disabled="!!state.waitProc || !page.valid || !page.email"
             @click="resetPassword"
           />
         </div>
@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import { auth } from '@/plugins/firebase'
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
@@ -83,14 +82,10 @@ import ButtonPrimary from '@/components/ButtonPrimary'
 import ButtonSecondary from '@/components/ButtonSecondary'
 import LinkButton from '@/components/LinkButton'
 
-const {
-  setProcForWait,
-  topUrl,
-  storeRequestedEmail
-} = helpers
+const { useStore, topUrl, storeRequestedEmail } = helpers
 
 export default {
-  name: 'SignInPage',
+  name: 'PageSignIn',
   components: {
     PageTitle,
     ButtonPrimary,
@@ -98,50 +93,57 @@ export default {
     LinkButton
   },
   setup () {
-
+    const store = useStore()
+    const { setProcForWait, auth } = store
     const page = reactive({
       result: {},
       valid: true,
       email: '',
       password: '',
-      showPassword: false,
-      waitProc: false
+      showPassword: false
     })
 
-    const signInWithEmailLink = () => setProcForWait(page, async () => {
-      await auth.sendSignInLinkToEmail(page.email, {
-        url: window.location.href,
-        handleCodeInApp: true
-      })
-      storeRequestedEmail(page.email)
-      page.result = { type: 'success', desc: 'Sent message' }
-    })
-
-    const signInWithPassword = () => setProcForWait(page, async () => {
-      try {
-        await auth.signInWithEmailAndPassword(
-          page.email,
-          page.password
-        )
-      } catch (e) {
-        page.result = { type: 'error', desc: 'Invalid email or password' }
-      }
-    })
-
-    const resetPassword = () => setProcForWait(page, async () => {
-      await auth.sendPasswordResetEmail(
-        page.email,
-        {
-          url: topUrl(),
+    const signInWithEmailLink = () => setProcForWait(
+      async () => {
+        await auth.sendSignInLinkToEmail(page.email, {
+          url: window.location.href,
           handleCodeInApp: true
+        })
+        storeRequestedEmail(page.email)
+        page.result = { type: 'success', desc: 'Sent message' }
+      }
+    )
+
+    const signInWithPassword = () => setProcForWait(
+      async () => {
+        try {
+          await auth.signInWithEmailAndPassword(
+            page.email,
+            page.password
+          )
+        } catch (e) {
+          page.result = { type: 'error', desc: 'Invalid email or password' }
         }
-      )
-      page.result = { type: 'success', desc: 'Sent message' }
-      // window.localStorage.setItem('tamuroAuthMessage', '')
-    })
+      }
+    )
+
+    const resetPassword = () => setProcForWait(
+      async () => {
+        await auth.sendPasswordResetEmail(
+          page.email,
+          {
+            url: topUrl(),
+            handleCodeInApp: true
+          }
+        )
+        page.result = { type: 'success', desc: 'Sent message' }
+        // window.localStorage.setItem('tamuroAuthMessage', '')
+      }
+    )
 
     return {
       page,
+      ...store,
       signInWithEmailLink,
       signInWithPassword,
       resetPassword,

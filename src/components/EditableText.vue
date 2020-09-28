@@ -13,7 +13,7 @@
         />
         <MiniButton
           :icon="iconSave"
-          :disabled="value === state.value"
+          :disabled="disabled || value === state.value || !evalRules(rules, state.value)"
           @click="onSave"
         />
       </template>
@@ -32,6 +32,7 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
+import { evalRules } from './helper'
 import MiniButton from './MiniButton'
 
 export default {
@@ -47,6 +48,10 @@ export default {
     value: String,
     rules: Array,
     editable: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     },
@@ -79,7 +84,8 @@ export default {
       state,
       onEdit,
       onCancel,
-      onSave
+      onSave,
+      evalRules
     }
   }
 }

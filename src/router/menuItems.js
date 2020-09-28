@@ -31,6 +31,12 @@ const menuItems = (priv, myName, page, router) => () => {
       action: () => { goPage(router,{ name: 'me' }) }
     },
     {
+      label: 'Categories',
+      icon: icon('Categories'),
+      visible: routePermission(router, priv, 'categories'),
+      action: () => { goPage(router,{ name: 'categories' }) }
+    },
+    {
       label: 'Privacy policy',
       icon: icon('Privacy policy'),
       visible: routePermission(router, priv, 'policy'),

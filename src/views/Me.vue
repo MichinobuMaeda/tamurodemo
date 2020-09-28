@@ -31,6 +31,7 @@
               :label="$t('Sign out')"
               :icon="icon('Sign out')"
               @click="signOut"
+              :disabled="!!state.waitProc"
             />
           </v-col>
         </v-row>
@@ -46,31 +47,34 @@ import PageTitle from '@/components/PageTitle'
 import ButtonSecondary from '@/components/ButtonSecondary'
 import ButtonNegative from '@/components/ButtonNegative'
 
+const { useStore, signInUrl } = helpers
+
 export default {
-  name: 'PageMyProfile',
+  name: 'PageMe',
   components: {
     PageTitle,
     ButtonSecondary,
     ButtonNegative
   },
   setup () {
-    const { useStore, signInUrl, setProcForWait } = helpers
     const store = useStore()
+    const { setProcForWait, auth } = store
     const page = reactive({
       confirmSginOut: false,
-      waitProc: false
     })
 
-    const signOut = async (auth, page) => {
-      await auth.signOut()
-      page.confirmSginOut = false
-      window.location.href = signInUrl()
-    }
+    const signOut = () => setProcForWait(
+      async () => {
+        await auth.signOut()
+        page.confirmSginOut = false
+        window.location.href = signInUrl()
+      }
+    )
 
     return {
       ...store,
       page,
-      signOut: () => setProcForWait(page, () => signOut(store.auth, page)),
+      signOut,
       ...helpers
     }
   }
