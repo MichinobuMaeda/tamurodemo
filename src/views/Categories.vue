@@ -2,14 +2,15 @@
   <v-row justify="center">
     <v-col sm="10" md="8" lg="6" xl="5">
       <PageTitle
-        :text-color="color.pageTitle"
-        :icon-color="color.pageIcon"
+        text-color="h2--text"
+        icon-color="h2"
         :title="$t('Categories')"
         :icon="icon('Categories')"
       />
+      <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
       <v-row
         v-for="(item, index) in page.items" :key="item.id"
-        :class="item.deletedAt ? color.deletedRow : ''"
+        :class="item.deletedAt ? 'deleted' : ''"
       >
         <v-col class="col-1 pt-8">
           <mini-button

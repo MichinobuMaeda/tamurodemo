@@ -41,7 +41,8 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     data: {
       tz,
       locale: 'ja_JP',
-      menuPosition: 'br'
+      menuPosition: 'br',
+      darkTheme: false
     }
   },
   {

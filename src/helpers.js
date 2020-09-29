@@ -10,7 +10,6 @@ const LS_REQ_EMAIL = `${product}tamuroEmailLinkRequest`
 
 // UI
 export * from '@/components/helper'
-export { color } from '@/conf/colors'
 export { icon } from '@/conf/icons'
 export { locales } from '@/conf/locales'
 export { menuPositions } from '@/conf/menuPositions'

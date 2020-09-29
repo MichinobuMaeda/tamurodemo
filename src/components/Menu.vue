@@ -5,7 +5,8 @@
   >
     <v-btn
       v-if="position.slice(0, 1) === 't'"
-      dark
+      :dark="!$vuetify.theme.dark"
+      :light="$vuetify.theme.dark"
       fab
       :color="menuColor"
       @click="onMenuClick"
@@ -31,7 +32,8 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             v-bind="attrs"
-            dark
+            :dark="!$vuetify.theme.dark"
+            :light="$vuetify.theme.dark"
             fab
             small
             :color="menuItemColor"
@@ -45,7 +47,8 @@
     </div>
     <v-btn
       v-if="position.slice(0, 1) === 'b'"
-      dark
+      :dark="!$vuetify.theme.dark"
+      :light="$vuetify.theme.dark"
       fab
       :color="menuColor"
       @click="onMenuClick"
@@ -64,39 +67,8 @@
 <script>
 import { reactive, computed } from '@vue/composition-api'
 
-const menuStyles = {
-  tl: {
-    position: 'fixed',
-    'z-index': 999,
-    top: 0,
-    left: 0
-  },
-  tr: {
-    position: 'fixed',
-    'z-index': 999,
-    top: 0,
-    right: 0
-  },
-  bl: {
-    position: 'fixed',
-    'z-index': 999,
-    bottom: 0,
-    left: 0
-  },
-  br: {
-    position: 'fixed',
-    'z-index': 999,
-    bottom: 0,
-    right: 0
-  }
-}
-
 export default {
   name: 'Menu',
-  model: {
-    prop: 'position',
-    event: 'move'
-  },
   props: {
     position: {
       type: String,
@@ -190,6 +162,33 @@ export default {
       onMenuSwipe,
       onFocusOut
     }
+  }
+}
+
+const menuStyles = {
+  tl: {
+    position: 'fixed',
+    'z-index': 999,
+    top: 0,
+    left: 0
+  },
+  tr: {
+    position: 'fixed',
+    'z-index': 999,
+    top: 0,
+    right: 0
+  },
+  bl: {
+    position: 'fixed',
+    'z-index': 999,
+    bottom: 0,
+    left: 0
+  },
+  br: {
+    position: 'fixed',
+    'z-index': 999,
+    bottom: 0,
+    right: 0
   }
 }
 </script>

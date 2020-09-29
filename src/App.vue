@@ -2,27 +2,30 @@
   <v-app>
     <v-app-bar
       app
-      :color="color.headerBg"
+      color="theme1"
       dense
       hide-on-scroll
       elevation="0"
       @click="goPage($router, { name: 'top' })"
     >
-      <img style="width: 40px;" src="img/icons/apple-touch-icon-120x120.png" alt="Sanno" />
+      <img
+        :style="`width: 40px; filter: brightness(${ this.$vuetify.theme.dark ? '300%' : '100%' });`"
+        src="img/icons/apple-touch-icon-120x120.png"
+        :alt="(state.service.conf && state.service.conf.name) || 'Tamuro'"
+      />
       <v-toolbar-title
-        :class="color.headerText + ' text-h5 ml-2'"
+        class="theme1r--text text-h5 ml-2"
       >
         {{ (state.service.conf && state.service.conf.name) || 'Tamuro' }}
       </v-toolbar-title>
     </v-app-bar>
 
     <v-main class="ma-3" v-if="page.loading">
-      <Loading :color="color.theme1" :size="96" />
+      <Loading color="h2" :size="96" />
     </v-main>
     <v-main class="ma-3" v-else>
       <AppUpdater
         v-if="state.service.conf && state.service.conf.version !== version"
-        color="orange darken-4"
         :label="$t('Update app')"
         :icon="icon('Update app')"
       />
@@ -30,8 +33,8 @@
     </v-main>
 
     <v-footer
-      :color="color.footerBg"
-      :class="color.footerText"
+      color="theme1r--text"
+      class="theme1"
       height="48px"
     >
       <span>Ver. {{ version }}</span>
@@ -39,10 +42,10 @@
 
     <Menu
       v-if="!page.loading"
-      :menu-color="color.theme1"
-      :menu-item-color="color.theme2"
+      menu-color="menu"
+      menu-item-color="menu-item"
       :menuItems="menuItems"
-      v-model="state.menuPosition"
+      :position="menuPosition"
       @move="pos => onMenuMoved(pos)"
     />
 
@@ -50,16 +53,16 @@
       v-model="page.rawData"
       :icon="icon('Raw data')"
       :title="$t('Raw data')"
-      :icon-color="color.pageIcon"
-      :title-color="color.pageTitle"
-      :text-color="color.pageTitle"
+      icon-color="h2"
+      title-color="h2--text"
+      text-color="title--text"
       :items="state"
     />
   </v-app>
 </template>
 
 <style lang="scss">
-@import 'sass/index.scss';
+@import 'styles/index.scss';
 </style>
 
 <script>
@@ -94,8 +97,8 @@ export default {
     const store = createStore()
 
     onMounted(async () => {
-      await syncServiceData(store)
-      await syncUserData(store, page)
+      await syncServiceData(store, root)
+      await syncUserData(store, root, page)
     })
 
     watchEffect(() => {

@@ -28,7 +28,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'orange darken-4'
+      default: 'info'
     }
   },
   setup () {

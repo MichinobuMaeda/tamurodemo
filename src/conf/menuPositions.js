@@ -8,11 +8,11 @@ export const menuPositions = [
     value: 'tr'
   },
   {
-    text: 'Bottom Left',
-    value: 'bl'
-  },
-  {
     text: 'Bottom Right',
     value: 'br'
+  },
+  {
+    text: 'Bottom Left',
+    value: 'bl'
   }
 ]

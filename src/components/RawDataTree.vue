@@ -7,11 +7,12 @@
   >
     <v-card>
       <v-card-title>
-          <span :class="titleColor + ' text-h5'">
-            <v-icon large :color="iconColor">{{ icon }}</v-icon>
-            {{ title }}
-          </span>
+        <span :class="titleColor + ' text-h5'">
+          <v-icon large :color="iconColor">{{ icon }}</v-icon>
+          {{ title }}
+        </span>
         <v-spacer />
+        <span class="text-body-2 pr-2">Developers only</span>
         <v-btn icon @click="$emit('dialogChange', false)">
           <v-icon>close</v-icon>
         </v-btn>

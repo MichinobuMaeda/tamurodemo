@@ -5,7 +5,7 @@ import { StoreSymbol, getMyPriv, getMyName,
   restoreRequestedEmail, eraseRequestedEmail
 } from '@/helpers'
 
-const defaultsKeys = ['menuPosition', 'locale', 'tz']
+const defaultsKeys = ['darkTheme', 'menuPosition', 'locale', 'tz']
 
 const createState = () => {
   const state = {}
@@ -30,19 +30,23 @@ export const createStore = () => {
   }
   store.priv = computed(() => getMyPriv(store.state))
   store.myName = computed(() => getMyName(store.state))
+  defaultsKeys.forEach(key => {
+    store[key] = computed(() => getDefault(state, key))
+  })
   provide(StoreSymbol, store)
   return store
 }
 
-export const syncServiceData = async ({ db, state }) => {
+export const syncServiceData = async ({ db, state }, root) => {
   const querySnapshot = await db.collection('service').get()
-  onServiceUpdate(state, querySnapshot)
+  onServiceUpdate(state, root, querySnapshot)
+
   db.collection('service').onSnapshot(
-    querySnapshot => onServiceUpdate(state, querySnapshot)
+    querySnapshot => onServiceUpdate(state, root, querySnapshot)
   )
 }
 
-export const syncUserData = async ({ db, auth, state }, page) => {
+export const syncUserData = async ({ db, auth, state }, root, page) => {
 
   // state.authMessage = window.localStorage.getItem('tamuroAuthMessage') || ''
   auth.onAuthStateChanged(async user => {
@@ -51,7 +55,7 @@ export const syncUserData = async ({ db, auth, state }, page) => {
     } else if (user) {
       const me = await db.collection('accounts').doc(user.uid).get()
       if (me && me.exists && me.data().valid) {
-        await onValidAccount(db, auth, state, me)
+        await onValidAccount(db, auth, state, root, me)
       } else {
         await onInvalidAccount(auth)
       }
@@ -109,9 +113,6 @@ const restore = (db, collection, id) => db.collection(collection)
 
 const clearServiceData = state => {
   state.service = {}
-  state.menuPosition = 'br'
-  state.locale = 'ja_JP'
-  state.tz = 'Asia/Tokyo'
 }
 
 const clearUserData = state => {
@@ -128,13 +129,11 @@ const clearUserData = state => {
   state.categories = []
 }
 
-const onServiceUpdate = (state, querySnapshot) => {
+const onServiceUpdate = (state, root, querySnapshot) => {
   const service = {}
   querySnapshot.forEach(doc => service[doc.id] = doc.data())
   state.service = service
-  if (state.service.defaults) {
-    defaultsKeys.forEach(key => { state[key] = state.service.defaults[key] || state[key] })
-  }
+  setDefaults(state, root)
 }
 
 const onSignInWithEmailLink = async auth => {
@@ -150,11 +149,11 @@ const onSignInWithEmailLink = async auth => {
   window.location.href = topUrl()
 }
 
-const onValidAccount = async (db, auth, state, me) => {
+const onValidAccount = async (db, auth, state, root, me) => {
   state.authMessage = ''
   // window.localStorage.setItem('tamuroAuthMessage', '')
   state.me = simplifyDoc(me)
-  defaultsKeys.forEach(key => { state[key] = state.me[key] || state[key] })
+  setDefaults(state, root)
 
   await getInitialAndRealtimeData(
     state,
@@ -178,6 +177,7 @@ const onValidAccount = async (db, auth, state, me) => {
       db.collection('accounts'),
       (state) => {
         state.me = getById(state.accounts, state.me.id)
+        setDefaults(state, root)
       }
     )
   } else {
@@ -186,6 +186,7 @@ const onValidAccount = async (db, auth, state, me) => {
     state.unsubscribers.accounts = meRef.onSnapshot(me => {
       state.accounts = [simplifyDoc(me)]
       state.me = simplifyDoc(me)
+      setDefaults(state, root)
     })
   }
   if (getMyPriv(state).manager) {
@@ -212,10 +213,25 @@ const onSighOut = state => {
 }
 
 const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) => {
-  state[propName] = (await queryRef.get()).docs.map(doc => simplifyDoc(doc))
+  state[propName] = (await queryRef.get()).docs
+    .filter(doc => getMyPriv(state).admin || getMyPriv(state).manager || !doc.data().deletedAt)
+    .map(doc => simplifyDoc(doc))
   onChange && onChange(state)
   state.unsubscribers[propName] = queryRef.onSnapshot(querySnapshot => {
-    state[propName] = querySnapshot.docs.map(doc => simplifyDoc(doc))
+    state[propName] = querySnapshot.docs
+      .filter(doc => getMyPriv(state).admin || getMyPriv(state).manager || !doc.data().deletedAt)
+      .map(doc => simplifyDoc(doc))
     onChange && onChange(state)
   })
 }
+
+const setDefaults = (state, root) => {
+  root.$vuetify.theme.dark = getDefault(state, 'darkTheme')
+  root.$i18n.locale = getDefault(state, 'locale')
+}
+
+const getDefault = (state, key) => getMyPriv(state).user
+  ? state.me[key]
+  : state.service.defaults
+    ? state.service.defaults[key]
+    : null

@@ -2,8 +2,8 @@
   <v-row justify="center">
     <v-col sm="8" md="6" lg="5" xl="4">
       <PageTitle
-        :text-color="color.pageTitle"
-        :icon-color="color.pageIcon"
+        text-color="h2--text"
+        icon-color="h2"
         :title="$t('Sign in')"
         :icon="icon('Sign in')"
       />

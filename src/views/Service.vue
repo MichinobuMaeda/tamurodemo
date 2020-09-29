@@ -2,13 +2,14 @@
   <v-row justify="center">
     <v-col sm="10" md="8">
       <PageTitle
-        :text-color="color.pageTitle"
-        :icon-color="color.pageIcon"
+        text-color="h2--text"
+        icon-color="h2"
         :title="$t('Service settings')"
         :icon="icon('Service settings')"
       />
+      <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
       <v-row>
-        <v-col :class="color.pageTitle + ' col-4'">Version</v-col>
+        <v-col class="title--text' col-4">Version</v-col>
         <v-col class="col-6">{{ state.service.conf.version }}</v-col>
         <v-col class="col-2 text-right">
           <MiniButton
@@ -21,7 +22,7 @@
       </v-row>
       <v-divider />
       <v-row>
-        <v-col :class="color.pageTitle + ' col-4'">URL</v-col>
+        <v-col class="title--text' col-4">URL</v-col>
         <v-col class="col-8">
           <EditableText
             :icon-edit="icon('Edit')"
@@ -37,7 +38,7 @@
       </v-row>
       <v-divider />
       <v-row>
-        <v-col :class="color.pageTitle + ' col-4'">{{ $t('Site name') }}</v-col>
+        <v-col class="title--text' col-4">{{ $t('Site name') }}</v-col>
         <v-col class="col-8">
           <EditableText
             :icon-edit="icon('Edit')"
@@ -52,12 +53,28 @@
         </v-col>
       </v-row>
       <v-divider />
-      <p :class="color.level2Title + ' text-h6 pt-6'">
-        <v-icon :color="color.level2Icon">{{ icon('Defaults') }}</v-icon>
+      <p class="h3--text text-h6 pt-6">
+        <v-icon color="h3">{{ icon('Defaults') }}</v-icon>
         {{ $t('Defaults') }}
       </p>
       <v-row>
-        <v-col :class="color.pageTitle + ' col-4'">{{ $t('Menu position') }}</v-col>
+        <v-col class="title--text' col-4">{{ $t('Dark theme') }}</v-col>
+        <v-col class="col-8">
+          <EditableSwitch
+            :icon-edit="icon('Edit')"
+            :icon-cancel="icon('Cancel')"
+            :icon-save="icon('Save')"
+            :editable="priv.manager"
+            :disabled="!!state.waitProc"
+            v-model="state.service.defaults.darkTheme"
+            :items="[{ text: 'On', value: true }, { text: 'Off', value: false }]"
+            @save="val => set('service', 'defaults', { darkTheme: val })"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+      <v-row>
+        <v-col class="title--text' col-4">{{ $t('Menu position') }}</v-col>
         <v-col class="col-8">
           <EditableSelect
             :icon-edit="icon('Edit')"
@@ -73,7 +90,7 @@
       </v-row>
       <v-divider />
       <v-row>
-        <v-col :class="color.pageTitle + ' col-4'">{{ $t('Locale') }}</v-col>
+        <v-col class="title--text' col-4">{{ $t('Locale') }}</v-col>
         <v-col class="col-8">
           <EditableSelect
             :icon-edit="icon('Edit')"
@@ -89,7 +106,7 @@
       </v-row>
       <v-divider />
       <v-row>
-        <v-col :class="color.pageTitle + ' col-4'">{{ $t('Timezone') }}</v-col>
+        <v-col class="title--text' col-4">{{ $t('Timezone') }}</v-col>
         <v-col class="col-8">
           <EditableSelect
             :icon-edit="icon('Edit')"
@@ -116,6 +133,7 @@ import PageTitle from '@/components/PageTitle'
 import MiniButton from '@/components/MiniButton'
 import EditableText from '@/components/EditableText'
 import EditableSelect from '@/components/EditableSelect'
+import EditableSwitch from '@/components/EditableSwitch'
 
 const { useStore, validateURL } = helpers
 
@@ -125,7 +143,8 @@ export default {
     PageTitle,
     MiniButton,
     EditableText,
-    EditableSelect
+    EditableSelect,
+    EditableSwitch
   },
   setup(prop, { root }) {
     const store = useStore()

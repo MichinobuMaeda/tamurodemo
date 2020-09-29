@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-select
+    <v-switch
       v-if="state.edit"
-      :items="items"
       v-model="state.value"
+      :label="items.reduce((ret, cur) => cur === value ? value : (cur.value === value ? cur.text : ret), '')"
     >
-      <template v-slot:append-outer>
+      <template v-slot:append>
         <MiniButton
           class="mr-2"
           :icon="iconCancel"
@@ -17,7 +17,7 @@
           @click="onSave"
         />
       </template>
-    </v-select>
+    </v-switch>
     <div v-else>
       <MiniButton
         v-if="editable"
@@ -45,7 +45,7 @@ export default {
     event: 'save'
   },
   props: {
-    value: String,
+    value: Boolean,
     items: Array,
     rules: Array,
     editable: {
