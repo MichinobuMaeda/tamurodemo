@@ -24,6 +24,7 @@ const apiKeyValidator = async (req, res, next) => {
     res.status(401)
     return res.send('401 Unauthorized')
   }
+  console.log(req.url)
   return next()
 }
 
