@@ -15,6 +15,20 @@ const setupService = async () => {
   const auth = admin.auth()
   await updateService(db)
 
+  // set API Key.
+  const serviceConfRef = db.collection('service').doc('conf')
+  if (!(await serviceConfRef.get()).data().apiKey) {
+    const { apiKey } = await prompts([
+      {
+        type: 'text',
+        name: 'apiKey',
+        message: 'Web API key:',
+        validate: value => /.{10}/.test(value) || 'Required.'
+      }
+    ])
+    await serviceConfRef.update({ apiKey })
+  }
+
   // Create primary user.
   if ((await db.collection('accounts').get()).docs.length) {
     return true

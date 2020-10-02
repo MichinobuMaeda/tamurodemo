@@ -9,19 +9,16 @@
       />
       <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
       <v-row>
-        <v-col class="title--text col-4">Version</v-col>
+        <v-col class="title--text col-4">API key</v-col>
         <v-col class="col-8">
-          {{ state.service.conf.version }}
-          <mini-button
-            :icon="icon('Update service')"
+          <editable-item
+            label="API key"
+            v-model="state.service.conf.apiKey"
+            :rules="rulesRequired"
+            @save="val => set('service', 'conf', { apiKey: val })"
+            :editable="priv.admin"
             :disabled="!!state.waitProc"
-            @click="updateServiceVersion"
           />
-          <span
-            v-if="!!state.waitProc"
-            class="info--text">
-            {{ $t('Please wait') }}
-          </span>
         </v-col>
       </v-row>
       <v-divider />
@@ -45,7 +42,7 @@
           <editable-item
             :label="$t('Site name')"
             v-model="state.service.conf.name"
-            :rules="rulesName"
+            :rules="rulesRequired"
             @save="val => set('service', 'conf', { name: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
@@ -126,21 +123,18 @@
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
-import MiniButton from '@/components/MiniButton'
 import EditableItem from '@/components/EditableItem'
 
-const { useStore, validateURL } = helpers
+const { useStore, validateURL, validateRequired } = helpers
 
 export default {
   name: 'PageService',
   components: {
     PageTitle,
-    MiniButton,
     EditableItem
   },
   setup (prop, { root }) {
     const store = useStore()
-    const { functions, setProcForWait } = store
 
     const page = reactive({
       name: store.state.service.conf.name,
@@ -157,12 +151,9 @@ export default {
         v => !!v || root.$i18n.t('Required'),
         v => validateURL(v) || root.$i18n.t('Invalid URL format')
       ],
-      rulesName: [
-        v => !!v || root.$i18n.t('Required')
+      rulesRequired: [
+        v => validateRequired(v) || root.$i18n.t('Required')
       ],
-      updateServiceVersion: () => setProcForWait(
-        () => functions.httpsCallable('updateServiceVersion').call()
-      ),
       ...helpers
     }
   }

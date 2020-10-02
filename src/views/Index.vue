@@ -89,7 +89,7 @@ export default {
   },
   setup () {
     const store = useStore()
-
+    const { functions } = store
     const groupsOfCatecogry = computed(
       () => store.state.categories.reduce(
         (ret, cur) => ({
@@ -124,6 +124,10 @@ export default {
       groupsOfCatecogry,
       uncategorizedGroups,
       deletedGroups,
+      test: async () => {
+        const test = await functions.httpsCallable('test').call()
+        console.log(test)
+      },
       ...helpers
     }
   }

@@ -55,3 +55,6 @@ jobs:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
       working-directory: ${{ github.workspace }}
       run: yarn deploy --only hosting --token "$FIREBASE_TOKEN"
+
+    - name: Set version to DB
+      run: curl https://us-central1-tamuro-test01.cloudfunctions.net/api/updateServiceVersion\?key\=$API_KEY
