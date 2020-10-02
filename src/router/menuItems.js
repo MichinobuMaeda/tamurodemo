@@ -25,6 +25,12 @@ const menuItems = (priv, myName, page, router) => () => {
       action: () => { goPage(router, { name: 'signin' }) }
     },
     {
+      label: 'Privacy policy',
+      icon: icon('Privacy policy'),
+      visible: routePermission(router, priv, 'policy'),
+      action: () => { goPage(router, { name: 'policy' }) }
+    },
+    {
       label: ['Profile and Settings', { user: myName }],
       icon: icon('Profile and Settings'),
       visible: routePermission(router, priv, 'me'),
@@ -35,12 +41,6 @@ const menuItems = (priv, myName, page, router) => () => {
       icon: icon('Categories'),
       visible: routePermission(router, priv, 'categories'),
       action: () => { goPage(router, { name: 'categories' }) }
-    },
-    {
-      label: 'Privacy policy',
-      icon: icon('Privacy policy'),
-      visible: routePermission(router, priv, 'policy'),
-      action: () => { goPage(router, { name: 'policy' }) }
     },
     {
       label: 'Service settings',

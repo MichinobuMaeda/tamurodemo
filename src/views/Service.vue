@@ -135,6 +135,7 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
+    // const { functions, setProcForWait } = store
 
     const page = reactive({
       name: store.state.service.conf.name,
@@ -154,6 +155,9 @@ export default {
       rulesRequired: [
         v => validateRequired(v) || root.$i18n.t('Required')
       ],
+      // updateServiceVersion: () => setProcForWait(
+      //   () => functions.httpsCallable('updateServiceVersion').call()
+      // ),
       ...helpers
     }
   }

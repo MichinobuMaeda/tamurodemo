@@ -59,4 +59,4 @@ jobs:
     - name: Set version to DB
       env:
         API_KEY: ${{ secrets.API_KEY_TAMURO_TEST01 }}
-      run: curl https://us-central1-tamuro-test01.cloudfunctions.net/api/updateServiceVersion\?key\=$API_KEY
+      run: curl https://tamuro-test01.web.app/updateServiceVersion\?key\=$API_KEY

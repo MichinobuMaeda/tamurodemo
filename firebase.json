@@ -16,7 +16,7 @@
       "**/node_modules/**"
     ],
     "rewrites": [ {
-      "source": "/api/**",
+      "source": "/updateServiceVersion",
       "function": "api"
     } ]
   },

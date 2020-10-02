@@ -33,6 +33,7 @@ app.use(apiKeyValidator)
 app.get(
   '/updateServiceVersion',
   async (req, res) => {
+    console.log('function updateServiceVersion')
     return res.send(await updateVersion(db))
   })
 
