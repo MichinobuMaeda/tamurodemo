@@ -14,7 +14,7 @@
         :alt="(state.service.conf && state.service.conf.name) || 'Tamuro'"
       />
       <v-toolbar-title
-        class="theme1r--text text-h5 ml-2"
+        class="theme1r--text text-h1 ml-2"
       >
         {{ (state.service.conf && state.service.conf.name) || 'Tamuro' }}
       </v-toolbar-title>

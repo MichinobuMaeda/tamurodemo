@@ -1,7 +1,9 @@
 <template>
-  <div :class="textColor + ' text-h5 mb-4'">
-    <v-icon :color="iconColor" large>{{ icon }}</v-icon>
-    {{ title }}
+  <div class="mb-4 text-h2" style="vertical-align: baseline;">
+    <v-icon :color="iconColor" size="1.8rem">{{ icon }}</v-icon>
+    <span :class="textColor">
+      {{ title }}
+    </span>
   </div>
 </template>
 

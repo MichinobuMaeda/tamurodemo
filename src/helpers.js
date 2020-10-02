@@ -4,12 +4,12 @@ export const StoreSymbol = Symbol('store')
 export const useStore = () => inject(StoreSymbol)
 
 // Local storage keys
-const product = 'tamuro'
-const LS_REQ_ROUTE = `${product}RequestedRoute`
-const LS_REQ_EMAIL = `${product}tamuroEmailLinkRequest`
+const LS_PRODUCT = 'tamuro'
+const LS_REQ_ROUTE = `${LS_PRODUCT}RequestedRoute`
+const LS_REQ_EMAIL = `${LS_PRODUCT}tamuroEmailLinkRequest`
 
 // UI
-export * from '@/components/helper'
+export * from '@/components/helpers'
 export { icon } from '@/conf/icons'
 export { locales } from '@/conf/locales'
 export { menuPositions } from '@/conf/menuPositions'

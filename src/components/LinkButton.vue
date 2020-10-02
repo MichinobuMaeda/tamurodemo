@@ -6,7 +6,7 @@
     @click="$emit('click')"
     :disabled="disabled"
   >
-    <v-icon small v-if="icon" :class="label ? 'mr-1' : ''">{{ icon }}</v-icon>
+    <v-icon v-if="icon" :class="label ? 'mr-1' : ''">{{ icon }}</v-icon>
     <span class="text-decoration-underline">{{ label }}</span>
   </v-btn>
 </template>

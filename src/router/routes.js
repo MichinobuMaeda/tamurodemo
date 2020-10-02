@@ -30,6 +30,12 @@ const routes = [
     meta: { privs: ['manager'] }
   },
   {
+    path: '/groups/:id',
+    name: 'groups',
+    component: () => import('../views/Group.vue'),
+    meta: { privs: ['user'] }
+  },
+  {
     path: '/service',
     name: 'service',
     component: () => import('../views/Service.vue'),

@@ -1,10 +1,8 @@
 <template>
   <v-btn
     class="my-1 mx-2"
-    :rounded="!!label"
-    :outlined="!!label"
-    :fab="!label"
-    :small="!label"
+    rounded
+    outlined
     :color="color"
     @click="$emit('click')"
     :disabled="disabled"

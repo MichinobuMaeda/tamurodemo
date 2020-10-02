@@ -50,6 +50,10 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     id: 'admins',
     data: {
       name: 'System admins',
+      desc: {
+        type: 'markdown',
+        data: ''
+      },
       members: []
     }
   },
@@ -58,6 +62,10 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     id: 'managers',
     data: {
       name: 'Managers',
+      desc: {
+        type: 'markdown',
+        data: ''
+      },
       members: []
     }
   }

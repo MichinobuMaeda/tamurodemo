@@ -1,6 +1,7 @@
+import { defaultIcons } from '@/components/defaults'
+
 const iconList = {
-  'OK': 'check',
-  'Cancel': 'close',
+  ...defaultIcons,
   'Top': 'home',
   'Sign in': 'account_circle',
   'Sign out': 'power_settings_new',
@@ -9,14 +10,10 @@ const iconList = {
   'Category': 'label',
   'Groups': 'group',
   'Group': 'group',
+  'Members': 'supervised_user_circle',
   'User': 'person',
   'Profile and Settings': 'contact_page',
   'Service': 'settings',
-  'Edit': 'edit',
-  'Add': 'add',
-  'Delete': 'delete',
-  'Undo delete': 'restore_from_trash',
-  'Save': 'done',
   'Upward': 'arrow_upward',
   'Downward': 'arrow_downward',
   'Top Left': 'north_west',
@@ -30,8 +27,7 @@ const iconList = {
   'Defaults': 'settings_applications',
   'Update app': 'system_update_alt',
   'Update service': 'sync',
-  'Service settings': 'settings',
-  'Raw data': 'memory'
+  'Service settings': 'settings'
 }
 
 export const icon = name => iconList[name] || 'description'

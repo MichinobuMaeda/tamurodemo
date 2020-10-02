@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-card-title>
-        <span :class="titleColor + ' text-h5'">
+        <span :class="titleColor + ' text-h2'">
           <v-icon large :color="iconColor">{{ icon }}</v-icon>
           {{ title }}
         </span>

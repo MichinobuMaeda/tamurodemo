@@ -15,14 +15,14 @@
         <v-col class="col-1 pt-8">
           <mini-button
             :icon="icon('Upward')"
-            :disabled="!item.seq || index === 0"
+            :disabled="!!item.deletedAt || index === 0"
             @click="onUpward(index)"
           />
         </v-col>
         <v-col class="col-1 pt-8">
           <mini-button
             :icon="icon('Downward')"
-            :disabled="!item.seq || index === (page.items.length - 1)"
+            :disabled="!!item.deletedAt || index === (page.items.length - 1) || !!page.items[index + 1].deletedAt"
             @click="onDownward(index)"
           />
         </v-col>
@@ -60,7 +60,7 @@
           <ButtonPrimary
             :label="$t('Save')"
             @click="onSave"
-            :disabled="!!state.waitProc"
+            :disabled="!!state.waitProc || !modified"
           />
         </v-col>
       </v-row>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { reactive, onMounted } from "@vue/composition-api";
+import { reactive, computed, onMounted } from "@vue/composition-api";
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import MiniButton from "@/components/MiniButton";
@@ -130,7 +130,7 @@ export default {
       if (index < (page.items.length - 1)) {
         const items = [...page.items]
         items[index] = { ...page.items[index + 1], seq: items[index].seq }
-        items[index + 1] = { ...page.items[index], seq: items[index - 1].seq }
+        items[index + 1] = { ...page.items[index], seq: items[index + 1].seq }
         page.items = items
       }
     }
@@ -150,34 +150,48 @@ export default {
       page.items = reOrder(store.state.categories)
     }
 
-    const onSave = async () => {
-      page.items = reOrder(page.items)
-      await Promise.all(
-        page.items.filter(item => (!item.id && item.name) ||
-          (item.id &&
-            (
-              (getById(store.state.categories, item.id).seq !== item.seq) ||
-              (getById(store.state.categories, item.id).name !== item.name) ||
-              (getById(store.state.categories, item.id).deletedAt !== item.deletedAt)
+    const onSave = () => setProcForWait(
+      async () => {
+        page.items = reOrder(page.items)
+        await Promise.all(
+          page.items.filter(item => (!item.id && item.name) ||
+            (item.id &&
+              (
+                (getById(store.state.categories, item.id).seq !== item.seq) ||
+                (getById(store.state.categories, item.id).name !== item.name) ||
+                (getById(store.state.categories, item.id).deletedAt !== item.deletedAt)
+              )
             )
-          )
-        ).map(async item => {
-          const { seq, name } = item
-          if (item.id) {
-            if (item.seq) {
-              return store.set('categories', item.id, {
-                seq, name, deletedAt: null
-              })
+          ).map(async item => {
+            const { seq, name } = item
+            if (item.id) {
+              if (item.seq) {
+                return store.set('categories', item.id, {
+                  seq, name, deletedAt: null
+                })
+              } else {
+                return store.del('categories', item.id)
+              }
             } else {
-              return store.del('categories', item.id)
+              return store.add('categories', { seq, name })
             }
-          } else {
-            return store.add('categories', { seq, name })
-          }
-        })
-      )
-      page.items = reOrder(store.state.categories)
-    }
+          })
+        )
+        page.items = reOrder(store.state.categories)
+      }
+    )
+
+    const modified = computed(() => {
+      const org = reOrder(store.state.categories || [])
+      const cmp = page.items || []
+      return (org.length !== cmp.length) ||
+        org.some((item, i) => !(
+          org[i].id === cmp[i].id &&
+          org[i].seq === cmp[i].seq &&
+          org[i].name === cmp[i].name &&
+          !!org[i].deletedAt === !!cmp[i].deletedAt
+        ))
+    })
 
     return {
       ...store,
@@ -188,6 +202,7 @@ export default {
       onUndoDelete,
       onCancel,
       onSave: () => setProcForWait(onSave),
+      modified,
       ...helpers
     }
   }

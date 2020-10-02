@@ -7,21 +7,20 @@
         :title="$t('Top')"
         :icon="icon('Top')"
       />
-      <EditableRichText
+      <EditableItem
+        type="formatted-text"
+        :label="$t('Description')"
         v-model="state.service.conf.desc"
-        :editable="priv.manager"
-        :icon-edit="icon('Edit')"
-        :cancel-text="$t('Cancel')"
-        :save-text="$t('Save')"
         @save="val => set('service', 'conf', { desc: val })"
+        :editable="priv.manager"
         :disabled="!!state.waitProc"
       />
 
       <div
         v-for="category in state.categories.filter(item => !item.deletedAt)" :key="category.id"
-        class="h3--text text-h6 py-2"
+        class="h3--text text-h3 py-2"
       >
-        <v-icon color="h3">{{ icon('Category') }}</v-icon>
+        <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
         <span class="ma-2">{{ category.name }}</span>
         <div v-for="group in groupsOfCatecogry[category]" :key="group.id">
           <LinkButton
@@ -32,14 +31,15 @@
       </div>
 
       <div v-if="uncategorizedGroups.length">
-        <div class="h3--text text-h6 py-2">
-          <v-icon color="h3">{{ icon('Category') }}</v-icon>
+        <div class="h3--text text-h3 py-2">
+          <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
           <span class="ma-2">{{ $t('Uncategorized') }}</span>
         </div>
         <div v-for="group in uncategorizedGroups" :key="group.id">
           <LinkButton
             :icon="icon('Group')"
             :label="group.name"
+            @click="goPage($router, { name: 'groups', params: { id: group.id } })"
           />
         </div>
       </div>
@@ -52,8 +52,8 @@
           :label="$t('Create new', { type: $t('group') })"
         />
         <div v-if="deletedGroups.length">
-          <div class="h3--text text-h6 py-2">
-            <v-icon color="h3">{{ icon('Category') }}</v-icon>
+          <div class="h3--text text-h3 py-2">
+            <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
             <span class="ma-2">{{ $t('Deleted groups') }}</span>
           </div>
           <div v-for="group in deletedGroups" :key="group.id">
@@ -73,7 +73,7 @@
 import { computed } from "@vue/composition-api";
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
-import EditableRichText from "@/components/EditableRichText";
+import EditableItem from "@/components/EditableItem";
 import ButtonPrimary from "@/components/ButtonPrimary";
 import LinkButton from "@/components/LinkButton";
 
@@ -83,7 +83,7 @@ export default {
   name: 'PageIndex',
   components: {
     PageTitle,
-    EditableRichText,
+    EditableItem,
     ButtonPrimary,
     LinkButton
   },

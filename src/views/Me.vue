@@ -49,7 +49,23 @@
           />
         </v-col>
       </v-row>
-      <div v-if="!page.confirmSginOut">
+
+      <v-row>
+        <v-col class="title--text col-4">{{ $t('Display name') }}</v-col>
+        <v-col class="col-8">
+          <EditableItem
+            type="text"
+            :label="$t('Display name')"
+            v-model="state.users.find(user => user.id === state.me.id).name"
+            :rules="rulesName"
+            @save="val => set('users', state.me.id, { name: val })"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
+      <v-divider />
+
+      <div v-if="!page.confirmSginOut" class="mt-4">
         <ButtonNegative
           :label="$t('Sign out')"
           :icon="icon('Sign out')"
@@ -78,16 +94,18 @@
           </v-col>
         </v-row>
       </div>
+
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { reactive } from "@vue/composition-api";
+import { reactive, computed } from "@vue/composition-api";
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import ButtonSecondary from '@/components/ButtonSecondary'
 import ButtonNegative from '@/components/ButtonNegative'
+import EditableItem from '@/components/EditableItem'
 
 const { useStore, signInUrl } = helpers
 
@@ -96,9 +114,10 @@ export default {
   components: {
     PageTitle,
     ButtonSecondary,
-    ButtonNegative
+    ButtonNegative,
+    EditableItem
   },
-  setup () {
+  setup (proc, { root }) {
     const store = useStore()
     const { setProcForWait, auth } = store
     const page = reactive({
@@ -117,6 +136,11 @@ export default {
       ...store,
       page,
       signOut,
+      rulesName: [
+        v => !!v || root.$i18n.t('Required')
+      ],
+      myInfo: computed(() => store.state.users.find(item => item.id === store.state.me.id)),
+      myProfile: computed(() => store.state.profiles.find(item => item.id === store.state.me.id)),
       ...helpers
     }
   }

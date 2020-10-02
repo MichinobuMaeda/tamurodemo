@@ -19,6 +19,9 @@
   "Users": "会員",
   "User": "会員",
   "user": "会員",
+  "Members": "メンバー",
+  "Member": "メンバー",
+  "Display name": "表示名",
   "Uncategorized": "未分類",
   "Deleted groups": "削除されたグループ",
   "Administrators only": "管理者だけに表示",
@@ -37,9 +40,10 @@
   "E-mail": "メールアドレス",
   "Password": "パスワード",
   "Site name": "名称",
+  "Description": "説明",
   "Defaults": "既定値",
   "Menu position": "メニューの位置",
-  "Locale": "言語・地域",
+  "Locale": "言語",
   "Timezone": "タイムゾーン",
   "Dark theme" : "ダークテーマ",
   "Dark theme value" : "ダークテーマ: {on}",
@@ -54,5 +58,6 @@
   "Invalid URL format": "URLを正しい書式で記入してください。",
   "Invalid email or password": "メールアドレスかパスワードが間違っています。",
   "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。",
+  "Please wait": "しばらくお待ちください",
   "Update app": "アプリを更新してください"
 }

@@ -7,13 +7,12 @@
         :title="$t('Privacy policy')"
         :icon="icon('Privacy policy')"
       />
-      <EditableRichText
+      <EditableItem
+        type="formatted-text"
+        :label="$t('Privacy policy')"
         v-model="state.service.conf.policy"
-        :editable="priv.manager"
-        :icon-edit="icon('Edit')"
-        :cancel-text="$t('Cancel')"
-        :save-text="$t('Save')"
         @save="val => set('service', 'conf', { policy: val })"
+        :editable="priv.manager"
         :disabled="!!state.waitProc"
       />
     </v-col>
@@ -23,7 +22,7 @@
 <script>
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
-import EditableRichText from '@/components/EditableRichText'
+import EditableItem from '@/components/EditableItem'
 
 const { useStore } = helpers
 
@@ -31,7 +30,7 @@ export default {
   name: 'PagePolicy',
   components: {
     PageTitle,
-    EditableRichText
+    EditableItem
   },
   setup () {
     const store = useStore()
