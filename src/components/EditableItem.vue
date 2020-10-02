@@ -120,12 +120,12 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { defaultIcons, defaultLabels  } from './defaults'
-import { evalRules  } from './helpers'
+import { defaultIcons, defaultLabels } from './defaults'
+import { evalRules } from './helpers'
 import ButtonPrimary from './ButtonPrimary'
 import ButtonSecondary from './ButtonSecondary'
-import sanitizeHtml from "sanitize-html";
-import marked from "marked";
+import sanitizeHtml from 'sanitize-html'
+import marked from 'marked'
 
 export default {
   name: 'EditableItem',
@@ -138,7 +138,7 @@ export default {
     event: 'save'
   },
   props: {
-    type:{
+    type: {
       type: String,
       default: 'text'
     },
@@ -175,7 +175,7 @@ export default {
       default: defaultLabels.Save
     }
   },
-  setup(props, { emit }) {
+  setup (props, { emit }) {
     const state = reactive({
       edit: false,
       value: getPropsValue(props)

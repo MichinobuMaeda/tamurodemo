@@ -69,12 +69,12 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted } from "@vue/composition-api";
+import { reactive, computed, onMounted } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
-import MiniButton from "@/components/MiniButton";
-import ButtonPrimary from "@/components/ButtonPrimary";
-import ButtonSecondary from "@/components/ButtonSecondary";
+import MiniButton from '@/components/MiniButton'
+import ButtonPrimary from '@/components/ButtonPrimary'
+import ButtonSecondary from '@/components/ButtonSecondary'
 
 const { useStore, getById } = helpers
 
@@ -90,7 +90,7 @@ export default {
     const store = useStore()
     const { setProcForWait } = store
     const page = reactive({
-      items: [],
+      items: []
     })
 
     const reOrder = items => {
@@ -113,7 +113,7 @@ export default {
       ]
     }
 
-    onMounted (() => {
+    onMounted(() => {
       page.items = reOrder(store.state.categories)
     })
 

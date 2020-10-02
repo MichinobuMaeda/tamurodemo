@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <v-icon
       v-if="!disabled"
       color="primary"
@@ -13,7 +13,7 @@
     >
       {{ icon }}
     </v-icon>
-  </div>
+  </span>
 </template>
 
 <script>

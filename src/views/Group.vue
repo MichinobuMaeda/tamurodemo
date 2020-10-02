@@ -39,10 +39,10 @@ export default {
     PageTitle,
     EditableItem
   },
-  setup(prop, { root }) {
+  setup (prop, { root }) {
     const store = useStore()
     const page = reactive({
-      edit: false,
+      edit: false
     })
 
     return {

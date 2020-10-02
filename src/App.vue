@@ -88,7 +88,6 @@ export default {
     RawDataTree
   },
   setup (props, { root }) {
-
     const page = reactive({
       loading: true,
       rawData: false

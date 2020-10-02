@@ -12,13 +12,11 @@
         <v-col class="title--text col-4">Version</v-col>
         <v-col class="col-8">
           {{ state.service.conf.version }}
-          <v-icon
-            :color="!!state.waitProc ? 'grey' : 'primary'"
-            class="ml-1"
-            @click="() => !!state.waitProc ? null : updateServiceVersion()"
-          >
-            {{ icon('Update service') }}
-          </v-icon>
+          <mini-button
+            :icon="icon('Update service')"
+            :disabled="!!state.waitProc"
+            @click="updateServiceVersion"
+          />
           <span
             v-if="!!state.waitProc"
             class="info--text">
@@ -30,7 +28,7 @@
       <v-row>
         <v-col class="title--text col-4">URL</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <editable-item
             label="URL"
             v-model="state.service.conf.hosting"
             :rules="rulesURL"
@@ -44,7 +42,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Site name') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <editable-item
             :label="$t('Site name')"
             v-model="state.service.conf.name"
             :rules="rulesName"
@@ -62,7 +60,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Dark theme') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <editable-item
             type="select"
             :label="$t('Dark theme')"
             v-model="state.service.defaults.darkTheme"
@@ -77,7 +75,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Menu position') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <editable-item
             type="select"
             :label="$t('Menu position')"
             v-model="state.service.defaults.menuPosition"
@@ -92,7 +90,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Locale') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <editable-item
             type="select"
             :label="$t('Locale')"
             v-model="state.service.defaults.locale"
@@ -107,7 +105,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Timezone') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <editable-item
             type="select"
             :label="$t('Timezone')"
             v-model="state.service.defaults.tz"
@@ -128,6 +126,7 @@
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
+import MiniButton from '@/components/MiniButton'
 import EditableItem from '@/components/EditableItem'
 
 const { useStore, validateURL } = helpers
@@ -136,9 +135,10 @@ export default {
   name: 'PageService',
   components: {
     PageTitle,
+    MiniButton,
     EditableItem
   },
-  setup(prop, { root }) {
+  setup (prop, { root }) {
     const store = useStore()
     const { functions, setProcForWait } = store
 
@@ -161,7 +161,7 @@ export default {
         v => !!v || root.$i18n.t('Required')
       ],
       updateServiceVersion: () => setProcForWait(
-        () => functions.httpsCallable("updateServiceVersion").call()
+        () => functions.httpsCallable('updateServiceVersion').call()
       ),
       ...helpers
     }

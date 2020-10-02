@@ -50,6 +50,9 @@ $ vue add i18n
 $ vue add vuetify
 $ vue add pwa
 $ vue add unit-jest
+$ vue add eslint
+? Pick an ESLint config: Standard
+? Pick additional lint features: Lint on save
 $ firebase login
 $ firebase init
 ? Which Firebase CLI features do you want to set up for this folder?

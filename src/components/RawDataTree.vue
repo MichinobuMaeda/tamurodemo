@@ -127,7 +127,7 @@ export default {
       default: 'blue--text text--darken-3'
     }
   },
-  setup(props) {
+  setup (props) {
     return {
       tree: computed(() => [...Object.keys(props.items || {})].sort().map(
         key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])

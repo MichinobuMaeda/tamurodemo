@@ -15,10 +15,16 @@ const firebase = Firebase.initializeApp({
 })
 
 if (process.env.NODE_ENV === 'test') {
+  console.log(process.env.NODE_ENV)
   firebase.firestore().settings({
     host: 'localhost:8080',
     ssl: false
-  });
+  })
+  firebase.functions().useFunctionsEmulator(
+    'http://localhost:5001'
+  )
+} else if (location.hostname === 'localhost') {
+  console.log(location.hostname)
   firebase.functions().useFunctionsEmulator(
     'http://localhost:5001'
   )

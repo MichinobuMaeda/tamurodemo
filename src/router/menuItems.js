@@ -16,37 +16,37 @@ const menuItems = (priv, myName, page, router) => () => {
       label: 'Top',
       icon: icon('Top'),
       visible: routePermission(router, priv, 'top'),
-      action: () => { goPage(router,{ name: 'top' }) }
+      action: () => { goPage(router, { name: 'top' }) }
     },
     {
       label: 'Sign in',
       icon: icon('Sign in'),
       visible: routePermission(router, priv, 'signin'),
-      action: () => { goPage(router,{ name: 'signin' }) }
+      action: () => { goPage(router, { name: 'signin' }) }
     },
     {
       label: ['Profile and Settings', { user: myName }],
       icon: icon('Profile and Settings'),
       visible: routePermission(router, priv, 'me'),
-      action: () => { goPage(router,{ name: 'me' }) }
+      action: () => { goPage(router, { name: 'me' }) }
     },
     {
       label: 'Categories',
       icon: icon('Categories'),
       visible: routePermission(router, priv, 'categories'),
-      action: () => { goPage(router,{ name: 'categories' }) }
+      action: () => { goPage(router, { name: 'categories' }) }
     },
     {
       label: 'Privacy policy',
       icon: icon('Privacy policy'),
       visible: routePermission(router, priv, 'policy'),
-      action: () => { goPage(router,{ name: 'policy' }) }
+      action: () => { goPage(router, { name: 'policy' }) }
     },
     {
       label: 'Service settings',
       icon: icon('Service settings'),
       visible: routePermission(router, priv, 'service'),
-      action: () => { goPage(router,{ name: 'service' }) }
+      action: () => { goPage(router, { name: 'service' }) }
     },
     {
       label: 'Raw data',

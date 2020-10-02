@@ -1,6 +1,7 @@
 import { computed, provide, reactive } from '@vue/composition-api'
 import { db, functions, auth } from '@/plugins/firebase'
-import { StoreSymbol, getMyPriv, getMyName,
+import {
+  StoreSymbol, getMyPriv, getMyName,
   topUrl, signInUrl, simplifyDoc, getById,
   restoreRequestedEmail, eraseRequestedEmail
 } from '@/helpers'
@@ -26,7 +27,7 @@ export const createStore = () => {
     add: (collection, data) => setProcForWait(state)(() => add(db, collection, data)),
     set: (collection, id, data) => setProcForWait(state)(() => set(db, collection, id, data)),
     del: (collection, id) => setProcForWait(state)(() => del(db, collection, id)),
-    restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id)),
+    restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id))
   }
   store.priv = computed(() => getMyPriv(store.state))
   store.myName = computed(() => getMyName(store.state))
@@ -47,7 +48,6 @@ export const syncServiceData = async ({ db, state }, root) => {
 }
 
 export const syncUserData = async ({ db, auth, state }, root, page) => {
-
   // state.authMessage = window.localStorage.getItem('tamuroAuthMessage') || ''
   auth.onAuthStateChanged(async user => {
     if (auth.isSignInWithEmailLink(window.location.href)) {
@@ -131,7 +131,7 @@ const clearUserData = state => {
 
 const onServiceUpdate = (state, root, querySnapshot) => {
   const service = {}
-  querySnapshot.forEach(doc => service[doc.id] = doc.data())
+  querySnapshot.forEach(doc => { service[doc.id] = doc.data() })
   state.service = service
   setDefaults(state, root)
 }
@@ -193,7 +193,7 @@ const onValidAccount = async (db, auth, state, root, me) => {
     await getInitialAndRealtimeData(
       state,
       'profiles',
-      db.collection('profiles')    )
+      db.collection('profiles'))
   } else {
     const meRef = db.collection('profiles').doc(state.me.id)
     state.profiles = [simplifyDoc(await meRef.get())]

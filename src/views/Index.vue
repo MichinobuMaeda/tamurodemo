@@ -70,12 +70,12 @@
 </template>
 
 <script>
-import { computed } from "@vue/composition-api";
+import { computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
-import EditableItem from "@/components/EditableItem";
-import ButtonPrimary from "@/components/ButtonPrimary";
-import LinkButton from "@/components/LinkButton";
+import EditableItem from '@/components/EditableItem'
+import ButtonPrimary from '@/components/ButtonPrimary'
+import LinkButton from '@/components/LinkButton'
 
 const { useStore } = helpers
 
@@ -111,7 +111,7 @@ export default {
             category => (group.categories || []).includes(category.id)
           ) &&
           !group.deletedAt
-      )
+        )
     )
 
     const deletedGroups = computed(

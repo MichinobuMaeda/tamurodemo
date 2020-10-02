@@ -87,7 +87,7 @@ export default {
       default: null
     }
   },
-  setup(props, { emit }) {
+  setup (props, { emit }) {
     const isTop = () => props.position.slice(0, 1) === 't'
     const isBottom = () => props.position.slice(0, 1) === 'b'
     const isLeft = () => props.position.slice(1) === 'l'

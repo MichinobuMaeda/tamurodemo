@@ -45,7 +45,7 @@ export const simplifyDoc = doc => ({
     }), ({}))
 })
 
-export const getById = (list, id) => (list ||[]).reduce(
+export const getById = (list, id) => (list || []).reduce(
   (ret, cur) => cur.id === id ? { ...cur } : ret,
   {}
 )

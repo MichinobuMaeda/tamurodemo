@@ -7,5 +7,11 @@ const db = admin.firestore()
 const auth = admin.auth()
 
 exports.updateServiceVersion = functions.https.onCall(
-  (data, context) => updateVersion(db)
+  (data, context) => {
+    try {
+      return updateVersion(db)
+    } catch (e) {
+      throw new functions.https.HttpsError('unknown', e.toString())
+    }
+  }
 )

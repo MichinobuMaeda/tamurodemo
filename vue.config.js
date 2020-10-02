@@ -1,14 +1,14 @@
 module.exports = {
-  "pluginOptions": {
-    "i18n": {
-      "locale": "ja",
-      "fallbackLocale": "ja",
-      "localeDir": "locales",
-      "enableInSFC": false
+  pluginOptions: {
+    i18n: {
+      locale: 'ja',
+      fallbackLocale: 'ja',
+      localeDir: 'locales',
+      enableInSFC: false
     }
   },
-  "transpileDependencies": [
-    "vuetify"
+  transpileDependencies: [
+    'vuetify'
   ],
   pwa: {
     name: 'Tamuro',

@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { reactive, computed } from "@vue/composition-api";
+import { reactive, computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import ButtonSecondary from '@/components/ButtonSecondary'
@@ -121,7 +121,7 @@ export default {
     const store = useStore()
     const { setProcForWait, auth } = store
     const page = reactive({
-      confirmSginOut: false,
+      confirmSginOut: false
     })
 
     const signOut = () => setProcForWait(
