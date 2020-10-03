@@ -26,6 +26,7 @@
           <LinkButton
             :icon="icon('Group')"
             :label="group.name"
+            @click="goPage($router, { name: 'groups', params: { id: group.id } })"
           />
         </div>
       </div>
@@ -50,6 +51,7 @@
         <ButtonPrimary
           :icon="icon('Add')"
           :label="$t('Create new', { type: $t('group') })"
+          @click="goPage($router, { name: 'groups', params: { id: group.id } })"
         />
         <div v-if="deletedGroups.length">
           <div class="h3--text text-h3 py-2">
@@ -60,6 +62,7 @@
             <LinkButton
               :icon="icon('Group')"
               :label="group.name"
+              @click="goPage($router, { name: 'groups', params: { id: group.id } })"
             />
           </div>
         </div>

@@ -3,7 +3,7 @@ import { db, functions, auth } from '@/plugins/firebase'
 import {
   StoreSymbol, getMyPriv, getMyName,
   topUrl, signInUrl, simplifyDoc, getById,
-  restoreRequestedEmail, eraseRequestedEmail
+  restoreRequestedEmail, eraseRequestedEmail, restoreRequestedRoute
 } from '@/helpers'
 
 const defaultsKeys = ['darkTheme', 'menuPosition', 'locale', 'tz']
@@ -27,7 +27,8 @@ export const createStore = () => {
     add: (collection, data) => setProcForWait(state)(() => add(db, collection, data)),
     set: (collection, id, data) => setProcForWait(state)(() => set(db, collection, id, data)),
     del: (collection, id) => setProcForWait(state)(() => del(db, collection, id)),
-    restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id))
+    restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id)),
+    onSighOut
   }
   store.priv = computed(() => getMyPriv(store.state))
   store.myName = computed(() => getMyName(store.state))
@@ -200,6 +201,11 @@ const onValidAccount = async (db, auth, state, root, me) => {
     state.unsubscribers.profiles = meRef.onSnapshot(me => {
       state.profiles = [simplifyDoc(me)]
     })
+  }
+
+  const requestedRoute = restoreRequestedRoute()
+  if (requestedRoute) {
+    root.$router.push(requestedRoute).catch(() => {})
   }
 }
 

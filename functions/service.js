@@ -1,7 +1,6 @@
 const moment = require('moment-timezone')
 const axios = require('axios')
 
-const tz = 'Asia/Tokyo'
 const initialData = ts => [
   {
     collection: 'service',
@@ -39,7 +38,7 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     collection: 'service',
     id: 'defaults',
     data: {
-      tz,
+      tz: 'Asia/Tokyo',
       locale: 'ja_JP',
       menuPosition: 'br',
       darkTheme: false
@@ -79,7 +78,7 @@ const updateService = async db => {
       const docRef = db.collection(collection).doc(id)
       const doc = await docRef.get()
       if (doc && doc.exists) {
-        if (Object.keys(data).some(key => !doc.data()[key])) {
+        if (Object.keys(data).some(key => !doc.data()[key] && doc.data()[key] !== false)) {
           console.log(`Update: ${collection}.${id}`)
           await docRef.set({
             ...data,

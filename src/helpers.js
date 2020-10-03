@@ -26,7 +26,7 @@ export const signInUrl = () => window.location.href
   .replace(/#.*/, '#/signin')
 
 export const goPage = (router, route) => {
-  if (!['signin', 'policy'].includes(route.name)) {
+  if (!['signin', 'policy', 'me'].includes(route.name)) {
     storeRequestedRoute(route)
   }
   router.push(route).catch(() => {})
@@ -60,7 +60,7 @@ export const userIsMemberOf = (state, id, groupId) => !!(state.groups || []).som
   group => group.id === groupId && group.members.includes(id)
 )
 
-export const iamValid = state => !!(state.me.id && state.me.valid)
+export const iamValid = state => !!(state.me && state.me.id && state.me.valid)
 
 export const iamMemberOf = (state, groupId) => userIsMemberOf(state, state.me.id, groupId)
 
@@ -87,22 +87,18 @@ export const restoreRequestedEmail = () => {
   return window.localStorage.getItem(LS_REQ_EMAIL)
 }
 
-export const eraseRequestedRoute = () => {
-  window.localStorage.setItem(LS_REQ_ROUTE, '')
-}
-
 export const storeRequestedRoute = route => {
-  const { name, param } = route
-  window.localStorage.setItem(LS_REQ_ROUTE, JSON.stringify({ name, param }))
+  window.localStorage.setItem(LS_REQ_ROUTE, JSON.stringify(route))
 }
 
-export const restoreRequestedRoute = defaultRoute => {
+export const restoreRequestedRoute = () => {
   const saved = window.localStorage.getItem(LS_REQ_ROUTE)
   if (saved) {
     try {
-      return JSON.parse(saved)
+      const route = JSON.parse(saved)
+      return route.name ? route : null
     } catch (e) {
-      return defaultRoute
+      return null
     }
   } else {
     return null
