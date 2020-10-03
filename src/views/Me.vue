@@ -4,9 +4,10 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :title="$t('Profile and Settings', { user: myName })"
         :icon="icon('Profile and Settings')"
-      />
+      >
+        <template v-slot:title>{{ $t('Profile and Settings', { user: state.myName }) }}</template>
+      </PageTitle>
       <v-row>
         <v-col class="col-12 col-sm-6 col-md-6 col-lg-6">
           <v-switch
@@ -95,6 +96,15 @@
         </v-row>
       </div>
 
+      <div v-if="page.realPriv.manager || page.realPriv.admin">
+        <v-divider class="my-6" />
+        <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
+        <v-checkbox
+          v-model="state.me.emulateNoPriv"
+          :label="$t('Emulate non-priv') + ': ' + (state.emulateNoPriv ? 'On' : 'Off')"
+        />
+      </div>
+
     </v-col>
   </v-row>
 </template>
@@ -107,7 +117,7 @@ import ButtonSecondary from '@/components/ButtonSecondary'
 import ButtonNegative from '@/components/ButtonNegative'
 import EditableItem from '@/components/EditableItem'
 
-const { useStore, signInUrl } = helpers
+const { useStore, signInUrl, getMyPriv } = helpers
 
 export default {
   name: 'PageMe',
@@ -121,7 +131,8 @@ export default {
     const store = useStore()
     const { setProcForWait, auth } = store
     const page = reactive({
-      confirmSginOut: false
+      confirmSginOut: false,
+      realPriv: computed(() => getMyPriv(store.state))
     })
 
     const signOut = () => setProcForWait(

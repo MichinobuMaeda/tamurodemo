@@ -4,15 +4,16 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :title="$t('Privacy policy')"
         :icon="icon('Privacy policy')"
-      />
+      >
+        <template v-slot:title>{{ $t('Privacy policy') }}</template>
+      </PageTitle>
       <EditableItem
         type="formatted-text"
         :label="$t('Privacy policy')"
         v-model="state.service.conf.policy"
         @save="val => set('service', 'conf', { policy: val })"
-        :editable="priv.manager"
+        :editable="state.priv.manager"
         :disabled="!!state.waitProc"
       />
     </v-col>

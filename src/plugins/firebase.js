@@ -4,7 +4,7 @@ import 'firebase/functions'
 import 'firebase/auth'
 import apiKey from './firebase-api-key.js'
 
-const firebase = Firebase.initializeApp({
+export const firebase = Firebase.initializeApp({
   apiKey,
   authDomain: 'tamuro-test01.firebaseapp.com',
   databaseURL: 'https://tamuro-test01.firebaseio.com',

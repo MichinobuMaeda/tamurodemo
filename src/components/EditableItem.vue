@@ -1,7 +1,17 @@
 <template>
-  <div>
+  <span>
 
-    <span v-if="type === 'select' && items[0].value">
+    <span v-if="type === 'chips' && items[0].value">
+      <v-chip class="ma-1" v-for="(v, index) in (value || [])" :key="index">
+      {{ (items.find(item => item.value === v) || {}).text }}
+      </v-chip>
+    </span>
+    <span class="ma-1" v-else-if="type === 'chips' && !items[0].value">
+      <v-chip v-for="(v, index) in (value || [])" :key="index">
+        {{ v }}
+      </v-chip>
+    </span>
+    <span v-else-if="type === 'select' && items[0].value">
       {{ (items.find(item => item.value === value) || {}).text }}
     </span>
     <span v-else-if="type !== 'formatted-text'">
@@ -30,9 +40,7 @@
     >
       <v-card>
 
-        <v-card-title
-          :class="'headline' + ($vuetify.theme.dark ? ' grey darken-2' : ' grey lighten-2')"
-        >
+        <v-card-title class="headline dialogTitle">
           <v-icon
             color="primary"
             class="mr-2"
@@ -77,7 +85,9 @@
             />
           </div>
           <v-select
-            v-else-if="type === 'select'"
+            v-else-if="['select', 'chips'].includes(type)"
+            :chips="type === 'chips'"
+            :multiple="type === 'chips'"
             :items="items"
             v-model="state.value"
             :rules="rules"
@@ -90,9 +100,7 @@
 
         </v-card-text>
 
-        <v-card-actions
-          :class="$vuetify.theme.dark ? ' grey darken-3' : ' grey lighten-4'"
-        >
+        <v-card-actions class="dialogAction">
           <v-spacer />
           <ButtonSecondary
             class="mr-2"
@@ -115,11 +123,11 @@
       </v-card>
     </v-dialog>
 
-  </div>
+  </span>
 </template>
 
 <script>
-import { reactive } from '@vue/composition-api'
+import { reactive, computed } from '@vue/composition-api'
 import { defaultIcons, defaultLabels } from './defaults'
 import { evalRules } from './helpers'
 import ButtonPrimary from './ButtonPrimary'
@@ -196,27 +204,6 @@ export default {
       emit('save', state.value)
     }
 
-    const formatted = () => {
-      if (state.value.type === 'markdown') {
-        return sanitizeHtml(marked(state.value.data), { allowedTags })
-      } else if (state.value.type === 'html') {
-        return sanitizeHtml(state.value.data, { allowedTags })
-      } else {
-        return (state.value.data || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .split(/\n/)
-          .map(line => `<div>${line || '&nbsp;'}</div>`)
-          .join('\n')
-      }
-    }
-
-    const modified = () => props.type === 'formatted-text'
-      ? props.value.type !== state.value.type || props.value.data !== state.value.data
-      : props.value !== state.value
-
     const valid = () => evalRules(
       props.rules,
       props.type === 'formatted-text' ? state.value.data : state.value
@@ -224,8 +211,8 @@ export default {
 
     return {
       state,
-      formatted,
-      modified,
+      formatted: computed(() => () => formatted(state)),
+      modified: computed(() => () => modified(props, state)),
       onEdit,
       onCancel,
       onSave,
@@ -238,5 +225,36 @@ const allowedTags = ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
   'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div',
   'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
 
-const getPropsValue = props => props.type === 'formatted-text' ? { ...props.value } : props.value
+const getPropsValue = props => props.type === 'formatted-text'
+  ? { ...props.value }
+  : props.type === 'chips'
+    ? [...props.value]
+    : props.value
+
+const modified = (props, state) => props.type === 'formatted-text'
+  ? props.value.type !== state.value.type || props.value.data !== state.value.data
+  : props.type === 'chips'
+    ? (props.value || []).length !== (state.value || []).length ||
+    !(props.value || []).reduce(
+      (ret, cur) => ret && (state.value || []).includes(cur),
+      true
+    )
+    : props.value !== state.value
+
+const formatted = state => {
+  if (state.value.type === 'markdown') {
+    return sanitizeHtml(marked(state.value.data), { allowedTags })
+  } else if (state.value.type === 'html') {
+    return sanitizeHtml(state.value.data, { allowedTags })
+  } else {
+    return (state.value.data || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .split(/\n/)
+      .map(line => `<div>${line || '&nbsp;'}</div>`)
+      .join('\n')
+  }
+}
 </script>

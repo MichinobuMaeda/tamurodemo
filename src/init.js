@@ -1,9 +1,9 @@
 import { computed, provide, reactive } from '@vue/composition-api'
-import { db, functions, auth } from '@/plugins/firebase'
+import { firebase, db, functions, auth } from '@/plugins/firebase'
 import {
   StoreSymbol, getMyPriv, getMyName,
   topUrl, signInUrl, simplifyDoc, getById,
-  restoreRequestedEmail, eraseRequestedEmail, restoreRequestedRoute
+  restoreRequestedEmail, eraseRequestedEmail, restoreRequestedRoute, iamValid
 } from '@/helpers'
 
 const defaultsKeys = ['darkTheme', 'menuPosition', 'locale', 'tz']
@@ -13,6 +13,14 @@ const createState = () => {
   clearServiceData(state)
   clearUserData(state)
   state.waitProc = null
+  state.myName = computed(() => getMyName(state))
+  state.priv = computed(() => (state.me && state.me.emulateNoPriv) ? {
+    guest: !iamValid(state),
+    user: iamValid(state),
+    admin: false,
+    manager: false,
+    tester: false
+  } : getMyPriv(state))
   return reactive(state)
 }
 
@@ -20,6 +28,7 @@ export const createStore = () => {
   const state = createState()
   const store = {
     state,
+    firebase,
     db,
     functions,
     auth,
@@ -30,8 +39,6 @@ export const createStore = () => {
     restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id)),
     onSighOut
   }
-  store.priv = computed(() => getMyPriv(store.state))
-  store.myName = computed(() => getMyName(store.state))
   defaultsKeys.forEach(key => {
     store[key] = computed(() => getDefault(state, key))
   })
@@ -79,8 +86,9 @@ export const setProcForWait = state => async (proc, next = null) => {
     10 * 1000
   )
   try {
-    await proc()
+    const ret = proc()
     if (next) { await next() }
+    return ret
   } finally {
     state.waitProc = null
   }

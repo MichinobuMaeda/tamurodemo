@@ -77,7 +77,7 @@ import Loading from '@/components/Loading.vue'
 import AppUpdater from '@/components/AppUpdater'
 import RawDataTree from '@/components/RawDataTree'
 
-const { getMyPriv, getMyName } = helpers
+const { getMyPriv } = helpers
 
 export default {
   name: 'App',
@@ -117,8 +117,7 @@ export default {
       ...store,
       page,
       menuItems: computed(() => menuItems(
-        getMyPriv(store.state),
-        getMyName(store.state),
+        store.state,
         page,
         root.$router)
       ),

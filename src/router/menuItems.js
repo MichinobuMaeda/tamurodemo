@@ -9,7 +9,7 @@ const routePermission = (router, priv, name) => {
   )
 }
 
-const menuItems = (priv, myName, page, router) => () => {
+const menuItems = ({ priv, myName }, page, router) => () => {
   const { icon, goPage } = helpers
   return [
     {

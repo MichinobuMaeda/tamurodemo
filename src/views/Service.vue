@@ -4,9 +4,10 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :title="$t('Service settings')"
         :icon="icon('Service settings')"
-      />
+      >
+        <template v-slot:title>{{ $t('Service settings') }}</template>
+      </PageTitle>
       <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
       <v-row>
         <v-col class="title--text col-4">API key</v-col>
@@ -16,7 +17,7 @@
             v-model="state.service.conf.apiKey"
             :rules="rulesRequired"
             @save="val => set('service', 'conf', { apiKey: val })"
-            :editable="priv.admin"
+            :editable="state.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -30,7 +31,7 @@
             v-model="state.service.conf.hosting"
             :rules="rulesURL"
             @save="val => set('service', 'conf', { hosting: val })"
-            :editable="priv.admin"
+            :editable="state.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -44,7 +45,7 @@
             v-model="state.service.conf.name"
             :rules="rulesRequired"
             @save="val => set('service', 'conf', { name: val })"
-            :editable="priv.manager"
+            :editable="state.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -63,7 +64,7 @@
             v-model="state.service.defaults.darkTheme"
             :items="[{ text: 'On', value: true }, { text: 'Off', value: false }]"
             @save="val => set('service', 'defaults', { darkTheme: val })"
-            :editable="priv.manager"
+            :editable="state.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -78,7 +79,7 @@
             v-model="state.service.defaults.menuPosition"
             :items="menuPositions.map(item => ({ ...item, text: $t(item.text) }))"
             @save="val => set('service', 'defaults', { menuPosition: val })"
-            :editable="priv.manager"
+            :editable="state.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -93,7 +94,7 @@
             v-model="state.service.defaults.locale"
             :items="locales"
             @save="val => set('service', 'defaults', { locale: val })"
-            :editable="priv.manager"
+            :editable="state.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -108,7 +109,7 @@
             v-model="state.service.defaults.tz"
             :items="timezones"
             @save="val => set('service', 'defaults', { tz: val })"
-            :editable="priv.manager"
+            :editable="state.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>

@@ -4,15 +4,16 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :title="$t('Top')"
         :icon="icon('Top')"
-      />
+      >
+        <template v-slot:title>{{ $t('Top') }}</template>
+      </PageTitle>
       <EditableItem
         type="formatted-text"
         :label="$t('Description')"
         v-model="state.service.conf.desc"
         @save="val => set('service', 'conf', { desc: val })"
-        :editable="priv.manager"
+        :editable="state.priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -22,7 +23,7 @@
       >
         <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
         <span class="ma-2">{{ category.name }}</span>
-        <div v-for="group in groupsOfCatecogry[category]" :key="group.id">
+        <div v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => !group.deletedAt)" :key="group.id">
           <LinkButton
             :icon="icon('Group')"
             :label="group.name"
@@ -45,14 +46,12 @@
         </div>
       </div>
 
-      <div v-if="priv.manager || priv.admin">
+      <div v-if="state.priv.manager || state.priv.admin">
         <v-divider class="my-6" />
         <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
-        <ButtonPrimary
-          :icon="icon('Add')"
-          :label="$t('Create new', { type: $t('group') })"
-          @click="goPage($router, { name: 'groups', params: { id: group.id } })"
-        />
+
+        <CreateGroup />
+
         <div v-if="deletedGroups.length">
           <div class="h3--text text-h3 py-2">
             <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
@@ -77,8 +76,8 @@ import { computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
-import ButtonPrimary from '@/components/ButtonPrimary'
 import LinkButton from '@/components/LinkButton'
+import CreateGroup from '@/views/CreateGroup'
 
 const { useStore } = helpers
 
@@ -87,33 +86,19 @@ export default {
   components: {
     PageTitle,
     EditableItem,
-    ButtonPrimary,
-    LinkButton
+    LinkButton,
+    CreateGroup
   },
   setup () {
     const store = useStore()
-    const { functions } = store
-    const groupsOfCatecogry = computed(
-      () => store.state.categories.reduce(
-        (ret, cur) => ({
-          ...ret,
-          [cur]: store.state.groups
-            .filter(group =>
-              (group.categories || []).includes(cur.id) &&
-              !group.deletedAt
-            )
-        }),
-        {}
-      )
-    )
 
     const uncategorizedGroups = computed(
       () => store.state.groups
         .filter(group =>
+          !group.deletedAt &&
           !store.state.categories.some(
-            category => (group.categories || []).includes(category.id)
-          ) &&
-          !group.deletedAt
+            category => !category.deletedAt && (category.groups || []).includes(group.id)
+          )
         )
     )
 
@@ -124,13 +109,8 @@ export default {
 
     return {
       ...store,
-      groupsOfCatecogry,
       uncategorizedGroups,
       deletedGroups,
-      test: async () => {
-        const test = await functions.httpsCallable('test').call()
-        console.log(test)
-      },
       ...helpers
     }
   }

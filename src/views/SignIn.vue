@@ -4,9 +4,10 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :title="$t('Sign in')"
         :icon="icon('Sign in')"
-      />
+      >
+        <template v-slot:title>{{ $t('Sign in') }}</template>
+      </PageTitle>
       <v-alert
         v-if="page.result.type"
         dense outlined

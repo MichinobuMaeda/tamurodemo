@@ -10,7 +10,7 @@ export const theme = {
       error: colors.red.accent3, // Default: '#FF5252' red accent-2
       info: colors.teal, // Default: '#2196F3' blue
       success: '#4CAF50', // Default: '#4CAF50' green
-      warning: '#FB8C00', // Default: '#FB8C00' orange darken-1
+      warning: colors.orange.darken3, // Default: '#FB8C00' orange darken-1
       theme1: colors.lime.lighten4,
       theme1r: colors.lime.darken4,
       theme2: colors.lightGreen.lighten4,
@@ -20,7 +20,9 @@ export const theme = {
       h2: colors.lightGreen.darken3,
       h3: colors.lime.darken4,
       title: colors.lightGreen.darken3,
-      deleted: colors.blueGrey.lighten4
+      deleted: colors.blueGrey.lighten4,
+      dialogTitle: colors.grey.lighten2,
+      dialogAction: colors.grey.lighten4
     },
     dark: {
       primary: colors.indigo.lighten4, // Default: '#2196F3' blue
@@ -39,7 +41,9 @@ export const theme = {
       h2: colors.lightGreen.lighten3,
       h3: colors.lime.lighten4,
       title: colors.lightGreen.lighten3,
-      deleted: colors.blueGrey.darken3
+      deleted: colors.blueGrey.darken3,
+      dialogTitle: colors.grey.darken2,
+      dialogAction: colors.grey.darken3
     }
   }
 }

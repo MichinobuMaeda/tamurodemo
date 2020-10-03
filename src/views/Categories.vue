@@ -4,23 +4,24 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :title="$t('Categories')"
         :icon="icon('Categories')"
-      />
+      >
+        <template v-slot:title>{{ $t('Categories') }}</template>
+      </PageTitle>
       <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
       <v-row
         v-for="(item, index) in page.items" :key="item.id"
         :class="item.deletedAt ? 'deleted' : ''"
       >
         <v-col class="col-1 pt-8">
-          <mini-button
+          <MiniButton
             :icon="icon('Upward')"
             :disabled="!!item.deletedAt || index === 0"
             @click="onUpward(index)"
           />
         </v-col>
         <v-col class="col-1 pt-8">
-          <mini-button
+          <MiniButton
             :icon="icon('Downward')"
             :disabled="!!item.deletedAt || index === (page.items.length - 1) || !!page.items[index + 1].deletedAt"
             @click="onDownward(index)"
@@ -34,17 +35,17 @@
           />
         </v-col>
         <v-col class="col-1 pt-8 text-right">
-          <mini-button
+          <MiniButton
             v-if="item.id && !item.deletedAt"
             :icon="icon('Delete')"
             @click="onDelete(index)"
           />
-          <mini-button
+          <MiniButton
             v-if="item.id && item.deletedAt"
             :icon="icon('Undo delete')"
             @click="onUndoDelete(index)"
           />
-          <mini-button
+          <MiniButton
             v-if="!item.id && item.name"
             :icon="icon('Cancel')"
             @click="item.name = ''"
@@ -173,7 +174,7 @@ export default {
                 return store.del('categories', item.id)
               }
             } else {
-              return store.add('categories', { seq, name })
+              return store.add('categories', { seq, name, groups: [] })
             }
           })
         )

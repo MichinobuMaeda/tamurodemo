@@ -1,0 +1,97 @@
+<template>
+  <div>
+    <ButtonPrimary
+      :icon="icon('Add')"
+      :label="$t('Create new', { type: $t('group') })"
+      @click="page.dialog = true; page.name = ''"
+    />
+    <v-dialog
+      max-width="640px"
+      v-model="page.dialog"
+    >
+      <v-card>
+
+        <v-card-title class="headline dialogTitle">
+          <v-icon>{{ icon('Add') }}</v-icon>
+          {{ $t('Create new', { type: $t('group') }) }}
+          <v-spacer />
+          <v-icon
+            color="gray"
+            @click="page.dialog = false; page.name = ''"
+          >
+            {{ icon('Cancel') }}
+          </v-icon>
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            :label="$t('Group name')"
+            v-model="page.name"
+            :rules="rulesName"
+          />
+        </v-card-text>
+
+        <v-card-actions class="dialogAction">
+          <v-spacer />
+          <ButtonSecondary
+            class="mr-2"
+            :icon="icon('Cancel')"
+            :label="$t('Cancel')"
+            @click="page.dialog = false; page.name = ''"
+          />
+          <ButtonPrimary
+            :icon="icon('OK')"
+            :label="$t('Create')"
+            :disabled="!!state.waitProc || !page.name"
+            @click="onCreate"
+          />
+        </v-card-actions>
+
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+
+<script>
+import { reactive } from '@vue/composition-api'
+import * as helpers from '@/helpers'
+import ButtonPrimary from '@/components/ButtonPrimary'
+import ButtonSecondary from '@/components/ButtonSecondary'
+
+const { useStore, goPage } = helpers
+
+export default {
+  name: 'CreateGroup',
+  components: {
+    ButtonPrimary,
+    ButtonSecondary
+  },
+  setup (props, { root }) {
+    const store = useStore()
+    const { add } = store
+    const page = reactive({
+      dialog: false,
+      name: ''
+    })
+
+    const onCreate = async () => {
+      const group = await add('groups', {
+        name: page.name,
+        desc: { type: 'plain', data: '' },
+        members: []
+      })
+      return goPage(root.$router, { name: 'groups', params: { id: group.id } })
+    }
+
+    return {
+      ...store,
+      page,
+      rulesName: [
+        v => !!v || root.$i18n.t('Required')
+      ],
+      onCreate,
+      ...helpers
+    }
+  }
+}
+</script>

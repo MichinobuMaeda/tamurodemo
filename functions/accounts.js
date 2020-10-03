@@ -5,6 +5,7 @@ const createAccount = async (db, auth, name) => {
   const account = await db.collection('accounts').add({
     ...defaults.data(),
     valid: true,
+    emulateNoPriv: false,
     createdAt: ts,
     updatedAt: ts
   })
