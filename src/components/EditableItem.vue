@@ -1,38 +1,59 @@
 <template>
   <span>
 
-    <span v-if="type === 'chips' && items[0].value">
-      <v-chip class="ma-1" v-for="(v, index) in (value || [])" :key="index">
-      {{ (items.find(item => item.value === v) || {}).text }}
+    <span v-if="type === 'linked-chips'">
+      <LinkButton
+        v-for="(v, index) in (value || [])" :key="index"
+        :icon="(items.find(item => item.value === v) || {}).icon"
+        :label="(items.find(item => item.value === v) || {}).text"
+        @click="$emit('click', v)"
+      />
+    </span>
+    <span v-else-if="type === 'chips' && items[0].value">
+      <v-chip
+        outlined
+        :color="(items.find(item => item.value === v) || {}).color || 'secondary'"
+        class="ma-1"
+        v-for="(v, index) in (value || [])" :key="index"
+      >
+        <v-icon left>{{ (items.find(item => item.value === v) || {}).icon }}</v-icon>
+        {{ (items.find(item => item.value === v) || {}).text }}
       </v-chip>
     </span>
     <span class="ma-1" v-else-if="type === 'chips' && !items[0].value">
-      <v-chip v-for="(v, index) in (value || [])" :key="index">
+      <v-chip
+        outlined
+        class="ma-1"
+        v-for="(v, index) in (value || [])" :key="index"
+      >
         {{ v }}
       </v-chip>
     </span>
     <span v-else-if="type === 'select' && items[0].value">
       {{ (items.find(item => item.value === value) || {}).text }}
     </span>
-    <span v-else-if="type !== 'formatted-text'">
+    <span v-else-if="!['formatted-text', 'textarea'].includes(type)">
       {{ value }}
     </span>
 
-    <v-icon
+    <MiniButton
       v-if="editable"
-      small
-      :color="disabled ? 'grey' : 'primary'"
-      :class="'ml-1' + (type === 'formatted-text' ? ' float-right' : '')"
+      :class="'ml-1' + (['formatted-text', 'textarea'].includes(type) ? ' float-right' : '')"
+      :icon="iconEdit || defaultIcons.Edit"
       @click="() => disabled ? null : onEdit()"
-    >
-      {{ iconEdit }}
-    </v-icon>
+      :disabled="disabled"
+    />
 
     <div
       v-if="type === 'formatted-text'"
       class="formatted-text"
       v-html="formatted()"
     ></div>
+    <div v-if="type === 'textarea'">
+      <div v-for="(line, index) in (value || '').split(/\n/)" :key="index">
+        {{ line || '\u200C' }}
+      </div>
+    </div>
 
     <v-dialog
       :max-width="type === 'formatted-text' ? '1024px' : '640px'"
@@ -45,7 +66,7 @@
             color="primary"
             class="mr-2"
           >
-            {{ iconEdit }}
+            {{ iconEdit || defaultIcons.Edit }}
           </v-icon>
           {{ label }}
           <v-spacer />
@@ -58,15 +79,13 @@
         </v-card-title>
 
         <v-card-text class="pb-1">
-          <div
-            v-if="type === 'formatted-text'"
-          >
+          <div v-if="type === 'formatted-text'">
             <v-radio-group
               v-model="state.value.type"
               row
             >
               <v-radio
-                label="書式無し"
+                :label="$t('Plain text')"
                 value="plain"
               />
               <v-radio
@@ -85,10 +104,16 @@
             />
           </div>
           <v-select
-            v-else-if="['select', 'chips'].includes(type)"
-            :chips="type === 'chips'"
-            :multiple="type === 'chips'"
+            v-else-if="['select', 'chips', 'linked-chips'].includes(type)"
+            :chips="['chips', 'linked-chips'].includes(type)"
+            :multiple="['chips', 'linked-chips'].includes(type)"
             :items="items"
+            v-model="state.value"
+            :rules="rules"
+          />
+          <v-textarea
+            v-else-if="['textarea'].includes(type)"
+            outlined class="mt-2"
             v-model="state.value"
             :rules="rules"
           />
@@ -102,15 +127,17 @@
 
         <v-card-actions class="dialogAction">
           <v-spacer />
-          <ButtonSecondary
+          <DefaultButton
+            color="secondary"
             class="mr-2"
-            :icon="iconCancel"
-            :label="$t(labelCancel)"
+            :icon="iconCancel || defaultIcons.Cancel"
+            :label="labelCancel || $t(defaultLabels.Cancel)"
             @click="onCancel"
           />
-          <ButtonPrimary
-            :icon="iconSave"
-            :label="$t(labelSave)"
+          <DefaultButton
+            color="primary"
+            :icon="iconSave || defaultIcons.OK"
+            :label="labelSave || $t(defaultLabels.Save)"
             :disabled="disabled || !modified() || !valid()"
             @click="onSave"
           />
@@ -127,19 +154,21 @@
 </template>
 
 <script>
+import sanitizeHtml from 'sanitize-html'
+import marked from 'marked'
 import { reactive, computed } from '@vue/composition-api'
 import { defaultIcons, defaultLabels } from './defaults'
 import { evalRules } from './helpers'
-import ButtonPrimary from './ButtonPrimary'
-import ButtonSecondary from './ButtonSecondary'
-import sanitizeHtml from 'sanitize-html'
-import marked from 'marked'
+import DefaultButton from './DefaultButton'
+import LinkButton from './LinkButton'
+import MiniButton from './MiniButton'
 
 export default {
   name: 'EditableItem',
   components: {
-    ButtonPrimary,
-    ButtonSecondary
+    DefaultButton,
+    LinkButton,
+    MiniButton
   },
   model: {
     prop: 'value',
@@ -162,26 +191,11 @@ export default {
       type: Boolean,
       default: false
     },
-    iconEdit: {
-      type: String,
-      default: defaultIcons.Edit
-    },
-    iconCancel: {
-      type: String,
-      default: defaultIcons.Cancel
-    },
-    labelCancel: {
-      type: String,
-      default: defaultLabels.Cancel
-    },
-    iconSave: {
-      type: String,
-      default: defaultIcons.OK
-    },
-    labelSave: {
-      type: String,
-      default: defaultLabels.Save
-    }
+    iconEdit: String,
+    iconCancel: String,
+    labelCancel: String,
+    iconSave: String,
+    labelSave: String
   },
   setup (props, { emit }) {
     const state = reactive({
@@ -211,6 +225,8 @@ export default {
 
     return {
       state,
+      defaultIcons,
+      defaultLabels,
       formatted: computed(() => () => formatted(state)),
       modified: computed(() => () => modified(props, state)),
       onEdit,

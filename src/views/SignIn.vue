@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col sm="8" md="6" lg="5" xl="4">
+    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -34,7 +34,8 @@
           {{ $t('Select sign-in method without password') }}
         </div>
         <div class="text-right">
-          <ButtonPrimary
+          <DefaultButton
+            color="primary"
             :icon="icon('E-mail')"
             :label="$t('Get sign-in link')"
             :disabled="!!state.waitProc || !page.valid || !page.email"
@@ -52,7 +53,8 @@
           @click:append="page.showPassword = !page.showPassword"
         ></v-text-field>
         <div class="text-right">
-          <ButtonPrimary
+          <DefaultButton
+            color="primary"
             :icon="icon('Sign in')"
             :label="$t('Sign-in with password')"
             :disabled="!!state.waitProc || !page.valid || !page.email || !page.password"
@@ -63,7 +65,8 @@
           {{ $t('Forgot password?') }}
         </div>
         <div class="text-right">
-          <ButtonSecondary
+          <DefaultButton
+            color="secondary"
             :icon="icon('E-mail')"
             :label="$t('Reset password')"
             :disabled="!!state.waitProc || !page.valid || !page.email"
@@ -79,8 +82,7 @@
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
-import ButtonPrimary from '@/components/ButtonPrimary'
-import ButtonSecondary from '@/components/ButtonSecondary'
+import DefaultButton from '@/components/DefaultButton'
 import LinkButton from '@/components/LinkButton'
 
 const { useStore, topUrl, storeRequestedEmail } = helpers
@@ -89,8 +91,7 @@ export default {
   name: 'PageSignIn',
   components: {
     PageTitle,
-    ButtonPrimary,
-    ButtonSecondary,
+    DefaultButton,
     LinkButton
   },
   setup () {

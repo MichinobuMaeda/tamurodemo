@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col sm="10" md="8">
+    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -12,7 +12,7 @@
       <v-row>
         <v-col class="title--text col-4">API key</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             label="API key"
             v-model="state.service.conf.apiKey"
             :rules="rulesRequired"
@@ -26,7 +26,7 @@
       <v-row>
         <v-col class="title--text col-4">URL</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             label="URL"
             v-model="state.service.conf.hosting"
             :rules="rulesURL"
@@ -40,7 +40,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Site name') }}</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             :label="$t('Site name')"
             v-model="state.service.conf.name"
             :rules="rulesRequired"
@@ -58,7 +58,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Dark theme') }}</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             type="select"
             :label="$t('Dark theme')"
             v-model="state.service.defaults.darkTheme"
@@ -73,7 +73,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Menu position') }}</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             type="select"
             :label="$t('Menu position')"
             v-model="state.service.defaults.menuPosition"
@@ -88,7 +88,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Locale') }}</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             type="select"
             :label="$t('Locale')"
             v-model="state.service.defaults.locale"
@@ -103,7 +103,7 @@
       <v-row>
         <v-col class="title--text col-4">{{ $t('Timezone') }}</v-col>
         <v-col class="col-8">
-          <editable-item
+          <EditableItem
             type="select"
             :label="$t('Timezone')"
             v-model="state.service.defaults.tz"
@@ -136,7 +136,6 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    // const { functions, setProcForWait } = store
 
     const page = reactive({
       name: store.state.service.conf.name,
@@ -156,9 +155,6 @@ export default {
       rulesRequired: [
         v => validateRequired(v) || root.$i18n.t('Required')
       ],
-      // updateServiceVersion: () => setProcForWait(
-      //   () => functions.httpsCallable('updateServiceVersion').call()
-      // ),
       ...helpers
     }
   }

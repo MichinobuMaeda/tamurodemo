@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col sm="10" md="8" lg="6" xl="5">
+    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -42,7 +42,7 @@
           />
           <MiniButton
             v-if="item.id && item.deletedAt"
-            :icon="icon('Undo delete')"
+            :icon="icon('Restore')"
             @click="onUndoDelete(index)"
           />
           <MiniButton
@@ -54,11 +54,13 @@
       </v-row>
       <v-row>
         <v-col class="text-right">
-          <ButtonSecondary
+          <DefaultButton
+            color="secondary"
             :label="$t('Cancel')"
             @click="onCancel"
           />
-          <ButtonPrimary
+          <DefaultButton
+            color="primary"
             :label="$t('Save')"
             @click="onSave"
             :disabled="!!state.waitProc || !modified"
@@ -74,8 +76,7 @@ import { reactive, computed, onMounted } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import MiniButton from '@/components/MiniButton'
-import ButtonPrimary from '@/components/ButtonPrimary'
-import ButtonSecondary from '@/components/ButtonSecondary'
+import DefaultButton from '@/components/DefaultButton'
 
 const { useStore, getById } = helpers
 
@@ -83,8 +84,7 @@ export default {
   name: 'PageCategories',
   components: {
     MiniButton,
-    ButtonPrimary,
-    ButtonSecondary,
+    DefaultButton,
     PageTitle
   },
   setup () {

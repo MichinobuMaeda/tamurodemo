@@ -4,9 +4,11 @@ export const defaultIcons = {
   Edit: 'edit',
   Add: 'add',
   Delete: 'delete',
-  'Undo delete': 'restore_from_trash',
+  Restore: 'restore_from_trash',
   Save: 'done',
-  'Raw data': 'memory'
+  'Raw data': 'memory',
+  Confirm: 'Confirm',
+  Confirmation: 'Confirm'
 }
 
 export const defaultLabels = {
@@ -15,5 +17,7 @@ export const defaultLabels = {
   Create: 'Create',
   Edit: 'Edit',
   Save: 'Save',
-  Delete: 'Delete'
+  Delete: 'Delete',
+  Confirm: 'Confirm',
+  Confirmation: 'Confirmation'
 }

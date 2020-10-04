@@ -3,10 +3,28 @@ import { firebase, db, functions, auth } from '@/plugins/firebase'
 import {
   StoreSymbol, getMyPriv, getMyName,
   topUrl, signInUrl, simplifyDoc, getById,
-  restoreRequestedEmail, eraseRequestedEmail, restoreRequestedRoute, iamValid
+  restoreRequestedEmail, eraseRequestedEmail, restoreRequestedRoute
 } from '@/helpers'
 
 const defaultsKeys = ['darkTheme', 'menuPosition', 'locale', 'tz']
+
+const clearServiceData = state => {
+  state.service = {}
+}
+
+const clearUserData = state => {
+  state.unsubscribers = state.unsubscribers || {}
+  Object.keys(state.unsubscribers).forEach(key => {
+    state.unsubscribers[key]()
+  })
+  state.unsubscribers = {}
+  state.me = {}
+  state.accounts = []
+  state.users = []
+  state.profiles = []
+  state.groups = []
+  state.categories = []
+}
 
 const createState = () => {
   const state = {}
@@ -14,13 +32,15 @@ const createState = () => {
   clearUserData(state)
   state.waitProc = null
   state.myName = computed(() => getMyName(state))
-  state.priv = computed(() => (state.me && state.me.emulateNoPriv) ? {
-    guest: !iamValid(state),
-    user: iamValid(state),
-    admin: false,
-    manager: false,
-    tester: false
-  } : getMyPriv(state))
+  state.priv = computed(() => getMyPriv(state))
+  state.sortedGroups = computed(
+    () => state.categories
+      .filter(category => !category.deletedAt)
+      .reduce((ret, cur) => [
+        ...ret,
+        ...state.groups.filter(group => !group.deletedAt && (cur.groups || []).includes(group.id))
+      ], [])
+  )
   return reactive(state)
 }
 
@@ -119,24 +139,6 @@ const restore = (db, collection, id) => db.collection(collection)
   .doc(id).update({
     deletedAt: null
   })
-
-const clearServiceData = state => {
-  state.service = {}
-}
-
-const clearUserData = state => {
-  state.unsubscribers = state.unsubscribers || {}
-  Object.keys(state.unsubscribers).forEach(key => {
-    state.unsubscribers[key]()
-  })
-  state.unsubscribers = {}
-  state.me = {}
-  state.accounts = []
-  state.users = []
-  state.profiles = []
-  state.groups = []
-  state.categories = []
-}
 
 const onServiceUpdate = (state, root, querySnapshot) => {
   const service = {}

@@ -1,6 +1,13 @@
 <template>
   <v-row justify="center">
-    <v-col sm="10" md="8">
+    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+      <v-switch
+        v-if="state.priv.manager || state.priv.admin"
+        color="primary"
+        class="float-right"
+        v-model="page.edit"
+        :label="$t('Edit')"
+      />
       <PageTitle
         :text-color="group.deletedAt ? 'grey--text' : 'h2--text'"
         :icon-color="group.deletedAt ? 'grey' : 'h2'"
@@ -11,7 +18,7 @@
             :label="$t('Group name')"
             v-model="group.name"
             @save="val => set('groups', group.id, { name: val })"
-            :editable="state.priv.manager"
+            :editable="page.edit && state.priv.manager"
             :disabled="!!state.waitProc"
           />
         </template>
@@ -21,7 +28,7 @@
         :label="$t('Description')"
         v-model="group.desc"
         @save="val => set('groups', group.id, { desc: val })"
-        :editable="state.priv.manager || (group.members || []).includes(state.me.id)"
+        :editable="page.edit && (state.priv.manager || (group.members || []).includes(state.me.id))"
         :disabled="!!state.waitProc"
       />
 
@@ -30,7 +37,7 @@
         :label="$t('Categories')"
         :items="categoryList"
         v-model="categories"
-        :editable="state.priv.manager"
+        :editable="page.edit && state.priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -39,12 +46,36 @@
         {{ $t('Members') }}
       </p>
 
-      <div v-if="state.priv.manager || state.priv.admin">
-        <v-divider class="my-6" />
-        <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
+      <LinkButton
+        v-for="user in state.users.filter(user => !user.deletedAt && (group.members || []).includes(user.id))" :key="user.id"
+        :icon="icon('User')"
+        :label="user.name"
+        @click="goPage($router, { name: 'user', params: { id: user.id } })"
+      />
 
-        <DeleteGroup :group="group" v-if="!group.deletedAt" />
-        <RestoreGroup :group="group" v-else />
+      <div v-if="page.edit && (state.priv.manager || state.priv.admin)">
+        <v-divider class="my-6" />
+
+        <ConfirmButton
+          v-if="!group.deletedAt"
+          type="error"
+          :title="$t('Delete item', { name: group.name })"
+          :iconProc="icon('Delete')"
+          :labelProc="$t('Delete')"
+          :message="$t('Confirm deletion', { name: group.name })"
+          @confirm="() => del('groups', group.id)"
+          :disabled="!!state.waitProc"
+        />
+        <ConfirmButton
+          v-else
+          type="warning"
+          :title="$t('Restore item', { name: group.name })"
+          :iconProc="icon('Restore')"
+          :labelProc="$t('Restore')"
+          :message="$t('Confirm restore', { name: group.name })"
+          @confirm="() => restore('groups', group.id)"
+          :disabled="!!state.waitProc"
+        />
       </div>
 
     </v-col>
@@ -58,41 +89,43 @@ import { reactive, computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
-import DeleteGroup from '@/views/DeleteGroup'
-import RestoreGroup from '@/views/RestoreGroup'
+import ConfirmButton from '@/components/ConfirmButton'
+import LinkButton from '@/components/LinkButton'
 
-const { useStore } = helpers
+const { useStore, icon, getById } = helpers
 
 export default {
   name: 'PageGroup',
   components: {
     PageTitle,
     EditableItem,
-    DeleteGroup,
-    RestoreGroup
+    ConfirmButton,
+    LinkButton
   },
   setup (prop, { root }) {
     const store = useStore()
     const { db, setProcForWait } = store
-    const page = reactive({})
+    const page = reactive({
+      edit: false
+    })
 
-    const getCategories = (state, groupId) => state.categories
-      .filter(item => (item.groups || []).includes(groupId))
+    const getCategories = (state, id) => state.categories
+      .filter(item => (item.groups || []).includes(id))
       .map(item => item.id)
 
-    const setCategories = (db, state, groupId) => categories => setProcForWait(
+    const setCategories = (db, state, id) => categories => setProcForWait(
       async () => Promise.all(
         state.categories.map(async c => {
           if ((categories || []).includes(c.id)) {
-            if (!(c.groups || []).includes(groupId)) {
+            if (!(c.groups || []).includes(id)) {
               await db.collection('categories').doc(c.id).update({
-                groups: firebase.firestore.FieldValue.arrayUnion(root.$route.params.id)
+                groups: firebase.firestore.FieldValue.arrayUnion(id)
               })
             }
           } else {
-            if ((c.groups || []).includes(root.$route.params.id)) {
+            if ((c.groups || []).includes(id)) {
               await db.collection('categories').doc(c.id).update({
-                groups: firebase.firestore.FieldValue.arrayRemove(groupId)
+                groups: firebase.firestore.FieldValue.arrayRemove(id)
               })
             }
           }
@@ -106,11 +139,14 @@ export default {
       rulesName: [
         v => !!v || root.$i18n.t('Required')
       ],
-      group: computed(() => store.state.groups.find(
-        item => item.id === root.$route.params.id)
-      ),
+      group: computed(() => getById(store.state.groups, root.$route.params.id)),
       categoryList: computed(() => store.state.categories
-        .map(item => ({ text: item.name, value: item.id }))
+        .map(item => ({
+          icon: icon('Category'),
+          color: 'h3',
+          text: item.name,
+          value: item.id
+        }))
       ),
       categories: computed({
         get: () => getCategories(store.state, root.$route.params.id),

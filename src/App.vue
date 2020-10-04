@@ -119,8 +119,8 @@ export default {
       menuItems: computed(() => menuItems(
         store.state,
         page,
-        root.$router)
-      ),
+        root.$router
+      )),
       onMenuMoved: onMenuMoved(store),
       version,
       ...helpers

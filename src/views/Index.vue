@@ -1,6 +1,13 @@
 <template>
   <v-row justify="center">
-    <v-col sm="10" md="8" lg="6" xl="5">
+    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+      <v-switch
+        v-if="state.priv.manager || state.priv.admin"
+        color="primary"
+        class="float-right"
+        v-model="page.edit"
+        :label="$t('Edit')"
+      />
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -13,7 +20,7 @@
         :label="$t('Description')"
         v-model="state.service.conf.desc"
         @save="val => set('service', 'conf', { desc: val })"
-        :editable="state.priv.manager"
+        :editable="page.edit && state.priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -23,48 +30,52 @@
       >
         <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
         <span class="ma-2">{{ category.name }}</span>
-        <div v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => !group.deletedAt)" :key="group.id">
-          <LinkButton
-            :icon="icon('Group')"
-            :label="group.name"
-            @click="goPage($router, { name: 'groups', params: { id: group.id } })"
-          />
-        </div>
+        <LinkButton
+          v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => !group.deletedAt)" :key="group.id"
+          :icon="icon('Group')"
+          :label="group.name"
+          @click="goPage($router, { name: 'group', params: { id: group.id } })"
+        />
       </div>
 
-      <div v-if="uncategorizedGroups.length">
-        <div class="h3--text text-h3 py-2">
+      <div
+        v-if="uncategorizedGroups.length"
+        class="h3--text text-h3 py-2"
+      >
+        <span>
           <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
           <span class="ma-2">{{ $t('Uncategorized') }}</span>
-        </div>
-        <div v-for="group in uncategorizedGroups" :key="group.id">
-          <LinkButton
-            :icon="icon('Group')"
-            :label="group.name"
-            @click="goPage($router, { name: 'groups', params: { id: group.id } })"
-          />
-        </div>
+        </span>
+        <LinkButton
+          v-for="group in uncategorizedGroups" :key="group.id"
+          :icon="icon('Group')"
+          :label="group.name"
+          @click="goPage($router, { name: 'group', params: { id: group.id } })"
+        />
       </div>
 
-      <div v-if="state.priv.manager || state.priv.admin">
+      <div v-if="page.edit && (state.priv.manager || state.priv.admin)">
+
+        <div
+          v-if="deletedGroups.length"
+          class="h3--text text-h3 py-2"
+        >
+          <span>
+            <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
+            <span class="ma-2">{{ $t('Deleted groups') }}</span>
+          </span>
+          <LinkButton
+            v-for="group in deletedGroups" :key="group.id"
+            :icon="icon('Group')"
+            :label="group.name"
+            @click="goPage($router, { name: 'group', params: { id: group.id } })"
+          />
+        </div>
+
         <v-divider class="my-6" />
-        <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
 
         <CreateGroup />
 
-        <div v-if="deletedGroups.length">
-          <div class="h3--text text-h3 py-2">
-            <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
-            <span class="ma-2">{{ $t('Deleted groups') }}</span>
-          </div>
-          <div v-for="group in deletedGroups" :key="group.id">
-            <LinkButton
-              :icon="icon('Group')"
-              :label="group.name"
-              @click="goPage($router, { name: 'groups', params: { id: group.id } })"
-            />
-          </div>
-        </div>
       </div>
 
     </v-col>
@@ -72,7 +83,7 @@
 </template>
 
 <script>
-import { computed } from '@vue/composition-api'
+import { reactive, computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -91,6 +102,9 @@ export default {
   },
   setup () {
     const store = useStore()
+    const page = reactive({
+      edit: false
+    })
 
     const uncategorizedGroups = computed(
       () => store.state.groups
@@ -108,6 +122,7 @@ export default {
     )
 
     return {
+      page,
       ...store,
       uncategorizedGroups,
       deletedGroups,

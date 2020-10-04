@@ -1,6 +1,5 @@
 <template>
   <v-btn
-    class="ma-1"
     text
     :color="color"
     @click="$emit('click')"

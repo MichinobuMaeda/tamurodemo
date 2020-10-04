@@ -1,7 +1,7 @@
 <template>
   <div
     class="pa-2"
-    :style="state.menuStyle"
+    :style="menuStyle"
   >
     <v-btn
       v-if="position.slice(0, 1) === 't'"
@@ -20,12 +20,12 @@
       <v-icon v-else>menu</v-icon>
     </v-btn>
     <div
-      v-for="(item, index) in state.items" :key="index"
+      v-for="(item, index) in items" :key="index"
       class="text-center py-2"
     >
       <v-tooltip
-        :left="state.toolChipLeft"
-        :right="state.toolChipRight"
+        :left="toolChipLeft"
+        :right="toolChipRight"
         v-if="state.menuOpen"
         :value="state.toolChip"
       >
@@ -97,11 +97,7 @@ export default {
       menuOpen: false,
       toolChip: false,
       toolChipTimer: null,
-      mouseDown: false,
-      menuStyle: computed(() => menuStyles[props.position]),
-      toolChipLeft: computed(isRight),
-      toolChipRight: computed(isLeft),
-      items: computed(() => isBottom() ? [...props.menuItems()].reverse() : [...props.menuItems()])
+      mouseDown: false
     })
 
     const openMenu = () => {
@@ -158,6 +154,10 @@ export default {
 
     return {
       state,
+      menuStyle: computed(() => menuStyles[props.position]),
+      toolChipLeft: computed(isRight),
+      toolChipRight: computed(isLeft),
+      items: computed(() => isBottom() ? [...props.menuItems()].reverse() : [...props.menuItems()]),
       onMenuClick,
       onMenuSwipe,
       onFocusOut

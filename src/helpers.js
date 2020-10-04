@@ -14,6 +14,7 @@ export { icon } from '@/conf/icons'
 export { locales } from '@/conf/locales'
 export { menuPositions } from '@/conf/menuPositions'
 export { timezones } from '@/conf/timezones'
+export { permissions } from '@/conf/permissions'
 export * from '@/conf/validators'
 
 // Route

@@ -1,21 +1,20 @@
 <template>
-  <ButtonBase
-    color="secondary"
-    :icon="icon"
-    :label="label"
+  <v-btn
+    class="my-1 mx-2"
+    rounded
+    outlined
+    :color="color"
     @click="$emit('click')"
     :disabled="disabled"
-  />
+  >
+    <v-icon v-if="icon" :class="label ? 'mr-1' : ''">{{ icon }}</v-icon>
+    {{ label }}
+  </v-btn>
 </template>
 
 <script>
-import ButtonBase from './ButtonBase'
-
 export default {
-  name: 'ButtonSecondary',
-  components: {
-    ButtonBase
-  },
+  name: 'DefaultButton',
   props: {
     icon: {
       type: String,
@@ -28,6 +27,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    color: {
+      type: String,
+      default: 'secondary'
     }
   }
 }

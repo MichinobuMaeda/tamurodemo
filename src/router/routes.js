@@ -18,20 +18,26 @@ const routes = [
     meta: { privs: ['user', 'guest'] }
   },
   {
-    path: '/me',
-    name: 'me',
-    component: () => import('../views/Me.vue'),
-    meta: { privs: ['user'] }
-  },
-  {
     path: '/categories',
     name: 'categories',
     component: () => import('../views/Categories.vue'),
     meta: { privs: ['manager'] }
   },
   {
+    path: '/users',
+    name: 'users',
+    component: () => import('../views/Users.vue'),
+    meta: { privs: ['manager', 'admin'] }
+  },
+  {
+    path: '/users/:id/:mode?',
+    name: 'user',
+    component: () => import('../views/User.vue'),
+    meta: { privs: ['user'] }
+  },
+  {
     path: '/groups/:id',
-    name: 'groups',
+    name: 'group',
     component: () => import('../views/Group.vue'),
     meta: { privs: ['user'] }
   },

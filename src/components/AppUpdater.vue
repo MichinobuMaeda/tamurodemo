@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <ButtonBase
+    <DefaultButton
       :color="color"
       :icon="icon"
       :label="label"
@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import ButtonBase from './ButtonBase'
+import DefaultButton from './DefaultButton'
 
 export default {
   name: 'AppUpdater',
   components: {
-    ButtonBase
+    DefaultButton
   },
   props: {
     icon: {

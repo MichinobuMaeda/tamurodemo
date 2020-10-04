@@ -1,6 +1,13 @@
 <template>
   <v-row justify="center">
-    <v-col sm="10" md="8" lg="6" xl="5">
+    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+      <v-switch
+        v-if="state.priv.manager || state.priv.admin"
+        color="primary"
+        class="float-right"
+        v-model="page.edit"
+        :label="$t('Edit')"
+      />
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -13,7 +20,7 @@
         :label="$t('Privacy policy')"
         v-model="state.service.conf.policy"
         @save="val => set('service', 'conf', { policy: val })"
-        :editable="state.priv.manager"
+        :editable="page.edit && state.priv.manager"
         :disabled="!!state.waitProc"
       />
     </v-col>
@@ -21,6 +28,7 @@
 </template>
 
 <script>
+import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -35,8 +43,12 @@ export default {
   },
   setup () {
     const store = useStore()
+    const page = reactive({
+      edit: false
+    })
 
     return {
+      page,
       ...store,
       ...helpers
     }
