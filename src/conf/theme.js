@@ -25,10 +25,10 @@ export const theme = {
       dialogAction: colors.grey.lighten4
     },
     dark: {
-      primary: colors.indigo.lighten4, // Default: '#2196F3' blue
-      secondary: colors.grey.lighten2, // Default: '#424242' grey darken-3
+      primary: colors.indigo.lighten2, // Default: '#2196F3' blue
+      secondary: colors.grey, // Default: '#424242' grey darken-3
       accent: '#FF4081', // Default: '#FF4081' pink accent-2
-      error: colors.red.accent1, // Default: '#FF5252' red accent-2
+      error: colors.red.accent2, // Default: '#FF5252' red accent-2
       info: colors.teal.lighten3, // Default: '#2196F3' blue
       success: '#4CAF50', // Default: '#4CAF50' green
       warning: '#FB8C00', // Default: '#FB8C00' orange darken-1

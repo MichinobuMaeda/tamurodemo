@@ -10,19 +10,22 @@
   margin: 0.5em 0 1em 0;
 }
 .formatted-text h3 {
-  font-size: 180%;
+  font-size: 160%;
 }
 .formatted-text h4 {
-  font-size: 150%;
+  font-size: 130%;
 }
 .formatted-text h5 {
-  font-size: 125%;
+  font-size: 115%;
 }
 .formatted-text h6 {
-  font-size: 110%;
+  font-size: 108%;
 }
 .formatted-text ol,
 .formatted-text ul {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+}
+div, p, li, th, td, dd {
+  line-height: 150%;
 }

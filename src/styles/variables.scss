@@ -1,21 +1,33 @@
 $headings: (
   'h1': (
-    'size': 2rem
+    'size': 2rem,
+    'weight': 400,
+    'line-height': 2.5rem
   ),
   'h2': (
-    'size': 2rem
+    'size': 1.6rem,
+    'weight': 400,
+    'line-height': 2.0rem
   ),
   'h3': (
-    'size': 1.5rem
+    'size': 1.3rem,
+    'weight': 400,
+    'line-height': 1.6rem
   ),
   'h4': (
-    'size': 1.25rem
+    'size': 1.16rem,
+    'weight': 400,
+    'line-height': 1.5rem
   ),
   'h5': (
-    'size': 1.125rem
+    'size': 1.08rem,
+    'weight': 400,
+    'line-height': 1.4rem
   ),
   'h6': (
-    'size': 1.0625rem
+    'size': 1.04rem,
+    'weight': 400,
+    'line-height': 1.3rem
   )
 );
 $btn-text-transform: none;

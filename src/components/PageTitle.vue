@@ -1,6 +1,12 @@
 <template>
-  <div class="mb-4 text-h2" style="vertical-align: baseline;">
-    <v-icon :color="iconColor" size="1.8rem">{{ icon }}</v-icon>
+  <div class="text-h2">
+    <v-icon
+      :color="iconColor"
+      size="1.5rem"
+      class="mr-1"
+    >
+      {{ icon }}
+    </v-icon>
     <span :class="textColor">
       <slot name="title"></slot>
     </span>

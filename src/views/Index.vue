@@ -4,7 +4,7 @@
       <v-switch
         v-if="state.priv.manager || state.priv.admin"
         color="primary"
-        class="float-right"
+        class="float-right my-0"
         v-model="page.edit"
         :label="$t('Edit')"
       />
@@ -15,21 +15,29 @@
       >
         <template v-slot:title>{{ $t('Top') }}</template>
       </PageTitle>
-      <EditableItem
-        type="formatted-text"
-        :label="$t('Description')"
-        v-model="state.service.conf.desc"
-        @save="val => set('service', 'conf', { desc: val })"
-        :editable="page.edit && state.priv.manager"
-        :disabled="!!state.waitProc"
-      />
+
+      <v-sheet
+        v-if="page.edit || (state.service.conf.desc && state.service.conf.desc.data)"
+        outlined rounded class="px-3 pt-3"
+      >
+        <EditableItem
+          type="formatted-text"
+          :label="$t('Description')"
+          v-model="state.service.conf.desc"
+          @save="val => set('service', 'conf', { desc: val })"
+          :editable="page.edit && state.priv.manager"
+          :disabled="!!state.waitProc"
+        />
+      </v-sheet>
 
       <div
         v-for="category in state.categories.filter(item => !item.deletedAt)" :key="category.id"
-        class="h3--text text-h3 py-2"
+        class="my-2"
       >
-        <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
-        <span class="ma-2">{{ category.name }}</span>
+        <v-chip color="h3" outlined>
+          <v-icon>{{ icon('Category') }}</v-icon>
+          {{ category.name }}
+        </v-chip>
         <LinkButton
           v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => !group.deletedAt)" :key="group.id"
           :icon="icon('Group')"
@@ -40,12 +48,12 @@
 
       <div
         v-if="uncategorizedGroups.length"
-        class="h3--text text-h3 py-2"
+        class="my-2"
       >
-        <span>
-          <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
-          <span class="ma-2">{{ $t('Uncategorized') }}</span>
-        </span>
+        <v-chip color="h3" outlined>
+          <v-icon>{{ icon('Category') }}</v-icon>
+          {{ $t('Uncategorized') }}
+        </v-chip>
         <LinkButton
           v-for="group in uncategorizedGroups" :key="group.id"
           :icon="icon('Group')"
@@ -58,12 +66,12 @@
 
         <div
           v-if="deletedGroups.length"
-          class="h3--text text-h3 py-2"
+          class="my-2"
         >
-          <span>
-            <v-icon color="h3" size="1.2rem">{{ icon('Category') }}</v-icon>
-            <span class="ma-2">{{ $t('Deleted groups') }}</span>
-          </span>
+          <v-chip color="h3" outlined>
+            <v-icon>{{ icon('Category') }}</v-icon>
+            {{ $t('Deleted groups') }}
+          </v-chip>
           <LinkButton
             v-for="group in deletedGroups" :key="group.id"
             :icon="icon('Group')"
@@ -72,7 +80,7 @@
           />
         </div>
 
-        <v-divider class="my-6" />
+        <v-divider class="my-2" />
 
         <CreateGroup />
 

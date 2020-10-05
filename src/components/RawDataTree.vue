@@ -32,6 +32,16 @@
   </v-dialog>
 </template>
 
+<style>
+.v-treeview--dense .v-treeview-node__root {
+  min-height: 24px;
+}
+.v-treeview-node__label {
+  font-family: 'Lucida Console', Monaco, monospace;
+  font-size: 14px;
+}
+</style>
+
 <script>
 import { computed } from '@vue/composition-api'
 

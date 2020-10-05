@@ -4,7 +4,7 @@
       <v-switch
         v-if="user.id === state.me.id || state.priv.manager || state.priv.admin"
         color="primary"
-        class="float-right"
+        class="my-0 float-right"
         v-model="page.edit"
         :label="$t('Edit')"
       />
@@ -24,7 +24,30 @@
         </template>
       </PageTitle>
       <GroupsOfUser class="mb-2" :id="user.id" :edit="page.edit" />
-      <Profile :id="user.id" :edit="page.edit" />
+      <div
+        v-if="user.id === state.me.id || state.priv.manager || state.priv.admin"
+      >
+        <span class="float-sm-left mt-2 mr-2">{{ $t('Visible for') }}</span>
+        <v-chip-group
+          v-if="!page.edit"
+          mandatory column
+          active-class="info--text"
+          v-model="page.preview"
+        >
+          <v-chip v-for="p in permissionList" :key="p.value">
+            <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
+          </v-chip>
+        </v-chip-group>
+        <v-chip
+          v-else
+          v-for="p in permissionList" :key="p.value"
+          outlined class="mt-2 mr-2"
+        >
+          <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
+        </v-chip>
+      </div>
+
+      <Profile :id="user.id" :edit="page.edit" :preview="preview" />
 
       <div v-if="page.edit">
         <v-divider
@@ -59,7 +82,7 @@
 </template>
 
 <script>
-import { reactive, watch } from '@vue/composition-api'
+import { reactive, computed, watch } from '@vue/composition-api'
 import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -68,7 +91,7 @@ import GroupsOfUser from '@/views/GroupsOfUser'
 import Preferences from '@/views/Preferences'
 import Profile from '@/views/Profile'
 
-const { useStore, signInUrl } = helpers
+const { useStore, signInUrl, icon, permissions } = helpers
 
 export default {
   name: 'PageUser',
@@ -84,7 +107,8 @@ export default {
     const store = useStore()
     const { setProcForWait, auth } = store
     const page = reactive({
-      edit: root.$route.params.mode === 'edit'
+      edit: root.$route.params.mode === 'edit',
+      preview: 2
     })
 
     watch(
@@ -105,6 +129,12 @@ export default {
     return {
       user: store.state.users.find(item => item.id === root.$route.params.id),
       page,
+      permissionList: permissions.map(item => ({
+        icon: icon(item.icon),
+        value: item.value,
+        text: root.$i18n.t(item.text)
+      })),
+      preview: computed(() => permissions[page.preview].value),
       ...store,
       signOut,
       ...helpers

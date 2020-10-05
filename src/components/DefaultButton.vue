@@ -1,8 +1,8 @@
 <template>
   <v-btn
     class="my-1 mx-2"
-    rounded
-    outlined
+    :dark="$vuetify.theme.dark"
+    :light="!$vuetify.theme.dark"
     :color="color"
     @click="$emit('click')"
     :disabled="disabled"

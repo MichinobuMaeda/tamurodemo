@@ -4,7 +4,7 @@
       <v-switch
         v-if="state.priv.manager || state.priv.admin"
         color="primary"
-        class="float-right"
+        class="float-right my-0"
         v-model="page.edit"
         :label="$t('Edit')"
       />

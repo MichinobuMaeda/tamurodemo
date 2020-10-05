@@ -13,28 +13,29 @@
         v-for="(item, index) in page.items" :key="item.id"
         :class="item.deletedAt ? 'deleted' : ''"
       >
-        <v-col class="col-1 pt-8">
+        <v-col class="col-1 pt-4">
           <MiniButton
             :icon="icon('Upward')"
             :disabled="!!item.deletedAt || index === 0"
             @click="onUpward(index)"
           />
         </v-col>
-        <v-col class="col-1 pt-8">
+        <v-col class="col-1 pt-4">
           <MiniButton
             :icon="icon('Downward')"
             :disabled="!!item.deletedAt || index === (page.items.length - 1) || !!page.items[index + 1].deletedAt"
             @click="onDownward(index)"
           />
         </v-col>
-        <v-col class="col-9">
+        <v-col class="col-8">
           <v-text-field
+            class="my-0 py-0"
             v-model="item.name"
             :rules="[v => !item.id || !!v || $t('Required')]"
             :disabled="!!item.deletedAt"
           />
         </v-col>
-        <v-col class="col-1 pt-8 text-right">
+        <v-col class="col-2 pt-4 text-center">
           <MiniButton
             v-if="item.id && !item.deletedAt"
             :icon="icon('Delete')"

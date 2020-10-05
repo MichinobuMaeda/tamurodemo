@@ -20,10 +20,10 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <v-main class="ma-3" v-if="page.loading">
+    <v-main v-if="page.loading">
       <Loading color="h2" :size="96" />
     </v-main>
-    <v-main class="ma-3" v-else>
+    <v-main class="px-2" v-else>
       <AppUpdater
         v-if="state.service.conf && state.service.conf.version !== version"
         :label="$t('Update app')"

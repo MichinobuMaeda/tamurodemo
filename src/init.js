@@ -142,7 +142,10 @@ const restore = (db, collection, id) => db.collection(collection)
 
 const onServiceUpdate = (state, root, querySnapshot) => {
   const service = {}
-  querySnapshot.forEach(doc => { service[doc.id] = doc.data() })
+  querySnapshot.forEach(doc => {
+    const { id, ...data } = simplifyDoc(doc)
+    service[id] = data
+  })
   state.service = service
   setDefaults(state, root)
 }
