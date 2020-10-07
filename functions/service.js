@@ -50,7 +50,7 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     data: {
       name: 'System admins',
       desc: {
-        type: 'markdown',
+        type: 'plain',
         data: ''
       },
       members: []
@@ -62,7 +62,19 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     data: {
       name: 'Managers',
       desc: {
-        type: 'markdown',
+        type: 'plain',
+        data: ''
+      },
+      members: []
+    }
+  },
+  {
+    collection: 'groups',
+    id: 'testers',
+    data: {
+      name: 'Testers',
+      desc: {
+        type: 'plain',
         data: ''
       },
       members: []

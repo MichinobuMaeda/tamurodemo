@@ -20,10 +20,15 @@
           @click="() => goPage($router, { name: 'user', params: { id: user.id } })"
         />
 
+        <v-icon>{{ icon('Sign in') }}</v-icon> {{ signedInAt(user) }}
+
         <GroupsOfUser :id="user.id" :edit="page.edit" />
 
         <v-divider class="my-2"  />
       </div>
+
+      <CreateUser />
+
     </v-col>
   </v-row>
 </template>
@@ -34,23 +39,32 @@ import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import GroupsOfUser from '@/views/GroupsOfUser'
+import CreateUser from '@/views/CreateUser'
 
-const { useStore } = helpers
+const { useStore, getById } = helpers
 
 export default {
   name: 'PageAccounts',
   components: {
     PageTitle,
     DefaultButton,
-    GroupsOfUser
+    GroupsOfUser,
+    CreateUser
   },
   setup () {
     const store = useStore()
+    const { withTz } = store
     const page = reactive({})
+
+    const signedInAt = user => {
+      const account = getById(store.state.accounts, user.id)
+      return account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--'
+    }
 
     return {
       ...store,
       page,
+      signedInAt,
       ...helpers
     }
   }

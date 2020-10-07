@@ -63,20 +63,20 @@ const setupService = async () => {
   //     hidden: true
   //   }
   // ])
-  // const uid = await accounts.createAccount(db, auth, name)
+  // const id = await accounts.createAccount({ name }, { db, auth })
   // if (email) {
-  //   await accounts.setEmail(db, auth, uid, email)
+  //   await accounts.setEmail({ id, email }, { db, auth })
   // }
   // if (password) {
-  //   await accounts.setPassword(db, auth, uid, password)
+  //   await accounts.setPassword({ id, password }, { db, auth })
   // }
-  // console.log(`Add memeber: accounts.${uid} to groups.admins`)
+  // console.log(`Add memeber: accounts.${id} to groups.admins`)
   // await db.collection('groups').doc('admins').update({
-  //   members: admin.firestore.FieldValue.arrayUnion(uid)
+  //   members: admin.firestore.FieldValue.arrayUnion(id)
   // })
-  // console.log(`Add memeber: accounts.${uid} to groups.managers`)
+  // console.log(`Add memeber: accounts.${id} to groups.managers`)
   // await db.collection('groups').doc('managers').update({
-  //   members: admin.firestore.FieldValue.arrayUnion(uid)
+  //   members: admin.firestore.FieldValue.arrayUnion(id)
   // })
 }
 

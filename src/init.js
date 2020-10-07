@@ -1,4 +1,5 @@
 import { computed, provide, reactive } from '@vue/composition-api'
+import moment from 'moment-timezone'
 import { firebase, db, functions, auth } from '@/plugins/firebase'
 import {
   StoreSymbol, getMyPriv, getMyName,
@@ -33,6 +34,11 @@ const createState = () => {
   state.waitProc = null
   state.myName = computed(() => getMyName(state))
   state.priv = computed(() => getMyPriv(state))
+  state.tz = computed(() =>
+    (state.me && state.me.valid && state.me.tz) ||
+    (state.service.defaults && state.service.defaults.tz) ||
+    'UTC'
+  )
   state.sortedGroups = computed(
     () => state.categories
       .filter(category => !category.deletedAt)
@@ -57,6 +63,7 @@ export const createStore = () => {
     set: (collection, id, data) => setProcForWait(state)(() => set(db, collection, id, data)),
     del: (collection, id) => setProcForWait(state)(() => del(db, collection, id)),
     restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id)),
+    withTz: date => moment(date).tz(state.tz),
     onSighOut
   }
   defaultsKeys.forEach(key => {
@@ -168,6 +175,9 @@ const onValidAccount = async (db, auth, state, root, me) => {
   // window.localStorage.setItem('tamuroAuthMessage', '')
   state.me = simplifyDoc(me)
   setDefaults(state, root)
+  await db.collection('accounts').doc(state.me.id).update({
+    signedInAt: new Date()
+  })
 
   await getInitialAndRealtimeData(
     state,
@@ -247,6 +257,7 @@ const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) =>
 const setDefaults = (state, root) => {
   root.$vuetify.theme.dark = getDefault(state, 'darkTheme')
   root.$i18n.locale = getDefault(state, 'locale')
+  moment.locale(getDefault(state, 'locale').replace(/_.+/, ''))
 }
 
 const getDefault = (state, key) => getMyPriv(state).user

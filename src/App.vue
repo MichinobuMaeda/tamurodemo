@@ -49,6 +49,10 @@
       @move="pos => onMenuMoved(pos)"
     />
 
+    <Preferences
+      v-model="page.preferences"
+      :id="state.me.id"
+    />
     <RawDataTree
       v-model="page.rawData"
       :icon="icon('Raw data')"
@@ -76,6 +80,7 @@ import Menu from '@/components/Menu'
 import Loading from '@/components/Loading.vue'
 import AppUpdater from '@/components/AppUpdater'
 import RawDataTree from '@/components/RawDataTree'
+import Preferences from '@/views/Preferences'
 
 const { getMyPriv } = helpers
 
@@ -85,11 +90,13 @@ export default {
     Menu,
     Loading,
     AppUpdater,
-    RawDataTree
+    RawDataTree,
+    Preferences
   },
   setup (props, { root }) {
     const page = reactive({
       loading: true,
+      preferences: false,
       rawData: false
     })
 

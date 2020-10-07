@@ -3,7 +3,7 @@
     scrollable max-width="1024px"
     v-model="dialog"
     @click:outside="$emit('dialogChange', false)"
-    @keydown="$emit('dialogChange', false)"
+    @keydown.esc="$emit('dialogChange', false)"
   >
     <v-card>
       <v-card-title>
@@ -44,6 +44,42 @@
 
 <script>
 import { computed } from '@vue/composition-api'
+
+export default {
+  name: 'RawDataTree',
+  model: {
+    prop: 'dialog',
+    event: 'dialogChange'
+  },
+  props: {
+    dialog: {
+      type: Boolean,
+      default: false
+    },
+    items: Object,
+    icon: String,
+    title: String,
+    iconColor: {
+      type: String,
+      default: 'blue darken-3'
+    },
+    titleColor: {
+      type: String,
+      default: 'blue--text text--darken-3'
+    },
+    textColor: {
+      type: String,
+      default: 'blue--text text--darken-3'
+    }
+  },
+  setup (props) {
+    return {
+      tree: computed(() => [...Object.keys(props.items || {})].sort().map(
+        key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])
+      ))
+    }
+  }
+}
 
 const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
   ? {
@@ -109,40 +145,4 @@ const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
               name: key,
               value: '{ }'
             }
-
-export default {
-  name: 'RawDataTree',
-  model: {
-    prop: 'dialog',
-    event: 'dialogChange'
-  },
-  props: {
-    dialog: {
-      type: Boolean,
-      default: false
-    },
-    items: Object,
-    icon: String,
-    title: String,
-    iconColor: {
-      type: String,
-      default: 'blue darken-3'
-    },
-    titleColor: {
-      type: String,
-      default: 'blue--text text--darken-3'
-    },
-    textColor: {
-      type: String,
-      default: 'blue--text text--darken-3'
-    }
-  },
-  setup (props) {
-    return {
-      tree: computed(() => [...Object.keys(props.items || {})].sort().map(
-        key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])
-      ))
-    }
-  }
-}
 </script>
