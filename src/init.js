@@ -113,7 +113,7 @@ export const setProcForWait = state => async (proc, next = null) => {
     10 * 1000
   )
   try {
-    const ret = proc()
+    const ret = await proc()
     if (next) { await next() }
     return ret
   } finally {
@@ -174,7 +174,7 @@ const onValidAccount = async (db, auth, state, root, me) => {
   state.authMessage = ''
   // window.localStorage.setItem('tamuroAuthMessage', '')
   state.me = simplifyDoc(me)
-  setDefaults(state, root)
+  setDefaults(state, root, auth)
   await db.collection('accounts').doc(state.me.id).update({
     signedInAt: new Date()
   })
@@ -201,7 +201,7 @@ const onValidAccount = async (db, auth, state, root, me) => {
       db.collection('accounts'),
       (state) => {
         state.me = getById(state.accounts, state.me.id)
-        setDefaults(state, root)
+        setDefaults(state, root, auth)
       }
     )
   } else {
@@ -210,7 +210,7 @@ const onValidAccount = async (db, auth, state, root, me) => {
     state.unsubscribers.accounts = meRef.onSnapshot(me => {
       state.accounts = [simplifyDoc(me)]
       state.me = simplifyDoc(me)
-      setDefaults(state, root)
+      setDefaults(state, root, auth)
     })
   }
   if (getMyPriv(state).manager) {
@@ -254,10 +254,14 @@ const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) =>
   })
 }
 
-const setDefaults = (state, root) => {
+const setDefaults = (state, root, auth = null) => {
   root.$vuetify.theme.dark = getDefault(state, 'darkTheme')
   root.$i18n.locale = getDefault(state, 'locale')
-  moment.locale(getDefault(state, 'locale').replace(/_.+/, ''))
+  const lang = getDefault(state, 'locale').replace(/_.+/, '')
+  moment.locale(lang)
+  if (auth) {
+    auth.languageCode = lang
+  }
 }
 
 const getDefault = (state, key) => getMyPriv(state).user

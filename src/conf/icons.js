@@ -5,6 +5,7 @@ const iconList = {
   Top: 'home',
   'Sign in': 'login',
   'Sign out': 'power_settings_new',
+  Password: 'vpn_key',
   'Privacy policy': 'privacy_tip',
   Categories: 'label',
   Category: 'label',

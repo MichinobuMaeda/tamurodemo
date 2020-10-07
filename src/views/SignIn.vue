@@ -74,6 +74,7 @@
           />
         </div>
       </v-form>
+      <div class="my-2">{{ $t('Ask system admin to change e-mail') }}</div>
     </v-col>
   </v-row>
 </template>
