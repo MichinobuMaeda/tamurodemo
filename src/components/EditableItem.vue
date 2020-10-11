@@ -78,7 +78,10 @@
           </v-icon>
         </v-card-title>
 
-        <v-card-text class="pb-1">
+        <v-card-text
+          class="pb-1"
+          :style="['select', 'chips', 'linked-chips'].includes(type) ? 'height: 360px' : ''"
+        >
           <div v-if="type === 'formatted-text'">
             <v-radio-group
               v-model="state.value.type"

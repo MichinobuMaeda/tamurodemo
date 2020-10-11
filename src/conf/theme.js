@@ -22,7 +22,13 @@ export const theme = {
       title: colors.lightGreen.darken3,
       deleted: colors.blueGrey.lighten4,
       dialogTitle: colors.grey.lighten2,
-      dialogAction: colors.grey.lighten4
+      dialogAction: colors.grey.lighten4,
+      google: '#DB4437',
+      facebook: '#4267B2',
+      twitter: '#1DA1F2',
+      line: '#00C300',
+      yahooJapan: '#FF0132',
+      mixi: '#FFAA00'
     },
     dark: {
       primary: colors.indigo.lighten2, // Default: '#2196F3' blue
@@ -43,7 +49,13 @@ export const theme = {
       title: colors.lightGreen.lighten3,
       deleted: colors.blueGrey.darken3,
       dialogTitle: colors.grey.darken2,
-      dialogAction: colors.grey.darken3
+      dialogAction: colors.grey.darken3,
+      google: '#DB4437',
+      facebook: '#4267B2',
+      twitter: '#1DA1F2',
+      line: '#00C300',
+      yahooJapan: '#FF0132',
+      mixi: '#FFAA00'
     }
   }
 }

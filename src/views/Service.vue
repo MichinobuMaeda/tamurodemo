@@ -10,7 +10,7 @@
       </PageTitle>
       <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
       <v-row>
-        <v-col class="title--text col-4">API key</v-col>
+        <v-col class="title--text col-4 text-right">API key</v-col>
         <v-col class="col-8">
           <EditableItem
             label="API key"
@@ -22,9 +22,8 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
       <v-row>
-        <v-col class="title--text col-4">URL</v-col>
+        <v-col class="title--text col-4 text-right">URL</v-col>
         <v-col class="col-8">
           <EditableItem
             label="URL"
@@ -36,9 +35,8 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
       <v-row>
-        <v-col class="title--text col-4">{{ $t('Site name') }}</v-col>
+        <v-col class="title--text col-4 text-right">{{ $t('Site name') }}</v-col>
         <v-col class="col-8">
           <EditableItem
             :label="$t('Site name')"
@@ -50,13 +48,12 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
       <p class="h3--text text-h3 pt-6">
         <v-icon color="h3">{{ icon('Defaults') }}</v-icon>
         {{ $t('Defaults') }}
       </p>
       <v-row>
-        <v-col class="title--text col-4">{{ $t('Dark theme') }}</v-col>
+        <v-col class="title--text col-4 text-right">{{ $t('Dark theme') }}</v-col>
         <v-col class="col-8">
           <EditableItem
             type="select"
@@ -69,9 +66,8 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
       <v-row>
-        <v-col class="title--text col-4">{{ $t('Menu position') }}</v-col>
+        <v-col class="title--text col-4 text-right">{{ $t('Menu position') }}</v-col>
         <v-col class="col-8">
           <EditableItem
             type="select"
@@ -84,9 +80,8 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
       <v-row>
-        <v-col class="title--text col-4">{{ $t('Locale') }}</v-col>
+        <v-col class="title--text col-4 text-right">{{ $t('Locale') }}</v-col>
         <v-col class="col-8">
           <EditableItem
             type="select"
@@ -99,9 +94,8 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
       <v-row>
-        <v-col class="title--text col-4">{{ $t('Timezone') }}</v-col>
+        <v-col class="title--text col-4 text-right">{{ $t('Timezone') }}</v-col>
         <v-col class="col-8">
           <EditableItem
             type="select"
@@ -114,7 +108,24 @@
           />
         </v-col>
       </v-row>
-      <v-divider />
+      <p class="h3--text text-h3 pt-6">
+        <v-icon color="h3">{{ icon('Sign in') }}</v-icon>
+        {{ $t('Authentication') }}
+      </p>
+      <v-row v-for="provider in providers.filter(provider => provider.type === 'oauth')" :key="provider.id">
+        <v-col class="title--text col-4 text-right">{{ provider.name }}</v-col>
+        <v-col class="col-8">
+          <EditableItem
+            type="select"
+            :label="provider.name"
+            v-model="state.service.auth[provider.id]"
+            :items="[{ text: 'On', value: true }, { text: 'Off', value: false }]"
+            @save="val => set('service', 'auth', { [provider.id]: val })"
+            :editable="state.priv.admin"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
 
     </v-col>
   </v-row>
@@ -123,6 +134,7 @@
 <script>
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
+import { authProviders } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 
@@ -155,6 +167,7 @@ export default {
       rulesRequired: [
         v => validateRequired(v) || root.$i18n.t('Required')
       ],
+      providers: authProviders(store, root.$route),
       ...helpers
     }
   }

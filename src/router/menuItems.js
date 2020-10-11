@@ -33,14 +33,14 @@ const menuItems = ({ priv, myName, me }, page, router) => () => {
     {
       label: ['Profile', { user: myName }],
       icon: icon('Profile'),
-      visible: routePermission(router, priv, { name: 'user', params: { id: me.id, mode: 'edit' } }),
-      action: () => { goPage(router, { name: 'user', params: { id: me.id, mode: 'edit' } }) }
+      visible: routePermission(router, priv, { name: 'user', params: { id: me.id || 'unknown', mode: 'edit' } }),
+      action: () => { goPage(router, { name: 'user', params: { id: me.id || 'unknown', mode: 'edit' } }) }
     },
     {
       label: 'Preferences',
       icon: icon('Preferences'),
       visible: priv.user,
-      action: () => { page.preferences = true }
+      action: () => { goPage(router, { name: 'preferences' }) }
     },
     {
       label: 'Categories',

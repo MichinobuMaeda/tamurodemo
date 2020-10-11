@@ -19,7 +19,8 @@
     "express": "^4.17.1",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1",
-    "moment-timezone": "^0.5.31"
+    "moment-timezone": "^0.5.31",
+    "nanoid": "^3.1.12"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

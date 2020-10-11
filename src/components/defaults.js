@@ -7,8 +7,8 @@ export const defaultIcons = {
   Restore: 'restore_from_trash',
   Save: 'done',
   'Raw data': 'memory',
-  Confirm: 'Confirm',
-  Confirmation: 'Confirm'
+  Confirm: 'check',
+  Confirmation: 'check'
 }
 
 export const defaultLabels = {

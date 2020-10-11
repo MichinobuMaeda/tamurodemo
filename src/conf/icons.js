@@ -33,7 +33,11 @@ const iconList = {
   Defaults: 'settings_applications',
   Preferences: 'settings_applications',
   'Update app': 'system_update_alt',
-  'Update service': 'sync'
+  'Update service': 'sync',
+  'Checkbox On': 'check_box',
+  'Checkbox Off': 'check_box_outline_blank',
+  'Confirm to add': 'add_circle_outline',
+  'Confirm to remove': 'remove_circle_outline'
 }
 
 export const icon = name => iconList[name] || 'description'

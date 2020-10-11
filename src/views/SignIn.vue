@@ -74,7 +74,19 @@
           />
         </div>
       </v-form>
+
       <div class="my-2">{{ $t('Ask system admin to change e-mail') }}</div>
+
+      <v-divider class="my-4" />
+
+      <v-btn
+        v-for="provider in providers" :key="provider.id"
+        class="ma-4 white--text" :color="provider.id"
+        @click="provider.signIn"
+        :disabled="!!state.waitProc"
+      >
+        {{ $t('Sign-in with provider', { provider: provider.name }) }}
+      </v-btn>
     </v-col>
   </v-row>
 </template>
@@ -82,11 +94,16 @@
 <script>
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
+import { useStore } from '@/helpers'
+import {
+  authProviders,
+  sendSignInLinkToEmail,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import LinkButton from '@/components/LinkButton'
-
-const { useStore, topUrl, storeRequestedEmail } = helpers
 
 export default {
   name: 'PageSignIn',
@@ -95,9 +112,9 @@ export default {
     DefaultButton,
     LinkButton
   },
-  setup () {
+  setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, auth } = store
+    const { setProcForWait } = store
     const page = reactive({
       result: {},
       valid: true,
@@ -108,11 +125,7 @@ export default {
 
     const signInWithEmailLink = () => setProcForWait(
       async () => {
-        await auth.sendSignInLinkToEmail(page.email, {
-          url: window.location.href,
-          handleCodeInApp: true
-        })
-        storeRequestedEmail(page.email)
+        await sendSignInLinkToEmail(store, page.email)
         page.result = { type: 'success', desc: 'Sent message' }
       }
     )
@@ -120,10 +133,7 @@ export default {
     const signInWithPassword = () => setProcForWait(
       async () => {
         try {
-          await auth.signInWithEmailAndPassword(
-            page.email,
-            page.password
-          )
+          await signInWithEmailAndPassword(store, page.email, page.password)
         } catch (e) {
           page.result = { type: 'error', desc: 'Invalid email or password' }
         }
@@ -132,15 +142,8 @@ export default {
 
     const resetPassword = () => setProcForWait(
       async () => {
-        await auth.sendPasswordResetEmail(
-          page.email,
-          {
-            url: topUrl(),
-            handleCodeInApp: true
-          }
-        )
+        await sendPasswordResetEmail(store, page.email)
         page.result = { type: 'success', desc: 'Sent message' }
-        // window.localStorage.setItem('tamuroAuthMessage', '')
       }
     )
 
@@ -150,6 +153,7 @@ export default {
       signInWithEmailLink,
       signInWithPassword,
       resetPassword,
+      providers: authProviders(store, root.$route).filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
       ...helpers
     }
   }

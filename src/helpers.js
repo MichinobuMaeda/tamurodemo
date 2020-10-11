@@ -27,7 +27,11 @@ export const signInUrl = () => window.location.href
   .replace(/#.*/, '#/signin')
 
 export const goPage = (router, route) => {
-  if (!['signin', 'policy', 'me'].includes(route.name)) {
+  if (![
+    'signin',
+    'policy',
+    'preferences'
+  ].includes(route.name)) {
     storeRequestedRoute(route)
   }
   router.push(route).catch(() => {})
@@ -105,3 +109,5 @@ export const restoreRequestedRoute = () => {
     return null
   }
 }
+
+export const linkedWithProviderId = (auth, providerId) => auth.currentUser && auth.currentUser.providerData.some(item => item.providerId === providerId)

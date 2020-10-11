@@ -1,8 +1,9 @@
 <template>
   <span>
     <DefaultButton
-      :color="type"
-      :icon="iconProc || defaultIcons.Confirmation"
+      :color="color || type"
+      :class="buttonClass"
+      :icon="buttonIcon || iconProc || defaultIcons.Confirmation"
       :label="title || defaultLabels.Confirmation"
       @click="state.dialog = true"
       :disabled="disabled"
@@ -25,8 +26,8 @@
           </v-icon>
         </v-card-title>
 
-        <v-card-text>
-          <v-alert :type="type" text dense class="mt-2">
+        <v-card-text class="pa-1">
+          <v-alert :type="type" text class="ma-0">
             {{ message }}
           </v-alert>
         </v-card-text>
@@ -69,6 +70,12 @@ export default {
       type: String,
       default: 'info'
     },
+    color: {
+      type: String,
+      default: null
+    },
+    buttonClass: String,
+    buttonIcon: String,
     title: String,
     iconProc: String,
     labelProc: String,

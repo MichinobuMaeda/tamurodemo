@@ -23,7 +23,7 @@
     <v-main v-if="page.loading">
       <Loading color="h2" :size="96" />
     </v-main>
-    <v-main class="px-2" v-else>
+    <v-main class="px-4" v-else>
       <AppUpdater
         v-if="state.service.conf && state.service.conf.version !== version"
         :label="$t('Update app')"
@@ -49,10 +49,6 @@
       @move="pos => onMenuMoved(pos)"
     />
 
-    <Preferences
-      v-model="page.preferences"
-      :id="state.me.id"
-    />
     <RawDataTree
       v-model="page.rawData"
       :icon="icon('Raw data')"
@@ -60,7 +56,7 @@
       icon-color="h2"
       title-color="h2--text"
       text-color="title--text"
-      :items="state"
+      :items="{ ...state, currentUser: auth.currentUser }"
     />
   </v-app>
 </template>
@@ -80,7 +76,6 @@ import Menu from '@/components/Menu'
 import Loading from '@/components/Loading.vue'
 import AppUpdater from '@/components/AppUpdater'
 import RawDataTree from '@/components/RawDataTree'
-import Preferences from '@/views/Preferences'
 
 const { getMyPriv } = helpers
 
@@ -90,8 +85,7 @@ export default {
     Menu,
     Loading,
     AppUpdater,
-    RawDataTree,
-    Preferences
+    RawDataTree
   },
   setup (props, { root }) {
     const page = reactive({

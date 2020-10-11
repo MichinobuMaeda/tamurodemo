@@ -5,10 +5,10 @@ const guardValidAccount = async (data, context, next) => {
     throw new functions.https.HttpsError('unauthenticated', 'failed to get an authenticated user id.')
   }
   const account = await db.collection('accounts').doc(uid).get()
-  if (!account || !account.exists) {
-    throw new functions.https.HttpsError('unauthenticated', 'failed to get the account.')
+  if (!account || !state.me.exists) {
+    throw new functions.https.HttpsError('unauthenticated', 'failed to get the state.me.')
   }
-  if (!account.data().valid) {
+  if (!state.me.data().valid) {
     throw new functions.https.HttpsError('unauthenticated', 'the account is invalid.')
   }
   return next()
@@ -55,7 +55,7 @@ const createAccount = async ({ name }, { db, auth }) => {
       createdAt: ts,
       updatedAt: ts
     })
-    const id = account.id
+    const id = state.me.id
     await db.collection('users').doc(id).set({
       name,
       createdAt: ts,

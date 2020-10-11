@@ -42,6 +42,12 @@ const routes = [
     meta: { privs: ['user'] }
   },
   {
+    path: '/preferences',
+    name: 'preferences',
+    component: () => import('../views/Preferences.vue'),
+    meta: { privs: ['user'] }
+  },
+  {
     path: '/service',
     name: 'service',
     component: () => import('../views/Service.vue'),

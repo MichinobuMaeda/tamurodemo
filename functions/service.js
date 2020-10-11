@@ -45,6 +45,21 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     }
   },
   {
+    collection: 'service',
+    id: 'auth',
+    data: {
+      invitation: true,
+      emailLink: true,
+      password: true,
+      google: {},
+      facebook: false,
+      twitter: false,
+      line: false,
+      yahooJapan: {},
+      mixi: false
+    }
+  },
+  {
     collection: 'groups',
     id: 'admins',
     data: {
