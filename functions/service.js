@@ -132,7 +132,7 @@ const updateVersion = async ({ db }) => {
   const version = response.data.version
   if (conf.data().version !== response.data.version) {
     console.log(`update from ${conf.data().version} to ${version}`)
-    await updateService(db)
+    await updateService({ db })
     await confRef.update({ version })
   }
   return version
