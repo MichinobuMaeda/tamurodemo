@@ -122,3 +122,8 @@ export const signInWithEmailAndPassword = ({ auth }, email, password) => auth.si
   email,
   password
 )
+
+export const invite = async ({ functions, state }, id) => {
+  const result = await functions.httpsCallable('invite')({ id })
+  state.invitations[id] = result.data.invitation
+}

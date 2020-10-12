@@ -225,8 +225,8 @@
           buttonClass="white--text mr-2"
           :buttonIcon="page[provider.id] ? icon('Checkbox On') : icon('Checkbox Off')"
           :iconProc="page[provider.id] ? icon('Confirm to remove') : icon('Confirm to add')"
-          :title="$t('Sign-in with provider', { provider: provider.name })"
-          :message="$t((page[provider.id] ? 'Remove': 'Add') + ' setting to sign-in with provider', { provider: provider.name })"
+          :title="$t('Sign in with provider', { provider: provider.name })"
+          :message="$t((page[provider.id] ? 'Remove': 'Add') + ' setting to sign in with provider', { provider: provider.name })"
           @confirm="provider.update"
           :disabled="!!state.waitProc"
         />

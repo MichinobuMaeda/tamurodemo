@@ -97,7 +97,7 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
   }
 ]
 
-const updateService = async db => {
+const updateService = async ({ db }) => {
   const ts = new Date()
   await Promise.all(
     initialData(ts).map(async item => {
@@ -125,7 +125,7 @@ const updateService = async db => {
   )
 }
 
-const updateVersion = async db => {
+const updateVersion = async ({ db }) => {
   const confRef = db.collection('service').doc('conf')
   const conf = await confRef.get()
   const response = await axios.get(`${conf.data().hosting}/version.json`)

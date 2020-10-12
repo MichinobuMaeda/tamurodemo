@@ -1,51 +1,5 @@
 
-const guardValidAccount = async (data, context, next) => {
-  const { functions, db, uid } = context
-  if (!uid) {
-    throw new functions.https.HttpsError('unauthenticated', 'failed to get an authenticated user id.')
-  }
-  const account = await db.collection('accounts').doc(uid).get()
-  if (!account || !state.me.exists) {
-    throw new functions.https.HttpsError('unauthenticated', 'failed to get the state.me.')
-  }
-  if (!state.me.data().valid) {
-    throw new functions.https.HttpsError('unauthenticated', 'the account is invalid.')
-  }
-  return next()
-}
-
-const memberOf = async (db, uid, groups) => (
-  await Promise.all(
-    (groups ||[]).map(
-      async id => {
-        const group = await db.collection('groups').doc(id).get()
-        return group && group.exists && (group.data().members || []).includes(uid)
-      }
-    )
-  )
-).some(priv => priv)
-
-const guardGroups = async (data, context, groups, next) => {
-  const { functions, db, uid } = context
-  return guardValidAccount(data, context, async () => {
-    if (!(await memberOf(db, uid, groups))) {
-      throw new functions.https.HttpsError('permission-denied', 'the account has no privilege.')
-    }
-    return next(data, context)
-  })
-}
-
-const guardUserSelfOrGroups = async (data, context, groups, next) => {
-  const { functions, db, uid } = context
-  return guardValidAccount(data, context, async () => {
-    if ((data.id !== uid) && !(await memberOf(db, uid, groups))) {
-      throw new functions.https.HttpsError('permission-denied', 'the account has no privilege.')
-    }
-    return next(data, context)
-  })
-}
-
-const createAccount = async ({ name }, { db, auth }) => {
+const createAccount = async ({ name }, { functions, db, auth }) => {
   try {
     const ts = new Date()
     const defaults = await db.collection('service').doc('defaults').get()
@@ -55,7 +9,7 @@ const createAccount = async ({ name }, { db, auth }) => {
       createdAt: ts,
       updatedAt: ts
     })
-    const id = state.me.id
+    const id = account.id
     await db.collection('users').doc(id).set({
       name,
       createdAt: ts,
@@ -75,7 +29,7 @@ const createAccount = async ({ name }, { db, auth }) => {
   }
 }
 
-const setEmail = async ({ id, email }, { db, auth }) => {
+const setEmail = async ({ id, email }, { functions, db, auth }) => {
   try {
     const ts = new Date()
     await auth.updateUser(id, { email })
@@ -92,7 +46,7 @@ const setEmail = async ({ id, email }, { db, auth }) => {
   }
 }
 
-const setPassword = async ({ id, password }, { db, auth }) => {
+const setPassword = async ({ id, password }, { functions, db, auth }) => {
   try {
     await auth.updateUser(id, { password })
     console.log(`Update account "${id}" set password`)
@@ -105,9 +59,6 @@ const setPassword = async ({ id, password }, { db, auth }) => {
 }
 
 module.exports = {
-  guardValidAccount,
-  guardGroups,
-  guardUserSelfOrGroups,
   createAccount,
   setEmail,
   setPassword

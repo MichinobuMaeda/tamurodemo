@@ -15,12 +15,10 @@
       >
         <DefaultButton
           color="secondary"
-          :icon="icon('User')"
+          :icon="icon(userStatusIcon(user))"
           :label="user.name"
-          @click="() => goPage($router, { name: 'user', params: { id: user.id } })"
+          @click="() => goPage($router, { name: 'user', params: { id: user.id, mode: 'edit' } })"
         />
-
-        <v-icon>{{ icon('Sign in') }}</v-icon> {{ signedInAt(user) }}
 
         <GroupsOfUser :id="user.id" :edit="page.edit" />
 
@@ -36,12 +34,11 @@
 <script>
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
+import { useStore, getById } from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import GroupsOfUser from '@/views/GroupsOfUser'
 import CreateUser from '@/views/CreateUser'
-
-const { useStore, getById } = helpers
 
 export default {
   name: 'PageAccounts',
@@ -53,18 +50,25 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { withTz } = store
     const page = reactive({})
 
-    const signedInAt = user => {
+    const userStatusIcon = user => {
       const account = getById(store.state.accounts, user.id)
-      return account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--'
+      return account.deletedAt
+        ? 'Delete'
+        : account.valid
+          ? (account.invitedAs
+            ? 'Invitation'
+            : (account.signedInAt
+              ? 'Signed in'
+              : 'Not signed in'))
+          : 'Lock'
     }
 
     return {
       ...store,
       page,
-      signedInAt,
+      userStatusIcon,
       ...helpers
     }
   }

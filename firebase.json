@@ -15,10 +15,16 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [ {
-      "source": "/updateServiceVersion",
-      "function": "api"
-    } ]
+    "rewrites": [
+      {
+        "source": "/updateServiceVersion",
+        "function": "api"
+      },
+      {
+        "source": "/invitation",
+        "function": "api"
+      }
+    ]
   },
   "storage": {
     "rules": "storage.rules"

@@ -8,11 +8,14 @@ const hasValidKey = async (db, req) => {
   if (!apiKey) {
     return false
   }
+  if (req.params.invitation) {
+    return true
+  }
   const conf = await db.collection('service').doc('conf').get()
   return conf.data().apiKey === apiKey
 }
 
-const apiKeyValidator = db => async (req, res, next) => {
+const apiKeyValidator = ({ db }) => async (req, res, next) => {
   if (!(await hasValidKey(db, req))) {
     res.status(401)
     return res.send('401 Unauthorized')

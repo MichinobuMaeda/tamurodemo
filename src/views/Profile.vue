@@ -4,15 +4,15 @@
       <PermittedMembers class="float-right" :id="user.id" />
       <v-col class="col-12">
         <LinkButton
-          v-for="item in (user.permittedGroups || []).map(id => getById(state.groups, id)).filter(group => !group.deletedAt)" :key="item.id"
+          v-for="group in (user.permittedGroups || []).map(id => getById(state.groups, id)).filter(group => !group.deletedAt)" :key="group.id"
           :icon="icon('Group')"
-          :label="item.name"
+          :label="group.name"
           @click="goPage($router, { name: 'group', params: { id: group.id } })"
         />
         <LinkButton
-          v-for="item in (user.permittedUsers || []).map(id => getById(state.users, id)).filter(user => !user.deletedAt)" :key="item.id"
+          v-for="user in (user.permittedUsers || []).map(id => getById(state.users, id)).filter(user => !user.deletedAt)" :key="user.id"
           :icon="icon('User')"
-          :label="item.name"
+          :label="user.name"
           @click="goPage($router, { name: 'user', params: { id: user.id } })"
         />
       </v-col>

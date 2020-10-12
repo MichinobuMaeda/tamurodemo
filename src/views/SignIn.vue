@@ -31,13 +31,13 @@
           :label="$t('E-mail')"
         ></v-text-field>
         <div :class="page.valid && page.email ? 'primary--text' : 'grey--text'">
-          {{ $t('Select sign-in method without password') }}
+          {{ $t('Select sign in method without password') }}
         </div>
         <div class="text-right">
           <DefaultButton
             color="primary"
             :icon="icon('E-mail')"
-            :label="$t('Get sign-in link')"
+            :label="$t('Get sign in link')"
             :disabled="!!state.waitProc || !page.valid || !page.email"
             @click="signInWithEmailLink"
           />
@@ -56,7 +56,7 @@
           <DefaultButton
             color="primary"
             :icon="icon('Sign in')"
-            :label="$t('Sign-in with password')"
+            :label="$t('Sign in with password')"
             :disabled="!!state.waitProc || !page.valid || !page.email || !page.password"
             @click="signInWithPassword"
           />
@@ -85,7 +85,7 @@
         @click="provider.signIn"
         :disabled="!!state.waitProc"
       >
-        {{ $t('Sign-in with provider', { provider: provider.name }) }}
+        {{ $t('Sign in with provider', { provider: provider.name }) }}
       </v-btn>
     </v-col>
   </v-row>

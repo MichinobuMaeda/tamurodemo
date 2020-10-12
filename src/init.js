@@ -25,6 +25,7 @@ const clearUserData = state => {
   state.profiles = []
   state.groups = []
   state.categories = []
+  state.invitations = {}
 }
 
 const createState = () => {
@@ -102,6 +103,7 @@ export const syncUserData = async ({ db, auth, state }, root, page) => {
 }
 
 export const setProcForWait = state => async (proc, next = null) => {
+  console.log('setProcForWait')
   const ts = new Date().getTime()
   state.waitProc = ts
   setTimeout(
@@ -176,7 +178,8 @@ const onValidAccount = async (db, auth, state, root, me) => {
   state.me = simplifyDoc(me)
   setDefaults(state, root, auth)
   await db.collection('accounts').doc(state.me.id).update({
-    signedInAt: new Date()
+    signedInAt: new Date(),
+    invitedAs: null
   })
 
   await getInitialAndRealtimeData(

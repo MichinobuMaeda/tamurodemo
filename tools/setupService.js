@@ -13,7 +13,8 @@ admin.initializeApp({
 const setupService = async () => {
   const db = admin.firestore()
   const auth = admin.auth()
-  await updateService(db)
+  const context = { db, auth }
+  await updateService(context)
 
   // set API Key.
   const serviceConfRef = db.collection('service').doc('conf')
@@ -54,12 +55,12 @@ const setupService = async () => {
       hidden: true
     }
   ])
-  const id = await accounts.createAccount({ name }, { db, auth })
+  const id = await accounts.createAccount({ name }, context)
   if (email) {
-    await accounts.setEmail({ id, email }, { db, auth })
+    await accounts.setEmail({ id, email }, context)
   }
   if (password) {
-    await accounts.setPassword({ id, password }, { db, auth })
+    await accounts.setPassword({ id, password }, context)
   }
   console.log(`Add memeber: accounts.${id} to groups.admins`)
   await db.collection('groups').doc('admins').update({

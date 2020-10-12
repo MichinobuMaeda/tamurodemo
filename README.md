@@ -13,9 +13,9 @@ https://console.firebase.google.com/
         - Project settings
             - Google Cloud Platform (GCP) resource location: asia-northeast1 or 2
     - Authentication
-        - Sign-in method
+        - Sign in method
             - Email/Password: Enable
-                - Email link (passwordless sign-in): Enable
+                - Email link (passwordless sign in): Enable
             - enable other methods
     - Database
         - Cloud Firestore
