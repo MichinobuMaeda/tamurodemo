@@ -62,7 +62,7 @@
         <p v-if="account.valid">
           <v-icon>{{ icon('Sign in') }}</v-icon>
           {{ $t('Sign in') }}:
-          {{ account.signedInAt ? withTz(account.signedInAt).format('l') : '--' }}
+          {{ account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--' }}
         </p>
         <div v-if="account.valid">
           <ConfirmButton

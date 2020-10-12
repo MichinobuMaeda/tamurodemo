@@ -21,7 +21,7 @@
         "function": "api"
       },
       {
-        "source": "/invitation",
+        "source": "/invitation/*",
         "function": "api"
       }
     ]
