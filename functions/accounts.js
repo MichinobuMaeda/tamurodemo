@@ -1,23 +1,26 @@
+const { throwErrorDataLoss } = require('./utils')
 
 const createAccount = async ({ name }, { functions, db, auth }) => {
   try {
     const ts = new Date()
+    const createdAt = ts
+    const updatedAt = ts
     const defaults = await db.collection('service').doc('defaults').get()
     const account = await db.collection('accounts').add({
       ...defaults.data(),
       valid: true,
-      createdAt: ts,
-      updatedAt: ts
+      createdAt,
+      updatedAt
     })
     const id = account.id
     await db.collection('users').doc(id).set({
       name,
-      createdAt: ts,
-      updatedAt: ts
+      createdAt,
+      updatedAt
     })
     await db.collection('profiles').doc(id).set({
-      createdAt: ts,
-      updatedAt: ts
+      createdAt,
+      updatedAt
     })
     await auth.createUser({ id })
     console.log(`Create account "${id}"`)
@@ -25,24 +28,23 @@ const createAccount = async ({ name }, { functions, db, auth }) => {
     return { id }
 
   } catch (err) {
-    throw new functions.https.HttpsError('data-loss', err.message, err.details)
+    throwErrorDataLoss('createAccount', name, err)
   }
 }
 
 const setEmail = async ({ id, email }, { functions, db, auth }) => {
   try {
     const ts = new Date()
+    const updatedAt = ts
     await auth.updateUser(id, { email })
     await db.collection('accounts').doc(id).update({
       email,
-      updatedAt: ts
+      updatedAt
     })
     console.log(`Update account "${id}" set email "${email}"`)
-
     return { status: 'ok' }
-
   } catch (err) {
-    throw new functions.https.HttpsError('data-loss', err.message, err.details)
+    throwErrorDataLoss('setEmail', id, err)
   }
 }
 
@@ -50,11 +52,9 @@ const setPassword = async ({ id, password }, { functions, db, auth }) => {
   try {
     await auth.updateUser(id, { password })
     console.log(`Update account "${id}" set password`)
-
     return { status: 'ok' }
-
   } catch (err) {
-    throw new functions.https.HttpsError('data-loss', err.message, err.details)
+    throwErrorDataLoss('setEmail', id, err)
   }
 }
 

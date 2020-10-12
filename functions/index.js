@@ -1,44 +1,32 @@
-const express = require('express')
-const cors = require('cors')
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
-const { apiKeyValidator, api } = require('./api')
+const { apiKeyValidator, api, router } = require('./api')
 const { updateVersion } = require('./service')
-const {
-  guardGroups,
-  guardUserSelfOrGroups
-} = require('./guard')
-const {
-  createAccount,
-  setEmail,
-  setPassword
-} = require('./accounts')
-const {
-  invite,
-  validateInvitation
-} = require('./auth')
+const { guardGroups, guardUserSelfOrGroups} = require('./guard')
+const { createAccount, setEmail, setPassword } = require('./accounts')
+const { invite, validateInvitation } = require('./auth')
 
 admin.initializeApp()
 const db = admin.firestore()
 const auth = admin.auth()
 const firebase = { functions, db, auth }
 
-api.use(apiKeyValidator(firebase))
-
-api.get(
+router.use(
   '/updateServiceVersion',
-  async (req, res) => {
-    return res.send(await updateVersion(firebase))
-  }
+  apiKeyValidator(firebase)
 )
 
-api.get(
+router.get(
+  '/updateServiceVersion',
+  async (req, res) => res.send(await updateVersion(firebase))
+)
+
+router.get(
   '/invitation/:invitation',
-  async (req, res) => {
-    return res.send(await validateInvitation(req.params, firebase))
-  }
+  async (req, res) => res.send(await validateInvitation(req.params, firebase))
 )
 
+api.use('/', router)
 exports.api = functions.https.onRequest(api)
 
 const ctx = context => ({ ...context.auth, ...firebase })

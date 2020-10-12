@@ -99,6 +99,8 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
 
 const updateService = async ({ db }) => {
   const ts = new Date()
+  const createdAt = ts
+  const updatedAt = ts
   await Promise.all(
     initialData(ts).map(async item => {
       const { collection, id, data } = item
@@ -110,15 +112,15 @@ const updateService = async ({ db }) => {
           await docRef.set({
             ...data,
             ...doc.data(),
-            updatedAt: ts
+            updatedAt
           })
         }
       } else {
         console.log(`Create: ${collection}.${id}`)
         await docRef.set({
           ...data,
-          createdAt: ts,
-          updatedAt: ts
+          updatedAt,
+          createdAt
         })
       }
     })

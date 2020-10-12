@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 
 const api = express()
+const router = express.Router()
 
 const hasValidKey = async (db, req) => {
   const apiKey = req.query.key
@@ -27,5 +28,6 @@ api.use(cors({ origin: true }))
 
 module.exports = {
   apiKeyValidator,
-  api
+  api,
+  router
 }
