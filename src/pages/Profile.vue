@@ -123,7 +123,7 @@ import { useStore, icon } from '@/helpers'
 import { permissions } from '@/conf/permissions'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
-import PermittedMembers from '@/views/PermittedMembers'
+import PermittedMembers from '@/parts/PermittedMembers'
 
 export default {
   name: 'Profile',

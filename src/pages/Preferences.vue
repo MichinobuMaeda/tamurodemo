@@ -95,11 +95,16 @@
               v-model="page.confirmEmail"
               type="text"
               :rules="[
-              v => validateEmail(v) || $t('Invalid E-mail format'),
-              v => v === page.newEmail || $t('E-mail confitmation failed')
+              v => validateEmail(v) || $t('Invalid E-mail format')
             ]"
-              :label="$t('Confirm New e-mail')"
+              :label="$t('Confirm new e-mail')"
             ></v-text-field>
+            <div
+              v-if="page.newEmail && page.confirmEmail && (page.newEmail !== page.confirmEmail)"
+              class="error--text" style="font-size: 12px;"
+            >
+              {{ $t('E-mail confirmation failed') }}
+            </div>
 
             <v-alert dense outlined text type="warning" v-if="page.changeEmailMessage">
               {{ page.changeEmailMessage }}
@@ -110,7 +115,7 @@
                 :icon="icon('Save')"
                 :label="$t('Save')"
                 @click="changeEmail"
-                :disabled="!!state.waitProc || !page.changeEmailPassword || !page.newEmail || !page.confirmEmail || !page.changeEmail"
+                :disabled="!!state.waitProc || !page.changeEmailPassword || !page.newEmail || !page.confirmEmail || page.newEmail !== page.confirmEmail || !page.changeEmail"
               />
             </div>
           </v-form>
@@ -150,13 +155,18 @@
               v-model="page.confirmPassword"
               :type="page.showConfirmPassword ? 'text' : 'password'"
               :rules="[
-              v => validatePassword(v) || $t('Invalid password'),
-              v => v === page.newPassword || $t('Password confitmation failed')
+              v => validatePassword(v) || $t('Invalid password')
             ]"
               :label="$t('Confirm new password')"
               :append-icon="page.showConfirmPassword ? icon('Visible') : icon('Invisible')"
               @click:append="page.showConfirmPassword = !page.showConfirmPassword"
             ></v-text-field>
+            <div
+              v-if="page.newPassword && page.confirmPassword && (page.newPassword !== page.confirmPassword)"
+              class="error--text" style="font-size: 12px;"
+            >
+              {{ $t('New password confirmation failed') }}
+            </div>
 
             <v-alert dense outlined text type="warning" v-if="page.changePasswordMessage">
               {{ page.changePasswordMessage }}
@@ -167,7 +177,7 @@
                 :icon="icon('Save')"
                 :label="$t('Save')"
                 @click="changePassword"
-                :disabled="!!state.waitProc || !page.oldPassword || !page.newPassword || !page.confirmPassword || !page.changePassword"
+                :disabled="!!state.waitProc || !page.oldPassword || !page.newPassword || !page.confirmPassword || page.newPassword !== page.confirmPassword || !page.changePassword"
               />
             </div>
           </v-form>
@@ -245,7 +255,7 @@ import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import ConfirmButton from '@/components/ConfirmButton'
-import SelectAuthProviders from '@/views/SelectAuthProviders'
+import SelectAuthProviders from '@/parts/SelectAuthProviders'
 
 export default {
   name: 'Preferences',

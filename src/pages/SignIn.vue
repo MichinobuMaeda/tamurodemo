@@ -24,13 +24,13 @@
       </div>
       <v-form ref="form" v-model="page.valid">
         <v-text-field
-          v-model="page.email"
+          v-model="page.newEmail"
           :rules="[
             v => validateEmail(v) || $t('Invalid E-mail format')
           ]"
           :label="$t('E-mail')"
         ></v-text-field>
-        <div :class="page.valid && page.email ? 'primary--text' : 'grey--text'">
+        <div :class="page.valid && page.newEmail ? 'primary--text' : 'grey--text'">
           {{ $t('Select sign in method without password') }}
         </div>
         <div class="text-right">
@@ -38,7 +38,7 @@
             color="primary"
             :icon="icon('E-mail')"
             :label="$t('Get sign in link')"
-            :disabled="!!state.waitProc || !page.valid || !page.email"
+            :disabled="!!state.waitProc || !page.valid || !page.newEmail"
             @click="signInWithEmailLink"
           />
         </div>
@@ -57,7 +57,7 @@
             color="primary"
             :icon="icon('Sign in')"
             :label="$t('Sign in with password')"
-            :disabled="!!state.waitProc || !page.valid || !page.email || !page.password"
+            :disabled="!!state.waitProc || !page.valid || !page.newEmail || !page.password"
             @click="signInWithPassword"
           />
         </div>
@@ -69,7 +69,7 @@
             color="secondary"
             :icon="icon('E-mail')"
             :label="$t('Reset password')"
-            :disabled="!!state.waitProc || !page.valid || !page.email"
+            :disabled="!!state.waitProc || !page.valid || !page.newEmail"
             @click="resetPassword"
           />
         </div>
@@ -125,7 +125,7 @@ export default {
 
     const signInWithEmailLink = () => setProcForWait(
       async () => {
-        await sendSignInLinkToEmail(store, page.email)
+        await sendSignInLinkToEmail(store, page.newEmail)
         page.result = { type: 'success', desc: 'Sent message' }
       }
     )
@@ -133,7 +133,7 @@ export default {
     const signInWithPassword = () => setProcForWait(
       async () => {
         try {
-          await signInWithEmailAndPassword(store, page.email, page.password)
+          await signInWithEmailAndPassword(store, page.newEmail, page.password)
         } catch (e) {
           page.result = { type: 'error', desc: 'Invalid email or password' }
         }
@@ -142,7 +142,7 @@ export default {
 
     const resetPassword = () => setProcForWait(
       async () => {
-        await sendPasswordResetEmail(store, page.email)
+        await sendPasswordResetEmail(store, page.newEmail)
         page.result = { type: 'success', desc: 'Sent message' }
       }
     )

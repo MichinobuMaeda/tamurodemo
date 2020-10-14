@@ -96,7 +96,7 @@ import * as helpers from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
-import CreateGroup from '@/views/CreateGroup'
+import CreateGroup from '@/parts/CreateGroup'
 
 const { useStore } = helpers
 

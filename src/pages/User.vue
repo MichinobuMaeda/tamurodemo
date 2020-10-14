@@ -1,6 +1,27 @@
 <template>
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+      <div v-if="user.id === state.me.id || priv.manager || priv.admin">
+        <span class="float-sm-left mt-2 mr-2">{{ $t('Visible for') }}</span>
+        <v-chip-group
+          v-if="!edit"
+          mandatory column
+          active-class="info--text"
+          v-model="page.preview"
+        >
+          <v-chip v-for="p in permissionList" :key="p.value">
+            <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
+          </v-chip>
+        </v-chip-group>
+        <v-chip
+          v-else
+          v-for="p in permissionList" :key="p.value"
+          outlined class="mt-2 mr-2"
+        >
+          <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
+        </v-chip>
+      </div>
+      <v-divider class="my-2" />
       <v-switch
         v-if="user.id === state.me.id || priv.manager || priv.admin"
         color="primary"
@@ -31,27 +52,6 @@
       </v-alert>
       <div v-if="(!account.deletedAt) || (edit && priv.manager)">
         <GroupsOfUser class="mb-2" :id="user.id" :edit="edit" />
-        <div v-if="user.id === state.me.id || priv.manager || priv.admin">
-          <span class="float-sm-left mt-2 mr-2">{{ $t('Visible for') }}</span>
-          <v-chip-group
-            v-if="!edit"
-            mandatory column
-            active-class="info--text"
-            v-model="page.preview"
-          >
-            <v-chip v-for="p in permissionList" :key="p.value">
-              <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
-            </v-chip>
-          </v-chip-group>
-          <v-chip
-            v-else
-            v-for="p in permissionList" :key="p.value"
-            outlined class="mt-2 mr-2"
-          >
-            <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
-          </v-chip>
-        </div>
-
         <Profile :id="user.id" :edit="edit" :preview="preview" />
       </div>
 
@@ -152,8 +152,8 @@ import { invite } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
-import GroupsOfUser from '@/views/GroupsOfUser'
-import Profile from '@/views/Profile'
+import GroupsOfUser from '@/parts/GroupsOfUser'
+import Profile from '@/pages/Profile'
 
 export default {
   name: 'PageUser',

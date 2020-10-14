@@ -35,8 +35,8 @@ import * as helpers from '@/helpers'
 import { useStore } from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
-import GroupsOfUser from '@/views/GroupsOfUser'
-import CreateUser from '@/views/CreateUser'
+import GroupsOfUser from '@/parts/GroupsOfUser'
+import CreateUser from '@/parts/CreateUser'
 
 export default {
   name: 'PageAccounts',
