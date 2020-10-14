@@ -1,8 +1,9 @@
 <template>
   <div class="text-h2">
     <v-icon
+      v-if="icon"
       :color="iconColor"
-      size="1.5rem"
+      size="2rem"
       class="mr-1"
     >
       {{ icon }}

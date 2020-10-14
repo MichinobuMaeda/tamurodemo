@@ -17,6 +17,7 @@ export const theme = {
       theme2r: colors.lightGreen.darken4,
       menu: colors.lightGreen.darken2,
       'menu-item': colors.lightGreen.darken4,
+      'menu-item-manager': colors.lime.darken3,
       h2: colors.lightGreen.darken3,
       h3: colors.lime.darken4,
       title: colors.lightGreen.darken3,
@@ -35,7 +36,7 @@ export const theme = {
       secondary: colors.grey, // Default: '#424242' grey darken-3
       accent: '#FF4081', // Default: '#FF4081' pink accent-2
       error: colors.red.accent2, // Default: '#FF5252' red accent-2
-      info: colors.teal.lighten3, // Default: '#2196F3' blue
+      info: colors.teal.lighten1, // Default: '#2196F3' blue
       success: '#4CAF50', // Default: '#4CAF50' green
       warning: '#FB8C00', // Default: '#FB8C00' orange darken-1
       theme1: colors.lime.darken4,
@@ -44,6 +45,7 @@ export const theme = {
       theme2r: colors.lightGreen.lighten4,
       menu: colors.lightGreen.lighten2,
       'menu-item': colors.lightGreen.lighten4,
+      'menu-item-manager': colors.lime.lighten1,
       h2: colors.lightGreen.lighten3,
       h3: colors.lime.lighten4,
       title: colors.lightGreen.lighten3,

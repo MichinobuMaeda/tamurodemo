@@ -9,7 +9,7 @@ const routePermission = (router, priv, { name, params }) => {
   )
 }
 
-const menuItems = ({ priv, myName, me }, page, router) => () => {
+const menuItems = (priv, myName, me, page, router) => () => {
   const { icon, goPage } = helpers
   return [
     {
@@ -45,24 +45,35 @@ const menuItems = ({ priv, myName, me }, page, router) => () => {
     {
       label: 'Categories',
       icon: icon('Categories'),
+      color: 'menu-item-manager',
       visible: routePermission(router, priv, { name: 'categories' }),
       action: () => { goPage(router, { name: 'categories' }) }
     },
     {
       label: 'Users',
       icon: icon('Users'),
+      color: 'menu-item-manager',
       visible: routePermission(router, priv, { name: 'users' }),
       action: () => { goPage(router, { name: 'users' }) }
     },
     {
+      label: 'Guide',
+      icon: icon('Guide'),
+      color: 'menu-item-manager',
+      visible: routePermission(router, priv, { name: 'invitationForEdit' }),
+      action: () => { goPage(router, { name: 'invitationForEdit' }) }
+    },
+    {
       label: 'Service settings',
       icon: icon('Service settings'),
+      color: 'menu-item-manager',
       visible: routePermission(router, priv, { name: 'service' }),
       action: () => { goPage(router, { name: 'service' }) }
     },
     {
       label: 'Raw data',
       icon: icon('Raw data'),
+      color: 'secondary',
       visible: priv.admin || priv.tester,
       action: () => { page.rawData = true }
     }

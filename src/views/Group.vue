@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <v-switch
-        v-if="state.priv.manager || state.priv.admin"
+        v-if="priv.manager || priv.admin"
         color="primary"
         class="float-right my-0"
         v-model="page.edit"
@@ -18,7 +18,7 @@
             :label="$t('Group name')"
             v-model="group.name"
             @save="val => set('groups', group.id, { name: val })"
-            :editable="page.edit && state.priv.manager"
+            :editable="page.edit && priv.manager"
             :disabled="!!state.waitProc"
           />
         </template>
@@ -28,7 +28,7 @@
         :label="$t('Description')"
         v-model="group.desc"
         @save="val => set('groups', group.id, { desc: val })"
-        :editable="page.edit && (state.priv.manager || (group.members || []).includes(state.me.id))"
+        :editable="page.edit && (priv.manager || (group.members || []).includes(state.me.id))"
         :disabled="!!state.waitProc"
       />
 
@@ -37,7 +37,7 @@
         :label="$t('Categories')"
         :items="categoryList"
         v-model="categories"
-        :editable="page.edit && state.priv.manager"
+        :editable="page.edit && priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -53,7 +53,7 @@
         @click="goPage($router, { name: 'user', params: { id: user.id } })"
       />
 
-      <div v-if="page.edit && (state.priv.manager || state.priv.admin)">
+      <div v-if="page.edit && (priv.manager || priv.admin)">
         <v-divider class="my-6" />
 
         <ConfirmButton

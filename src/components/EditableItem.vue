@@ -213,7 +213,7 @@ export default {
 
     const onCancel = () => {
       state.edit = false
-      state.value = props.value
+      state.value = getPropsValue(props)
     }
 
     const onSave = () => {
@@ -245,13 +245,13 @@ const allowedTags = ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
   'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
 
 const getPropsValue = props => props.type === 'formatted-text'
-  ? { ...props.value }
+  ? (props.value && props.value.type ? { ...props.value } : { type: 'plain', data: '' })
   : props.type === 'chips'
     ? [...props.value]
     : props.value
 
 const modified = (props, state) => props.type === 'formatted-text'
-  ? props.value.type !== state.value.type || props.value.data !== state.value.data
+  ? !props.value || props.value.type !== state.value.type || props.value.data !== state.value.data
   : props.type === 'chips'
     ? (props.value || []).length !== (state.value || []).length ||
     !(props.value || []).reduce(

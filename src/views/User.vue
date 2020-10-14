@@ -2,10 +2,10 @@
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <v-switch
-        v-if="user.id === state.me.id || state.priv.manager || state.priv.admin"
+        v-if="user.id === state.me.id || priv.manager || priv.admin"
         color="primary"
         class="my-0 float-right"
-        v-model="page.edit"
+        v-model="edit"
         :label="$t('Edit')"
       />
       <PageTitle
@@ -18,7 +18,7 @@
             :label="$t('Display name')"
             v-model="user.name"
             @save="val => set('users', user.id, { name: val })"
-            :editable="page.edit && (state.priv.manager || user.id === state.me.id)"
+            :editable="edit && (priv.manager || user.id === state.me.id)"
             :disabled="!!state.waitProc"
           />
         </template>
@@ -29,12 +29,12 @@
       >
         {{ $t('This user is deleted.') }}
       </v-alert>
-      <div v-if="(!account.deletedAt) || (page.edit && state.priv.manager)">
-        <GroupsOfUser class="mb-2" :id="user.id" :edit="page.edit" />
-        <div v-if="user.id === state.me.id || state.priv.manager || state.priv.admin">
+      <div v-if="(!account.deletedAt) || (edit && priv.manager)">
+        <GroupsOfUser class="mb-2" :id="user.id" :edit="edit" />
+        <div v-if="user.id === state.me.id || priv.manager || priv.admin">
           <span class="float-sm-left mt-2 mr-2">{{ $t('Visible for') }}</span>
           <v-chip-group
-            v-if="!page.edit"
+            v-if="!edit"
             mandatory column
             active-class="info--text"
             v-model="page.preview"
@@ -52,19 +52,25 @@
           </v-chip>
         </div>
 
-        <Profile :id="user.id" :edit="page.edit" :preview="preview" />
+        <Profile :id="user.id" :edit="edit" :preview="preview" />
       </div>
 
-      <div v-if="page.edit && state.priv.manager">
+      <div v-if="edit && priv.manager">
 
         <v-divider class="my-6" />
         <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
-        <p v-if="account.valid">
-          <v-icon>{{ icon('Sign in') }}</v-icon>
-          {{ $t('Sign in') }}:
-          {{ account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--' }}
-        </p>
-        <div v-if="account.valid">
+        <v-row>
+          <v-col class="col-12 col-sm-6">
+            <v-icon>{{ icon(accountStatus(state, account.id)) }}</v-icon>
+            {{ $t(accountStatus(state, account.id)) }}
+          </v-col>
+          <v-col class="col-12 col-sm-6" v-if="accountIsValid(account)">
+            <v-icon>{{ icon('Sign in') }}</v-icon>
+            {{ $t('Sign in') }}:
+            {{ account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--' }}
+          </v-col>
+        </v-row>
+        <div v-if="state.service.auth.invitation && account.valid">
           <ConfirmButton
             type="info"
             :title="$t('Invitation')"
@@ -76,8 +82,13 @@
           />
           {{ account.invitedAt ? withTz(account.invitedAt).format('l') : '--/--/--' }}
           {{ account.invitedBy ? `( ${getById(state.users, account.invitedBy).name} )` : '' }}
-          {{ invitationUrl(account.id) }}
         </div>
+        <v-alert
+          v-if="state.invitations[account.id] && invitationStatus === 'Sent'"
+          type="info" outlined dense class="my-2" style="word-break: break-all;"
+        >
+          {{ $t('Send invitation', { url: topUrl().replace(/\/$/, '') + $router.resolve({ name: 'invitation', params: { invitation: state.invitations[account.id] } }).resolved.path }) }}
+        </v-alert>
 
         <v-row>
           <v-col class="col-12 col-sm-7 my-2">
@@ -135,7 +146,8 @@
 <script>
 import { reactive, computed, watch } from '@vue/composition-api'
 import * as helpers from '@/helpers'
-import { useStore, icon, getById, topUrl, permissions } from '@/helpers'
+import { useStore, icon, getById, goPage } from '@/helpers'
+import { permissions } from '@/conf/permissions'
 import { invite } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -156,21 +168,39 @@ export default {
     const store = useStore()
     const { setProcForWait } = store
     const page = reactive({
-      edit: root.$route.params.mode === 'edit',
       preview: 2
     })
 
-    watch(
-      () => root.$route,
-      mode => {
-        page.edit = root.$route.params.mode === 'edit'
-      }
-    )
+    const user = computed(() => getById(store.state.users, root.$route.params.id))
+    const account = computed(() => getById(store.state.accounts, root.$route.params.id))
+    const profile = computed(() => getById(store.state.profiles, root.$route.params.id))
+    const edit = computed({
+      get: () => root.$route.params.mode === 'edit',
+      set: edit => goPage(
+        root.$router,
+        { name: root.$route.name, params: { id: root.$route.params.id, mode: edit ? 'edit' : null } }
+      )
+    })
+
+    const invitationStatus = computed(() => {
+      const account = getById(store.state.accounts, root.$route.params.id)
+      return account.invitedAt
+        ? (account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime())
+          ? 'Accepted'
+          : (account.invitedAt.getTime() >= (new Date().getTime() - store.state.service.conf.invitationExpirationTime))
+            ? 'Sent'
+            : 'Timeout'
+        : ''
+    })
+
+    watch(() => root.$route, route => { page.preview = 2 })
 
     return {
-      user: computed(() => getById(store.state.users, root.$route.params.id)),
-      account: computed(() => getById(store.state.accounts, root.$route.params.id)),
-      profile: computed(() => getById(store.state.profiles, root.$route.params.id)),
+      user,
+      account,
+      profile,
+      edit,
+      invitationStatus,
       page,
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),
@@ -180,9 +210,6 @@ export default {
       preview: computed(() => permissions[page.preview].value),
       ...store,
       invite: id => setProcForWait(() => invite(store, id)),
-      invitationUrl: id => store.state.invitations[id]
-        ? `${topUrl().replace(/#\/$/, '')}invitation/${store.state.invitations[id]}`
-        : '',
       ...helpers
     }
   }

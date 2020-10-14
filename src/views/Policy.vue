@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <v-switch
-        v-if="state.priv.manager || state.priv.admin"
+        v-if="priv.manager || priv.admin"
         color="primary"
         class="float-right my-0"
         v-model="page.edit"
@@ -20,7 +20,7 @@
         :label="$t('Privacy policy')"
         v-model="state.service.conf.policy"
         @save="val => set('service', 'conf', { policy: val })"
-        :editable="page.edit && state.priv.manager"
+        :editable="page.edit && priv.manager"
         :disabled="!!state.waitProc"
       />
     </v-col>

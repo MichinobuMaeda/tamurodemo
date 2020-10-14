@@ -1,5 +1,5 @@
-const path = require('path')
-const fs = require('fs')
+// const path = require('path')
+// const fs = require('fs')
 const prompts = require('prompts')
 const firebase = require('@firebase/testing')
 const { updateService } = require('../functions/service')

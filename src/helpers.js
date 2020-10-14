@@ -11,10 +11,6 @@ const LS_REQ_EMAIL = `${LS_PRODUCT}tamuroEmailLinkRequest`
 // UI
 export * from '@/components/helpers'
 export { icon } from '@/conf/icons'
-export { locales } from '@/conf/locales'
-export { menuPositions } from '@/conf/menuPositions'
-export { timezones } from '@/conf/timezones'
-export { permissions } from '@/conf/permissions'
 export * from '@/conf/validators'
 
 // Route
@@ -28,6 +24,7 @@ export const signInUrl = () => window.location.href
 
 export const goPage = (router, route) => {
   if (![
+    'invitation',
     'signin',
     'policy',
     'preferences'
@@ -56,26 +53,24 @@ export const getById = (list, id) => (list || []).reduce(
 )
 
 // Account and Privilege
-export const userIsValid = (state, id) => {
-  const user = getById(state.accounts, id)
-  return !!(user && user.valid)
+
+export const accountIsValid = account => !!(account && account.id && !account.deletedAt && account.valid)
+export const accountIsMemberOf = (account, group) => ((group || {}).members || []).includes(account.id)
+
+export const accountPriv = (service, groups, account) => {
+  const valid = accountIsValid(account)
+  return {
+    guest: !valid,
+    invited: !!(valid &&
+      account.invitedAs &&
+      account.invitedAt &&
+      account.invitedAt.getTime() >= (new Date().getTime() - service.conf.invitationExpirationTime)),
+    user: valid,
+    admin: valid && accountIsMemberOf(account, getById(groups, 'admins')),
+    manager: valid && accountIsMemberOf(account, getById(groups, 'managers')),
+    tester: valid && accountIsMemberOf(account, getById(groups, 'testers'))
+  }
 }
-
-export const userIsMemberOf = (state, id, groupId) => !!(state.groups || []).some(
-  group => group.id === groupId && group.members.includes(id)
-)
-
-export const iamValid = state => !!(state.me && state.me.id && state.me.valid)
-
-export const iamMemberOf = (state, groupId) => userIsMemberOf(state, state.me.id, groupId)
-
-export const getMyPriv = state => ({
-  guest: !iamValid(state),
-  user: iamValid(state),
-  admin: iamValid(state) && iamMemberOf(state, 'admins'),
-  manager: iamValid(state) && iamMemberOf(state, 'managers'),
-  tester: iamValid(state) && iamMemberOf(state, 'testers')
-})
 
 export const getMyName = state => getById(state.users, state.me.id).name || 'Guest'
 
@@ -110,4 +105,23 @@ export const restoreRequestedRoute = () => {
   }
 }
 
-export const linkedWithProviderId = (auth, providerId) => auth.currentUser && auth.currentUser.providerData.some(item => item.providerId === providerId)
+export const accountStatus = (state, id) => {
+  const account = getById(state.accounts, id)
+  return account.deletedAt
+    ? 'Account deleted'
+    : !account.valid
+      ? 'Account locked'
+      : account.invitedAs
+        ? account.invitedAt
+          ? account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime()
+            ? 'Invitation accepted'
+            : account.invitedAt.getTime() < (new Date().getTime() - state.service.conf.invitationExpirationTime)
+              ? 'Invitation timeout'
+              : 'Invited'
+          : account.signedInAt
+            ? 'Account active'
+            : 'Account inactive'
+        : account.signedInAt
+          ? 'Account active'
+          : 'Account inactive'
+}

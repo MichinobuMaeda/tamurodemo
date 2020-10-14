@@ -36,7 +36,7 @@
             :light="$vuetify.theme.dark"
             fab
             small
-            :color="menuItemColor"
+            :color="item.color || menuItemColor"
             @click="state.menuOpen = !state.menuOpen; item.action()"
           >
             <v-icon>{{ item.icon }}</v-icon>

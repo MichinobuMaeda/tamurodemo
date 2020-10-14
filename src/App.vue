@@ -44,7 +44,7 @@
       v-if="!page.loading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menuItems="menuItems"
+      :menuItems="menuItems(priv, state.myName, state.me, page, $router)"
       :position="menuPosition"
       @move="pos => onMenuMoved(pos)"
     />
@@ -67,17 +67,16 @@
 
 <script>
 import { createStore, syncServiceData, syncUserData } from '@/init'
-import { reactive, computed, onMounted, watchEffect } from '@vue/composition-api'
+import { reactive, onMounted, watch } from '@vue/composition-api'
 import menuItems from '@/router/menuItems'
 import guard from '@/router/guard'
 import version from '@/conf/version'
 import * as helpers from '@/helpers'
+import { accountPriv, accountIsValid } from '@/helpers'
 import Menu from '@/components/Menu'
 import Loading from '@/components/Loading.vue'
 import AppUpdater from '@/components/AppUpdater'
 import RawDataTree from '@/components/RawDataTree'
-
-const { getMyPriv } = helpers
 
 export default {
   name: 'App',
@@ -101,12 +100,30 @@ export default {
       await syncUserData(store, root, page)
     })
 
-    watchEffect(() => {
-      guard(root.$router, root.$route, getMyPriv(store.state))
-    })
+    watch(
+      () => [
+        root.$route,
+        store.state.service,
+        store.state.groups,
+        store.state.me,
+        page.loading
+      ],
+      ([
+        route,
+        service,
+        groups,
+        me,
+        loading
+      ]) => guard(
+        root.$router,
+        route,
+        accountPriv(service, groups, me),
+        loading
+      )
+    )
 
     const onMenuMoved = ({ db, state }) => async pos => {
-      if (state.me && state.me.valid) {
+      if (accountIsValid(state.me)) {
         await db.collection('accounts').doc(state.me.id).update({
           menuPosition: pos,
           updatedAt: new Date()
@@ -117,11 +134,7 @@ export default {
     return {
       ...store,
       page,
-      menuItems: computed(() => menuItems(
-        store.state,
-        page,
-        root.$router
-      )),
+      menuItems,
       onMenuMoved: onMenuMoved(store),
       version,
       ...helpers

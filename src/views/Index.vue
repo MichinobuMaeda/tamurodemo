@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <v-switch
-        v-if="state.priv.manager || state.priv.admin"
+        v-if="priv.manager || priv.admin"
         color="primary"
         class="float-right my-0"
         v-model="page.edit"
@@ -25,7 +25,7 @@
           :label="$t('Description')"
           v-model="state.service.conf.desc"
           @save="val => set('service', 'conf', { desc: val })"
-          :editable="page.edit && state.priv.manager"
+          :editable="page.edit && priv.manager"
           :disabled="!!state.waitProc"
         />
       </v-sheet>
@@ -39,7 +39,7 @@
           {{ category.name }}
         </v-chip>
         <LinkButton
-          v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => !group.deletedAt)" :key="group.id"
+          v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => group && !group.deletedAt)" :key="group.id"
           :icon="icon('Group')"
           :label="group.name"
           @click="goPage($router, { name: 'group', params: { id: group.id } })"
@@ -62,7 +62,7 @@
         />
       </div>
 
-      <div v-if="page.edit && (state.priv.manager || state.priv.admin)">
+      <div v-if="page.edit && (priv.manager || priv.admin)">
 
         <div
           v-if="deletedGroups.length"

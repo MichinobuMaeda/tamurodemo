@@ -217,20 +217,7 @@
 
       <v-divider class="my-4" />
 
-      <div style="line-height: 64px;">
-        <ConfirmButton
-          v-for="provider in providers" :key="provider.id"
-          :type="page[provider.id] ? 'warning' : 'info'"
-          :color="provider.id"
-          buttonClass="white--text mr-2"
-          :buttonIcon="page[provider.id] ? icon('Checkbox On') : icon('Checkbox Off')"
-          :iconProc="page[provider.id] ? icon('Confirm to remove') : icon('Confirm to add')"
-          :title="$t('Sign in with provider', { provider: provider.name })"
-          :message="$t((page[provider.id] ? 'Remove': 'Add') + ' setting to sign in with provider', { provider: provider.name })"
-          @confirm="provider.update"
-          :disabled="!!state.waitProc"
-        />
-      </div>
+      <SelectAuthProviders />
 
       <v-divider class="my-4" />
 
@@ -248,27 +235,32 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, onUnmounted } from '@vue/composition-api'
+import { reactive, onMounted, onUnmounted } from '@vue/composition-api'
 import * as helpers from '@/helpers'
-import { useStore, signInUrl, linkedWithProviderId } from '@/helpers'
-import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail, authProviders } from '@/auth'
+import { useStore, signInUrl } from '@/helpers'
+import { menuPositions } from '@/conf/menuPositions'
+import { locales } from '@/conf/locales'
+import { timezones } from '@/conf/timezones'
+import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import ConfirmButton from '@/components/ConfirmButton'
+import SelectAuthProviders from '@/views/SelectAuthProviders'
 
 export default {
   name: 'Preferences',
   components: {
     PageTitle,
     DefaultButton,
-    ConfirmButton
+    ConfirmButton,
+    SelectAuthProviders
   },
   setup (props, { root, emit }) {
     const store = useStore()
     const { auth, setProcForWait } = store
     const page = reactive({
       now: new Date().getTime(),
-      secondaryUpdater: null,
+      everySecondUpdater: null,
       changePassword: false,
       changePasswordMessage: '',
       oldPassword: '',
@@ -283,25 +275,19 @@ export default {
       newEmail: '',
       confirmEmail: '',
       showChangeEmailPassword: false,
-      resetPasswordMessage: '',
-      google: linkedWithProviderId(auth, 'google.com'),
-      facebook: linkedWithProviderId(auth, 'facebook.com'),
-      twitter: linkedWithProviderId(auth, 'twitter.com'),
-      line: computed(() => store.state.me && store.state.me.line),
-      yahooJapan: computed(() => store.state.me && store.state.me.yahooJapan),
-      mixi: computed(() => store.state.me && store.state.me.mixi)
+      resetPasswordMessage: ''
     })
 
     onMounted(
       () => {
-        page.secondaryUpdater = setInterval(
+        page.everySecondUpdater = setInterval(
           () => { page.now = new Date().getTime() },
           1000
         )
       }
     )
 
-    onUnmounted(() => { clearInterval(page.secondaryUpdater) })
+    onUnmounted(() => { clearInterval(page.everySecondUpdater) })
 
     const changeEmail = () => setProcForWait(
       async () => {
@@ -373,9 +359,9 @@ export default {
       changePassword,
       resetPassword,
       signOut,
-      providers: authProviders(store, root.$route, ({ id, providerId }) => {
-        page[id] = linkedWithProviderId(auth, providerId)
-      }).filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
+      menuPositions,
+      locales,
+      timezones,
       ...helpers
     }
   }

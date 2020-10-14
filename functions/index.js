@@ -55,3 +55,7 @@ exports.invite = functions.https.onCall(
     data, ctx(context), adminsOrManagers, invite
   )
 )
+
+exports.validateInvitation = functions.https.onCall(
+  (data, context) => validateInvitation(data, ctx(context))
+)

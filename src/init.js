@@ -2,7 +2,7 @@ import { computed, provide, reactive } from '@vue/composition-api'
 import moment from 'moment-timezone'
 import { firebase, db, functions, auth } from '@/plugins/firebase'
 import {
-  StoreSymbol, getMyPriv, getMyName,
+  StoreSymbol, accountPriv,
   topUrl, signInUrl, simplifyDoc, getById,
   restoreRequestedEmail, eraseRequestedEmail, restoreRequestedRoute
 } from '@/helpers'
@@ -26,47 +26,44 @@ const clearUserData = state => {
   state.groups = []
   state.categories = []
   state.invitations = {}
+  state.waitProc = null
 }
 
 const createState = () => {
   const state = {}
   clearServiceData(state)
   clearUserData(state)
-  state.waitProc = null
-  state.myName = computed(() => getMyName(state))
-  state.priv = computed(() => getMyPriv(state))
-  state.tz = computed(() =>
-    (state.me && state.me.valid && state.me.tz) ||
-    (state.service.defaults && state.service.defaults.tz) ||
-    'UTC'
-  )
-  state.sortedGroups = computed(
-    () => state.categories
-      .filter(category => !category.deletedAt)
-      .reduce((ret, cur) => [
-        ...ret,
-        ...state.groups.filter(group => !group.deletedAt && (cur.groups || []).includes(group.id))
-      ], [])
-  )
+  state.myName = computed(() => getById(state.users, state.me.id).name || 'Guest')
   return reactive(state)
 }
 
 export const createStore = () => {
   const state = createState()
+  const tz = state =>
+    (state.me && state.me.valid && state.me.tz) ||
+    (state.service.defaults && state.service.defaults.tz) ||
+    'UTC'
   const store = {
     state,
     firebase,
     db,
     functions,
     auth,
-    setProcForWait: setProcForWait(state),
+    priv: computed(() => accountPriv(state.service, state.groups, state.me)),
+    sortedGroups: state => state.categories
+      .filter(category => !category.deletedAt)
+      .reduce((ret, cur) => [
+        ...ret,
+        ...state.groups.filter(group => !group.deletedAt && (cur.groups || []).includes(group.id))
+      ], []),
+    tz: computed(() => tz(state)),
     add: (collection, data) => setProcForWait(state)(() => add(db, collection, data)),
     set: (collection, id, data) => setProcForWait(state)(() => set(db, collection, id, data)),
     del: (collection, id) => setProcForWait(state)(() => del(db, collection, id)),
     restore: (collection, id) => setProcForWait(state)(() => restore(db, collection, id)),
-    withTz: date => moment(date).tz(state.tz),
-    onSighOut
+    setProcForWait: setProcForWait(state)
   }
+  store.withTz = date => moment(date).tz(tz(state))
   defaultsKeys.forEach(key => {
     store[key] = computed(() => getDefault(state, key))
   })
@@ -96,7 +93,7 @@ export const syncUserData = async ({ db, auth, state }, root, page) => {
         await onInvalidAccount(auth)
       }
     } else {
-      onSighOut(state)
+      onSignOut(state)
     }
     setTimeout(() => { page.loading = false }, 500)
   })
@@ -178,8 +175,7 @@ const onValidAccount = async (db, auth, state, root, me) => {
   state.me = simplifyDoc(me)
   setDefaults(state, root, auth)
   await db.collection('accounts').doc(state.me.id).update({
-    signedInAt: new Date(),
-    invitedAs: null
+    signedInAt: new Date()
   })
 
   await getInitialAndRealtimeData(
@@ -197,7 +193,8 @@ const onValidAccount = async (db, auth, state, root, me) => {
     'users',
     db.collection('users').orderBy('name', 'asc')
   )
-  if (getMyPriv(state).admin || getMyPriv(state).manager) {
+  const priv = accountPriv(state.service, state.groups, state.me)
+  if (priv.admin || priv.manager) {
     await getInitialAndRealtimeData(
       state,
       'accounts',
@@ -216,7 +213,7 @@ const onValidAccount = async (db, auth, state, root, me) => {
       setDefaults(state, root, auth)
     })
   }
-  if (getMyPriv(state).manager) {
+  if (accountPriv(state.service, state.groups, state.me).manager) {
     await getInitialAndRealtimeData(
       state,
       'profiles',
@@ -229,9 +226,24 @@ const onValidAccount = async (db, auth, state, root, me) => {
     })
   }
 
-  const requestedRoute = restoreRequestedRoute()
-  if (requestedRoute) {
-    root.$router.push(requestedRoute).catch(() => {})
+  if (!['invitation', 'policy'].includes(root.$route.name)) {
+    if (state.me.invitedAs &&
+      (
+        auth.currentUser.email ||
+        (auth.currentUser.providerData && auth.currentUser.providerData.length) ||
+        state.me.line ||
+        state.me.yahooJapan ||
+        state.me.mixi
+      )
+    ) {
+      await db.collection('accounts').doc(state.me.id).update({
+        invitedAs: null
+      })
+    }
+    const requestedRoute = restoreRequestedRoute()
+    if (requestedRoute) {
+      root.$router.push(requestedRoute).catch(() => {})
+    }
   }
 }
 
@@ -240,18 +252,20 @@ const onInvalidAccount = async auth => {
   window.location.href = signInUrl()
 }
 
-const onSighOut = state => {
+const onSignOut = state => {
   clearUserData(state)
 }
 
 const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) => {
+  const priv = accountPriv(state.service, state.groups, state.me)
   state[propName] = (await queryRef.get()).docs
-    .filter(doc => getMyPriv(state).admin || getMyPriv(state).manager || !doc.data().deletedAt)
+    .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
     .map(doc => simplifyDoc(doc))
   onChange && onChange(state)
   state.unsubscribers[propName] = queryRef.onSnapshot(querySnapshot => {
+    const priv = accountPriv(state.service, state.groups, state.me)
     state[propName] = querySnapshot.docs
-      .filter(doc => getMyPriv(state).admin || getMyPriv(state).manager || !doc.data().deletedAt)
+      .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
       .map(doc => simplifyDoc(doc))
     onChange && onChange(state)
   })
@@ -267,7 +281,7 @@ const setDefaults = (state, root, auth = null) => {
   }
 }
 
-const getDefault = (state, key) => getMyPriv(state).user
+const getDefault = (state, key) => accountPriv(state.service, state.groups, state.me).user
   ? state.me[key]
   : state.service.defaults
     ? state.service.defaults[key]

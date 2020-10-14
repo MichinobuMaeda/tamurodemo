@@ -4,7 +4,7 @@
       color="primary"
       :icon="icon('For permitted')"
       :label="$t('Close members')"
-      @click="page.dialog = true"
+      @click="onEdit(groups, users)"
     />
     <v-dialog
       max-width="640px"
@@ -24,29 +24,54 @@
           </v-icon>
         </v-card-title>
 
-        <v-card-text>
-            <div v-for="group in page.groups" :key="group.id">
-              <v-checkbox
-                v-model="group.checked"
-              >
-                <template v-slot:label>
-                  <v-icon class="float-left">{{ icon('Group') }}</v-icon>
-                  {{ group.name }}
-                </template>
-              </v-checkbox>
-              <div class="pl-8" v-if="!group.checked">
-                <v-checkbox
+        <v-card-text class="pa-1">
+          <v-expansion-panels>
+            <v-expansion-panel
+              v-for="group in page.groups" :key="group.id"
+            >
+              <v-expansion-panel-header class="py-0">
+                <v-flex shrink>
+                  <v-checkbox
+                    v-model="group.checked"
+                    dense
+                    @click.native="e => { e.cancelBubble = true }"
+                  >
+                    <template v-slot:label>
+                      <v-icon class="float-left">{{ icon('Group') }}</v-icon>
+                      {{ group.name }}
+                    </template>
+                  </v-checkbox>
+                </v-flex>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class="pl-6 py-0">
+                <div
                   v-for="user in page.users.filter(user => (group.members || []).includes(user.id))" :key="user.id"
-                  v-model="user.checked"
-                  :disabled="user.id === id"
                 >
-                  <template v-slot:label>
-                    <v-icon class="float-left">{{ icon('User') }}</v-icon>
-                    {{ user.name }}
-                  </template>
-                </v-checkbox>
-              </div>
-            </div>
+                  <v-checkbox
+                    v-if="user.id === id || group.checked"
+                    dense
+                    v-model="page.checked"
+                    :disabled="true"
+                  >
+                    <template v-slot:label>
+                      <v-icon class="float-left">{{ icon('User') }}</v-icon>
+                      {{ user.name }}
+                    </template>
+                  </v-checkbox>
+                  <v-checkbox
+                    v-else
+                    dense
+                    v-model="user.checked"
+                  >
+                    <template v-slot:label>
+                      <v-icon class="float-left">{{ icon('User') }}</v-icon>
+                      {{ user.name }}
+                    </template>
+                  </v-checkbox>
+                </div>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-card-text>
 
         <v-card-actions class="dialogAction">
@@ -63,7 +88,7 @@
             :icon="icon('OK')"
             :label="$t('Save')"
             :disabled="!!state.waitProc"
-            @click="onSave"
+            @click="onSave(page.groups, page.users)"
           />
         </v-card-actions>
 
@@ -73,11 +98,10 @@
 </template>
 
 <script>
-import { reactive } from '@vue/composition-api'
+import { reactive, computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
+import { useStore, getById } from '@/helpers'
 import DefaultButton from '@/components/DefaultButton'
-
-const { useStore, getById } = helpers
 
 export default {
   name: 'PermittedMembers',
@@ -89,34 +113,42 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { set } = store
+    const { state, set, sortedGroups } = store
     const page = reactive({
       dialog: false,
-      groups: store.state.sortedGroups
-        .filter(group => group.id !== 'managers')
-        .map(group => ({
-          ...group,
-          checked: (getById(store.state.users, props.id).permittedGroups || []).includes(group.id)
-        })),
-      users: store.state.users
-        .map(user => ({
-          ...user,
-          checked: user.id !== props.id && (getById(store.state.users, props.id).permittedUsers || []).includes(user.id)
-        }))
+      groups: [],
+      users: [],
+      checked: true
     })
-
-    const onSave = async () => {
-      await set('users', props.id, {
-        permittedGroups: page.groups.filter(group => group.checked).map(group => group.id),
-        permittedUsers: page.users.filter(user => user.checked).map(user => user.id)
-      })
-      page.dialog = false
-    }
 
     return {
       ...store,
       page,
-      onSave,
+      groups: computed(() => sortedGroups(state)
+        .filter(group => group.id !== 'managers')
+        .map(group => ({
+          ...group,
+          checked: (getById(state.users, props.id).permittedGroups || []).includes(group.id)
+        }))
+      ),
+      users: computed(() => state.users
+        .map(user => ({
+          ...user,
+          checked: user.id !== props.id && (getById(state.users, props.id).permittedUsers || []).includes(user.id)
+        }))
+      ),
+      onEdit: (groups, users) => {
+        page.dialog = true
+        page.groups = [...groups]
+        page.users = [...users]
+      },
+      onSave: async (groups, users) => {
+        await set('users', props.id, {
+          permittedGroups: groups.filter(group => group.checked).map(group => group.id),
+          permittedUsers: users.filter(user => user.checked).map(user => user.id)
+        })
+        page.dialog = false
+      },
       ...helpers
     }
   }

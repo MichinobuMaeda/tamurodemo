@@ -1,6 +1,6 @@
 import Firebase from 'firebase/app'
 import 'firebase/auth'
-import { storeRequestedEmail, storeRequestedRoute, linkedWithProviderId, topUrl } from './helpers'
+import { storeRequestedEmail, storeRequestedRoute, topUrl } from './helpers'
 
 const firebaseAuthProviders = {
   google: new Firebase.auth.GoogleAuthProvider(),
@@ -127,3 +127,15 @@ export const invite = async ({ functions, state }, id) => {
   const result = await functions.httpsCallable('invite')({ id })
   state.invitations[id] = result.data.invitation
 }
+
+export const validateInvitation = async ({ functions, auth }, invitation) => {
+  try {
+    const result = await functions.httpsCallable('validateInvitation')({ invitation })
+    await auth.signInWithCustomToken(result.data.token)
+  } catch (e) {
+    return { status: 'error' }
+  }
+  return { status: 'ok' }
+}
+
+export const linkedWithProviderId = (auth, providerId) => auth.currentUser && auth.currentUser.providerData.some(item => item.providerId === providerId)

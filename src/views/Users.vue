@@ -15,13 +15,11 @@
       >
         <DefaultButton
           color="secondary"
-          :icon="icon(userStatusIcon(user))"
+          :icon="icon(accountStatus(state, user.id))"
           :label="user.name"
           @click="() => goPage($router, { name: 'user', params: { id: user.id, mode: 'edit' } })"
         />
-
         <GroupsOfUser :id="user.id" :edit="page.edit" />
-
         <v-divider class="my-2"  />
       </div>
 
@@ -34,7 +32,7 @@
 <script>
 import { reactive } from '@vue/composition-api'
 import * as helpers from '@/helpers'
-import { useStore, getById } from '@/helpers'
+import { useStore } from '@/helpers'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import GroupsOfUser from '@/views/GroupsOfUser'
@@ -52,23 +50,9 @@ export default {
     const store = useStore()
     const page = reactive({})
 
-    const userStatusIcon = user => {
-      const account = getById(store.state.accounts, user.id)
-      return account.deletedAt
-        ? 'Delete'
-        : account.valid
-          ? (account.invitedAs
-            ? 'Invitation'
-            : (account.signedInAt
-              ? 'Signed in'
-              : 'Not signed in'))
-          : 'Lock'
-    }
-
     return {
       ...store,
       page,
-      userStatusIcon,
       ...helpers
     }
   }

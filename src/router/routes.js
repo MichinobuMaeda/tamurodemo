@@ -12,10 +12,22 @@ const routes = [
     meta: { privs: ['guest'] }
   },
   {
+    path: '/invitation/edit',
+    name: 'invitationForEdit',
+    component: () => import('../views/Invitation.vue'),
+    meta: { privs: ['manager', 'admin'] }
+  },
+  {
+    path: '/inv/:invitation',
+    name: 'invitation',
+    component: () => import('../views/Invitation.vue'),
+    meta: { privs: ['guest', 'invited'] }
+  },
+  {
     path: '/policy',
     name: 'policy',
     component: () => import('../views/Policy.vue'),
-    meta: { privs: ['user', 'guest'] }
+    meta: { privs: ['guest', 'user'] }
   },
   {
     path: '/categories',

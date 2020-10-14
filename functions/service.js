@@ -9,6 +9,7 @@ const initialData = ts => [
       version: '0000000',
       name: 'Tamuro',
       hosting: 'https://tamuro-test01.web.app',
+      invitationExpirationTime: 24 * 3600 * 1000,
       desc: {
         type: 'markdown',
         data: '',

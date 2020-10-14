@@ -79,7 +79,7 @@
       </v-sheet>
     </div>
 
-    <div v-if="(edit || (user.descForPermitted && (preview !== 'a'))) && (user.id === state.me.id || state.priv.manager)">
+    <div v-if="(edit || (user.descForPermitted && (preview !== 'a'))) && (user.id === state.me.id || priv.manager)">
       <div class="title--text my-2">
         <v-icon>{{ picon.c }}</v-icon>
         {{ $t('Message for close members') }}
@@ -96,7 +96,7 @@
       </v-sheet>
     </div>
 
-    <div v-if="(edit || (user.descForManagers && (preview === 'm'))) && (user.id === state.me.id || state.priv.manager)">
+    <div v-if="(edit || (user.descForManagers && (preview === 'm'))) && (user.id === state.me.id || priv.manager)">
       <div class="title--text my-2">
         <v-icon>{{ picon.m }}</v-icon>
         {{ $t('Note for managers') }}
@@ -119,11 +119,11 @@
 <script>
 import { reactive, computed } from '@vue/composition-api'
 import * as helpers from '@/helpers'
+import { useStore, icon } from '@/helpers'
+import { permissions } from '@/conf/permissions'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/views/PermittedMembers'
-
-const { useStore, icon, permissions } = helpers
 
 export default {
   name: 'Profile',

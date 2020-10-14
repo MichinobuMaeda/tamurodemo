@@ -4,7 +4,7 @@
     :label="$t('Groups')"
     :items="groupList"
     v-model="groups"
-    :editable="edit && state.priv.manager"
+    :editable="edit && priv.manager"
     :disabled="!!state.waitProc"
     @click="id => goPage($router, { name: 'group', params: { id } })"
   />
@@ -30,9 +30,9 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, db } = store
+    const { sortedGroups, setProcForWait, db } = store
 
-    const getGroups = (state, id) => state.sortedGroups
+    const getGroups = (state, id) => sortedGroups(state)
       .filter(item => (item.members || []).includes(id))
       .map(item => item.id)
 
@@ -58,7 +58,7 @@ export default {
 
     return {
       ...store,
-      groupList: computed(() => store.state.sortedGroups
+      groupList: computed(() => sortedGroups(store.state)
         .map(item => ({
           icon: icon('Group'),
           text: item.name,
