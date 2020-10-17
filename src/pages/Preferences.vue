@@ -56,13 +56,13 @@
         </v-col>
 
         <v-col class="col-12 text-right">
-          <p>{{ withTz(page.now).format('llll') }}</p>
+          <div>{{ withTz(page.now).format('llll') }}</div>
         </v-col>
       </v-row>
 
-      <v-row
-        v-if="auth.currentUser && auth.currentUser.providerData.some(item => item.providerId === 'password')"
-      >
+      <v-divider class="my-4" v-if="state.me.email" />
+
+      <v-row v-if="state.me.email">
         <v-col class="col-12 col-sm-6">
           <v-form v-model="page.changeEmail">
 
@@ -183,13 +183,17 @@
           </v-form>
         </v-col>
       </v-row>
-      <div
-        v-if="auth.currentUser && auth.currentUser.providerData.some(item => item.providerId === 'password')"
-      >
+
+      <div v-if="state.me.email">
+
+        <v-divider class="my-2" />
 
         <div class="text-h3 h3--text my-4">
           {{ $t('Do not use or forget password') }}
         </div>
+        <p>
+          {{ $t('Ask system admin to change e-mail address for sign-in') }}
+        </p>
 
         <DefaultButton
           color="secondary"
@@ -200,30 +204,17 @@
         />
         <v-alert
           v-if="page.resetPasswordMessage"
-          type="info" dense outlined class="my-4"
+          type="info" dense outlined class="my-2"
         >
           {{ page.resetPasswordMessage }}
         </v-alert>
       </div>
-      <div
-        v-else-if="auth.currentUser && auth.currentUser.email"
-      >
-        <DefaultButton
-          color="secondary"
-          :icon="icon('E-mail')"
-          :label="$t('Set password')"
-          :disabled="!!state.waitProc"
-          @click="resetPassword"
-        />
-        <v-alert
-          v-if="page.resetPasswordMessage"
-          type="info" dense outlined class="my-4"
-        >
-          {{ page.resetPasswordMessage }}
+      <div v-else>
+        <v-alert type="info" dense outlined class="my-2">
+          {{ $t('No e-mail address for sign-in') }}
+          {{ $t('Ask system admin to set e-mail address for sign-in') }}
         </v-alert>
       </div>
-
-      <div class="my-2">{{ $t('Ask system admin to change e-mail') }}</div>
 
       <v-divider class="my-4" />
 

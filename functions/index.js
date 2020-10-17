@@ -2,9 +2,18 @@ const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 const { apiKeyValidator, api, router } = require('./api')
 const { updateVersion } = require('./service')
-const { guardGroups, guardUserSelfOrGroups} = require('./guard')
+const {
+  guardValidAccount,
+  guardGroups,
+  guardUserSelfOrGroups
+} = require('./guard')
 const { createAccount, setEmail, setPassword } = require('./accounts')
-const { invite, validateInvitation } = require('./auth')
+const {
+  invite,
+  validateInvitation,
+  setEmailWithInvitation,
+  setEmailAndPasswordWithInvitation
+} = require('./auth')
 
 admin.initializeApp()
 const db = admin.firestore()
@@ -58,4 +67,16 @@ exports.invite = functions.https.onCall(
 
 exports.validateInvitation = functions.https.onCall(
   (data, context) => validateInvitation(data, ctx(context))
+)
+
+exports.setEmailWithInvitation = functions.https.onCall(
+  (data, context) => guardValidAccount(
+    data, ctx(context), setEmailWithInvitation
+  )
+)
+
+exports.setEmailAndPasswordWithInvitation = functions.https.onCall(
+  (data, context) => guardValidAccount(
+    data, ctx(context), setEmailAndPasswordWithInvitation
+  )
 )

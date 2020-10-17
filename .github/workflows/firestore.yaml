@@ -8,34 +8,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Get yarn cache directory path
-      id: yarn-ui-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Get yarn cache directory path
+        id: yarn-ui-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-    - uses: actions/cache@v2
-      id: yarn-ui-cache
-      with:
-        path: ${{ steps.yarn-ui-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-ui-${{ hashFiles('yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-ui-
+      - uses: actions/cache@v2
+        id: yarn-ui-cache
+        with:
+          path: ${{ steps.yarn-ui-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-ui-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-ui-
 
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
 
-    - name: Use yarn
-      run: npm -g i yarn
+      - name: Use yarn
+        run: npm -g i yarn
 
-    - name: Install dependencies
-      working-directory: ${{ github.workspace }}
-      run: yarn --frozen-lockfile
+      - name: Install dependencies
+        working-directory: ${{ github.workspace }}
+        run: yarn --frozen-lockfile
 
-    - name: Deploy
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
-      working-directory: ${{ github.workspace }}
-      run: yarn deploy --only firestore --token "$FIREBASE_TOKEN"
+      - name: Deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
+        working-directory: ${{ github.workspace }}
+        run: yarn deploy --only firestore --token "$FIREBASE_TOKEN"

@@ -75,7 +75,7 @@
         </div>
       </v-form>
 
-      <div class="my-2">{{ $t('Ask system admin to change e-mail') }}</div>
+      <div class="my-2">{{ $t('Ask system admin to change e-mail address for sign-in') }}</div>
 
       <v-divider class="my-4" />
 

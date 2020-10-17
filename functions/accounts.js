@@ -1,6 +1,9 @@
 const { throwErrorDataLoss } = require('./utils')
 
-const createAccount = async ({ name }, { functions, db, auth }) => {
+const createAccount = async ({ name }, { db, auth }) => {
+  if (!name) {
+    throwErrorDataLoss('createAccount', name, err)
+  }
   try {
     const ts = new Date()
     const createdAt = ts
@@ -13,6 +16,7 @@ const createAccount = async ({ name }, { functions, db, auth }) => {
       updatedAt
     })
     const id = account.id
+    console.log({ id })
     await db.collection('users').doc(id).set({
       name,
       createdAt,
@@ -32,7 +36,7 @@ const createAccount = async ({ name }, { functions, db, auth }) => {
   }
 }
 
-const setEmail = async ({ id, email }, { functions, db, auth }) => {
+const setEmail = async ({ id, email }, { db, auth }) => {
   try {
     const ts = new Date()
     const updatedAt = ts
@@ -48,7 +52,7 @@ const setEmail = async ({ id, email }, { functions, db, auth }) => {
   }
 }
 
-const setPassword = async ({ id, password }, { functions, db, auth }) => {
+const setPassword = async ({ id, password }, { auth }) => {
   try {
     await auth.updateUser(id, { password })
     console.log(`Update account "${id}" set password`)

@@ -23,7 +23,7 @@
         <template v-slot:title>{{ $t('Guide') }}</template>
       </PageTitle>
 
-      <v-row>
+      <v-row v-if="accountIsValid(state.me)">
         <v-col class="col-12 col-sm-6">
           <v-select
             v-model="state.me.locale"
@@ -70,9 +70,9 @@
         </v-sheet>
         <div v-if="state.me.email">
           <v-alert type="info" outlined dense>
-            <div>{{ $t('E-mail address has been set') }}</div>
+            <div>{{ $t('E-mail address for sign-inhas been set') }}</div>
             <v-icon>{{ icon('E-mail') }}</v-icon> {{ state.me.email }}
-            <div>{{ $t('Ask system admin to change e-mail') }}</div>
+            <div>{{ $t('Ask system admin to change e-mail address for sign-in') }}</div>
           </v-alert>
         </div>
         <div v-else>
