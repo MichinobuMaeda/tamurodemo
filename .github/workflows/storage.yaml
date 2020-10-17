@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'storage.rules'
+      - '.github/workflows/storage.yaml'
 jobs:
   build:
     runs-on: ubuntu-latest

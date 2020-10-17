@@ -6,6 +6,7 @@ on:
       - 'functions/**'
       - 'firestore.*'
       - 'storage.rules'
+      - '!.github/workflows/ui.yaml'
 jobs:
   build:
     runs-on: ubuntu-latest
