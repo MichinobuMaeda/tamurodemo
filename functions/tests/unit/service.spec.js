@@ -1,11 +1,12 @@
 const {
-  version,
   db,
   auth,
   clearDb,
   testData,
+  version
 } = require('./utils')
 const {
+  updateService,
   updateVersion
 } = require('../../service')
 
@@ -20,14 +21,48 @@ afterAll(async () => {
   await db.terminate()
 })
 
+test('updateService()' +
+  ' create required documents and properties but not overwrite.', async () => {
+
+  // prepare
+  await db.collection('service').doc('defaults').delete()
+  await db.collection('service').doc('defaults').set({
+    tz: 'US/Hawaii'
+  })
+  await db.collection('groups').doc('managers').delete()
+
+  // run
+  await updateService({ db })
+
+  // evaluate
+  const defaults = await db.collection('service').doc('defaults').get()
+  const managers = await db.collection('groups').doc('managers').get()
+  expect(defaults.data().tz).toEqual('US/Hawaii')
+  expect(defaults.data().locale).toEqual('ja_JP')
+  expect(managers.exists).toBeTruthy()
+})
+
 test('updateVersion()' +
   ' get dist/version.json in hosting and set version of service/conf.', async () => {
 
-  // run
-  const version = await updateVersion({ db })
+  // prepare
+  await db.collection('service').doc('conf').update({
+    version: '0000000000'
+  })
 
-  // evaluate
-  const conf = await db.collection('service').doc('conf').get()
-  expect(version).toEqual(version)
-  expect(conf.data().version).toEqual(version)
+  // #1 run
+  const version1 = await updateVersion({ db })
+
+  // #1 evaluate
+  const conf1 = await db.collection('service').doc('conf').get()
+  expect(version1).toEqual(version)
+  expect(conf1.data().version).toEqual(version)
+
+  // #2 run
+  const version2 = await updateVersion({ db })
+
+  // #3 evaluate
+  const conf2 = await db.collection('service').doc('conf').get()
+  expect(version2).toEqual(version)
+  expect(conf2.data().version).toEqual(version)
 })

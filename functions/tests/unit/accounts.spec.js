@@ -51,7 +51,7 @@ test('createAccount()' +
   ' rejects no name.', async () => {
   const name = null
 
-  // should be failed
+  // should fail
   await expect(createAccount({ name }, { db, auth })).rejects.toThrow()
 })
 
@@ -62,7 +62,7 @@ test('createAccount()' +
   auth.error = true
   const name = 'account01'
 
-  // should be failed
+  // should fail
   await expect(createAccount({ name }, { db, auth })).rejects.toThrow()
 })
 
@@ -93,7 +93,7 @@ test('setEmail()' +
   await db.collection('accounts').doc(id).set({ email: '' })
   auth.error = true
 
-  // should be failed
+  // should fail
   await expect(setEmail({ id, email }, { db, auth })).rejects.toThrow()
 })
 
@@ -123,6 +123,6 @@ test('setPassword()' +
   await db.collection('accounts').doc(id).set({ email: '' })
   auth.error = true
 
-  // should be failed
+  // should fail
   await expect(setPassword({ id, password }, { db, auth })).rejects.toThrow()
 })

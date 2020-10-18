@@ -2,7 +2,6 @@ const path = require('path')
 const fs = require('fs')
 const firebase = require('@firebase/testing')
 const { updateService } = require('../../service')
-const { createAccount } = require('../../accounts')
 
 const projectId = 'tamuro-test01'
 const apiKey = 'test-api-key'
@@ -62,7 +61,7 @@ const testData = async () => {
     invitationExpirationTime: 60 * 1000,
     hosting: 'http://localhost:5000'
   })
-  await createAccount({ name: admin01 }, { db, auth })
+  await db.collection('accounts').doc(admin01).set({ valid: true })
   await db.collection('groups').doc('admins').update({
     members: [admin01]
   })
@@ -76,6 +75,7 @@ module.exports = {
   apiKey,
   admin01,
   version,
+  firestore: firebase.firestore,
   db,
   auth,
   clearDb,

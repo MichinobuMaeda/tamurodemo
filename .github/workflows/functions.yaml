@@ -31,9 +31,6 @@ jobs:
       - name: Use yarn
         run: npm -g i yarn
 
-      - name: Use firebase-tools
-        run: npm -g i firebase-tools
-
       - name: Install dependencies
         working-directory: ${{ github.workspace }}
         run: yarn --frozen-lockfile

@@ -9,9 +9,6 @@ const hasValidKey = async (db, req) => {
   if (!apiKey) {
     return false
   }
-  if (req.params.invitation) {
-    return true
-  }
   const conf = await db.collection('service').doc('conf').get()
   return conf.data().apiKey === apiKey
 }

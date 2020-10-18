@@ -64,7 +64,7 @@ test('validateInvitation()' +
 test('validateInvitation()' +
   ' rejects invalid invitation', async () => {
 
-  // should be failed
+  // should fail
   await expect(
     validateInvitation({ invitation: 'invalid invitation' }, { db, auth })
   ).rejects.toThrow()
@@ -81,7 +81,7 @@ test('validateInvitation()' +
   const { invitation } = await invite({ id }, { db, uid })
   await docRef.update({ invitedAt: new Date(new Date().getTime() - 999999 * 1000) })
 
-  // should be failed
+  // should fail
   await expect(
     validateInvitation({ invitation }, { db, auth })
   ).rejects.toThrow()
@@ -125,7 +125,7 @@ test('setEmailAndPasswordWithInvitation()' +
   const email = 'account01@example.com'
   const password = 'password01'
 
-  // should be failed
+  // should fail
   await expect(
     setEmailAndPasswordWithInvitation(
       { invitation, email, password },
@@ -142,7 +142,7 @@ test('setEmailAndPasswordWithInvitation()' +
   const email = 'account01@example.com'
   const password = 'password01'
 
-  // should be failed
+  // should fail
   await expect(
     setEmailAndPasswordWithInvitation(
       { invitation, email, password },
@@ -164,7 +164,7 @@ test('setEmailAndPasswordWithInvitation()' +
   const password = 'password01'
   await docRef.update({ invitedAt: new Date(new Date().getTime() - 999999 * 1000) })
 
-  // should be failed
+  // should fail
   await expect(
     setEmailAndPasswordWithInvitation(
       { invitation, email, password },
@@ -211,7 +211,7 @@ test('setEmailWithInvitation()' +
   const email = 'account01@example.com'
   const password = 'password01'
 
-  // should be failed
+  // should fail
   await expect(
     setEmailWithInvitation(
       { invitation, email, password },
@@ -228,7 +228,7 @@ test('setEmailWithInvitation()' +
   const email = 'account01@example.com'
   const password = 'password01'
 
-  // should be failed
+  // should fail
   await expect(
     setEmailWithInvitation(
       { invitation, email, password },
@@ -250,7 +250,7 @@ test('setEmailWithInvitation()' +
   const password = 'password01'
   await docRef.update({ invitedAt: new Date(new Date().getTime() - 999999 * 1000) })
 
-  // should be failed
+  // should fail
   await expect(
     setEmailWithInvitation(
       { invitation, email, password },
