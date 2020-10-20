@@ -19,15 +19,13 @@
         <LinkButton
           :icon="icon('Privacy policy')"
           :label="$t('Privacy policy')"
-          @click="() => goPage($router, { name: 'policy' })"
+          @click="() => goPage({ name: 'policy' })"
         />
       </div>
       <v-form ref="form" v-model="page.valid">
         <v-text-field
           v-model="page.newEmail"
-          :rules="[
-            v => validateEmail(v) || $t('Invalid E-mail format')
-          ]"
+          :rules="[ruleEmail]"
           :label="$t('E-mail')"
         ></v-text-field>
         <div :class="page.valid && page.newEmail ? 'primary--text' : 'grey--text'">
@@ -45,9 +43,7 @@
         <v-text-field
           v-model="page.password"
           :type="page.showPassword ? 'text' : 'password'"
-          :rules="[
-            v => validatePassword(v) || $t('Invalid password')
-          ]"
+          :rules="[rulePassword]"
           :label="$t('Password')"
           :append-icon="page.showPassword ? icon('Visible') : icon('Invisible')"
           @click:append="page.showPassword = !page.showPassword"
@@ -93,8 +89,7 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore } from '@/helpers'
+import { useStore } from '@/utils'
 import {
   authProviders,
   sendSignInLinkToEmail,
@@ -153,8 +148,8 @@ export default {
       signInWithEmailLink,
       signInWithPassword,
       resetPassword,
-      providers: authProviders(store, root.$route).filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
-      ...helpers
+      providers: authProviders(store, root.$route)
+        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id])
     }
   }
 }

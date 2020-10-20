@@ -15,8 +15,8 @@
           <EditableItem
             :label="$t('Site name')"
             v-model="state.service.conf.name"
-            :rules="rulesRequired"
-            @save="val => set('service', 'conf', { name: val })"
+            :rules="[ruleRequired]"
+            @save="val => waitForUpdate('service', 'conf', { name: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -28,8 +28,8 @@
           <EditableItem
             label="URL"
             v-model="state.service.conf.hosting"
-            :rules="rulesURL"
-            @save="val => set('service', 'conf', { hosting: val })"
+            :rules="[ruleRequired, ruleUrl]"
+            @save="val => waitForUpdate('service', 'conf', { hosting: val })"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -43,7 +43,7 @@
             :label="$t('Invitation')"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
             v-model="state.service.auth.invitation"
-            @save="val => set('service', 'auth', { invitation: val })"
+            @save="val => waitForUpdate('service', 'auth', { invitation: val })"
             :editable="priv.admin || priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -67,8 +67,8 @@
           <EditableItem
             label="API key"
             v-model="state.service.conf.apiKey"
-            :rules="rulesRequired"
-            @save="val => set('service', 'conf', { apiKey: val })"
+            :rules="[ruleRequired]"
+            @save="val => waitForUpdate('service', 'conf', { apiKey: val })"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -86,7 +86,7 @@
             :label="$t('Dark theme')"
             v-model="state.service.defaults.darkTheme"
             :items="[{ text: 'On', value: true }, { text: 'Off', value: false }]"
-            @save="val => set('service', 'defaults', { darkTheme: val })"
+            @save="val => waitForUpdate('service', 'defaults', { darkTheme: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -100,7 +100,7 @@
             :label="$t('Menu position')"
             v-model="state.service.defaults.menuPosition"
             :items="menuPositions.map(item => ({ ...item, text: $t(item.text) }))"
-            @save="val => set('service', 'defaults', { menuPosition: val })"
+            @save="val => waitForUpdate('service', 'defaults', { menuPosition: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -114,7 +114,7 @@
             :label="$t('Locale')"
             v-model="state.service.defaults.locale"
             :items="locales"
-            @save="val => set('service', 'defaults', { locale: val })"
+            @save="val => waitForUpdate('service', 'defaults', { locale: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -128,7 +128,7 @@
             :label="$t('Timezone')"
             v-model="state.service.defaults.tz"
             :items="timezones"
-            @save="val => set('service', 'defaults', { tz: val })"
+            @save="val => waitForUpdate('service', 'defaults', { tz: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -147,7 +147,7 @@
             :label="provider.name"
             v-model="state.service.auth[provider.id]"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
-            @save="val => set('service', 'auth', { [provider.id]: val })"
+            @save="val => waitForUpdate('service', 'auth', { [provider.id]: val })"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -160,15 +160,10 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { menuPositions } from '@/conf/menuPositions'
-import { locales } from '@/conf/locales'
-import { timezones } from '@/conf/timezones'
+import { useStore } from '@/utils'
 import { authProviders } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
-
-const { useStore, validateURL, validateRequired } = helpers
 
 export default {
   name: 'PageService',
@@ -178,7 +173,7 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    const { set } = store
+    const { waitForUpdate } = store
     const page = reactive({
       name: store.state.service.conf.name,
       hosting: store.state.service.conf.hosting,
@@ -204,23 +199,12 @@ export default {
           const d = Math.floor(t / (24 * 60 * 60 * 1000))
           return `${d} ${new Date(t % (24 * 60 * 60 * 1000)).toISOString().slice(11, 19)}`
         },
-        set: str => set('service', 'conf', { invitationExpirationTime: invExtTime(str) })
+        set: str => waitForUpdate('service', 'conf', { invitationExpirationTime: invExtTime(str) })
       }),
-      rulesURL: [
-        v => !!v || root.$i18n.t('Required'),
-        v => validateURL(v) || root.$i18n.t('Invalid URL format')
-      ],
-      rulesRequired: [
-        v => validateRequired(v) || root.$i18n.t('Required')
-      ],
       rulesDaysAndTime: [
         v => invExtTime(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
       ],
-      providers: authProviders(store, root.$route),
-      menuPositions,
-      locales,
-      timezones,
-      ...helpers
+      providers: authProviders(store, root.$route)
     }
   }
 }

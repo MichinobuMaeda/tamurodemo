@@ -19,7 +19,7 @@
         type="formatted-text"
         :label="$t('Privacy policy')"
         v-model="state.service.conf.policy"
-        @save="val => set('service', 'conf', { policy: val })"
+        @save="val => waitForUpdate('service', 'conf', { policy: val })"
         :editable="page.edit && priv.manager"
         :disabled="!!state.waitProc"
       />
@@ -29,11 +29,9 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore } from '@/utils'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
-
-const { useStore } = helpers
 
 export default {
   name: 'PagePolicy',
@@ -49,8 +47,7 @@ export default {
 
     return {
       page,
-      ...store,
-      ...helpers
+      ...store
     }
   }
 }

@@ -23,13 +23,13 @@
         <template v-slot:title>{{ $t('Guide') }}</template>
       </PageTitle>
 
-      <v-row v-if="accountIsValid(state.me)">
+      <v-row v-if="state.me && state.me.valid">
         <v-col class="col-12 col-sm-6">
           <v-select
             v-model="state.me.locale"
             :label="$t('Locale')"
             :items="locales"
-            @change="set('accounts', state.me.id, { locale: state.me.locale })"
+            @change="waitForUpdate('accounts', state.me.id, { locale: state.me.locale })"
           />
         </v-col>
 
@@ -38,7 +38,7 @@
             v-model="state.me.tz"
             :label="$t('Timezone')"
             :items="timezones"
-            @change="set('accounts', state.me.id, { tz: state.me.tz })"
+            @change="waitForUpdate('accounts', state.me.id, { tz: state.me.tz })"
           />
         </v-col>
       </v-row>
@@ -48,7 +48,7 @@
           {{ $t('Invitation link authentication error') }}
         </v-alert>
       </div>
-      <div v-else-if="!accountIsValid(state.me)">
+      <div v-else-if="!state.me || !state.me.valid">
         <v-alert type="info" outlined text class="mt-4">
           {{ $t('Please wait') }}
         </v-alert>
@@ -63,7 +63,7 @@
             type="formatted-text"
             :label="$t('Description')"
             v-model="state.service.conf.guide"
-            @save="val => set('service', 'conf', { guide: val })"
+            @save="val => waitForUpdate('service', 'conf', { guide: val })"
             :editable="page.edit && (priv.manager || priv.admin)"
             :disabled="!!state.waitProc"
           />
@@ -82,7 +82,7 @@
                 <v-text-field
                   v-model="page.newEmail"
                   type="text"
-                  :rules="[v => validateEmail(v) || $t('Invalid E-mail format')]"
+                  :rules="[ruleEmail]"
                   :label="$t('E-mail')"
                 ></v-text-field>
               </v-col>
@@ -90,7 +90,7 @@
                 <v-text-field
                   v-model="page.confirmEmail"
                   type="text"
-                  :rules="[v => validateEmail(v) || $t('Invalid E-mail format')]"
+                  :rules="[ruleEmail]"
                   :label="$t('Confirm e-mail')"
                 ></v-text-field>
               </v-col>
@@ -104,7 +104,7 @@
                 <v-text-field
                   v-model="page.newPassword"
                   :type="page.showNewPassword ? 'text' : 'password'"
-                  :rules="[v => validatePassword(v) || $t('Invalid password')]"
+                  :rules="[rulePassword]"
                   :label="$t('Password')"
                   :append-icon="page.showNewPassword ? icon('Visible') : icon('Invisible')"
                   @click:append="page.showNewPassword = !page.showNewPassword"
@@ -114,7 +114,7 @@
                 <v-text-field
                   v-model="page.confirmPassword"
                   :type="page.showConfirmPassword ? 'text' : 'password'"
-                  :rules="[v => validatePassword(v) || $t('Invalid password')]"
+                  :rules="[rulePassword]"
                   :label="$t('Confirm password')"
                   :append-icon="page.showConfirmPassword ? icon('Visible') : icon('Invisible')"
                   @click:append="page.showConfirmPassword = !page.showConfirmPassword"
@@ -150,10 +150,7 @@
 
 <script>
 import { reactive, watch, onMounted } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore } from '@/helpers'
-import { locales } from '@/conf/locales'
-import { timezones } from '@/conf/timezones'
+import { useStore } from '@/utils'
 import { updateMyEmail, validateInvitation } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import Loading from '@/components/Loading.vue'
@@ -226,10 +223,7 @@ export default {
     return {
       page,
       ...store,
-      setEmail,
-      locales,
-      timezones,
-      ...helpers
+      setEmail
     }
   }
 }

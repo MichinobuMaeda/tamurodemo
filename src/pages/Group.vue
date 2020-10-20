@@ -17,7 +17,7 @@
           <EditableItem
             :label="$t('Group name')"
             v-model="group.name"
-            @save="val => set('groups', group.id, { name: val })"
+            @save="val => waitForUpdate('groups', group.id, { name: val })"
             :editable="page.edit && priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -27,7 +27,7 @@
         type="formatted-text"
         :label="$t('Description')"
         v-model="group.desc"
-        @save="val => set('groups', group.id, { desc: val })"
+        @save="val => waitForUpdate('groups', group.id, { desc: val })"
         :editable="page.edit && (priv.manager || (group.members || []).includes(state.me.id))"
         :disabled="!!state.waitProc"
       />
@@ -50,7 +50,7 @@
         v-for="user in state.users.filter(user => !user.deletedAt && (group.members || []).includes(user.id))" :key="user.id"
         :icon="icon('User')"
         :label="user.name"
-        @click="goPage($router, { name: 'user', params: { id: user.id } })"
+        @click="goPageUser(user.id)"
       />
 
       <div v-if="page.edit && (priv.manager || priv.admin)">
@@ -63,7 +63,7 @@
           :iconProc="icon('Delete')"
           :labelProc="$t('Delete')"
           :message="$t('Confirm deletion', { name: group.name })"
-          @confirm="() => del('groups', group.id)"
+          @confirm="() => waitForRemove('groups', group.id)"
           :disabled="!!state.waitProc"
         />
         <ConfirmButton
@@ -73,7 +73,7 @@
           :iconProc="icon('Restore')"
           :labelProc="$t('Restore')"
           :message="$t('Confirm restore', { name: group.name })"
-          @confirm="() => restore('groups', group.id)"
+          @confirm="() => waitForRestore('groups', group.id)"
           :disabled="!!state.waitProc"
         />
       </div>
@@ -83,16 +83,12 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import 'firebase/firestore'
 import { reactive, computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore, getById } from '@/utils'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
 import LinkButton from '@/components/LinkButton'
-
-const { useStore, icon, getById } = helpers
 
 export default {
   name: 'PageGroup',
@@ -104,7 +100,7 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    const { db, setProcForWait } = store
+    const { icon, setProcForWait, update, FieldValue } = store
     const page = reactive({
       edit: false
     })
@@ -113,19 +109,19 @@ export default {
       .filter(item => (item.groups || []).includes(id))
       .map(item => item.id)
 
-    const setCategories = (db, state, id) => categories => setProcForWait(
+    const setCategories = (state, id) => categories => setProcForWait(
       async () => Promise.all(
         state.categories.map(async c => {
           if ((categories || []).includes(c.id)) {
             if (!(c.groups || []).includes(id)) {
-              await db.collection('categories').doc(c.id).update({
-                groups: firebase.firestore.FieldValue.arrayUnion(id)
+              await update('categories', c.id, {
+                groups: FieldValue.arrayUnion(id)
               })
             }
           } else {
             if ((c.groups || []).includes(id)) {
-              await db.collection('categories').doc(c.id).update({
-                groups: firebase.firestore.FieldValue.arrayRemove(id)
+              await update('categories', c.id, {
+                groups: FieldValue.arrayRemove(id)
               })
             }
           }
@@ -150,10 +146,8 @@ export default {
       ),
       categories: computed({
         get: () => getCategories(store.state, root.$route.params.id),
-        set: val => setCategories(db, store.state, root.$route.params.id)(val)
-      }),
-      setCategories,
-      ...helpers
+        set: val => setCategories(store.state, root.$route.params.id)(val)
+      })
     }
   }
 }

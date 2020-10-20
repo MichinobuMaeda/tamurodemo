@@ -31,7 +31,7 @@
           <v-text-field
             class="my-0 py-0"
             v-model="item.name"
-            :rules="[v => !item.id || !!v || $t('Required')]"
+            :rules="item.id ? [ruleRequired] : []"
             :disabled="!!item.deletedAt"
           />
         </v-col>
@@ -74,12 +74,10 @@
 
 <script>
 import { reactive, computed, onMounted } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore, getById } from '@/utils'
 import PageTitle from '@/components/PageTitle'
 import MiniButton from '@/components/MiniButton'
 import DefaultButton from '@/components/DefaultButton'
-
-const { useStore, getById } = helpers
 
 export default {
   name: 'PageCategories',
@@ -90,7 +88,7 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { setProcForWait } = store
+    const { setProcForWait, add, update, remove } = store
     const page = reactive({
       items: []
     })
@@ -168,14 +166,14 @@ export default {
             const { seq, name } = item
             if (item.id) {
               if (item.seq) {
-                return store.set('categories', item.id, {
+                return update('categories', item.id, {
                   seq, name, deletedAt: null
                 })
               } else {
-                return store.del('categories', item.id)
+                return remove('categories', item.id)
               }
             } else {
-              return store.add('categories', { seq, name, groups: [] })
+              return add('categories', { seq, name, groups: [] })
             }
           })
         )
@@ -204,8 +202,7 @@ export default {
       onUndoDelete,
       onCancel,
       onSave: () => setProcForWait(onSave),
-      modified,
-      ...helpers
+      modified
     }
   }
 }

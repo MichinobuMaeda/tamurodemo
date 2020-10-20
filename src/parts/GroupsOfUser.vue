@@ -11,13 +11,9 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import 'firebase/firestore'
 import { computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore } from '@/utils'
 import EditableItem from '@/components/EditableItem'
-
-const { useStore, icon } = helpers
 
 export default {
   name: 'GroupsOfUser',
@@ -30,25 +26,26 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { sortedGroups, setProcForWait, db } = store
+    const { icon } = store
+    const { sortedGroups, setProcForWait, update, FieldValue } = store
 
     const getGroups = (state, id) => sortedGroups(state)
       .filter(item => (item.members || []).includes(id))
       .map(item => item.id)
 
-    const setGroups = (db, state, id) => groups => setProcForWait(
+    const setGroups = (state, id) => groups => setProcForWait(
       async () => Promise.all(
         state.groups.map(async group => {
           if ((groups || []).includes(group.id)) {
             if (!(group.members || []).includes(id)) {
-              await db.collection('groups').doc(group.id).update({
-                members: firebase.firestore.FieldValue.arrayUnion(id)
+              await update('groups', group.id, {
+                members: FieldValue.arrayUnion(id)
               })
             }
           } else {
             if ((group.members || []).includes(id)) {
-              await db.collection('groups').doc(group.id).update({
-                members: firebase.firestore.FieldValue.arrayRemove(id)
+              await update('groups', group.id, {
+                members: FieldValue.arrayRemove(id)
               })
             }
           }
@@ -67,9 +64,8 @@ export default {
       ),
       groups: computed({
         get: () => getGroups(store.state, props.id),
-        set: val => setGroups(db, store.state, props.id)(val)
-      }),
-      ...helpers
+        set: val => setGroups(store.state, props.id)(val)
+      })
     }
   }
 }

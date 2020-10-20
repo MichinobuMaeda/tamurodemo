@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
-import { theme } from '@/conf/theme'
+import { theme } from '@/conf'
 
 Vue.use(Vuetify)
 

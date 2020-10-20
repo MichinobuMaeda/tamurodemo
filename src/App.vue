@@ -6,11 +6,11 @@
       dense
       hide-on-scroll
       elevation="0"
-      @click="goPage($router, { name: 'top' })"
+      @click="goPage({ name: 'top' })"
     >
       <img
         :style="`width: 40px; filter: brightness(${ this.$vuetify.theme.dark ? '300%' : '100%' });`"
-        src="img/icons/apple-touch-icon-120x120.png"
+        :src="baseUrl + 'img/icons/apple-touch-icon-120x120.png'"
         :alt="(state.service.conf && state.service.conf.name) || 'Tamuro'"
       />
       <v-toolbar-title
@@ -20,7 +20,7 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <v-main v-if="page.loading">
+    <v-main v-if="state.loading">
       <Loading color="h2" :size="96" />
     </v-main>
     <v-main class="px-4" v-else>
@@ -41,11 +41,11 @@
     </v-footer>
 
     <Menu
-      v-if="!page.loading"
+      v-if="!state.loading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menuItems="menuItems(priv, state.myName, state.me, page, $router)"
-      :position="menuPosition"
+      :menuItems="menuItems($router, priv, state.me.id, myName, goPage, showRawData)"
+      :position="state.menuPosition"
       @move="pos => onMenuMoved(pos)"
     />
 
@@ -66,13 +66,10 @@
 </style>
 
 <script>
-import { createStore, syncServiceData, syncUserData } from '@/init'
 import { reactive, onMounted, watch } from '@vue/composition-api'
-import menuItems from '@/router/menuItems'
-import guard from '@/router/guard'
-import version from '@/conf/version'
-import * as helpers from '@/helpers'
-import { accountPriv, accountIsValid } from '@/helpers'
+import { createStore, initServiceData, initUserData, menuItems, overrideDefaults } from '@/store'
+import { getAuthState, guard, signOut, accountIsValid, detectPrivilegesChanged } from '@/auth'
+import { restoreRequestedRoute, baseUrl } from '@/utils'
 import Menu from '@/components/Menu'
 import Loading from '@/components/Loading.vue'
 import AppUpdater from '@/components/AppUpdater'
@@ -88,38 +85,59 @@ export default {
   },
   setup (props, { root }) {
     const page = reactive({
-      loading: true,
-      preferences: false,
       rawData: false
     })
 
-    const store = createStore()
+    const store = createStore(root)
+    store.state.loading = true
 
     onMounted(async () => {
-      await syncServiceData(store, root)
-      await syncUserData(store, root, page)
+      await initServiceData(store, root)
+      await getAuthState(store, { root })
     })
 
     watch(
-      () => [
-        root.$route,
-        store.state.service,
-        store.state.groups,
-        store.state.me,
-        page.loading
-      ],
-      ([
-        route,
-        service,
-        groups,
-        me,
-        loading
-      ]) => guard(
-        root.$router,
-        route,
-        accountPriv(service, groups, me),
-        loading
-      )
+      () => root.$route,
+      () => {
+        guard(root.$router, root.$route, store.state)
+      }
+    )
+
+    watch(
+      () => store.state.service,
+      () => {
+        overrideDefaults(store, root)
+        guard(root.$router, root.$route, store.state)
+      }
+    )
+
+    watch(
+      () => store.state.groups,
+      async (groups, groupsPrev) => {
+        await detectPrivilegesChanged(store, root, groups, groupsPrev)
+        guard(root.$router, root.$route, store.state)
+      }
+    )
+
+    watch(
+      () => store.state.me,
+      async (me, mePrev) => {
+        overrideDefaults(store, root)
+        if ((!mePrev.id || accountIsValid(mePrev)) && !accountIsValid(me)) {
+          await signOut(store)
+        } else if (!accountIsValid(mePrev) && accountIsValid(me)) {
+          await await initUserData(store, root)
+          restoreRequestedRoute(root.$router)
+        }
+        guard(root.$router, root.$route, store.state, store.state.loading)
+      }
+    )
+
+    watch(
+      () => store.state.loading,
+      () => {
+        guard(root.$router, root.$route, store.state)
+      }
     )
 
     const onMenuMoved = ({ db, state }) => async pos => {
@@ -136,8 +154,8 @@ export default {
       page,
       menuItems,
       onMenuMoved: onMenuMoved(store),
-      version,
-      ...helpers
+      showRawData: () => { page.rawData = true },
+      baseUrl: baseUrl()
     }
   }
 }

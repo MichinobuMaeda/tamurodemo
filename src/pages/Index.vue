@@ -24,7 +24,7 @@
           type="formatted-text"
           :label="$t('Description')"
           v-model="state.service.conf.desc"
-          @save="val => set('service', 'conf', { desc: val })"
+          @save="val => waitForUpdate('service', 'conf', { desc: val })"
           :editable="page.edit && priv.manager"
           :disabled="!!state.waitProc"
         />
@@ -42,7 +42,7 @@
           v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => group && !group.deletedAt)" :key="group.id"
           :icon="icon('Group')"
           :label="group.name"
-          @click="goPage($router, { name: 'group', params: { id: group.id } })"
+          @click="goPageGroup(group.id)"
         />
       </div>
 
@@ -58,7 +58,7 @@
           v-for="group in uncategorizedGroups" :key="group.id"
           :icon="icon('Group')"
           :label="group.name"
-          @click="goPage($router, { name: 'group', params: { id: group.id } })"
+          @click="goPageGroup(group.id)"
         />
       </div>
 
@@ -76,7 +76,7 @@
             v-for="group in deletedGroups" :key="group.id"
             :icon="icon('Group')"
             :label="group.name"
-            @click="goPage($router, { name: 'group', params: { id: group.id } })"
+            @click="goPageGroup(group.id)"
           />
         </div>
 
@@ -92,13 +92,11 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore } from '@/utils'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
 import CreateGroup from '@/parts/CreateGroup'
-
-const { useStore } = helpers
 
 export default {
   name: 'PageIndex',
@@ -133,8 +131,7 @@ export default {
       page,
       ...store,
       uncategorizedGroups,
-      deletedGroups,
-      ...helpers
+      deletedGroups
     }
   }
 }

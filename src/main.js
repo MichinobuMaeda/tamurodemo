@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from '@/App.vue'
-import router from '@/router'
+import router from '@/plugins/router'
 import i18n from '@/plugins/i18n'
 import vuetify from '@/plugins/vuetify'
 import '@/plugins/composition-api'

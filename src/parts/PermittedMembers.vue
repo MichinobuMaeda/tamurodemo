@@ -99,8 +99,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore, getById } from '@/helpers'
+import { useStore, getById } from '@/utils'
 import DefaultButton from '@/components/DefaultButton'
 
 export default {
@@ -113,7 +112,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { state, set, sortedGroups } = store
+    const { state, waitForUpdate, sortedGroups } = store
     const page = reactive({
       dialog: false,
       groups: [],
@@ -143,13 +142,12 @@ export default {
         page.users = [...users]
       },
       onSave: async (groups, users) => {
-        await set('users', props.id, {
+        await waitForUpdate('users', props.id, {
           permittedGroups: groups.filter(group => group.checked).map(group => group.id),
           permittedUsers: users.filter(user => user.checked).map(user => user.id)
         })
         page.dialog = false
-      },
-      ...helpers
+      }
     }
   }
 }

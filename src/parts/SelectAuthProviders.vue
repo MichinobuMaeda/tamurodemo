@@ -17,9 +17,8 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore } from '@/helpers'
-import { authProviders, linkedWithProviderId } from '@/auth'
+import { useStore } from '@/utils'
+import { authProviders, linkedWithOAuthProvider } from '@/auth'
 import ConfirmButton from '@/components/ConfirmButton'
 
 export default {
@@ -31,9 +30,9 @@ export default {
     const store = useStore()
     const { auth } = store
     const page = reactive({
-      google: linkedWithProviderId(auth, 'google.com'),
-      facebook: linkedWithProviderId(auth, 'facebook.com'),
-      twitter: linkedWithProviderId(auth, 'twitter.com'),
+      google: linkedWithOAuthProvider(auth, 'google.com'),
+      facebook: linkedWithOAuthProvider(auth, 'facebook.com'),
+      twitter: linkedWithOAuthProvider(auth, 'twitter.com'),
       line: computed(() => store.state.me && store.state.me.line),
       yahooJapan: computed(() => store.state.me && store.state.me.yahooJapan),
       mixi: computed(() => store.state.me && store.state.me.mixi)
@@ -43,9 +42,8 @@ export default {
       page,
       ...store,
       providers: authProviders(store, root.$route, ({ id, providerId }) => {
-        page[id] = linkedWithProviderId(auth, providerId)
-      }).filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
-      ...helpers
+        page[id] = linkedWithOAuthProvider(auth, providerId)
+      }).filter(provider => store.state.service.auth && store.state.service.auth[provider.id])
     }
   }
 }

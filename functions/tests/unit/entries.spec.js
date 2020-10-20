@@ -1,9 +1,5 @@
 const path = require('path')
-const firebase = require('firebase-functions-test')({
-  databaseURL: 'http://localhost:8080',
-  storageBucket: 'tamuro-test01.appspot.com',
-  projectId: 'tamuro-test01',
-}, path.join(__dirname, '..', '..', '..', 'tamuro-test01-firebase-adminsdk.json'))
+const firebase = require('firebase-functions-test')()
 const functions = require('firebase-functions')
 const {
   admin01,

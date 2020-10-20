@@ -33,3 +33,4 @@ export const firebase = Firebase.initializeApp({
 export const auth = firebase.auth()
 export const db = firebase.firestore()
 export const functions = firebase.functions()
+export const FieldValue = Firebase.firestore.FieldValue

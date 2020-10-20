@@ -14,7 +14,7 @@
           <v-switch
             v-model="state.me.darkTheme"
             :label="$t('Dark theme value', { on: $vuetify.theme.dark ? 'On' : 'Off' })"
-            @change="set('accounts', state.me.id, { darkTheme: state.me.darkTheme })"
+            @change="waitForUpdate('accounts', state.me.id, { darkTheme: state.me.darkTheme })"
           />
         </v-col>
 
@@ -23,7 +23,7 @@
             v-model="state.me.menuPosition"
             :label="$t('Menu position')"
             :items="menuPositions"
-            @change="set('accounts', state.me.id, { menuPosition: state.me.menuPosition })"
+            @change="waitForUpdate('accounts', state.me.id, { menuPosition: state.me.menuPosition })"
           >
             <template slot="selection" slot-scope="data">
               <v-icon>{{ icon(data.item.text) }}</v-icon>
@@ -42,7 +42,7 @@
             v-model="state.me.locale"
             :label="$t('Locale')"
             :items="locales"
-            @change="set('accounts', state.me.id, { locale: state.me.locale })"
+            @change="waitForUpdate('accounts', state.me.id, { locale: state.me.locale })"
           />
         </v-col>
 
@@ -51,7 +51,7 @@
             v-model="state.me.tz"
             :label="$t('Timezone')"
             :items="timezones"
-            @change="set('accounts', state.me.id, { tz: state.me.tz })"
+            @change="waitForUpdate('accounts', state.me.id, { tz: state.me.tz })"
           />
         </v-col>
 
@@ -74,9 +74,7 @@
             <v-text-field
               v-model="page.changeEmailPassword"
               :type="page.showChangeEmailPassword ? 'text' : 'password'"
-              :rules="[
-              v => validatePassword(v) || $t('Invalid password')
-            ]"
+              :rules="[rulePassword]"
               :label="$t('Password')"
               :append-icon="page.showChangeEmailPassword ? icon('Visible') : icon('Invisible')"
               @click:append="page.showChangeEmailPassword = !page.showChangeEmailPassword"
@@ -85,18 +83,14 @@
             <v-text-field
               v-model="page.newEmail"
               type="text"
-              :rules="[
-              v => validateEmail(v) || $t('Invalid E-mail format')
-            ]"
+              :rules="[ruleEmail]"
               :label="$t('New e-mail')"
             ></v-text-field>
 
             <v-text-field
               v-model="page.confirmEmail"
               type="text"
-              :rules="[
-              v => validateEmail(v) || $t('Invalid E-mail format')
-            ]"
+              :rules="[ruleEmail]"
               :label="$t('Confirm new e-mail')"
             ></v-text-field>
             <div
@@ -132,9 +126,7 @@
             <v-text-field
               v-model="page.oldPassword"
               :type="page.showOldPassword ? 'text' : 'password'"
-              :rules="[
-              v => validatePassword(v) || $t('Invalid password')
-            ]"
+              :rules="[rulePassword]"
               :label="$t('Old password')"
               :append-icon="page.showOldPassword ? icon('Visible') : icon('Invisible')"
               @click:append="page.showOldPassword = !page.showOldPassword"
@@ -143,9 +135,7 @@
             <v-text-field
               v-model="page.newPassword"
               :type="page.showNewPassword ? 'text' : 'password'"
-              :rules="[
-              v => validatePassword(v) || $t('Invalid password')
-            ]"
+              :rules="[rulePassword]"
               :label="$t('New password')"
               :append-icon="page.showNewPassword ? icon('Visible') : icon('Invisible')"
               @click:append="page.showNewPassword = !page.showNewPassword"
@@ -154,9 +144,7 @@
             <v-text-field
               v-model="page.confirmPassword"
               :type="page.showConfirmPassword ? 'text' : 'password'"
-              :rules="[
-              v => validatePassword(v) || $t('Invalid password')
-            ]"
+              :rules="[rulePassword]"
               :label="$t('Confirm new password')"
               :append-icon="page.showConfirmPassword ? icon('Visible') : icon('Invisible')"
               @click:append="page.showConfirmPassword = !page.showConfirmPassword"
@@ -237,12 +225,8 @@
 
 <script>
 import { reactive, onMounted, onUnmounted } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore, signInUrl } from '@/helpers'
-import { menuPositions } from '@/conf/menuPositions'
-import { locales } from '@/conf/locales'
-import { timezones } from '@/conf/timezones'
-import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail } from '@/auth'
+import { useStore } from '@/utils'
+import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail, signOut } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import ConfirmButton from '@/components/ConfirmButton'
@@ -344,26 +328,13 @@ export default {
       }
     )
 
-    const signOut = () => setProcForWait(
-      async () => {
-        emit('dialogChange', false)
-        await auth.signOut()
-        window.location.href = signInUrl()
-        page.confirmSginOut = false
-      }
-    )
-
     return {
       page,
       ...store,
       changeEmail,
       changePassword,
       resetPassword,
-      signOut,
-      menuPositions,
-      locales,
-      timezones,
-      ...helpers
+      signOut: () => setProcForWait(() => signOut(store))
     }
   }
 }

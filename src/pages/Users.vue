@@ -17,7 +17,7 @@
           color="secondary"
           :icon="icon(accountStatus(state, user.id))"
           :label="user.name"
-          @click="() => goPage($router, { name: 'user', params: { id: user.id, mode: 'edit' } })"
+          @click="() => goPageUser(user.id, true)"
         />
         <GroupsOfUser :id="user.id" :edit="page.edit" />
         <v-divider class="my-2"  />
@@ -31,8 +31,7 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore } from '@/helpers'
+import { useStore, accountStatus } from '@/utils'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import GroupsOfUser from '@/parts/GroupsOfUser'
@@ -53,7 +52,7 @@ export default {
     return {
       ...store,
       page,
-      ...helpers
+      accountStatus
     }
   }
 }

@@ -4,16 +4,16 @@
       <PermittedMembers class="float-right" :id="user.id" />
       <v-col class="col-12">
         <LinkButton
-          v-for="group in (user.permittedGroups || []).map(id => getById(state.groups, id)).filter(group => !group.deletedAt)" :key="group.id"
+          v-for="group in permittedGroups(user)" :key="group.id"
           :icon="icon('Group')"
           :label="group.name"
-          @click="goPage($router, { name: 'group', params: { id: group.id } })"
+          @click="goPageGroup(group.id)"
         />
         <LinkButton
-          v-for="user in (user.permittedUsers || []).map(id => getById(state.users, id)).filter(user => !user.deletedAt)" :key="user.id"
+          v-for="user in permittedUsers(user)" :key="user.id"
           :icon="icon('User')"
           :label="user.name"
-          @click="goPage($router, { name: 'user', params: { id: user.id } })"
+          @click="goPageUser(user.id)"
         />
       </v-col>
     </v-row>
@@ -45,7 +45,7 @@
     </v-row>
     <v-row
       v-else
-      v-for="item in (/^ja_/.test(state.me.locale) ? nameOrderJa :nameOrderEn )" :key="item.key"
+      v-for="item in locales.find(item => item.value === state.me.locale).names" :key="item.key"
     >
       <v-col class="title--text col-4">
         <v-icon>{{ picon.a }}</v-icon>
@@ -55,7 +55,7 @@
         <EditableItem
           :label="$t(item.label)"
           v-model="user[item.key]"
-          @save="val => set('users', user.id, { [item.key]: val })"
+          @save="val => waitForUpdateUser(item.key, val)"
           :disabled="!!state.waitProc"
         />
       </v-col>
@@ -72,7 +72,7 @@
           type="textarea"
           :label="$t('Self‐introduction')"
           v-model="user.desc"
-          @save="val => set('users', user.id, { desc: val })"
+          @save="val => waitForUpdateUser('desc', val)"
           :editable="edit"
           :disabled="!!state.waitProc"
         />
@@ -89,7 +89,7 @@
           type="textarea"
           :label="$t('Message for close members')"
           v-model="user.descForPermitted"
-          @save="val => set('users', user.id, { descForPermitted: val })"
+          @save="val => waitForUpdateUser('descForPermitted', val)"
           :editable="edit"
           :disabled="!!state.waitProc"
         />
@@ -106,7 +106,7 @@
           type="textarea"
           :label="$t('Note for managers')"
           v-model="user.descForManagers"
-          @save="val => set('users', user.id, { descForManagers: val })"
+          @save="val => waitForUpdateUser('descForManagers', val)"
           :editable="edit"
           :disabled="!!state.waitProc"
         />
@@ -118,9 +118,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore, icon } from '@/helpers'
-import { permissions } from '@/conf/permissions'
+import { useStore, getById } from '@/utils'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/parts/PermittedMembers'
@@ -145,37 +143,28 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
+    const { icon, permissions, waitForUpdate } = store
     const page = reactive({
     })
 
     return {
       page,
       ...store,
-      account: computed(() => store.state.accounts.find(item => item.id === props.id)),
       user: computed(() => store.state.users.find(item => item.id === props.id)),
       profile: computed(() => store.state.profiles.find(item => item.id === props.id)),
-      rulesName: [
-        v => !!v || root.$i18n.t('Required')
-      ],
-      nameOrderJa: [
-        { label: 'Last name', key: 'lastName' },
-        { label: 'First name', key: 'firstName' },
-        { label: 'Previous name', key: 'previousName' },
-        { label: 'Middle name', key: 'middleName' }
-      ],
-      nameOrderEn: [
-        { label: 'First name', key: 'firstName' },
-        { label: 'Middle name', key: 'middleName' },
-        { label: 'Last name', key: 'lastName' },
-        { label: 'Previous name', key: 'previousName' }
-      ],
+      permittedGroups: user => (user.permittedGroups || [])
+        .map(id => getById(store.state.groups, id))
+        .filter(group => !group.deletedAt),
+      permittedUsers: user => (user.permittedUsers || [])
+        .map(id => getById(store.state.users, id))
+        .filter(user => !user.deletedAt),
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),
         value: item.value,
         text: root.$i18n.t(item.text)
       })),
       picon: permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: icon(cur.icon) }), {}),
-      ...helpers
+      waitForUpdateUser: (key, val) => waitForUpdate('users', props.id, { [key]: val })
     }
   }
 }

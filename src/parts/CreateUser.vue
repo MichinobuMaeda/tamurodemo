@@ -57,10 +57,8 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore } from '@/utils'
 import DefaultButton from '@/components/DefaultButton'
-
-const { useStore, goPage } = helpers
 
 export default {
   name: 'CreateUser',
@@ -69,7 +67,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, functions } = store
+    const { setProcForWait, functions, goPageUser } = store
     const page = reactive({
       dialog: false,
       name: ''
@@ -77,7 +75,7 @@ export default {
 
     const onCreate = async () => {
       const result = await functions.httpsCallable('createAccount')({ name: page.name })
-      return goPage(root.$router, { name: 'user', params: { id: result.data.id } })
+      return goPageUser(result.data.id)
     }
 
     return {
@@ -86,8 +84,7 @@ export default {
       rulesName: [
         v => !!v || root.$i18n.t('Required')
       ],
-      onCreate: () => setProcForWait(onCreate),
-      ...helpers
+      onCreate: () => setProcForWait(onCreate)
     }
   }
 }

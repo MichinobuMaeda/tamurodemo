@@ -1,4 +1,4 @@
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'top',
@@ -66,5 +66,3 @@ const routes = [
     meta: { privs: ['admin'] }
   }
 ]
-
-export default routes

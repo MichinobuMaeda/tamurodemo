@@ -16,7 +16,7 @@
         <v-chip
           v-else
           v-for="p in permissionList" :key="p.value"
-          outlined class="mt-2 mr-2"
+          outlined class="my-2 mr-2"
         >
           <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
         </v-chip>
@@ -38,7 +38,7 @@
           <EditableItem
             :label="$t('Display name')"
             v-model="user.name"
-            @save="val => set('users', user.id, { name: val })"
+            @save="val => waitForUpdate('users', user.id, { name: val })"
             :editable="edit && (priv.manager || user.id === state.me.id)"
             :disabled="!!state.waitProc"
           />
@@ -64,7 +64,7 @@
             <v-icon>{{ icon(accountStatus(state, account.id)) }}</v-icon>
             {{ $t(accountStatus(state, account.id)) }}
           </v-col>
-          <v-col class="col-12 col-sm-6" v-if="accountIsValid(account)">
+          <v-col class="col-12 col-sm-6">
             <v-icon>{{ icon('Sign in') }}</v-icon>
             {{ $t('Sign in') }}:
             {{ account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--' }}
@@ -81,13 +81,13 @@
             :disabled="!!state.waitProc"
           />
           {{ account.invitedAt ? withTz(account.invitedAt).format('l') : '--/--/--' }}
-          {{ account.invitedBy ? `( ${getById(state.users, account.invitedBy).name} )` : '' }}
+          {{ account.invitedBy ? `( ${userName(account.invitedBy)} )` : '' }}
         </div>
         <v-alert
           v-if="state.invitations[account.id] && invitationStatus === 'Sent'"
           type="info" outlined dense class="my-2" style="word-break: break-all;"
         >
-          {{ $t('Send invitation', { url: topUrl().replace(/\/$/, '') + $router.resolve({ name: 'invitation', params: { invitation: state.invitations[account.id] } }).resolved.path }) }}
+          {{ $t('Send invitation', { url: invitationUrl(state, $router, account.id) }) }}
         </v-alert>
 
         <v-row>
@@ -99,7 +99,7 @@
               :iconProc="icon('Lock')"
               :labelProc="$t('Lock')"
               :message="$t('Confirm to revoke sign-in privilege', { name: user.name })"
-              @confirm="set('accounts', user.id, { valid: false })"
+              @confirm="waitForUpdate('accounts', user.id, { valid: false })"
               :disabled="!!state.waitProc"
             />
             <ConfirmButton
@@ -109,7 +109,7 @@
               :iconProc="icon('Unlock')"
               :labelProc="$t('Unlock')"
               :message="$t('Confirm to grant sign-in privilege', { name: user.name })"
-              @confirm="set('accounts', user.id, { valid: true })"
+              @confirm="waitForUpdate('accounts', user.id, { valid: true })"
               :disabled="!!state.waitProc"
             />
           </v-col>
@@ -121,7 +121,7 @@
               :iconProc="icon('Delete')"
               :labelProc="$t('Delete')"
               :message="$t('Confirm deletion', { name: user.name })"
-              @confirm="del('accounts', user.id)"
+              @confirm="waitForRemove('accounts', user.id)"
               :disabled="!!state.waitProc"
             />
             <ConfirmButton
@@ -131,7 +131,7 @@
               :iconProc="icon('Restore')"
               :labelProc="$t('Restore')"
               :message="$t('Confirm restore', { name: user.name })"
-              @confirm="restore('accounts', user.id)"
+              @confirm="waitForRestore('accounts', user.id)"
               :disabled="!!state.waitProc"
             />
           </v-col>
@@ -145,15 +145,13 @@
 
 <script>
 import { reactive, computed, watch } from '@vue/composition-api'
-import * as helpers from '@/helpers'
-import { useStore, icon, getById, goPage } from '@/helpers'
-import { permissions } from '@/conf/permissions'
-import { invite } from '@/auth'
+import { useStore, getById, accountStatus } from '@/utils'
+import { invite, invitationUrl } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
 import GroupsOfUser from '@/parts/GroupsOfUser'
-import Profile from '@/pages/Profile'
+import Profile from '@/parts/Profile'
 
 export default {
   name: 'PageUser',
@@ -166,7 +164,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait } = store
+    const { setProcForWait, icon, permissions, goPageUser } = store
     const page = reactive({
       preview: 2
     })
@@ -176,10 +174,7 @@ export default {
     const profile = computed(() => getById(store.state.profiles, root.$route.params.id))
     const edit = computed({
       get: () => root.$route.params.mode === 'edit',
-      set: edit => goPage(
-        root.$router,
-        { name: root.$route.name, params: { id: root.$route.params.id, mode: edit ? 'edit' : null } }
-      )
+      set: edit => goPageUser(root.$route.params.id, edit)
     })
 
     const invitationStatus = computed(() => {
@@ -202,6 +197,7 @@ export default {
       edit,
       invitationStatus,
       page,
+      userName: id => getById(store.state.users, id).name,
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),
         value: item.value,
@@ -210,7 +206,8 @@ export default {
       preview: computed(() => permissions[page.preview].value),
       ...store,
       invite: id => setProcForWait(() => invite(store, id)),
-      ...helpers
+      invitationUrl,
+      accountStatus
     }
   }
 }

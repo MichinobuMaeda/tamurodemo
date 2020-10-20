@@ -57,10 +57,8 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import * as helpers from '@/helpers'
+import { useStore } from '@/utils'
 import DefaultButton from '@/components/DefaultButton'
-
-const { useStore, goPage } = helpers
 
 export default {
   name: 'CreateGroup',
@@ -69,19 +67,19 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { add } = store
+    const { waitForAdd, goPageGroup } = store
     const page = reactive({
       dialog: false,
       name: ''
     })
 
     const onCreate = async () => {
-      const group = await add('groups', {
+      const group = await waitForAdd('groups', {
         name: page.name,
         desc: { type: 'plain', data: '' },
         members: []
       })
-      return goPage(root.$router, { name: 'group', params: { id: group.id } })
+      return goPageGroup(group.id)
     }
 
     return {
@@ -90,8 +88,7 @@ export default {
       rulesName: [
         v => !!v || root.$i18n.t('Required')
       ],
-      onCreate,
-      ...helpers
+      onCreate
     }
   }
 }
