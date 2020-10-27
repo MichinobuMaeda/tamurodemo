@@ -1,13 +1,13 @@
-const { defaults } = require('jest-config')
+// const { defaults } = require('jest-config')
 
 module.exports = {
   collectCoverageFrom: [
-    "**/*.{js,jsx}",
-    // "!**/index.js",
-    "!**/node_modules/**",
-    "!**/tests/**",
-    "!**/coverage/**",
-    "!**/jest.config.js"
+    '**/*.{js,jsx}',
+    '!**/index.js',
+    '!**/node_modules/**',
+    '!**/tests/**',
+    '!**/coverage/**',
+    '!**/*.config.js'
   ],
   coverageDirectory: 'coverage',
   runner: 'jest-serial-runner',
