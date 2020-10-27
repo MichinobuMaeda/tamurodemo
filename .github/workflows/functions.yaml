@@ -61,7 +61,7 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: ${{ github.workspace }}/functions
+          path-to-lcov: ${{ github.workspace }}/functions/coverage/lcov.info
 
       - name: Deploy
         env:
