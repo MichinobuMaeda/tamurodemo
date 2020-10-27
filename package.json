@@ -8,6 +8,7 @@
     "test:unit": "firebase emulators:exec 'jest --coverage --silent'",
     "test:unit:ci": "firebase emulators:exec 'jest --coverage --silent && codecov'",
     "lint": "vue-cli-service lint",
+    "deploy": "firebase deploy",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
   },
   "dependencies": {
