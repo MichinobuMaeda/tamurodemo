@@ -74,7 +74,7 @@
 
 <script>
 import { reactive, computed, onMounted } from '@vue/composition-api'
-import { useStore, getById } from '@/utils'
+import { useStore, getById } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import MiniButton from '@/components/MiniButton'
 import DefaultButton from '@/components/DefaultButton'

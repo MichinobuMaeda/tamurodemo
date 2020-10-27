@@ -57,7 +57,7 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { useStore } from '@/store'
 import DefaultButton from '@/components/DefaultButton'
 
 export default {

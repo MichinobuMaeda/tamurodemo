@@ -150,7 +150,8 @@
 
 <script>
 import { reactive, watch, onMounted } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { locales, menuPositions, timezones } from '@/conf'
+import { useStore } from '@/store'
 import { validateInvitation, setEmailAndPasswordWithInvitation } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import Loading from '@/components/Loading.vue'
@@ -218,7 +219,10 @@ export default {
           page.showConfirmPassword = false
           setTimeout(() => { page.setEmailMessage = '' }, 100 * 1000)
         }
-      })
+      }),
+      locales,
+      menuPositions,
+      timezones
     }
   }
 }

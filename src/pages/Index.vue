@@ -92,7 +92,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'

@@ -10,7 +10,7 @@ const {
   validateInvitation,
   setEmailWithInvitation,
   setEmailAndPasswordWithInvitation
-} = require('../../auth')
+} = require('../../invitation')
 
 beforeEach(async () => {
   auth.clear()

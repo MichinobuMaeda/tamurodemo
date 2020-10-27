@@ -118,7 +118,8 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, getById } from '@/utils'
+import { permissions, locales, menuPositions, timezones } from '@/conf'
+import { useStore, getById } from '@/store'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/parts/PermittedMembers'
@@ -143,7 +144,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { icon, permissions, waitForUpdate } = store
+    const { icon, waitForUpdate } = store
     const page = reactive({
     })
 
@@ -164,7 +165,10 @@ export default {
         text: root.$i18n.t(item.text)
       })),
       picon: permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: icon(cur.icon) }), {}),
-      waitForUpdateUser: (key, val) => waitForUpdate('users', props.id, { [key]: val })
+      waitForUpdateUser: (key, val) => waitForUpdate('users', props.id, { [key]: val }),
+      locales,
+      menuPositions,
+      timezones
     }
   }
 }

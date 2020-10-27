@@ -156,7 +156,8 @@
 
 <script>
 import { reactive, computed, watch } from '@vue/composition-api'
-import { useStore, getById, accountStatus } from '@/utils'
+import { permissions } from '@/conf'
+import { useStore, getById, accountStatus } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -175,7 +176,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, icon, permissions, goPageUser } = store
+    const { setProcForWait, icon, goPageUser } = store
     const page = reactive({
       preview: 2
     })

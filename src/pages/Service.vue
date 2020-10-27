@@ -160,7 +160,8 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { locales, menuPositions, timezones } from '@/conf'
+import { useStore } from '@/store'
 import { authProviders } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -204,7 +205,10 @@ export default {
       rulesDaysAndTime: [
         v => invExtTime(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
       ],
-      providers: authProviders(store, root.$route)
+      providers: authProviders(store, root.$route),
+      locales,
+      menuPositions,
+      timezones
     }
   }
 }

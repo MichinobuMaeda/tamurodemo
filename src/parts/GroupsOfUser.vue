@@ -12,7 +12,7 @@
 
 <script>
 import { computed } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { useStore } from '@/store'
 import EditableItem from '@/components/EditableItem'
 
 export default {

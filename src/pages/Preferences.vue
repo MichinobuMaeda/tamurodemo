@@ -225,7 +225,8 @@
 
 <script>
 import { reactive, onMounted, onUnmounted } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { locales, menuPositions, timezones } from '@/conf'
+import { useStore } from '@/store'
 import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail, signOut } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
@@ -334,7 +335,10 @@ export default {
       changeEmail,
       changePassword,
       resetPassword,
-      signOut: () => setProcForWait(() => signOut(store))
+      signOut: () => setProcForWait(() => signOut(store)),
+      locales,
+      menuPositions,
+      timezones
     }
   }
 }

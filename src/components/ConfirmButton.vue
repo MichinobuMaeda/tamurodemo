@@ -57,8 +57,8 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import DefaultButton from '@/components/DefaultButton'
-import { defaultIcons, defaultLabels } from '@/components/defaults'
+import DefaultButton from './DefaultButton'
+import { defaultIcons, defaultLabels } from './defaults'
 
 export default {
   name: 'ConfirmButton',

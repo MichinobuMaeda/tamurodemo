@@ -99,7 +99,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, getById } from '@/utils'
+import { useStore, getById } from '@/store'
 import DefaultButton from '@/components/DefaultButton'
 
 export default {

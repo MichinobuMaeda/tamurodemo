@@ -79,7 +79,7 @@ const resetUserAuth = async ({ id }, { db, auth }) => {
   } catch (e) {
     console.log('Fail to delete account: ' + id)
   }
-  await await auth.createUser({ uid: id })
+  await auth.createUser({ uid: id })
 }
 
 const rejectCreateUserWithoutAccount = async ({ uid }, { db, auth }) => {

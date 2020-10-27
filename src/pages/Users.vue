@@ -31,7 +31,7 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { useStore, accountStatus } from '@/utils'
+import { useStore, accountStatus } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import DefaultButton from '@/components/DefaultButton'
 import GroupsOfUser from '@/parts/GroupsOfUser'

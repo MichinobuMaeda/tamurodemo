@@ -29,7 +29,7 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 

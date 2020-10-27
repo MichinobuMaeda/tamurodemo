@@ -89,7 +89,8 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { locales, menuPositions, timezones } from '@/conf'
+import { useStore } from '@/store'
 import {
   authProviders,
   sendSignInLinkToEmail,
@@ -149,7 +150,10 @@ export default {
       signInWithPassword,
       resetPassword,
       providers: authProviders(store, root.$route)
-        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id])
+        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
+      locales,
+      menuPositions,
+      timezones
     }
   }
 }

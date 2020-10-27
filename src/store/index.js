@@ -1,28 +1,45 @@
-import { computed, provide, reactive } from '@vue/composition-api'
+import { computed, inject, provide, reactive } from '@vue/composition-api'
 import moment from 'moment-timezone'
-import { clearServiceData, clearUserData } from './state'
-import * as firebase from '@/plugins/firebase'
-import { myPriv } from '@/auth'
-import { StoreSymbol, getById, storeRequestedRoute } from '@/utils'
-import * as conf from '@/conf'
+import { icon, locales, defaults, validators } from '@/conf'
+import {
+  clearServiceData, clearUserData,
+  initServiceData, initUserData,
+  detectPrivilegesChanged,
+  accountStatus, accountIsValid, myPriv
+} from './state'
+import { simplifyDoc, getById, add, update, remove, restore } from './db'
+import { storeRequestedRoute } from './utils'
+export * from './utils'
 
-export * from './state'
-export * from './menuItems'
+export {
+  clearUserData,
+  initServiceData,
+  initUserData,
+  detectPrivilegesChanged,
+  accountStatus,
+  accountIsValid,
+  simplifyDoc,
+  getById,
+  myPriv
+}
 
-export const createStore = root => {
+export const StoreSymbol = Symbol('store')
+export const useStore = () => inject(StoreSymbol)
+
+export const createStore = (firebase, root) => {
   const { db } = firebase
 
   const state = reactive(clearUserData(clearServiceData({
-    ...conf.defaults,
+    ...defaults,
     loading: true
   })))
   const store = {
     state,
     ...firebase,
-    ...conf,
+    icon,
     myName: computed(() => getById(state.users, state.me.id).name || 'Guest'),
     priv: computed(() => myPriv(state)),
-    ...conf.validators(state, root)
+    ...validators(state, root)
   }
 
   store.sortedGroups = state => state.categories
@@ -53,6 +70,22 @@ export const createStore = root => {
   return store
 }
 
+export const overrideDefaults = (store, root) => {
+  const { state, auth } = store
+  Object.keys(defaults).forEach(key => {
+    state[key] = myPriv(state).user
+      ? state.me[key]
+      : state.service.defaults
+        ? state.service.defaults[key]
+        : defaults[key]
+  })
+  root.$vuetify.theme.dark = state.darkTheme
+  root.$i18n.locale = state.locale
+  const lang = locales.find(item => item.value === state.locale).lang
+  moment.locale(lang)
+  auth.languageCode = lang
+}
+
 const setProcForWait = state => async (proc, next = null) => {
   const ts = new Date().getTime()
   state.waitProc = ts
@@ -73,32 +106,6 @@ const setProcForWait = state => async (proc, next = null) => {
   }
 }
 
-const add = db => (collection, data) => {
-  const ts = new Date()
-  return db.collection(collection)
-    .add({
-      ...data,
-      createdAt: ts,
-      updatedAt: ts
-    })
-}
-
-const update = db => (collection, id, data) => db.collection(collection)
-  .doc(id).update({
-    ...data,
-    updatedAt: new Date()
-  })
-
-const remove = db => (collection, id) => db.collection(collection)
-  .doc(id).update({
-    deletedAt: new Date()
-  })
-
-const restore = db => (collection, id) => db.collection(collection)
-  .doc(id).update({
-    deletedAt: null
-  })
-
 const goPage = router => route => {
   if (![
     'invitation',
@@ -109,20 +116,4 @@ const goPage = router => route => {
     storeRequestedRoute(route)
   }
   router.push(route).catch(() => {})
-}
-
-export const overrideDefaults = (store, root) => {
-  const { state, auth, locales, defaults } = store
-  Object.keys(defaults).forEach(key => {
-    state[key] = myPriv(state).user
-      ? state.me[key]
-      : state.service.defaults
-        ? state.service.defaults[key]
-        : defaults[key]
-  })
-  root.$vuetify.theme.dark = state.darkTheme
-  root.$i18n.locale = state.locale
-  const lang = locales.find(item => item.value === state.locale).lang
-  moment.locale(lang)
-  auth.languageCode = lang
 }

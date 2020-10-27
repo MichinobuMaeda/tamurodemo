@@ -17,7 +17,7 @@ const {
   validateInvitation,
   setEmailWithInvitation,
   setEmailAndPasswordWithInvitation
-} = require('./auth')
+} = require('./invitation')
 
 const handleUpdateServiceVersion = firebase => async (req, res) => res.send(await updateVersion(firebase))
 const handleValidateInvitation = firebase => async (req, res) => res.send(await validateInvitation(req.params, firebase))

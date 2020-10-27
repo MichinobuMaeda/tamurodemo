@@ -17,7 +17,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore } from '@/utils'
+import { useStore } from '@/store'
 import { authProviders, linkedWithOAuthProvider } from '@/auth'
 import ConfirmButton from '@/components/ConfirmButton'
 

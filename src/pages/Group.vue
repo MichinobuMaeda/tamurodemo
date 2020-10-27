@@ -84,7 +84,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, getById } from '@/utils'
+import { useStore, getById } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
