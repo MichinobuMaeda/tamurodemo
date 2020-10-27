@@ -61,7 +61,7 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-path: : ${{ github.workspace }}/functions
+          base-path: ${{ github.workspace }}/functions
           path-to-lcov: ${{ github.workspace }}/functions/coverage/lcov.info
           flag-name: functions
 
