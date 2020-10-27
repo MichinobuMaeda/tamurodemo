@@ -25,6 +25,7 @@ export const storeRequestedRoute = route => {
 
 export const restoreRequestedRoute = router => {
   const saved = window.localStorage.getItem(LS_REQ_ROUTE)
+  window.localStorage.setItem(LS_REQ_ROUTE, '')
   if (saved) {
     try {
       const route = JSON.parse(saved)

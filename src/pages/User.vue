@@ -70,7 +70,7 @@
             {{ account.signedInAt ? withTz(account.signedInAt).format('l') : '--/--/--' }}
           </v-col>
         </v-row>
-        <div v-if="state.service.auth.invitation && account.valid">
+        <div v-if="state.service.auth.invitation && account.valid && !account.deletedAt">
           <ConfirmButton
             type="info"
             :title="$t('Invitation')"
@@ -91,7 +91,18 @@
         </v-alert>
 
         <v-row>
-          <v-col class="col-12 col-sm-7 my-2">
+          <v-col class="col-12 col-sm-8 my-1">
+            <ConfirmButton
+              type="error"
+              :title="$t('Reset all sign-in settings')"
+              :iconProc="icon('Reset all sign-in settings')"
+              :labelProc="$t('Reset all sign-in settings')"
+              :message="$t('Confirm to reset all sign-in settings', { name: user.name })"
+              @confirm="resetAllSignInSettings(account.id)"
+              :disabled="!!state.waitProc"
+            />
+          </v-col>
+          <v-col class="col-12 col-sm-7 my-1">
             <ConfirmButton
               v-if="account.valid"
               type="error"
@@ -113,7 +124,7 @@
               :disabled="!!state.waitProc"
             />
           </v-col>
-          <v-col class="col-12 col-sm-5 my-2">
+          <v-col class="col-12 col-sm-5 my-1">
             <ConfirmButton
               v-if="!account.deletedAt"
               type="error"
@@ -146,7 +157,7 @@
 <script>
 import { reactive, computed, watch } from '@vue/composition-api'
 import { useStore, getById, accountStatus } from '@/utils'
-import { invite, invitationUrl } from '@/auth'
+import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
@@ -206,6 +217,7 @@ export default {
       preview: computed(() => permissions[page.preview].value),
       ...store,
       invite: id => setProcForWait(() => invite(store, id)),
+      resetAllSignInSettings: id => setProcForWait(() => resetAllSignInSettings(store, id)),
       invitationUrl,
       accountStatus
     }

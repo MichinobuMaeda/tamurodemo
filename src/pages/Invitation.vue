@@ -135,7 +135,7 @@
                 color="primary"
                 :icon="icon('Save')"
                 :label="$t('Save')"
-                @click="setEmail"
+                @click="setEmailAndPasswordWithInvitation"
                 :disabled="!!state.waitProc || !page.newEmail || !page.confirmEmail || !page.setEmail || page.newEmail !== page.confirmEmail || page.newPassword !== page.confirmPassword"
               />
             </div>
@@ -151,7 +151,7 @@
 <script>
 import { reactive, watch, onMounted } from '@vue/composition-api'
 import { useStore } from '@/utils'
-import { updateMyEmail, validateInvitation } from '@/auth'
+import { validateInvitation, setEmailAndPasswordWithInvitation } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import Loading from '@/components/Loading.vue'
 import DefaultButton from '@/components/DefaultButton'
@@ -200,30 +200,25 @@ export default {
       }
     })
 
-    const setEmail = () => setProcForWait(
-      async () => {
+    return {
+      page,
+      ...store,
+      setEmailAndPasswordWithInvitation: () => setProcForWait(async () => {
         try {
-          await updateMyEmail(store, page.newEmail)
-
+          await setEmailAndPasswordWithInvitation(store, page)
           page.newEmail = ''
           page.confirmEmail = ''
-          page.newPassword = ''
-          page.confirmPassword = ''
-          page.showNewPassword = false
-          page.showConfirmPassword = false
           page.setEmailMessage = root.$i18n.t('Completed')
         } catch (e) {
           page.setEmailMessage = root.$i18n.t('System error')
         } finally {
+          page.newPassword = ''
+          page.confirmPassword = ''
+          page.showNewPassword = false
+          page.showConfirmPassword = false
           setTimeout(() => { page.setEmailMessage = '' }, 100 * 1000)
         }
-      }
-    )
-
-    return {
-      page,
-      ...store,
-      setEmail
+      })
     }
   }
 }

@@ -42,6 +42,7 @@ const iconList = {
   'Account inactive': 'pause_circle_filled',
   'Signed in': 'link',
   'Not signed in': 'link_off',
+  'Reset all sign-in settings': 'link_off',
   Visible: 'visibility',
   Invisible: 'visibility_off',
   Confirm: 'notifications',

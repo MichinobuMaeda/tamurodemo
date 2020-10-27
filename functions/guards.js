@@ -15,6 +15,7 @@ const guardValidAccount = async (data, context, next) => {
   if (!account.data().valid) {
     throwUnauthenticated('the account is invalid.', uid)
   }
+  console.log(JSON.stringify(data))
   return next(data, context)
 }
 

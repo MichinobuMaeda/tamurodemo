@@ -26,7 +26,7 @@ const createAccount = async ({ name }, { db, auth }) => {
       createdAt,
       updatedAt
     })
-    await auth.createUser({ id })
+    await auth.createUser({ uid: id })
     console.log(`Create account "${id}"`)
 
     return { id }
@@ -46,24 +46,53 @@ const setEmail = async ({ id, email }, { db, auth }) => {
       updatedAt
     })
     console.log(`Update account "${id}" set email "${email}"`)
-    return { status: 'ok' }
   } catch (err) {
     throwErrorDataLoss('setEmail', id, err)
   }
+  return { status: 'ok' }
 }
 
 const setPassword = async ({ id, password }, { auth }) => {
   try {
     await auth.updateUser(id, { password })
     console.log(`Update account "${id}" set password`)
-    return { status: 'ok' }
   } catch (err) {
     throwErrorDataLoss('setEmail', id, err)
+  }
+  return { status: 'ok' }
+}
+
+const resetUserAuth = async ({ id }, { db, auth }) => {
+  try {
+    await db.collection('accounts').doc(id).update({
+      email: null,
+      line: null,
+      yahooJapan: null,
+      mixi: null,
+      updatedAt: new Date()
+    })
+  } catch (err) {
+    throwErrorDataLoss('resetUserAuth', id, err)
+  }
+  try {
+    await auth.deleteUser(id)
+  } catch (e) {
+    console.log('Fail to delete account: ' + id)
+  }
+  await await auth.createUser({ uid: id })
+}
+
+const rejectCreateUserWithoutAccount = async ({ uid }, { db, auth }) => {
+  const account = await db.collection('accounts').doc(uid).get()
+  if (!account || !account.exists) {
+    await auth.deleteUser(uid)
   }
 }
 
 module.exports = {
+  rejectCreateUserWithoutAccount,
   createAccount,
   setEmail,
-  setPassword
+  setPassword,
+  resetUserAuth
 }

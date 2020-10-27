@@ -106,6 +106,8 @@
   "Revoke sign-in privilege": "ログインする権限を削除する",
   "Confirm to grant sign-in privilege": "{name} さんがログインできるようにしますか？",
   "Confirm to revoke sign-in privilege": "{name} さんがログインできないようにしますか？",
+  "Reset all sign-in settings": "ログインの設定をすべて消去する",
+  "Confirm to reset all sign-in settings": "{name} さんのログインの設定をすべて消去しますか？",
   "Lock": "停止",
   "Unlock": "解除",
   "Forgot password?": "パスワードを忘れた場合...",

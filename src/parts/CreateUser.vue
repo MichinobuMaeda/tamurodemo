@@ -28,7 +28,7 @@
           <v-text-field
             :label="$t('Display name')"
             v-model="page.name"
-            :rules="rulesName"
+            :rules="[ruleRequired]"
           />
         </v-card-text>
 
@@ -46,7 +46,7 @@
             :icon="icon('OK')"
             :label="$t('Create')"
             :disabled="!!state.waitProc || !page.name"
-            @click="onCreate"
+            @click="createUser"
           />
         </v-card-actions>
 
@@ -73,18 +73,15 @@ export default {
       name: ''
     })
 
-    const onCreate = async () => {
+    const createUser = () => setProcForWait(async () => {
       const result = await functions.httpsCallable('createAccount')({ name: page.name })
       return goPageUser(result.data.id)
-    }
+    })
 
     return {
       ...store,
       page,
-      rulesName: [
-        v => !!v || root.$i18n.t('Required')
-      ],
-      onCreate: () => setProcForWait(onCreate)
+      createUser
     }
   }
 }

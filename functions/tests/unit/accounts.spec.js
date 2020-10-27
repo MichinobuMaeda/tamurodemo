@@ -7,7 +7,9 @@ const {
 const {
   createAccount,
   setEmail,
-  setPassword
+  setPassword,
+  resetUserAuth,
+  rejectCreateUserWithoutAccount
 } = require('../../accounts')
 
 beforeEach(async () => {
@@ -125,4 +127,82 @@ test('setPassword()' +
 
   // should fail
   await expect(setPassword({ id, password }, { db, auth })).rejects.toThrow()
+})
+
+test('resetUserAuth()' +
+  ' delete user if exists and recreate user in Authentication.', async () => {
+
+  // prepare #1
+  const id = 'account01'
+
+  // run #1
+  await expect(resetUserAuth({ id }, { db, auth })).rejects.toThrow()
+
+  // prepare $2
+  await db.collection('accounts').doc(id).set({
+    email: 'account01@example.com',
+    line: 'OAuth ID: account01',
+    yahooJapan: 'OAuth ID: account01',
+    mixi: 'OAuth ID: account01'
+  })
+
+  // run #2
+  await resetUserAuth({ id }, { db, auth })
+
+  // evaluate #2
+  const account1 = await db.collection('accounts').doc(id).get()
+  expect(account1.data().email).toBeNull()
+  expect(account1.data().line).toBeNull()
+  expect(account1.data().yahooJapan).toBeNull()
+  expect(account1.data().mixi).toBeNull()
+  expect(auth.data[id]).toBeDefined()
+
+  // prepare #3
+  await db.collection('accounts').doc(id).set({
+    email: 'account01@example.com',
+    line: 'OAuth ID: account01',
+    yahooJapan: 'OAuth ID: account01',
+    mixi: 'OAuth ID: account01'
+  })
+  auth.data[id] = { email: 'account01@example.com' }
+
+  // run #3
+  await resetUserAuth({ id }, { db, auth })
+
+  // evaluate #3
+  const account2 = await db.collection('accounts').doc(id).get()
+  expect(account2.data().email).toBeNull()
+  expect(account1.data().line).toBeNull()
+  expect(account1.data().yahooJapan).toBeNull()
+  expect(account1.data().mixi).toBeNull()
+  expect(auth.data[id].email).not.toBeDefined()
+})
+
+test('rejectCreateUserWithoutAccount()' +
+  ' delete auth user without account doc in db.', async () => {
+
+  // prepare
+  const uid = 'account01'
+  auth.data[uid] = { email: 'account01@example.com' }
+
+  // run
+  await rejectCreateUserWithoutAccount({ uid }, { db, auth })
+
+  // evaluate
+  expect(auth.data[uid]).not.toBeDefined()
+})
+
+test('rejectCreateUserWithoutAccount()' +
+  ' skip to delete auth user with account doc in db.', async () => {
+
+  // prepare
+  const uid = 'account01'
+  auth.data[uid] = { email: 'account01@example.com' }
+  await db.collection('accounts').doc(uid).set({ email: 'account01@example.com' })
+
+  // run
+  await rejectCreateUserWithoutAccount({ uid }, { db, auth })
+
+  // evaluate
+  expect(auth.data[uid]).toBeDefined()
 })

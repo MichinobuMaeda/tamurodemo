@@ -1,5 +1,4 @@
 const path = require('path')
-const firebase = require('firebase-functions-test')()
 const functions = require('firebase-functions')
 const {
   admin01,
@@ -18,6 +17,8 @@ const {
   validateInvitation,
   setEmailWithInvitation,
   setEmailAndPasswordWithInvitation,
+  resetUserAuth,
+  rejectCreateUserWithoutAccount,
   handleUpdateServiceVersion,
   handleValidateInvitation
 } = entries({ functions, db, auth })
@@ -39,18 +40,17 @@ test('createAccount()' +
   // #1 prepare
   const uid = 'account01'
   await db.collection('accounts').doc(uid).set({ valid: true })
-  const wrapped = firebase.wrap(createAccount)
   const data = { name: 'name01' }
   const context = { auth: { uid }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(createAccount(data, context)).rejects.toThrow()
 
   // #2 prepare
   context.auth.uid = admin01
 
   // #2 run
-  const { id } = await wrapped(data, context)
+  const { id } = await createAccount(data, context)
 
   // #2 evaluate
   expect(id).toBeDefined()
@@ -67,18 +67,17 @@ test('setEmail()' +
   const email = 'dummy@example.com'
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
-  const wrapped = firebase.wrap(setEmail)
   const data = { id, email }
   const context = { auth: { uid }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(setEmail(data, context)).rejects.toThrow()
 
   // #2 prepare
   context.auth.uid = id
 
   // #2 run
-  const { status } = await wrapped(data, context)
+  const { status } = await setEmail(data, context)
 
   // #2 evaluate
   expect(status).toEqual('ok')
@@ -96,18 +95,17 @@ test('setPassword()' +
   const password = 'password02'
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
-  const wrapped = firebase.wrap(setPassword)
   const data = { id, password }
   const context = { auth: { uid }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(setPassword(data, context)).rejects.toThrow()
 
   // #2 prepare
   context.auth.uid = id
 
   // #2 run
-  const { status } = await wrapped(data, context)
+  const { status } = await setPassword(data, context)
 
   // #2 evaluate
   expect(status).toEqual('ok')
@@ -122,18 +120,17 @@ test('invite()' +
   const id = 'account02'
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
-  const wrapped = firebase.wrap(invite)
   const data = { id }
   const context = { auth: { uid }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(invite(data, context)).rejects.toThrow()
 
   // #2 prepare
   context.auth.uid = admin01
 
   // #2 run
-  const { invitation } = await wrapped(data, context)
+  const { invitation } = await invite(data, context)
 
   // #2 evaluate
   expect(invitation).toBeDefined()
@@ -145,19 +142,18 @@ test('validateInvitation()' +
   // #1 prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await firebase.wrap(invite)({ id }, { auth: { uid: admin01 }})
-  const wrapped = firebase.wrap(validateInvitation)
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
   const data = { invitation: 'invalid invitation' }
   const context = { auth: { uid: null }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(validateInvitation(data, context)).rejects.toThrow()
 
   // #2 prepare
   data.invitation = invitation
 
   // #2 run
-  const { token } = await wrapped(data, context)
+  const { token } = await validateInvitation(data, context)
 
   // #2 evaluate
   expect(token).toBeDefined()
@@ -172,19 +168,18 @@ test('setEmailWithInvitation()' +
   await db.collection('accounts').doc(id).set({ valid: true })
   await db.collection('accounts').doc(uid).set({ valid: true })
   const email = 'dummy@example.com'
-  const { invitation } = await firebase.wrap(invite)({ id }, { auth: { uid: admin01 }})
-  const wrapped = firebase.wrap(setEmailWithInvitation)
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
   const data = { invitation, email }
   const context = { auth: { uid }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(setEmailWithInvitation(data, context)).rejects.toThrow()
 
   // #2 prepare
   context.auth.uid = id
 
   // #2 run
-  const { status } = await wrapped(data, context)
+  const { status } = await setEmailWithInvitation(data, context)
 
   // #2 evaluate
   expect(status).toEqual('ok')
@@ -203,19 +198,18 @@ test('setEmailAndPasswordWithInvitation()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   const email = 'dummy@example.com'
   const password = 'password01'
-  const { invitation } = await firebase.wrap(invite)({ id }, { auth: { uid: admin01 }})
-  const wrapped = firebase.wrap(setEmailAndPasswordWithInvitation)
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
   const data = { invitation, email, password }
   const context = { auth: { uid }}
 
   // #1 should fail
-  await expect(wrapped(data, context)).rejects.toThrow()
+  await expect(setEmailAndPasswordWithInvitation(data, context)).rejects.toThrow()
 
   // #2 prepare
   context.auth.uid = id
 
   // #2 run
-  const { status } = await wrapped(data, context)
+  const { status } = await setEmailAndPasswordWithInvitation(data, context)
 
   // #2 evaluate
   expect(status).toEqual('ok')
@@ -223,6 +217,48 @@ test('setEmailAndPasswordWithInvitation()' +
   expect(auth.data[id].password).toEqual(password)
   const account = await db.collection('accounts').doc(id).get()
   expect(account.data().email).toEqual(email)
+})
+
+test('resetUserAuth()' +
+  ' recreate user in Authentication for given id' +
+  ' by uid with sufficient privilege.', async () => {
+
+  // #1 prepare
+  const uid = 'account01'
+  const id = 'account02'
+  await db.collection('accounts').doc(uid).set({ valid: true })
+  await db.collection('accounts').doc(id).set({ email: 'account02@example.com' })
+  auth.data[id] = { email: 'account02@example.com' }
+  const data = { id }
+  const context = { auth: { uid }}
+
+  // #1 should fail
+  await expect(resetUserAuth(data, context)).rejects.toThrow()
+
+  // #2 prepare
+  context.auth.uid = admin01
+
+  // #2 run
+  await resetUserAuth(data, context)
+
+  // #2 evaluate
+  const account = await db.collection('accounts').doc(id).get()
+  expect(account.data().email).toBeNull()
+  expect(auth.data[id].email).not.toBeDefined()
+})
+
+test('rejectCreateUserWithoutAccount()' +
+  ' delete auth user without account doc in db.', async () => {
+
+  // prepare
+  const uid = 'account01'
+  auth.data[uid] = { email: 'account01@example.com' }
+
+  // run
+  await rejectCreateUserWithoutAccount({ uid })
+
+  // evaluate
+  expect(auth.data[uid]).not.toBeDefined()
 })
 
 test('handleUpdateServiceVersion()' +
@@ -248,7 +284,7 @@ test('handleValidateInvitation()' +
   // prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await firebase.wrap(invite)({ id }, { auth: { uid: admin01 }})
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
   const result = {}
   const req = { params: { invitation } }
   const res = {

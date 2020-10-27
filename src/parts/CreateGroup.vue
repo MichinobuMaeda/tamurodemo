@@ -46,7 +46,7 @@
             :icon="icon('OK')"
             :label="$t('Create')"
             :disabled="!!state.waitProc || !page.name"
-            @click="onCreate"
+            @click="createGroup"
           />
         </v-card-actions>
 
@@ -73,7 +73,7 @@ export default {
       name: ''
     })
 
-    const onCreate = async () => {
+    const createGroup = async () => {
       const group = await waitForAdd('groups', {
         name: page.name,
         desc: { type: 'plain', data: '' },
@@ -88,7 +88,7 @@ export default {
       rulesName: [
         v => !!v || root.$i18n.t('Required')
       ],
-      onCreate
+      createGroup
     }
   }
 }

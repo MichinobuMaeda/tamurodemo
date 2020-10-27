@@ -36,21 +36,27 @@ const auth = {
     this.error = false
     this.data = {}
   },
-  createCustomToken: id => `token for ${id}`,
+  createCustomToken: uid => `token for ${uid}`,
   createUser(userData) {
-    const { id, ...data } = userData
+    const { uid, ...data } = userData
     if (this.error) {
       this.error = false
       throw new Error('something bad happened')
     }
-    this.data[id] = { ...data }
+    this.data[uid] = { ...data }
   },
-  updateUser(id, data) {
+  updateUser(uid, data) {
     if (this.error) {
       this.error = false
       throw new Error('something bad happened')
     }
-    this.data[id] = { ...this.data[id], ...data }
+    this.data[uid] = { ...this.data[uid], ...data }
+  },
+  deleteUser(uid) {
+    if (!this.data[uid]) {
+      throw Error('')
+    }
+    delete this.data[uid]
   }
 }
 

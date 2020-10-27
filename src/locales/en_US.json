@@ -106,6 +106,8 @@
   "Revoke sign-in privilege": "Revoke sign-in privilege",
   "Confirm to grant sign-in privilege": "Would you like to allow {name} to sign in?",
   "Confirm to revoke sign-in privilege": "Would you like to disallow {name} to sign in?",
+  "Reset all sign-in settings": "Reset all sign-in settings",
+  "Confirm to reset all sign-in settings": "Confirm to reset all sign-in settings of {name}",
   "Lock": "Lock",
   "Unlock": "Unlock",
   "Forgot password?": "Forgot password?",

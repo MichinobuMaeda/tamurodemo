@@ -128,6 +128,28 @@ export const invite = async ({ functions, state }, id) => {
   state.invitations[id] = result.data.invitation
 }
 
+export const setEmailAndPasswordWithInvitation = async ({ functions }, {
+  invitation, newEmail, confirmEmail, newPassword, confirmPassword
+}) => {
+  if (newEmail && newEmail === confirmEmail) {
+    if (newPassword && newPassword === confirmPassword) {
+      await functions.httpsCallable('setEmailAndPasswordWithInvitation')({
+        invitation,
+        email: newEmail,
+        password: newPassword
+      })
+    } else {
+      await functions.httpsCallable('setEmailWithInvitation')({
+        invitation,
+        email: newEmail
+      })
+    }
+  }
+}
+
+export const resetAllSignInSettings = ({ functions }, id) =>
+  functions.httpsCallable('resetUserAuth')({ id })
+
 export const validateInvitation = async ({ functions, auth }, invitation) => {
   try {
     const result = await functions.httpsCallable('validateInvitation')({ invitation })

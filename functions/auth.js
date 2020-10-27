@@ -56,7 +56,7 @@ const validateInvitation = async ({ invitation }, { db, auth }) => {
 }
 
 const setEmailAndPasswordWithInvitation = async (
-  { invitation, email, password = null },
+  { invitation, email, password },
   { db, auth, uid }
 ) => {
   const account = await invitedAccount({ invitation }, { db })

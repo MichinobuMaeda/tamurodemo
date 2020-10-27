@@ -55,7 +55,13 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
         working-directory: ${{ github.workspace }}/functions
-        run: yarn test --token "$FIREBASE_TOKEN"
+        run: yarn test:unit --token "$FIREBASE_TOKEN"
+
+      - name: Coveralls
+        working-directory: ${{ github.workspace }}/functions
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy
         env:
