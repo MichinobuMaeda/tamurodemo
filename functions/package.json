@@ -8,7 +8,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test:unit": "firebase emulators:exec 'jest --coverage --silent'"
+    "test:unit": "firebase emulators:exec 'jest --coverage --silent'",
+    "test:unit:ci": "firebase emulators:exec 'jest --coverage --silent && codecov'"
   },
   "engines": {
     "node": "10"
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@firebase/testing": "^0.20.11",
     "babel-eslint": "^10.1.0",
+    "codecov": "^3.8.0",
     "eslint": "^5.12.0",
     "eslint-plugin-promise": "^4.2.1",
     "firebase-functions-test": "^0.2.2",
