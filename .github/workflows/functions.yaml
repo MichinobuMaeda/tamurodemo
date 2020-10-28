@@ -52,10 +52,8 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: Unit test
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
         working-directory: ${{ github.workspace }}/functions
-        run: yarn test:unit:ci --token "$FIREBASE_TOKEN"
+        run: yarn test:unit:ci
 
       - name: Deploy
         env:
