@@ -46,6 +46,10 @@ jobs:
       - name: Set version to UI
         run: echo "export default '`git rev-parse --short HEAD`'" > src/conf/version.js
 
+      - name: Unit test
+        working-directory: ${{ github.workspace }}/functions
+        run: yarn test:unit:ci
+
       - name: Build UI
         run: yarn build
 
