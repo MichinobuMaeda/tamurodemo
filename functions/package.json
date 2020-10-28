@@ -8,8 +8,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test:unit": "firebase emulators:exec 'jest --coverage --silent'",
-    "test:unit:ci": "firebase emulators:exec 'jest --coverage --silent && codecov' --token \"$FIREBASE_TOKEN\""
+    "test:unit": "firebase emulators:exec 'jest --coverage --silent' --only firestore,hosting",
+    "test:unit:ci": "firebase emulators:exec 'jest --coverage --silent && codecov' --only firestore,hosting --token \"$FIREBASE_TOKEN\""
   },
   "engines": {
     "node": "10"
