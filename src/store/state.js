@@ -48,11 +48,14 @@ export const updateMe = ({ auth, state }, me = null) => {
     ...me || state.me,
     ...((auth.currentUser && auth.currentUser.providerData) || [])
       .reduce(
-        (ret, cur) => cur.providerId ? { ...ret, [cur.providerId]: true } : ret,
+        (ret, cur) => cur.providerId ? { ...ret, [cur.providerId.replace(/\./g, '_')]: true } : ret,
         {
-          'google.com': false,
-          'facebook.com': false,
-          'twitter.com': false
+          google_com: false,
+          apple_com: false,
+          facebook_com: false,
+          github_com: false,
+          microsoft_com: false,
+          twitter_com: false
         }
       )
   }

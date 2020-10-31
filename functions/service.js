@@ -52,12 +52,15 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
       invitation: true,
       emailLink: true,
       password: true,
-      'google.com': {},
-      'facebook.com': false,
-      'twitter.com': false,
-      'line.me': false,
-      'yahoo.co.jp': {},
-      'mixi.jp': false
+      'google_com': {},
+      'apple_com': false,
+      'facebook_com': false,
+      'github_com': false,
+      'microsoft_com': false,
+      'twitter_com': false,
+      'line_me': false,
+      'yahoo_co_jp': {},
+      'mixi_jp': false
     }
   },
   {

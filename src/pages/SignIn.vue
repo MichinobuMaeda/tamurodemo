@@ -150,7 +150,7 @@ export default {
       signInWithPassword,
       resetPassword,
       providers: authProviders(store)
-        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
+        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id.replace(/\./g, '_')]),
       locales,
       menuPositions,
       timezones

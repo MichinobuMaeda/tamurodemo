@@ -2,13 +2,13 @@
   <div style="line-height: 64px;">
     <ConfirmButton
       v-for="provider in providers" :key="provider.id"
-      :type="(state.me && state.me[provider.id]) ? 'warning' : 'info'"
+      :type="providerEnabled(state, provider.id) ? 'warning' : 'info'"
       :color="provider.id.replace(/\./g, '_')"
       buttonClass="white--text mr-2"
-      :buttonIcon="(state.me && state.me[provider.id]) ? icon('Checkbox On') : icon('Checkbox Off')"
-      :iconProc="(state.me && state.me[provider.id]) ? icon('Confirm to remove') : icon('Confirm to add')"
+      :buttonIcon="providerEnabled(state, provider.id) ? icon('Checkbox On') : icon('Checkbox Off')"
+      :iconProc="providerEnabled(state, provider.id) ? icon('Confirm to remove') : icon('Confirm to add')"
       :title="$t('Sign in with provider', { provider: provider.name })"
-      :message="$t(((state.me && state.me[provider.id]) ? 'Remove': 'Add') + ' setting to sign in with provider', { provider: provider.name })"
+      :message="$t((providerEnabled(state, provider.id) ? 'Remove': 'Add') + ' setting to sign in with provider', { provider: provider.name })"
       @confirm="provider.update"
       :disabled="!!state.waitProc"
     />
@@ -31,8 +31,9 @@ export default {
 
     return {
       ...store,
+      providerEnabled: (state, id) => state.me && state.me[id.replace(/\./g, '_')],
       providers: computed(() => authProviders(store)
-        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id]))
+        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id.replace(/\./g, '_')]))
     }
   }
 }

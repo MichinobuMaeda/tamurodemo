@@ -12,11 +12,32 @@ export const authProviders = store => [
     signIn: signInFirebaseAuthProvider(store, new Firebase.auth.GoogleAuthProvider())
   },
   {
+    id: 'apple.com',
+    type: 'oauth',
+    name: 'Apple',
+    update: toggleOAuthProvider(store, 'apple.com', new Firebase.auth.OAuthProvider('apple.com')),
+    signIn: signInFirebaseAuthProvider(store, new Firebase.auth.OAuthProvider('apple.com'))
+  },
+  {
     id: 'facebook.com',
     type: 'oauth',
     name: 'Facebook',
     update: toggleOAuthProvider(store, 'facebook.com', new Firebase.auth.FacebookAuthProvider()),
     signIn: signInFirebaseAuthProvider(store, new Firebase.auth.FacebookAuthProvider())
+  },
+  {
+    id: 'github.com',
+    type: 'oauth',
+    name: 'GitHub',
+    update: toggleOAuthProvider(store, 'github.com', new Firebase.auth.GithubAuthProvider()),
+    signIn: signInFirebaseAuthProvider(store, new Firebase.auth.GithubAuthProvider())
+  },
+  {
+    id: 'microsoft.com',
+    type: 'oauth',
+    name: 'Microsoft',
+    update: toggleOAuthProvider(store, 'microsoft.com', new Firebase.auth.OAuthProvider('microsoft.com')),
+    signIn: signInFirebaseAuthProvider(store, new Firebase.auth.OAuthProvider('microsoft.com'))
   },
   {
     id: 'twitter.com',
