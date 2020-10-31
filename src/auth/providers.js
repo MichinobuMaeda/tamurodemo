@@ -1,89 +1,76 @@
 import Firebase from 'firebase/app'
 import 'firebase/auth'
-import { storeRequestedRoute } from '@/store'
+import { updateMe } from '../store'
 import { updateInvitationStatus } from './invitation'
 
-const oAuthProviders = {
-  google: new Firebase.auth.GoogleAuthProvider(),
-  facebook: new Firebase.auth.FacebookAuthProvider(),
-  twitter: new Firebase.auth.TwitterAuthProvider()
-}
+export const authProviders = store => [
+  {
+    id: 'google.com',
+    type: 'oauth',
+    name: 'Google',
+    update: toggleOAuthProvider(store, 'google.com', new Firebase.auth.GoogleAuthProvider()),
+    signIn: signInFirebaseAuthProvider(store, new Firebase.auth.GoogleAuthProvider())
+  },
+  {
+    id: 'facebook.com',
+    type: 'oauth',
+    name: 'Facebook',
+    update: toggleOAuthProvider(store, 'facebook.com', new Firebase.auth.FacebookAuthProvider()),
+    signIn: signInFirebaseAuthProvider(store, new Firebase.auth.FacebookAuthProvider())
+  },
+  {
+    id: 'twitter.com',
+    type: 'oauth',
+    name: 'Twitter',
+    update: toggleOAuthProvider(store, 'twitter.com', new Firebase.auth.TwitterAuthProvider()),
+    signIn: signInFirebaseAuthProvider(store, new Firebase.auth.TwitterAuthProvider())
+  },
+  {
+    id: 'line.me',
+    type: 'custom',
+    name: 'LINE',
+    update: toggleOAuthProvider(store, 'line.me'),
+    signIn: () => {}
+  },
+  {
+    id: 'yahoo.co.jp',
+    type: 'custom',
+    name: 'Yahoo! Japan',
+    update: toggleOAuthProvider(store, 'yahoo.co.jp'),
+    signIn: () => {}
+  },
+  {
+    id: 'mixi.jp',
+    type: 'custom',
+    name: 'mixi',
+    update: toggleOAuthProvider(store, 'mixi.jp'),
+    signIn: () => {}
+  }
+]
 
-export const authProviders = (store, route, onChange = null) => {
-  const { auth, state, setProcForWait, waitForUpdate } = store
-
-  const toggleOAuthProvider = (auth, route, id, providerId, onChange) => () => setProcForWait(
+const toggleOAuthProvider = (store, id, provider = null) =>
+  () => store.setProcForWait(
     async () => {
-      if (linkedWithOAuthProvider(auth, providerId)) {
-        await auth.currentUser.unlink(providerId)
+      const { state, auth, update } = store
+      if (state.me && state.me[id]) {
+        if (provider) {
+          await auth.currentUser.unlink(id)
+        } else {
+          await update('accounts', state.me.id, { [id]: null })
+        }
       } else {
-        storeRequestedRoute({ name: route.name })
-        await auth.currentUser.linkWithRedirect(oAuthProviders[id])
+        if (provider) {
+          await auth.currentUser.linkWithRedirect(provider)
+        } else {
+          // TODO
+        }
       }
       await updateInvitationStatus(store)
-      return onChange ? onChange({ id, providerId }) : null
+      updateMe(store)
     }
   )
 
-  const signInFirebaseAuthProvider = id => () => setProcForWait(
-    () => auth.signInWithRedirect(oAuthProviders[id])
-  )
-
-  return [
-    {
-      id: 'google',
-      type: 'oauth',
-      name: 'Google',
-      update: toggleOAuthProvider(auth, route, 'google', 'google.com', onChange),
-      signIn: signInFirebaseAuthProvider('google')
-    },
-    {
-      id: 'facebook',
-      type: 'oauth',
-      name: 'Facebook',
-      update: toggleOAuthProvider(auth, route, 'facebook', 'facebook.com', onChange),
-      signIn: signInFirebaseAuthProvider('facebook')
-    },
-    {
-      id: 'twitter',
-      type: 'oauth',
-      name: 'Twitter',
-      update: toggleOAuthProvider(auth, route, 'twitter', 'twitter.com', onChange),
-      signIn: signInFirebaseAuthProvider('twitter')
-    },
-    {
-      id: 'line',
-      type: 'custom',
-      name: 'LINE',
-      update: state.me && state.me.line
-        ? waitForUpdate('accounts', state.me.id, { line: null })
-        : () => {},
-      signIn: () => {}
-    },
-    {
-      id: 'yahooJapan',
-      type: 'custom',
-      name: 'Yahoo! Japan',
-      update: state.me && state.me.yahooJapan
-        ? waitForUpdate('accounts', state.me.id, { yahooJapan: null })
-        : () => {},
-      signIn: () => {}
-    },
-    {
-      id: 'mixi',
-      type: 'custom',
-      name: 'mixi',
-      update: state.me && state.me.mixi
-        ? waitForUpdate('accounts', state.me.id, { mixi: null })
-        : () => {},
-      signIn: () => {}
-    }
-  ]
-}
-
-export const linkedWithOAuthProvider = (auth, providerId) =>
-  auth.currentUser &&
-  auth.currentUser.providerData &&
-  auth.currentUser.providerData.some(
-    item => item.providerId === providerId
+const signInFirebaseAuthProvider = (store, provider) =>
+  () => store.setProcForWait(
+    () => store.auth.signInWithRedirect(provider)
   )

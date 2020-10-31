@@ -157,7 +157,7 @@
 <script>
 import { reactive, computed, watch } from '@vue/composition-api'
 import { permissions } from '@/conf'
-import { useStore, getById, accountStatus } from '@/store'
+import { useStore, findItem, accountStatus } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -181,16 +181,16 @@ export default {
       preview: 2
     })
 
-    const user = computed(() => getById(store.state.users, root.$route.params.id))
-    const account = computed(() => getById(store.state.accounts, root.$route.params.id))
-    const profile = computed(() => getById(store.state.profiles, root.$route.params.id))
+    const user = computed(() => findItem(store.state.users, root.$route.params.id))
+    const account = computed(() => findItem(store.state.accounts, root.$route.params.id))
+    const profile = computed(() => findItem(store.state.profiles, root.$route.params.id))
     const edit = computed({
       get: () => root.$route.params.mode === 'edit',
       set: edit => goPageUser(root.$route.params.id, edit)
     })
 
     const invitationStatus = computed(() => {
-      const account = getById(store.state.accounts, root.$route.params.id)
+      const account = findItem(store.state.accounts, root.$route.params.id)
       return account.invitedAt
         ? (account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime())
           ? 'Accepted'
@@ -209,7 +209,7 @@ export default {
       edit,
       invitationStatus,
       page,
-      userName: id => getById(store.state.users, id).name,
+      userName: id => findItem(store.state.users, id).name,
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),
         value: item.value,

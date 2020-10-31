@@ -119,7 +119,7 @@
 <script>
 import { reactive, computed } from '@vue/composition-api'
 import { permissions, locales, menuPositions, timezones } from '@/conf'
-import { useStore, getById } from '@/store'
+import { useStore, findItem } from '@/store'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/parts/PermittedMembers'
@@ -154,10 +154,10 @@ export default {
       user: computed(() => store.state.users.find(item => item.id === props.id)),
       profile: computed(() => store.state.profiles.find(item => item.id === props.id)),
       permittedGroups: user => (user.permittedGroups || [])
-        .map(id => getById(store.state.groups, id))
+        .map(id => findItem(store.state.groups, id))
         .filter(group => !group.deletedAt),
       permittedUsers: user => (user.permittedUsers || [])
-        .map(id => getById(store.state.users, id))
+        .map(id => findItem(store.state.users, id))
         .filter(user => !user.deletedAt),
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),

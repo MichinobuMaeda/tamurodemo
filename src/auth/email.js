@@ -1,6 +1,6 @@
 import Firebase from 'firebase/app'
 import 'firebase/auth'
-import { appId, baseUrl } from '@/conf'
+import { appId, baseUrl } from '../conf'
 import { updateInvitationStatus } from './index'
 
 const LS_REQ_EMAIL = `${appId}tamuroEmailLinkRequest`

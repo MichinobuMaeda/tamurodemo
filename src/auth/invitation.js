@@ -1,4 +1,4 @@
-import { baseUrl } from '@/conf'
+import { baseUrl } from '../conf'
 
 export const invite = async ({ functions, state }, id) => {
   const result = await functions.httpsCallable('invite')({ id })
@@ -31,9 +31,9 @@ export const updateInvitationStatus = async ({ db, auth, state }) => {
     (
       auth.currentUser.email ||
       (auth.currentUser.providerData && auth.currentUser.providerData.length) ||
-      state.me.line ||
-      state.me.yahooJapan ||
-      state.me.mixi
+      state.me['line.me'] ||
+      state.me['yahoo.co.jp'] ||
+      state.me['mixi.jp']
     )
   ) {
     await db.collection('accounts').doc(state.me.id).update({

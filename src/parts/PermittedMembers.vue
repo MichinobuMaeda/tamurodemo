@@ -99,7 +99,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, getById } from '@/store'
+import { useStore, findItem } from '@/store'
 import DefaultButton from '@/components/DefaultButton'
 
 export default {
@@ -127,13 +127,13 @@ export default {
         .filter(group => group.id !== 'managers')
         .map(group => ({
           ...group,
-          checked: (getById(state.users, props.id).permittedGroups || []).includes(group.id)
+          checked: (findItem(state.users, props.id).permittedGroups || []).includes(group.id)
         }))
       ),
       users: computed(() => state.users
         .map(user => ({
           ...user,
-          checked: user.id !== props.id && (getById(state.users, props.id).permittedUsers || []).includes(user.id)
+          checked: user.id !== props.id && (findItem(state.users, props.id).permittedUsers || []).includes(user.id)
         }))
       ),
       onEdit: (groups, users) => {

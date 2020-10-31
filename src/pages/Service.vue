@@ -205,7 +205,7 @@ export default {
       rulesDaysAndTime: [
         v => invExtTime(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
       ],
-      providers: authProviders(store, root.$route),
+      providers: authProviders(store),
       locales,
       menuPositions,
       timezones

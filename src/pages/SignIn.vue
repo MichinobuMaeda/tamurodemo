@@ -77,7 +77,7 @@
 
       <v-btn
         v-for="provider in providers" :key="provider.id"
-        class="ma-4 white--text" :color="provider.id"
+        class="ma-4 white--text" :color="provider.id.replace(/\./g, '_')"
         @click="provider.signIn"
         :disabled="!!state.waitProc"
       >
@@ -149,7 +149,7 @@ export default {
       signInWithEmailLink,
       signInWithPassword,
       resetPassword,
-      providers: authProviders(store, root.$route)
+      providers: authProviders(store)
         .filter(provider => store.state.service.auth && store.state.service.auth[provider.id]),
       locales,
       menuPositions,

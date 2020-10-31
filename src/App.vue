@@ -44,9 +44,9 @@
       v-if="!state.loading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menuItems="menuItems(state.me.id, myName, priv, routePermission($router, priv), goPage, showRawData)"
+      :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, () => { page.rawData = true }), $router, priv, goPage)"
       :position="state.menuPosition"
-      @move="pos => onMenuMoved(pos)"
+      @move="menuPosition => state.me && state.me.valid && waitForUpdate('accounts', state.me.id, { menuPosition })"
     />
 
     <RawDataTree
@@ -67,21 +67,25 @@
 
 <script>
 import { reactive, onMounted, watch } from '@vue/composition-api'
-import * as firebase from '@/plugins/firebase'
-import { menuItems, baseUrl, version } from '@/conf'
+import * as firebase from './plugins/firebase'
+import { menuItems, baseUrl, version } from './conf'
 import {
-  createStore, initServiceData, initUserData,
-  overrideDefaults, restoreRequestedRoute,
-  accountIsValid, detectPrivilegesChanged, myPriv
-} from '@/store'
+  createStore, initServiceData,
+  overrideDefaults
+} from './store'
 import {
-  getAuthState, signOut,
-  updateInvitationStatus
-} from '@/auth'
-import Menu from '@/components/Menu'
-import Loading from '@/components/Loading.vue'
-import AppUpdater from '@/components/AppUpdater'
-import RawDataTree from '@/components/RawDataTree'
+  getAuthState,
+  updateInvitationStatus,
+  detectPrivilegesChanged,
+  detectAccountChanged,
+  guardMenuItem,
+  guardRoute,
+  goPage
+} from './auth'
+import Menu from './components/Menu'
+import Loading from './components/Loading.vue'
+import AppUpdater from './components/AppUpdater'
+import RawDataTree from './components/RawDataTree'
 
 export default {
   name: 'App',
@@ -97,6 +101,10 @@ export default {
     })
 
     const store = createStore(firebase, root)
+    overrideDefaults(store, root)
+    store.goPage = goPage(root.$router)
+    store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
+    store.goPageUser = (id, edit = false) => store.goPage({ name: 'user', params: { id, mode: (edit ? 'edit' : null) } })
 
     onMounted(async () => {
       await getAuthState(store)
@@ -104,34 +112,10 @@ export default {
       await updateInvitationStatus(store)
     })
 
-    const routePermission = (router, priv, route) => {
-      return Object.keys(priv).some(
-        key => priv[key] && route.matched.some(
-          record => record.meta.privs.includes(key)
-        )
-      )
-    }
-
-    const guard = (router, route, state) => {
-      const priv = myPriv(state)
-      if (state.loading || !route || !route.name || routePermission(router, priv, route)) {
-        // to do nothing
-      } else {
-        const compareRoutes = (r1, r2) => r1.name === r2.name &&
-          !Object.keys(r1.params || {}).some(
-            key => (r1.params || {})[key] !== (r2.params || {})[key]
-          )
-        const target = priv.user ? { name: 'top' } : { name: 'signin' }
-        if (!compareRoutes(target, route)) {
-          router.push(target).catch(() => {})
-        }
-      }
-    }
-
     watch(
       () => root.$route,
       () => {
-        guard(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, store.state)
       }
     )
 
@@ -139,7 +123,7 @@ export default {
       () => store.state.service,
       () => {
         overrideDefaults(store, root)
-        guard(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, store.state)
       }
     )
 
@@ -147,7 +131,7 @@ export default {
       () => store.state.groups,
       async (groups, groupsPrev) => {
         await detectPrivilegesChanged(store, groups, groupsPrev)
-        guard(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, store.state)
       }
     )
 
@@ -155,39 +139,23 @@ export default {
       () => store.state.me,
       async (me, mePrev) => {
         overrideDefaults(store, root)
-        if ((!mePrev.id || accountIsValid(mePrev)) && !accountIsValid(me)) {
-          await signOut(store)
-        } else if (!accountIsValid(mePrev) && accountIsValid(me)) {
-          await initUserData(store)
-          restoreRequestedRoute(root.$router)
-        }
-        guard(root.$router, root.$route, store.state, store.state.loading)
+        await detectAccountChanged(store, root.$router, me, mePrev)
+        guardRoute(root.$router, root.$route, store.state, store.state.loading)
       }
     )
 
     watch(
       () => store.state.loading,
       () => {
-        guard(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, store.state)
       }
     )
-
-    const onMenuMoved = ({ db, state }) => async pos => {
-      if (accountIsValid(state.me)) {
-        await db.collection('accounts').doc(state.me.id).update({
-          menuPosition: pos,
-          updatedAt: new Date()
-        })
-      }
-    }
 
     return {
       ...store,
       page,
-      routePermission: (router, priv) => route => routePermission(router, priv, router.match(route)),
+      guardMenuItem,
       menuItems,
-      onMenuMoved: onMenuMoved(store),
-      showRawData: () => { page.rawData = true },
       baseUrl: baseUrl(),
       version
     }

@@ -1,5 +1,5 @@
-import { onSignInWithEmailLink } from '@/auth/email'
-import { simplifyDoc } from '@/store'
+import { initMe } from '../store'
+import { onSignInWithEmailLink } from './email'
 
 export const getAuthState = async ({ db, auth, state }) => {
   if (auth.isSignInWithEmailLink(window.location.href)) {
@@ -7,7 +7,7 @@ export const getAuthState = async ({ db, auth, state }) => {
   } else {
     auth.onAuthStateChanged(async user => {
       if (user) {
-        state.me = simplifyDoc(await db.collection('accounts').doc(user.uid).get())
+        await initMe({ db, auth, state }, user.uid)
       } else {
         state.me = {}
         state.loading = false

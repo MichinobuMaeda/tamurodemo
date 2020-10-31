@@ -24,12 +24,12 @@ export const theme = {
       deleted: colors.blueGrey.lighten4,
       dialogTitle: colors.grey.lighten2,
       dialogAction: colors.grey.lighten4,
-      google: '#DB4437',
-      facebook: '#4267B2',
-      twitter: '#1DA1F2',
-      line: '#00C300',
-      yahooJapan: '#FF0132',
-      mixi: '#FFAA00'
+      google_com: '#DB4437',
+      facebook_com: '#4267B2',
+      twitter_com: '#1DA1F2',
+      line_me: '#00C300',
+      yahoo_co_jp: '#FF0132',
+      mixi_jp: '#FFAA00'
     },
     dark: {
       primary: colors.indigo.lighten2, // Default: '#2196F3' blue
@@ -52,12 +52,12 @@ export const theme = {
       deleted: colors.blueGrey.darken3,
       dialogTitle: colors.grey.darken2,
       dialogAction: colors.grey.darken3,
-      google: '#DB4437',
-      facebook: '#4267B2',
-      twitter: '#1DA1F2',
-      line: '#00C300',
-      yahooJapan: '#FF0132',
-      mixi: '#FFAA00'
+      google_com: '#DB4437',
+      facebook_com: '#4267B2',
+      twitter_com: '#1DA1F2',
+      line_me: '#00C300',
+      yahoo_co_jp: '#FF0132',
+      mixi_jp: '#FFAA00'
     }
   }
 }

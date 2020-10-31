@@ -9,7 +9,7 @@ Vue
 ```
 $ npm -g install npm n firebase-tools eslint @vue/cli
 $ n 10
-$ node --version                                                                        [21:22:57]
+$ node --version
 v10.22.0
 $ vue create tamuro
 $ cd tamuro

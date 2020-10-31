@@ -74,7 +74,7 @@
 
 <script>
 import { reactive, computed, onMounted } from '@vue/composition-api'
-import { useStore, getById } from '@/store'
+import { useStore, findItem } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import MiniButton from '@/components/MiniButton'
 import DefaultButton from '@/components/DefaultButton'
@@ -157,9 +157,9 @@ export default {
           page.items.filter(item => (!item.id && item.name) ||
             (item.id &&
               (
-                (getById(store.state.categories, item.id).seq !== item.seq) ||
-                (getById(store.state.categories, item.id).name !== item.name) ||
-                (getById(store.state.categories, item.id).deletedAt !== item.deletedAt)
+                (findItem(store.state.categories, item.id).seq !== item.seq) ||
+                (findItem(store.state.categories, item.id).name !== item.name) ||
+                (findItem(store.state.categories, item.id).deletedAt !== item.deletedAt)
               )
             )
           ).map(async item => {

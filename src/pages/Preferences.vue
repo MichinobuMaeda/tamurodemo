@@ -226,12 +226,15 @@
 <script>
 import { reactive, onMounted, onUnmounted } from '@vue/composition-api'
 import { locales, menuPositions, timezones } from '@/conf'
-import { useStore } from '@/store'
-import { reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail, signOut } from '@/auth'
-import PageTitle from '@/components/PageTitle'
-import DefaultButton from '@/components/DefaultButton'
-import ConfirmButton from '@/components/ConfirmButton'
-import SelectAuthProviders from '@/parts/SelectAuthProviders'
+import { useStore } from '../store'
+import {
+  reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail,
+  signOut
+} from '../auth'
+import PageTitle from '../components/PageTitle'
+import DefaultButton from '../components/DefaultButton'
+import ConfirmButton from '../components/ConfirmButton'
+import SelectAuthProviders from '../parts/SelectAuthProviders'
 
 export default {
   name: 'Preferences',

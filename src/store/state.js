@@ -1,4 +1,4 @@
-import { getById, simplifyDoc } from './db'
+import { myPriv } from './accounts'
 
 export const clearServiceData = (state = {}) => {
   state.service = {}
@@ -31,7 +31,7 @@ export const initServiceData = async ({ db, state }) => {
   const onServiceUpdate = (querySnapshot) => {
     const service = {}
     querySnapshot.forEach(doc => {
-      const { id, ...data } = simplifyDoc(doc)
+      const { id, ...data } = castDoc(doc)
       service[id] = data
     })
     state.service = service
@@ -43,7 +43,27 @@ export const initServiceData = async ({ db, state }) => {
   )
 }
 
-export const initUserData = async ({ db, state }) => {
+export const updateMe = ({ auth, state }, me = null) => {
+  state.me = {
+    ...me || state.me,
+    ...((auth.currentUser && auth.currentUser.providerData) || [])
+      .reduce(
+        (ret, cur) => cur.providerId ? { ...ret, [cur.providerId]: true } : ret,
+        {
+          'google.com': false,
+          'facebook.com': false,
+          'twitter.com': false
+        }
+      )
+  }
+}
+
+export const initMe = async ({ db, auth, state }, id) => {
+  const me = castDoc(await db.collection('accounts').doc(id).get())
+  updateMe({ auth, state }, me)
+}
+
+export const initUserData = async ({ db, auth, state }) => {
   state.loading = true
   unsubscribeAll(state)
   state.authMessage = ''
@@ -74,15 +94,15 @@ export const initUserData = async ({ db, state }) => {
       'accounts',
       db.collection('accounts'),
       (state) => {
-        state.me = getById(state.accounts, state.me.id)
+        updateMe({ auth, state }, findItem(state.accounts, state.me.id))
       }
     )
   } else {
     const meRef = db.collection('accounts').doc(state.me.id)
-    state.accounts = [simplifyDoc(await meRef.get())]
+    state.accounts = [castDoc(await meRef.get())]
     state.unsubscribers.accounts = meRef.onSnapshot(me => {
-      state.accounts = [simplifyDoc(me)]
-      state.me = simplifyDoc(me)
+      state.accounts = [castDoc(me)]
+      state.me = castDoc(me)
     })
   }
   if (myPriv(state).manager) {
@@ -92,9 +112,9 @@ export const initUserData = async ({ db, state }) => {
       db.collection('profiles'))
   } else {
     const meRef = db.collection('profiles').doc(state.me.id)
-    state.profiles = [simplifyDoc(await meRef.get())]
+    state.profiles = [castDoc(await meRef.get())]
     state.unsubscribers.profiles = meRef.onSnapshot(me => {
-      state.profiles = [simplifyDoc(me)]
+      state.profiles = [castDoc(me)]
     })
   }
   state.loading = false
@@ -104,66 +124,30 @@ const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) =>
   const priv = myPriv(state)
   state[propName] = (await queryRef.get()).docs
     .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
-    .map(doc => simplifyDoc(doc))
+    .map(doc => castDoc(doc))
   onChange && onChange(state)
   state.unsubscribers[propName] = queryRef.onSnapshot(querySnapshot => {
     const priv = myPriv(state)
     state[propName] = querySnapshot.docs
       .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
-      .map(doc => simplifyDoc(doc))
-    onChange && onChange(state)
+      .map(doc => castDoc(doc))
+    return onChange && onChange(state)
   })
 }
 
-export const detectPrivilegesChanged = async (store, groups, groupsPrev) => {
-  const hasPriv = (groups, groupId, account) => {
-    return isMemberOf(account, getById(groups, groupId))
-  }
-  const me = store.state.me
-  if (groupsPrev && groupsPrev.length && (
-    hasPriv(groupsPrev, 'admins', me) !== hasPriv(groups, 'admins', me) ||
-    hasPriv(groupsPrev, 'managers', me) !== hasPriv(groups, 'managers', me) ||
-    hasPriv(groupsPrev, 'testers', me) !== hasPriv(groups, 'testers', me)
-  )) {
-    await initUserData(store)
-  }
-}
+export const findItem = (list, id) => ({
+  ...((list || []).find(item => item.id === id) || {})
+})
 
-export const accountIsValid = account => !!(account && account.id && !account.deletedAt && account.valid)
-export const isMemberOf = (account, group) => ((group || {}).members || []).includes(account.id)
-export const accountPriv = ({ service, groups }, account) => {
-  const valid = accountIsValid(account)
-  return {
-    guest: !valid,
-    invited: !!(valid &&
-      account.invitedAs &&
-      account.invitedAt &&
-      account.invitedAt.getTime() >= (new Date().getTime() - service.conf.invitationExpirationTime)),
-    user: valid,
-    admin: valid && isMemberOf(account, getById(groups, 'admins')),
-    manager: valid && isMemberOf(account, getById(groups, 'managers')),
-    tester: valid && isMemberOf(account, getById(groups, 'testers'))
-  }
-}
-export const myPriv = ({ service, groups, me }) => accountPriv({ service, groups }, me)
-
-export const accountStatus = (state, id) => {
-  const account = (state.accounts && state.accounts.find(account => account.id === id)) || null
-  return (!account || account.deletedAt)
-    ? 'Account deleted'
-    : !account.valid
-      ? 'Account locked'
-      : account.invitedAs
-        ? account.invitedAt
-          ? account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime()
-            ? 'Invitation accepted'
-            : account.invitedAt.getTime() < (new Date().getTime() - state.service.conf.invitationExpirationTime)
-              ? 'Invitation timeout'
-              : 'Invited'
-          : account.signedInAt
-            ? 'Account active'
-            : 'Account inactive'
-        : account.signedInAt
-          ? 'Account active'
-          : 'Account inactive'
-}
+/**
+ * { id, data() } => { id, ...data }
+ * Firestore Timestamp => Date
+ */
+export const castDoc = doc => ({
+  id: doc.id,
+  ...Object.keys(doc.data()).reduce(
+    (ret, cur) => ({
+      ...ret,
+      [cur]: (doc.data()[cur] && doc.data()[cur].toDate ? doc.data()[cur].toDate() : doc.data()[cur])
+    }), ({}))
+})

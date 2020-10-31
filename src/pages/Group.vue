@@ -84,7 +84,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, getById } from '@/store'
+import { useStore, findItem } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
@@ -135,7 +135,7 @@ export default {
       rulesName: [
         v => !!v || root.$i18n.t('Required')
       ],
-      group: computed(() => getById(store.state.groups, root.$route.params.id)),
+      group: computed(() => findItem(store.state.groups, root.$route.params.id)),
       categoryList: computed(() => store.state.categories
         .map(item => ({
           icon: icon('Category'),
