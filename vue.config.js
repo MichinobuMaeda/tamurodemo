@@ -17,17 +17,14 @@ module.exports = {
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
     manifestOptions: {
+      start_url: '/',
       display: 'standalone',
       orientation: 'portrait-primary',
       background_color: '#f1f8e9'
     },
-
-    // configure the workbox plugin
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
-      // swSrc is required in InjectManifest mode.
       swSrc: 'src/registerServiceWorker.js'
-      // ...other Workbox options...
     }
   }
 }

@@ -54,7 +54,8 @@ const iconList = {
   'Checkbox On': 'check_box',
   'Checkbox Off': 'check_box_outline_blank',
   'Confirm to add': 'add_circle_outline',
-  'Confirm to remove': 'remove_circle_outline'
+  'Confirm to remove': 'remove_circle_outline',
+  'Install app': 'get_app'
 }
 
 export const icon = name => iconList[name] || 'description'

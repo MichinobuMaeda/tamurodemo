@@ -66,9 +66,9 @@ const resetUserAuth = async ({ id }, { db, auth }) => {
   try {
     await db.collection('accounts').doc(id).update({
       email: null,
-      'line.me': null,
-      'yahoo.co.jp': null,
-      'mixi.jp': null,
+      line_me: null,
+      yahoo_co_jp: null,
+      mixi_jp: null,
       updatedAt: new Date()
     })
   } catch (err) {

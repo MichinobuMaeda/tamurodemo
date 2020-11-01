@@ -26,6 +26,7 @@
     <v-main class="px-4" v-else>
       <div class="text-center">
         <DefaultButton
+          v-if="state.me.valid && !isSignInMethod(state)"
           color="warning"
           :icon="icon('Sign in')"
           :label="$t('Set the sign-in method')"
@@ -35,6 +36,11 @@
           v-if="updateAvailable(state)"
           :label="$t('Update app')"
           :icon="icon('Update app')"
+        />
+        <AppInstaller
+          v-if="state.me.valid"
+          :icon="icon('Install app')"
+          :label="$t('Install app')"
         />
       </div>
       <router-view />
@@ -94,6 +100,7 @@ import {
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
 import AppUpdater from './components/AppUpdater'
+import AppInstaller from './components/AppInstaller'
 import DefaultButton from './components/DefaultButton'
 import RawDataTree from './components/RawDataTree'
 
@@ -103,15 +110,18 @@ export default {
     Menu,
     Loading,
     AppUpdater,
+    AppInstaller,
     DefaultButton,
     RawDataTree
   },
   setup (props, { root }) {
     const page = reactive({
-      rawData: false
+      rawData: false,
+      pwaDeferredPrompt: null
     })
 
     const store = createStore(firebase, root)
+    const { messaging, vapidKey } = store
     overrideDefaults(store, root)
     store.goPage = goPage(root.$router)
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
@@ -121,6 +131,10 @@ export default {
       await getAuthState(store)
       await initServiceData(store)
       await updateInvitationStatus(store)
+      await messaging.getToken({ vapidKey })
+      messaging.onMessage((payload) => {
+        console.log('Message received. ', payload)
+      })
     })
 
     watch(
@@ -168,8 +182,9 @@ export default {
       guardMenuItem,
       menuItems,
       baseUrl: baseUrl(),
-      isSiginMethod: [...Object(authProviders(store)).keys, 'email'],
-      updateAvailable: state => state.service.conf && state.service.conf.version !== version
+      isSignInMethod: state => [...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
+      updateAvailable: state => state.service.conf && state.service.conf.version !== version,
+      version
     }
   }
 }

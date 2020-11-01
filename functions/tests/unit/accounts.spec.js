@@ -141,9 +141,9 @@ test('resetUserAuth()' +
   // prepare $2
   await db.collection('accounts').doc(id).set({
     email: 'account01@example.com',
-    'line.me': 'OAuth ID: account01',
-    'yahoo.co.jp': 'OAuth ID: account01',
-    'mixi.jp': 'OAuth ID: account01'
+    line_me: 'OAuth ID: account01',
+    yahoo_co_jp: 'OAuth ID: account01',
+    mixi_jp: 'OAuth ID: account01'
   })
 
   // run #2
@@ -152,17 +152,17 @@ test('resetUserAuth()' +
   // evaluate #2
   const account1 = await db.collection('accounts').doc(id).get()
   expect(account1.data().email).toBeNull()
-  expect(account1.data()['line.me'] ).toBeNull()
-  expect(account1.data()['yahoo.co.jp']).toBeNull()
-  expect(account1.data()['mixi.jp']).toBeNull()
+  expect(account1.data().line_me).toBeNull()
+  expect(account1.data().yahoo_co_jp).toBeNull()
+  expect(account1.data().mixi_jp).toBeNull()
   expect(auth.data[id]).toBeDefined()
 
   // prepare #3
   await db.collection('accounts').doc(id).set({
     email: 'account01@example.com',
-    'line.me': 'OAuth ID: account01',
-    'yahoo.co.jp': 'OAuth ID: account01',
-    'mixi.jp': 'OAuth ID: account01'
+    line_me: 'OAuth ID: account01',
+    yahoo_co_jp: 'OAuth ID: account01',
+    mixi_jp: 'OAuth ID: account01'
   })
   auth.data[id] = { email: 'account01@example.com' }
 
@@ -172,9 +172,9 @@ test('resetUserAuth()' +
   // evaluate #3
   const account2 = await db.collection('accounts').doc(id).get()
   expect(account2.data().email).toBeNull()
-  expect(account1.data()['line.me'] ).toBeNull()
-  expect(account1.data()['yahoo.co.jp']).toBeNull()
-  expect(account1.data()['mixi.jp']).toBeNull()
+  expect(account1.data().line_me).toBeNull()
+  expect(account1.data().yahoo_co_jp).toBeNull()
+  expect(account1.data().mixi_jp).toBeNull()
   expect(auth.data[id].email).not.toBeDefined()
 })
 
