@@ -1,7 +1,3 @@
-importScripts('/__/firebase/7.24.0/firebase-app.js')
-importScripts('/__/firebase/7.24.0/firebase-messaging.js')
-importScripts('/__/firebase/init.js')
-
 const cacheName = 'cache-v1'
 const precacheResources = [
   '/',
@@ -35,24 +31,6 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', async event => {
   console.log('Service worker has been activated.')
-
-  const messaging = firebase.messaging()
-  await messaging.getToken({
-    vapidKey: 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4'
-  })
-  messaging.onBackgroundMessage(function (payload) {
-    // Customize notification here
-    const notificationTitle = payload.notification.title || 'Tamuro'
-    const notificationOptions = {
-      body: payload.notification.body,
-      icon: 'img/icons/apple-touch-icon-120x120.png'
-    }
-
-    self.registration.showNotification(
-      notificationTitle,
-      notificationOptions
-    )
-  })
 })
 
 self.addEventListener('fetch', event => {
