@@ -1,12 +1,10 @@
 <template>
-  <div class="text-center">
-    <DefaultButton
-      :color="color"
-      :icon="icon"
-      :label="label"
-      @click="updateApp"
-    />
-  </div>
+  <DefaultButton
+    :color="color"
+    :icon="icon"
+    :label="label"
+    @click="updateApp"
+  />
 </template>
 
 <script>

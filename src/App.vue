@@ -24,11 +24,19 @@
       <Loading color="h2" :size="96" />
     </v-main>
     <v-main class="px-4" v-else>
-      <AppUpdater
-        v-if="state.service.conf && state.service.conf.version !== version"
-        :label="$t('Update app')"
-        :icon="icon('Update app')"
-      />
+      <div class="text-center">
+        <DefaultButton
+          color="warning"
+          :icon="icon('Sign in')"
+          :label="$t('Set the sign-in method')"
+          @click="goPage({ name: 'preferences' })"
+        />
+        <AppUpdater
+          v-if="updateAvailable(state)"
+          :label="$t('Update app')"
+          :icon="icon('Update app')"
+        />
+      </div>
       <router-view />
     </v-main>
 
@@ -80,11 +88,13 @@ import {
   detectAccountChanged,
   guardMenuItem,
   guardRoute,
-  goPage
+  goPage,
+  authProviders
 } from './auth'
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
 import AppUpdater from './components/AppUpdater'
+import DefaultButton from './components/DefaultButton'
 import RawDataTree from './components/RawDataTree'
 
 export default {
@@ -93,6 +103,7 @@ export default {
     Menu,
     Loading,
     AppUpdater,
+    DefaultButton,
     RawDataTree
   },
   setup (props, { root }) {
@@ -157,7 +168,8 @@ export default {
       guardMenuItem,
       menuItems,
       baseUrl: baseUrl(),
-      version
+      isSiginMethod: [...Object(authProviders(store)).keys, 'email'],
+      updateAvailable: state => state.service.conf && state.service.conf.version !== version
     }
   }
 }
