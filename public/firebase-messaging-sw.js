@@ -43,15 +43,16 @@ const messaging = firebase.messaging()
 // implement this optional method.
 // [START on_background_message]
 messaging.onBackgroundMessage(function (payload) {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload)
   // Customize notification here
   const notificationTitle = 'Tamuro'
   const notificationOptions = {
-    body: payload,
+    body: payload.notification.body,
     icon: '/img/icons/apple-touch-icon-120x120.png'
   }
 
-  self.registration.showNotification(notificationTitle,
-    notificationOptions)
+  self.registration.showNotification(
+    notificationTitle,
+    notificationOptions
+  )
 })
 // [END on_background_message]
