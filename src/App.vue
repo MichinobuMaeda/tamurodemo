@@ -121,7 +121,7 @@ export default {
     })
 
     const store = createStore(firebase, root)
-    const { messaging, vapidKey } = store
+    // const { messaging, vapidKey } = store
     overrideDefaults(store, root)
     store.goPage = goPage(root.$router)
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
@@ -131,10 +131,10 @@ export default {
       await getAuthState(store)
       await initServiceData(store)
       await updateInvitationStatus(store)
-      await messaging.getToken({ vapidKey })
-      messaging.onMessage((payload) => {
-        console.log('Message received. ', payload)
-      })
+      // await messaging.getToken({ vapidKey })
+      // messaging.onMessage((payload) => {
+      //   console.log('Message received. ', payload)
+      // })
     })
 
     watch(

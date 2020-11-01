@@ -2,7 +2,7 @@ import Firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/functions'
 import 'firebase/auth'
-import 'firebase/messaging'
+// import 'firebase/messaging'
 import apiKey from './firebase-api-key.js'
 
 export const firebase = Firebase.initializeApp({
@@ -34,6 +34,6 @@ export const firebase = Firebase.initializeApp({
 export const auth = firebase.auth()
 export const db = firebase.firestore()
 export const functions = firebase.functions()
-export const messaging = firebase.messaging()
-export const vapidKey = 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4'
+// export const messaging = firebase.messaging()
+// export const vapidKey = 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4'
 export const FieldValue = Firebase.firestore.FieldValue
