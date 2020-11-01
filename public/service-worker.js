@@ -1,28 +1,3 @@
-importScripts('https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js')
-importScripts('https://www.gstatic.com/firebasejs/7.24.0/firebase-messaging.js')
-firebase.initializeApp({
-  apiKey: 'AIzaSyAb-xsAZ4-ANflJXkxZUkBBbA2uCQZh4bs',
-  authDomain: 'tamuro-test01.firebaseapp.com',
-  databaseURL: 'https://tamuro-test01.firebaseio.com',
-  projectId: 'tamuro-test01',
-  storageBucket: 'tamuro-test01.appspot.com',
-  messagingSenderId: '1051588852085',
-  appId: '1:1051588852085:web:c88694ba93327e24137b3c'
-})
-const messaging = firebase.messaging()
-messaging.onBackgroundMessage(function (payload) {
-  console.log('Received background message ', payload)
-  // Customize notification here
-  const notificationTitle = 'Background Message Title'
-  const notificationOptions = {
-    body: 'Background Message body.',
-    icon: '/firebase-logo.png'
-  }
-
-  self.registration.showNotification(notificationTitle,
-    notificationOptions)
-})
-
 const cacheName = 'cache-v1'
 const precacheResources = [
   '/',
