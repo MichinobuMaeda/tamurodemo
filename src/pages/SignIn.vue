@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { reactive } from '@vue/composition-api'
+import { computed, reactive } from '@vue/composition-api'
 import { locales, menuPositions, timezones } from '@/conf'
 import { useStore } from '@/store'
 import {
@@ -149,8 +149,9 @@ export default {
       signInWithEmailLink,
       signInWithPassword,
       resetPassword,
-      providers: authProviders(store)
-        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id.replace(/\./g, '_')]),
+      providers: computed(() => authProviders(store)
+        .filter(provider => store.state.service.auth && store.state.service.auth[provider.id.replace(/\./g, '_')])
+      ),
       locales,
       menuPositions,
       timezones
