@@ -1,4 +1,25 @@
-require('./firebase-messaging-sw')
+importScripts('/__/firebase/7.24.0/firebase-app.js')
+importScripts('/__/firebase/7.24.0/firebase-messaging.js')
+importScripts('/__/firebase/init.js')
+
+const messaging = firebase.messaging()
+Promise.resolve(
+  messaging.getToken({ vapidKey: 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4' })
+).then(messaging => {
+  messaging.onBackgroundMessage(function (payload) {
+    // Customize notification here
+    const notificationTitle = payload.notification.title || 'Tamuro'
+    const notificationOptions = {
+      body: payload.notification.body,
+      icon: 'img/icons/apple-touch-icon-120x120.png'
+    }
+
+    self.registration.showNotification(
+      notificationTitle,
+      notificationOptions
+    )
+  })
+})
 
 const cacheName = 'cache-v1'
 const precacheResources = [
