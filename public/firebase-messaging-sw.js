@@ -3,7 +3,7 @@
 // If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup
 importScripts('/__/firebase/7.24.0/firebase-app.js')
 importScripts('/__/firebase/7.24.0/firebase-messaging.js')
-importScripts('/__/firebase/init.js');
+importScripts('/__/firebase/init.js')
 
 const messaging = firebase.messaging()
 
@@ -42,17 +42,16 @@ const messaging = firebase.messaging()
 // background (Web app is closed or not in browser focus) then you should
 // implement this optional method.
 // [START on_background_message]
-messaging.onBackgroundMessage(function (payload) {
-  // Customize notification here
-  const notificationTitle = 'Tamuro'
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/img/icons/apple-touch-icon-120x120.png'
-  }
-
-  self.registration.showNotification(
-    notificationTitle,
-    notificationOptions
-  )
-})
+// messaging.onBackgroundMessage(function (payload) {
+//   // Customize notification here
+//   const notificationTitle = payload.notification.body
+//   const notificationOptions = {
+//     icon: '/img/icons/apple-touch-icon-120x120.png'
+//   }
+//
+//   self.registration.showNotification(
+//     notificationTitle,
+//     notificationOptions
+//   )
+// })
 // [END on_background_message]
