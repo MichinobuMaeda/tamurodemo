@@ -6,7 +6,6 @@ importScripts('/__/firebase/7.24.0/firebase-messaging.js')
 importScripts('/__/firebase/init.js')
 
 const messaging = firebase.messaging()
-messaging.getToken({ vapidKey: 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4' })
 /**
  * Here is is the code snippet to initialize Firebase Messaging in the Service
  * Worker when your app is not hosted on Firebase Hosting.

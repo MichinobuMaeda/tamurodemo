@@ -29,29 +29,4 @@ if (process.env.NODE_ENV === 'production') {
       console.error('Error during service worker registration:', error)
     }
   })
-  register(`${process.env.BASE_URL}firebase-messaging-sw.js`, {
-    ready () {
-      console.log(
-        'FCM: Service worker has been ready.'
-      )
-    },
-    registered () {
-      console.log('FCM: Service worker has been registered.')
-    },
-    cached () {
-      console.log('FCM: Content has been cached for offline use.')
-    },
-    updatefound () {
-      console.log('FCM: New content is downloading.')
-    },
-    updated () {
-      console.log('FCM: New content is available; please refresh.')
-    },
-    offline () {
-      console.log('FCM: No internet connection found. App is running in offline mode.')
-    },
-    error (error) {
-      console.error('FCM: Error during service worker registration:', error)
-    }
-  })
 }
