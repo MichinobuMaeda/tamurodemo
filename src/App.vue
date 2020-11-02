@@ -52,7 +52,6 @@
       height="48px"
     >
       <span>Ver. {{ version }}</span>
-      {{ isPwa ? 'p' : 'b' }}
     </v-footer>
 
     <Menu
@@ -121,10 +120,6 @@ export default {
       pwaDeferredPrompt: null
     })
 
-    const isPwa = ['fullscreen', 'standalone', 'minimal-ui'].some(
-      displayMode => window.matchMedia('(display-mode: ' + displayMode + ')').matches
-    )
-
     const store = createStore(firebase, root)
     const { messaging, vapidKey } = store
     overrideDefaults(store, root)
@@ -136,12 +131,10 @@ export default {
       await getAuthState(store)
       await initServiceData(store)
       await updateInvitationStatus(store)
-      if (isPwa) {
-        await messaging.getToken({ vapidKey })
-        messaging.onMessage((payload) => {
-          console.log('Message received. ', payload)
-        })
-      }
+      await messaging.getToken({ vapidKey })
+      messaging.onMessage((payload) => {
+        console.log('Message received. ', payload)
+      })
     })
 
     watch(
@@ -191,8 +184,7 @@ export default {
       baseUrl: baseUrl(),
       isSignInMethod: state => [...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
       updateAvailable: state => state.service.conf && state.service.conf.version !== version,
-      version,
-      isPwa
+      version
     }
   }
 }
