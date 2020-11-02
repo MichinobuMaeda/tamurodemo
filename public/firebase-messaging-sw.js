@@ -44,7 +44,7 @@ const messaging = firebase.messaging()
 messaging.onBackgroundMessage(function (payload) {
   // Customize notification here
   console.log(JSON.stringify(payload, 0, 2))
-  const notificationTitle = payload.notification.title || 'Tamuro'
+  const notificationTitle = payload.notification.title || window.location.href || 'Tamuro'
   const notificationOptions = {
     body: payload.notification.body,
     icon: 'https://tamuro-test01.web.app/img/icons/apple-touch-icon-120x120.png'
