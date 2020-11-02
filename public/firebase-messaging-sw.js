@@ -41,17 +41,17 @@ const messaging = firebase.messaging()
 // background (Web app is closed or not in browser focus) then you should
 // implement this optional method.
 // [START on_background_message]
-messaging.onBackgroundMessage(function (payload) {
-  // Customize notification here
-  const notificationTitle = payload.notification.title || 'Tamuro'
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: 'https://tamuro-test01.web.app/img/icons/apple-touch-icon-120x120.png'
-  }
-
-  self.registration.showNotification(
-    notificationTitle,
-    notificationOptions
-  )
-})
+// messaging.onBackgroundMessage(function (payload) {
+//   // Customize notification here
+//   const notificationTitle = payload.notification.title || 'Tamuro'
+//   const notificationOptions = {
+//     body: payload.notification.body,
+//     icon: 'https://tamuro-test01.web.app/img/icons/apple-touch-icon-120x120.png'
+//   }
+//
+//   self.registration.showNotification(
+//     notificationTitle,
+//     notificationOptions
+//   )
+// })
 // [END on_background_message]
