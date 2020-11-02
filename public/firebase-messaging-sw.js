@@ -43,7 +43,6 @@ const messaging = firebase.messaging()
 // [START on_background_message]
 messaging.onBackgroundMessage(function (payload) {
   // Customize notification here
-  console.log(JSON.stringify(payload, 0, 2), window.location.href)
   const notificationTitle = payload.notification.title || 'Tamuro'
   const notificationOptions = {
     body: payload.notification.body,
