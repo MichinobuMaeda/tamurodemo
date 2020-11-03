@@ -68,6 +68,9 @@ const testData = async () => {
     hosting: 'http://localhost:5000'
   })
   await db.collection('accounts').doc(admin01).set({ valid: true })
+  await db.collection('groups').doc('all').update({
+    members: [admin01]
+  })
   await db.collection('groups').doc('admins').update({
     members: [admin01]
   })

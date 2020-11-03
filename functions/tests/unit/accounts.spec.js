@@ -29,6 +29,7 @@ test('createAccount()' +
 
   // prepare
   const name = 'account01'
+  await db.collection('groups').doc('all').update({ members: null })
 
   // run
   const { id } = await createAccount({ name }, { db, auth })
@@ -37,6 +38,7 @@ test('createAccount()' +
   const account = await db.collection('accounts').doc(id).get()
   const user = await db.collection('users').doc(id).get()
   const profile = await db.collection('profiles').doc(id).get()
+  const all = await db.collection('groups').doc('all').get()
   const defaults = await db.collection('service').doc('defaults').get()
   expect(account.exists).toBeTruthy()
   expect(account.data().tz).toEqual(defaults.data().tz)
@@ -47,6 +49,7 @@ test('createAccount()' +
   expect(user.data().name).toEqual(name)
   expect(profile.exists).toBeTruthy()
   expect(auth.data[id]).toBeDefined()
+  expect(all.data().members).toContain(id)
 })
 
 test('createAccount()' +

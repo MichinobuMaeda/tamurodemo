@@ -5,7 +5,7 @@ const { entries } = require('./entries')
 admin.initializeApp()
 const db = admin.firestore()
 const auth = admin.auth()
-const firebase = { functions, db, FieldValue: admin.firestore.FieldValue, auth }
+const firebase = { functions, db, auth }
 
 const ent = entries(firebase)
 

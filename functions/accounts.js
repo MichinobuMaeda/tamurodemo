@@ -27,8 +27,10 @@ const createAccount = async ({ name }, { db, FieldValue, auth }) => {
       createdAt,
       updatedAt
     })
-    await db.collection('groups').doc('all').set({
-      members: FieldValue.arrayUnion(id),
+    const allRef = db.collection('groups').doc('all')
+    const all = await allRef.get()
+    await allRef.update({
+      members: [...(all.data().members || []), id],
       updatedAt
     })
     await auth.createUser({ uid: id })
