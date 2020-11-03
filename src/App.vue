@@ -26,7 +26,7 @@
     <v-main class="px-4" v-else>
       <div class="text-center">
         <DefaultButton
-          v-if="state.me.valid && !isSignInMethod(state)"
+          v-if="noSignInMethod(state)"
           color="warning"
           :icon="icon('Sign in')"
           :label="$t('Set the sign-in method')"
@@ -97,6 +97,9 @@ import {
   goPage,
   authProviders
 } from './auth'
+import {
+  initializeMessaging
+} from './store/io'
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
 import AppUpdater from './components/AppUpdater'
@@ -121,20 +124,17 @@ export default {
     })
 
     const store = createStore(firebase, root)
-    const { messaging, vapidKey } = store
     overrideDefaults(store, root)
     store.goPage = goPage(root.$router)
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
     store.goPageUser = (id, edit = false) => store.goPage({ name: 'user', params: { id, mode: (edit ? 'edit' : null) } })
+    store.standalone = window.matchMedia('(display-mode: standalone)').matches
 
     onMounted(async () => {
       await getAuthState(store)
       await initServiceData(store)
       await updateInvitationStatus(store)
-      await messaging.getToken({ vapidKey })
-      messaging.onMessage((payload) => {
-        console.log('Message received. ', payload)
-      })
+      await initializeMessaging(store)
     })
 
     watch(
@@ -182,7 +182,7 @@ export default {
       guardMenuItem,
       menuItems,
       baseUrl: baseUrl(),
-      isSignInMethod: state => [...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
+      noSignInMethod: state => state.me.valid && ![...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
       updateAvailable: state => state.service.conf && state.service.conf.version !== version,
       version
     }

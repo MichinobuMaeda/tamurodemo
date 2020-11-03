@@ -1,11 +1,12 @@
 const path = require('path')
 const prompts = require('prompts')
-const admin = require('firebase-admin')
-const { updateService } = require('../functions/service')
-const accounts = require('../functions/accounts')
 
 process.env.GCLOUD_PROJECT = 'tamuro-test01'
 process.env.FIREBASE_CONFIG = path.join(__dirname, '..', 'tamuro-test01-firebase-adminsdk.json')
+
+const admin = require('firebase-admin')
+const { updateService } = require('../functions/service')
+const accounts = require('../functions/accounts')
 const serviceAccount = require(process.env.FIREBASE_CONFIG)
 
 admin.initializeApp({

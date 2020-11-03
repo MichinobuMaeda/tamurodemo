@@ -1,6 +1,6 @@
 const { throwErrorDataLoss } = require('./utils')
 
-const createAccount = async ({ name }, { db, auth }) => {
+const createAccount = async ({ name }, { db, FieldValue, auth }) => {
   if (!name) {
     throwErrorDataLoss('createAccount', name, err)
   }
@@ -11,6 +11,7 @@ const createAccount = async ({ name }, { db, auth }) => {
     const defaults = await db.collection('service').doc('defaults').get()
     const account = await db.collection('accounts').add({
       ...defaults.data(),
+      messagingTokens: [],
       valid: true,
       createdAt,
       updatedAt
@@ -24,6 +25,10 @@ const createAccount = async ({ name }, { db, auth }) => {
     })
     await db.collection('profiles').doc(id).set({
       createdAt,
+      updatedAt
+    })
+    await db.collection('groups').doc('all').set({
+      members: FieldValue.arrayUnion(id),
       updatedAt
     })
     await auth.createUser({ uid: id })

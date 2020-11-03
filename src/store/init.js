@@ -31,7 +31,7 @@ export const createStore = (firebase, root) => {
     .filter(category => !category.deletedAt)
     .reduce((ret, cur) => [
       ...ret,
-      ...state.groups.filter(group => !group.deletedAt && (cur.groups || []).includes(group.id))
+      ...state.groups.filter(group => group.id !== 'all' && !group.deletedAt && (cur.groups || []).includes(group.id))
     ], [])
 
   provide(StoreSymbol, store)

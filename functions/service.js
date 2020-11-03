@@ -65,6 +65,18 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
   },
   {
     collection: 'groups',
+    id: 'all',
+    data: {
+      name: 'All members',
+      desc: {
+        type: 'plain',
+        data: ''
+      },
+      members: []
+    }
+  },
+  {
+    collection: 'groups',
     id: 'admins',
     data: {
       name: 'System admins',
@@ -111,7 +123,11 @@ const updateService = async ({ db }) => {
       const docRef = db.collection(collection).doc(id)
       const doc = await docRef.get()
       if (doc && doc.exists) {
-        if (Object.keys(data).some(key => !doc.data()[key] && doc.data()[key] !== false)) {
+        if (Object.keys(data).some(
+          key => !doc.data()[key] &&
+            doc.data()[key] !== false &&
+            doc.data()[key] !== ''
+        )) {
           console.log(`Update: ${collection}.${id}`)
           await docRef.set({
             ...data,

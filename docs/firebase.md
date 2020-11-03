@@ -11,7 +11,8 @@ https://console.firebase.google.com/
 - [Project ID]
     - Project overview
         - Project settings
-            - Google Cloud Platform (GCP) resource location: asia-northeast1 or 2
+            - General
+                - Google Cloud Platform (GCP) resource location: asia-northeast1 or 2
     - Authentication
         - Sign in method
             - Email/Password: Enable
@@ -49,11 +50,17 @@ $ echo "export default 'Web API Key'" > src/plugins/firebase-api-key.js
 https://console.firebase.google.com/
 
 - [Project ID]
-    - Project settings
-        - Service accounts
-            - Firebase Admin SDK
-                - Generate new private key
-
-```
-$ mv ~/Downloads/tamuro-test01-firebase-adminsdk-q49yg-xxxxxxxx.json ./tamuro-test01-firebase-adminsdk.json
-```
+    - Project overview
+        - Project settings
+            - General
+                - Your apps
+                    - apiKey --> ``src/plugins/firebase-api-key.js``
+            - Cloud Messaging
+                - Web Push certificates
+                    - Generate Key Pair --> ``src/plugins/firebase.js``
+            - Service accounts
+                - Firebase Admin SDK
+                    - Generate new private key --> ``tamuro-test01-firebase-adminsdk.json``
+    - Grow
+        - Predictions
+            - Enable Google Analytics

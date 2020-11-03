@@ -46,23 +46,27 @@
         />
       </div>
 
-      <div
-        v-if="uncategorizedGroups.length"
-        class="my-2"
-      >
-        <v-chip color="h3" outlined>
-          <v-icon>{{ icon('Category') }}</v-icon>
-          {{ $t('Uncategorized') }}
-        </v-chip>
-        <LinkButton
-          v-for="group in uncategorizedGroups" :key="group.id"
-          :icon="icon('Group')"
-          :label="group.name"
-          @click="goPageGroup(group.id)"
-        />
-      </div>
-
       <div v-if="page.edit && (priv.manager || priv.admin)">
+
+        <v-divider class="my-4" />
+
+        <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
+
+        <div
+          v-if="uncategorizedGroups.length"
+          class="my-2"
+        >
+          <v-chip color="h3" outlined>
+            <v-icon>{{ icon('Category') }}</v-icon>
+            {{ $t('Uncategorized') }}
+          </v-chip>
+          <LinkButton
+            v-for="group in uncategorizedGroups" :key="group.id"
+            :icon="icon('Group')"
+            :label="group.name"
+            @click="goPageGroup(group.id)"
+          />
+        </div>
 
         <div
           v-if="deletedGroups.length"
@@ -80,7 +84,7 @@
           />
         </div>
 
-        <v-divider class="my-2" />
+        <v-divider class="my-4" />
 
         <CreateGroup />
 
@@ -108,28 +112,36 @@ export default {
   },
   setup () {
     const store = useStore()
+    const { state } = store
     const page = reactive({
       edit: false
     })
 
+    const groupsOfCategory = category => (category.groups || [])
+      .map(id => state.groups.find(group => group.id === id))
+      .filter(group => group && !group.deletedAt && group.id !== 'all')
+
     const uncategorizedGroups = computed(
-      () => store.state.groups
+      () => state.groups
         .filter(group =>
-          !group.deletedAt &&
-          !store.state.categories.some(
-            category => !category.deletedAt && (category.groups || []).includes(group.id)
+          group.id === 'all' || (
+            !group.deletedAt &&
+            !store.state.categories.some(
+              category => !category.deletedAt && (category.groups || []).includes(group.id)
+            )
           )
         )
     )
 
     const deletedGroups = computed(
-      () => store.state.groups
+      () => state.groups
         .filter(group => group.deletedAt)
     )
 
     return {
       page,
       ...store,
+      groupsOfCategory,
       uncategorizedGroups,
       deletedGroups
     }

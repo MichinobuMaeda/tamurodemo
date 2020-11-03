@@ -1,3 +1,19 @@
+export const initializeMessaging = async ({ webPushCertificateKey, messaging, db, FieldValue, state }) => {
+  if (webPushCertificateKey && process.env.NODE_ENV === 'production') {
+    const token = await messaging.getToken({ vapidKey: webPushCertificateKey })
+    messaging.onMessage((payload) => {
+      console.log('Message received. ', payload)
+    })
+    if (token && state.me.id) {
+      const ts = new Date()
+      await db.collection('accounts').doc(state.me.id).update({
+        messagingTokens: FieldValue.arrayUnion({ token, ts }),
+        updatedAt: ts
+      })
+    }
+  }
+}
+
 export const ioHelpers = (db, state) => {
   const setProcForWait = async (proc, next = null) => {
     const ts = new Date().getTime()
