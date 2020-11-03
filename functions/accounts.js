@@ -1,6 +1,7 @@
 const { throwErrorDataLoss } = require('./utils')
 
 const createAccount = async ({ name }, { db, FieldValue, auth }) => {
+  let id;
   if (!name) {
     throwErrorDataLoss('createAccount', name, err)
   }
@@ -16,37 +17,39 @@ const createAccount = async ({ name }, { db, FieldValue, auth }) => {
       createdAt,
       updatedAt
     })
-    const id = account.id
-    console.log({ id })
-    await db.collection('users').doc(id).set({
-      name,
-      createdAt,
-      updatedAt
+    id = account.id
+    await db.runTransaction(async transaction => {
+      const allRef = db.collection('groups').doc('all')
+      const all = await transaction.get(allRef)
+      await transaction.update(allRef, {
+        members: [...(all.data().members || []), id],
+        updatedAt
+      })
+      await transaction.set(db.collection('users').doc(id), {
+        name,
+        createdAt,
+        updatedAt
+      })
+      await transaction.set(db.collection('profiles').doc(id), {
+        createdAt,
+        updatedAt
+      })
+      await auth.createUser({ uid: id })
+      console.log(`Create account "${id}"`)
     })
-    await db.collection('profiles').doc(id).set({
-      createdAt,
-      updatedAt
-    })
-    const allRef = db.collection('groups').doc('all')
-    const all = await allRef.get()
-    await allRef.update({
-      members: [...(all.data().members || []), id],
-      updatedAt
-    })
-    await auth.createUser({ uid: id })
-    console.log(`Create account "${id}"`)
-
-    return { id }
-
   } catch (err) {
-    throwErrorDataLoss('createAccount', name, err)
+    try {
+      await db.collection('accounts').doc(id).delete()
+    } finally {
+      throwErrorDataLoss('createAccount', name, err)
+    }
   }
+  return { id }
 }
 
 const setEmail = async ({ id, email }, { db, auth }) => {
   try {
-    const ts = new Date()
-    const updatedAt = ts
+    const updatedAt = new Date()
     await auth.updateUser(id, { email })
     await db.collection('accounts').doc(id).update({
       email,

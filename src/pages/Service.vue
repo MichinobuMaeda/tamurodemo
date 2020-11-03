@@ -54,9 +54,46 @@
         <v-col class="col-8">
           <EditableItem
             :label="$t('Invitation expiration')"
-            v-model="invExp"
+            v-model="invitationExpirationTime"
             :rules="rulesDaysAndTime"
             :editable="priv.admin || priv.manager"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="title--text col-4 text-right">{{ $t('Notification expiration') }}</v-col>
+        <v-col class="col-8">
+          <EditableItem
+            :label="$t('Notification expiration')"
+            v-model="notificationExpirationTime"
+            :rules="rulesDaysAndTime"
+            :editable="priv.admin || priv.manager"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="title--text col-4 text-right">{{ $t('Notification pause repetition') }}</v-col>
+        <v-col class="col-8">
+          <EditableItem
+            :label="$t('Notification pause repetition')"
+            v-model="notificationPauseRepetitionTime"
+            :rules="rulesDaysAndTime"
+            :editable="priv.admin || priv.manager"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="title--text col-4 text-right">{{ $t('Notification icon') }}</v-col>
+        <v-col class="col-8">
+          <EditableItem
+            :label="$t('Notification icon')"
+            v-model="state.service.conf.notificationIconPath"
+            :rules="[ruleRequired]"
+            @save="val => waitForUpdate('service', 'conf', { notificationIconPath: val })"
+            :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -183,8 +220,13 @@ export default {
       tz: store.state.service.defaults.tz
     })
 
-    const invExtTime = invExp => {
-      const str = (invExp || '').trim()
+    const dateToDaysAndTime = val => {
+      const d = Math.floor(val / (24 * 60 * 60 * 1000))
+      return `${d} ${new Date(val % (24 * 60 * 60 * 1000)).toISOString().slice(11, 19)}`
+    }
+
+    const daysAndTimeToDate = val => {
+      const str = (val || '').trim()
       const dt = (/ /.test(str) ? str.replace(/ .*/, '') : (/:/.test(str) ? '' : str)) || '0'
       const tm = (/ /.test(str) ? str.replace(/.* /, '') : (/:/.test(str) ? str : '')) || '0:00'
       return Number(dt) * 24 * 60 * 60 * 1000 +
@@ -194,16 +236,20 @@ export default {
     return {
       ...store,
       page,
-      invExp: computed({
-        get: () => {
-          const t = store.state.service.conf.invitationExpirationTime
-          const d = Math.floor(t / (24 * 60 * 60 * 1000))
-          return `${d} ${new Date(t % (24 * 60 * 60 * 1000)).toISOString().slice(11, 19)}`
-        },
-        set: str => waitForUpdate('service', 'conf', { invitationExpirationTime: invExtTime(str) })
+      invitationExpirationTime: computed({
+        get: () => dateToDaysAndTime(store.state.service.conf.invitationExpirationTime),
+        set: str => waitForUpdate('service', 'conf', { invitationExpirationTime: daysAndTimeToDate(str) })
+      }),
+      notificationExpirationTime: computed({
+        get: () => dateToDaysAndTime(store.state.service.conf.notificationExpirationTime),
+        set: str => waitForUpdate('service', 'conf', { notificationExpirationTime: daysAndTimeToDate(str) })
+      }),
+      notificationPauseRepetitionTime: computed({
+        get: () => dateToDaysAndTime(store.state.service.conf.notificationPauseRepetitionTime),
+        set: str => waitForUpdate('service', 'conf', { notificationPauseRepetitionTime: daysAndTimeToDate(str) })
       }),
       rulesDaysAndTime: [
-        v => invExtTime(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
+        v => daysAndTimeToDate(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
       ],
       providers: authProviders(store),
       locales,

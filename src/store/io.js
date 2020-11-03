@@ -8,9 +8,16 @@ export const initializeMessaging = async (
     })
     if (token && state.me.id) {
       const ts = new Date()
-      await db.collection('accounts').doc(state.me.id).update({
-        messagingTokens: FieldValue.arrayUnion({ token, ts }),
-        updatedAt: ts
+      await db.runTransaction(async transaction => {
+        const accountRef = db.collection('accounts').doc(state.me.id)
+        const account = await transaction.get(accountRef)
+        await transaction.set(accountRef, {
+          messagingTokens: [
+            ...account.data().messagingTokens.filter(item => item.token !== token),
+            { token, ts }
+          ],
+          updatedAt: ts
+        })
       })
     }
   }

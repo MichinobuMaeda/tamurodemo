@@ -69,6 +69,10 @@ test('createAccount()' +
 
   // should fail
   await expect(createAccount({ name }, { db, auth })).rejects.toThrow()
+
+  // evaluate
+  const account = await db.collection('accounts').doc(id).get()
+  expect(account.exists).toBeFalsy()
 })
 
 test('setEmail()' +

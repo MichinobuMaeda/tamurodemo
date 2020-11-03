@@ -10,6 +10,9 @@ const initialData = ts => [
       name: 'Tamuro',
       hosting: 'https://tamuro-test01.web.app',
       invitationExpirationTime: 24 * 3600 * 1000,
+      notificationExpirationTime: 10 * 24 * 3600 * 1000,
+      notificationPauseRepetitionTime: 3 * 3600 * 1000,
+      notificationIconPath: '/img/icons/apple-touch-icon-120x120.png',
       desc: {
         type: 'markdown',
         data: '',
