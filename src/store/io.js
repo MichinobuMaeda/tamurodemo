@@ -1,5 +1,7 @@
-export const initializeMessaging = async ({ webPushCertificateKey, messaging, db, FieldValue, state }) => {
-  if (webPushCertificateKey && process.env.NODE_ENV === 'production') {
+export const initializeMessaging = async (
+  { standalone, webPushCertificateKey, messaging, db, FieldValue, state }
+) => {
+  if (standalone && webPushCertificateKey && process.env.NODE_ENV === 'production') {
     const token = await messaging.getToken({ vapidKey: webPushCertificateKey })
     messaging.onMessage((payload) => {
       console.log('Message received. ', payload)
