@@ -30,6 +30,8 @@
         />
       </v-sheet>
 
+      <ChatSummary class="mt-2" />
+
       <div
         v-for="category in state.categories.filter(item => !item.deletedAt)" :key="category.id"
         class="my-2"
@@ -100,6 +102,7 @@ import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
+import ChatSummary from '@/parts/ChatSummary'
 import CreateGroup from '@/parts/CreateGroup'
 
 export default {
@@ -108,6 +111,7 @@ export default {
     PageTitle,
     EditableItem,
     LinkButton,
+    ChatSummary,
     CreateGroup
   },
   setup () {

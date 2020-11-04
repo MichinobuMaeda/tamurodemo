@@ -41,6 +41,8 @@
         :disabled="!!state.waitProc"
       />
 
+      <ChatSummary class="mt-2" id="group.id" />
+
       <p class="h3--text text-h3 pt-6">
         <v-icon color="h3">{{ icon('Members') }}</v-icon>
         {{ $t('Members') }}
@@ -87,6 +89,7 @@ import { reactive, computed } from '@vue/composition-api'
 import { useStore, findItem } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
+import ChatSummary from '@/parts/ChatSummary'
 import ConfirmButton from '@/components/ConfirmButton'
 import LinkButton from '@/components/LinkButton'
 
@@ -95,6 +98,7 @@ export default {
   components: {
     PageTitle,
     EditableItem,
+    ChatSummary,
     ConfirmButton,
     LinkButton
   },

@@ -1,4 +1,5 @@
 export const defaults = {
+  chatSummaryExpand: true,
   darkTheme: false,
   locale: 'ja_JP',
   menuPosition: 'br',

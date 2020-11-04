@@ -1,4 +1,5 @@
 import { myPriv } from './accounts'
+import { groupsOfMe } from './groups'
 
 export const clearServiceData = (state = {}) => {
   state.service = {}
@@ -21,6 +22,7 @@ export const clearUserData = state => {
   state.users = []
   state.profiles = []
   state.groups = []
+  state.chats = {}
   state.categories = []
   state.invitations = {}
   state.waitProc = null
@@ -78,7 +80,8 @@ export const initUserData = async ({ db, auth, state }) => {
   await getInitialAndRealtimeData(
     state,
     'groups',
-    db.collection('groups').orderBy('name', 'asc')
+    db.collection('groups').orderBy('name', 'asc'),
+    onGroupsChange(db)
   )
   await getInitialAndRealtimeData(
     state,
@@ -128,13 +131,24 @@ const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) =>
   state[propName] = (await queryRef.get()).docs
     .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
     .map(doc => castDoc(doc))
-  onChange && onChange(state)
   state.unsubscribers[propName] = queryRef.onSnapshot(querySnapshot => {
     const priv = myPriv(state)
     state[propName] = querySnapshot.docs
       .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
       .map(doc => castDoc(doc))
     return onChange && onChange(state)
+  })
+}
+
+const onGroupsChange = db => async state => {
+  groupsOfMe(state).forEach(group => {
+    const id = group.id
+    state.unsubscribers[`chat_${id}`] && state.unsubscribers[`chat_${id}`]()
+    state.unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
+      .collection('messages').orderBy('createdAt', 'asc')
+      .onSnapshot(querySnapshot => {
+        state.chats[id] = querySnapshot.docs.map(doc => castDoc(doc))
+      })
   })
 }
 

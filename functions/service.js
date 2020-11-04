@@ -45,7 +45,8 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
       tz: 'Asia/Tokyo',
       locale: 'ja_JP',
       menuPosition: 'br',
-      darkTheme: false
+      darkTheme: false,
+      chatSummaryExpand: true
     }
   },
   {

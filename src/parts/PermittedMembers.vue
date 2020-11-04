@@ -99,7 +99,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, findItem } from '@/store'
+import { useStore, findItem, sortedGroups } from '@/store'
 import DefaultButton from '@/components/DefaultButton'
 
 export default {
@@ -112,7 +112,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { state, waitForUpdate, sortedGroups } = store
+    const { state, waitForUpdate } = store
     const page = reactive({
       dialog: false,
       groups: [],

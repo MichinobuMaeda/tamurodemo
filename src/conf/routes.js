@@ -54,6 +54,12 @@ export const routes = [
     meta: { privs: ['user'] }
   },
   {
+    path: '/chat',
+    name: 'chat',
+    component: () => import('../pages/Chat.vue'),
+    meta: { privs: ['user'] }
+  },
+  {
     path: '/preferences',
     name: 'preferences',
     component: () => import('../pages/Preferences.vue'),

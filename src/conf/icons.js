@@ -55,6 +55,11 @@ const iconList = {
   'Checkbox Off': 'check_box_outline_blank',
   'Confirm to add': 'add_circle_outline',
   'Confirm to remove': 'remove_circle_outline',
+  Expand: 'expand_more',
+  Shrink: 'expand_less',
+  Chat: 'chat',
+  'Go top': 'arrow_upward',
+  'Go bottom': 'arrow_downward',
   'Install app': 'get_app'
 }
 

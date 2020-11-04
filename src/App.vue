@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-app-bar
+      id="header"
       app
       color="theme1"
       dense
@@ -47,6 +48,7 @@
     </v-main>
 
     <v-footer
+      id="footer"
       color="theme1r--text"
       class="theme1"
       height="48px"

@@ -12,7 +12,7 @@
 
 <script>
 import { computed } from '@vue/composition-api'
-import { useStore } from '@/store'
+import { useStore, sortedGroups } from '@/store'
 import EditableItem from '@/components/EditableItem'
 
 export default {
@@ -27,7 +27,7 @@ export default {
   setup (props, { root }) {
     const store = useStore()
     const { icon } = store
-    const { sortedGroups, setProcForWait, update, FieldValue } = store
+    const { setProcForWait, update, FieldValue } = store
 
     const getGroups = (state, id) => sortedGroups(state)
       .filter(item => (item.members || []).includes(id))
