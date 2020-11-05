@@ -59,7 +59,7 @@ const setupService = async () => {
       hidden: true
     }
   ])
-  const id = await accounts.createAccount({ name }, context)
+  const { id } = await accounts.createAccount({ name }, context)
   if (email) {
     await accounts.setEmail({ id, email }, context)
   }
@@ -74,10 +74,11 @@ const setupService = async () => {
   await db.collection('groups').doc('managers').update({
     members: admin.firestore.FieldValue.arrayUnion(id)
   })
+  return db
 }
 
 setupService()
-  .then(() => {
+  .then(db => {
     console.log('complete')
   })
   .catch(e => {

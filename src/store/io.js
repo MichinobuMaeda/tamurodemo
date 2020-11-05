@@ -11,7 +11,7 @@ export const initializeMessaging = async (
       await db.runTransaction(async transaction => {
         const accountRef = db.collection('accounts').doc(state.me.id)
         const account = await transaction.get(accountRef)
-        await transaction.set(accountRef, {
+        await transaction.update(accountRef, {
           messagingTokens: [
             ...account.data().messagingTokens.filter(item => item.token !== token),
             { token, ts }
