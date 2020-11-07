@@ -113,8 +113,7 @@ icongen(inputPath, faviconPath, {
     sizes: [16, 32, 48]
   }
 }).then((results) => {
-    console.log(results)
-  })
-  .catch((err) => {
-    console.error(err)
-  })
+  console.log(results)
+}).catch((err) => {
+  console.error(err)
+})

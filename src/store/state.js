@@ -162,9 +162,21 @@ export const findItem = (list, id) => ({
  */
 export const castDoc = doc => ({
   id: doc.id,
-  ...Object.keys(doc.data()).reduce(
-    (ret, cur) => ({
-      ...ret,
-      [cur]: (doc.data()[cur] && doc.data()[cur].toDate ? doc.data()[cur].toDate() : doc.data()[cur])
-    }), ({}))
+  ...firestoreTimestampToDate(doc.data())
 })
+
+const firestoreTimestampToDate = val => {
+  return val && val.toDate
+    ? val.toDate()
+    : (Array.isArray(val)
+      ? val.map(item => firestoreTimestampToDate(item))
+      : (typeof val === 'object'
+        ? Object.keys(val).reduce(
+          (ret, cur) => ({
+            ...ret,
+            [cur]: firestoreTimestampToDate(val[cur])
+          }), ({}))
+        : val
+      )
+    )
+}

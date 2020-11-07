@@ -1,18 +1,7 @@
-const path = require('path')
+const { admin } = require('./env')
 const prompts = require('prompts')
-
-process.env.GCLOUD_PROJECT = 'tamuro-test01'
-process.env.FIREBASE_CONFIG = path.join(__dirname, '..', 'tamuro-test01-firebase-adminsdk.json')
-
-const admin = require('firebase-admin')
 const { updateService } = require('../functions/service')
 const accounts = require('../functions/accounts')
-const serviceAccount = require(process.env.FIREBASE_CONFIG)
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://tamuro-test01.firebaseio.com'
-})
 
 const setupService = async () => {
   const db = admin.firestore()
@@ -80,7 +69,9 @@ const setupService = async () => {
 setupService()
   .then(db => {
     console.log('complete')
+    admin.app().delete()
   })
   .catch(e => {
     console.error(e)
+    admin.app().delete()
   })

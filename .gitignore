@@ -5,6 +5,7 @@
 /src/conf/version.js
 /coverage
 /dist
+/work
 tamuro-test01-firebase-adminsdk.json
 
 .DS_Store
