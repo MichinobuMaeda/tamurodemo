@@ -1,8 +1,8 @@
 const {
-  firestore,
   db,
   auth,
   clearDb,
+  deleteApp,
   testData,
 } = require('./utils')
 const {
@@ -19,7 +19,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await clearDb()
-  await db.terminate()
+  await deleteApp()
 })
 
 test('guardValidAccount()' +
@@ -125,8 +125,9 @@ test('guardGroups()' +
   await accountRef.set({
     valid: true
   })
-  await managersRef.set({
-    members: firestore.FieldValue.arrayUnion(uid)
+  const managerMembers = ['admin01']
+  await managersRef.update({
+    members: [...managerMembers, uid]
   })
   const data = { test: 'test01' }
   const context = { db, uid }
@@ -143,8 +144,8 @@ test('guardGroups()' +
   expect(callMe.context.uid).toEqual(uid)
 
   // #2 prepare
-  await managersRef.set({
-    members: firestore.FieldValue.arrayRemove(uid)
+  await managersRef.update({
+    members: managerMembers
   })
 
   // #2 should fail
@@ -153,8 +154,8 @@ test('guardGroups()' +
   ).rejects.toThrow()
 
   // #3 prepare
-  await adminsRef.set({
-    members: firestore.FieldValue.arrayUnion(uid)
+  await managersRef.update({
+    members: [...managerMembers, uid]
   })
   callMe.data.test = null
   callMe.data.context = null
@@ -167,6 +168,9 @@ test('guardGroups()' +
   expect(callMe.context.uid).toEqual(uid)
 
   // #4 prepare
+  await managersRef.update({
+    members: managerMembers
+  })
   await adminsRef.update({
     deletedAt: new Date()
   })
@@ -206,8 +210,9 @@ test('guardUserSelfOrGroups()' +
   await accountRef.set({
     valid: true
   })
-  await managersRef.set({
-    members: firestore.FieldValue.arrayUnion(uid)
+  const managerMembers = ['admin01']
+  await managersRef.update({
+    members: [...managerMembers, uid]
   })
   const data = { test: 'test01', id: 'account02' }
   const context = { db, uid }
@@ -224,8 +229,8 @@ test('guardUserSelfOrGroups()' +
   expect(callMe.context.uid).toEqual(uid)
 
   // #2 prepare
-  await managersRef.set({
-    members: firestore.FieldValue.arrayRemove(uid)
+  await managersRef.update({
+    members: managerMembers
   })
 
   // #2 should fail
@@ -234,8 +239,8 @@ test('guardUserSelfOrGroups()' +
   ).rejects.toThrow()
 
   // #3 prepare
-  await adminsRef.set({
-    members: firestore.FieldValue.arrayUnion(uid)
+  await managersRef.update({
+    members: [...managerMembers, uid]
   })
   callMe.data.test = null
   callMe.data.context = null
@@ -248,6 +253,9 @@ test('guardUserSelfOrGroups()' +
   expect(callMe.context.uid).toEqual(uid)
 
   // #4 prepare
+  await managersRef.update({
+    members: managerMembers
+  })
   await adminsRef.update({
     deletedAt: new Date()
   })

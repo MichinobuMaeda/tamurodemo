@@ -18,6 +18,9 @@ const {
   setEmailWithInvitation,
   setEmailAndPasswordWithInvitation
 } = require('./invitation')
+const {
+  notifyMessage
+} = require('./notification')
 
 const handleUpdateServiceVersion = firebase => async (req, res) => res.send(await updateVersion(firebase))
 const handleValidateInvitation = firebase => async (req, res) => res.send(await validateInvitation(req.params, firebase))
@@ -75,6 +78,7 @@ const entries = firebase => {
     ),
     // Triggers
     rejectCreateUserWithoutAccount: user => rejectCreateUserWithoutAccount(user, firebase),
+    notifyMessage: snap => notifyMessage(snap, firebase),
     // for Unit test
     handleUpdateServiceVersion: handleUpdateServiceVersion(firebase),
     handleValidateInvitation: handleValidateInvitation(firebase)

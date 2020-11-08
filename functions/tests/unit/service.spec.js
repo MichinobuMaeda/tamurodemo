@@ -2,6 +2,7 @@ const {
   db,
   auth,
   clearDb,
+  deleteApp,
   testData,
   version
 } = require('./utils')
@@ -18,7 +19,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await clearDb()
-  await db.terminate()
+  await deleteApp()
 })
 
 test('updateService()' +

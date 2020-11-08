@@ -4,7 +4,9 @@ const {
   admin01,
   db,
   auth,
+  messaging,
   clearDb,
+  deleteApp,
   testData,
 } = require('./utils')
 const { entries } = require('../../entries')
@@ -19,19 +21,21 @@ const {
   setEmailAndPasswordWithInvitation,
   resetUserAuth,
   rejectCreateUserWithoutAccount,
+  notifyMessage,
   handleUpdateServiceVersion,
   handleValidateInvitation
-} = entries({ functions, db, auth })
+} = entries({ functions, db, auth, messaging })
 
 beforeEach(async () => {
   auth.clear()
+  messaging.clear()
   await clearDb()
   await testData()
 })
 
 afterAll(async () => {
   await clearDb()
-  await db.terminate()
+  await deleteApp()
 })
 
 test('createAccount()' +
@@ -259,6 +263,26 @@ test('rejectCreateUserWithoutAccount()' +
 
   // evaluate
   expect(auth.data[uid]).not.toBeDefined()
+})
+
+test('notifyMessage()' +
+  ' send notification to gtoup members except sender.', async () => {
+
+  // prepare
+  const token = 'token01'
+  const sender = 'account01'
+  await db.collection('accounts').doc('admin01').update({
+    messagingTokens: [{ token, ts: new Date() }]
+  })
+  const message = await db.collection('groups').doc('admins')
+    .collection('messages').add({ sender })
+
+  // run
+  await notifyMessage(await message.get())
+
+  // evaluate
+  expect(messaging.data.message.tokens.length).toEqual(1)
+  expect(messaging.data.message.tokens).toContain(token)
 })
 
 test('handleUpdateServiceVersion()' +

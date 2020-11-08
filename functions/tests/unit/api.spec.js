@@ -3,6 +3,7 @@ const {
   db,
   auth,
   clearDb,
+  deleteApp,
   testData,
 } = require('./utils')
 const {
@@ -17,7 +18,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await clearDb()
-  await db.terminate()
+  await deleteApp()
 })
 
 test('apiKeyValidator()' +

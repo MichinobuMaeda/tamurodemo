@@ -1,14 +1,18 @@
 const path = require('path')
-const fs = require('fs')
-const firebase = require('@firebase/testing')
-const { updateService } = require('../../service')
 
 const projectId = 'tamuro-test01'
+
+process.env.GCLOUD_PROJECT = projectId
+process.env.FIREBASE_CONFIG = path.join(__dirname, '..', '..', '..', `${projectId}-firebase-adminsdk.json`)
+const serviceAccount = require(process.env.FIREBASE_CONFIG)
+const admin = require('firebase-admin')
+const fs = require('fs')
+const { updateService } = require('../../service')
+
 const apiKey = 'test-api-key'
 const admin01 = 'admin01'
 const version = 'testver01'
 const hostingPath = path.join(__dirname, '..', '..', '..', 'dist')
-process.env.GCLOUD_PROJECT = projectId
 
 if (!fs.existsSync(hostingPath)) {
   fs.mkdirSync(hostingPath)
@@ -18,16 +22,35 @@ fs.writeFileSync(
   `{"version":"${version}"}`
 )
 
-const app = firebase.initializeAdminApp({
-  projectId,
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: 'http://localhost:8080'
 })
 
-const db = app.firestore()
+const db = admin.firestore()
 
-const clearDb = () => firebase.clearFirestoreData({
-  projectId
-})
+const clearDb = async () => {
+  const getDocRefs = async parent => {
+    const docRefs = []
+    const collections = (await parent.listCollections()).map(collection => collection.id)
+    const result = await Promise.all(
+      collections.map(collection => db.collection(collection).listDocuments())
+    )
+    result.forEach(refs => { refs.forEach(ref => { docRefs.push(ref) }) })
+    await Promise.all(
+      docRefs.map(async ref => {
+        (await getDocRefs(ref)).forEach(ref => {
+          docRefs.push(ref)
+        })
+      })
+    )
+    return docRefs
+  }
+  const docRefs = await getDocRefs(db)
+  await Promise.all(docRefs.map(ref => ref.delete()))
+}
+
+const deleteApp = () => admin.app().delete()
 
 const auth = {
   error: false,
@@ -60,6 +83,18 @@ const auth = {
   }
 }
 
+const messaging = {
+  error: false,
+  data: {},
+  clear() {
+    this.error = false
+    this.data = {}
+  },
+  sendMulticast(message) {
+    this.data.message = message
+  }
+}
+
 const testData = async () => {
   await updateService({ db })
   await db.collection('service').doc('conf').update({
@@ -84,9 +119,10 @@ module.exports = {
   apiKey,
   admin01,
   version,
-  firestore: firebase.firestore,
   db,
   auth,
+  messaging,
   clearDb,
+  deleteApp,
   testData
 }

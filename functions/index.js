@@ -5,7 +5,8 @@ const { entries } = require('./entries')
 admin.initializeApp()
 const db = admin.firestore()
 const auth = admin.auth()
-const firebase = { functions, db, auth }
+const messaging = admin.messaging()
+const firebase = { functions, db, auth, messaging }
 
 const ent = entries(firebase)
 
@@ -29,3 +30,6 @@ exports.resetUserAuth =
   functions.https.onCall(ent.resetUserAuth)
 exports.rejectCreateUserWithoutAccount =
   functions.auth.user().onCreate(ent.rejectCreateUserWithoutAccount)
+exports.notifyMessage =
+  functions.firestore.document('groups/{groupId}/messages/{messageId}')
+    .onCreate(ent.notifyMessage)

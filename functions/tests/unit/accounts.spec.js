@@ -2,7 +2,8 @@ const {
   db,
   auth,
   clearDb,
-  testData,
+  deleteApp,
+  testData
 } = require('./utils')
 const {
   createAccount,
@@ -20,7 +21,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await clearDb()
-  await db.terminate()
+  await deleteApp()
 })
 
 test('createAccount()' +
