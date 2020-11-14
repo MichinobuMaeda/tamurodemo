@@ -1,4 +1,3 @@
-// import { fakeWindow } from '../utils'
 import {
   admin,
   clearDb,

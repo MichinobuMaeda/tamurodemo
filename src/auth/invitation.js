@@ -26,17 +26,17 @@ export const validateInvitation = async ({ functions, auth }, invitation) => {
   return { status: 'ok' }
 }
 
-export const updateInvitationStatus = async ({ db, auth, state }) => {
+export const updateInvitationStatus = async ({ db, auth, state, update }) => {
   if (state.me.invitedAs &&
     (
       auth.currentUser.email ||
       (auth.currentUser.providerData && auth.currentUser.providerData.length) ||
-      state.me['line.me'] ||
-      state.me['yahoo.co.jp'] ||
-      state.me['mixi.jp']
+      state.me.line_me ||
+      state.me.yahoo_co_jp ||
+      state.me.mixi_jp
     )
   ) {
-    await db.collection('accounts').doc(state.me.id).update({
+    await update('accounts', state.me.id, {
       invitedAs: null
     })
   }

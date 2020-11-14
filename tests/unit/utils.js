@@ -128,6 +128,17 @@ export const auth = {
           password
         }
       })
+  },
+  signInWithCustomToken (token) {
+    return Promise.resolve(true)
+      .then(() => {
+        if (!token) {
+          throw new Error('Invalid token')
+        }
+        this.data.signInWithCustomToken = {
+          token
+        }
+      })
   }
 }
 
