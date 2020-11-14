@@ -1,4 +1,4 @@
-import { computed, inject, provide, reactive } from '@vue/composition-api'
+import { computed, inject, reactive } from '@vue/composition-api'
 import moment from 'moment-timezone'
 import { icon, locales, defaults, validators } from '../conf'
 import { clearServiceData, clearUserData, findItem } from './state'
@@ -27,7 +27,6 @@ export const createStore = (firebase, root) => {
     priv: computed(() => myPriv(state))
   }
 
-  provide(StoreSymbol, store)
   return store
 }
 

@@ -14,7 +14,16 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   runner: 'jest-serial-runner',
+  moduleDirectories: [
+    'node_modules',
+    'src'
+  ],
   testEnvironment: 'node',
-  testPathIgnorePatterns: ['/node_modules/', '/functions/'],
+  testMatch: [
+    '<rootDir>/tests/**/?(*.)+(spec|test).[jt]s?(x)'
+  ],
+  transformIgnorePatterns: [
+    'node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'
+  ],
   testTimeout: 10 * 1000
 }

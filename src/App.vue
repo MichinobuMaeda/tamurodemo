@@ -82,12 +82,12 @@
 </style>
 
 <script>
-import { reactive, onMounted, watch } from '@vue/composition-api'
+import { reactive, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import { menuItems, baseUrl, version } from './conf'
 import {
   createStore, initServiceData,
-  overrideDefaults
+  overrideDefaults, StoreSymbol
 } from './store'
 import {
   getAuthState,
@@ -125,7 +125,7 @@ export default {
       pwaDeferredPrompt: null
     })
 
-    const store = createStore(firebase, root)
+    const store = provide(StoreSymbol, createStore(firebase, root))
     overrideDefaults(store, root)
     store.goPage = goPage(root.$router)
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })

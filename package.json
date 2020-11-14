@@ -25,6 +25,7 @@
     "vuetify": "^2.2.11"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^1.1.1",
     "@firebase/testing": "^0.20.11",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
@@ -72,15 +73,6 @@
     },
     "rules": {},
     "overrides": [
-      {
-        "files": [
-          "**/__tests__/*.{j,t}s?(x)",
-          "**/tests/unit/**/*.spec.{j,t}s?(x)"
-        ],
-        "env": {
-          "jest": true
-        }
-      },
       {
         "files": [
           "**/__tests__/*.{j,t}s?(x)",

@@ -1,4 +1,4 @@
-import { defaultIcons } from '@/components/defaults'
+import { defaultIcons } from 'components/defaults'
 
 const iconList = {
   ...defaultIcons,

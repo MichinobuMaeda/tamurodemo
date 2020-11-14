@@ -3,7 +3,7 @@ import 'firebase/auth'
 import { appId, baseUrl } from '../conf'
 import { updateInvitationStatus } from './index'
 
-const LS_REQ_EMAIL = `${appId}tamuroEmailLinkRequest`
+const LS_REQ_EMAIL = `${appId}EmailLinkRequest`
 const eraseRequestedEmail = () => window.localStorage.setItem(LS_REQ_EMAIL, '')
 const storeRequestedEmail = email => window.localStorage.setItem(LS_REQ_EMAIL, email)
 const restoreRequestedEmail = () => window.localStorage.getItem(LS_REQ_EMAIL)
@@ -17,18 +17,18 @@ export const reauthenticate = ({ auth }, password) =>
   )
 
 // reauthenticate is required
-export const updateMyEmail = async ({ auth, set }, email) => {
+export const updateMyEmail = async ({ auth, update }, email) => {
   await auth.currentUser.updateEmail(email)
-  await set('accounts', auth.currentUser.uid, { email })
+  await update('accounts', auth.currentUser.uid, { email })
 }
 
 // reauthenticate is required
-export const updateMyPassword = async ({ auth, set }, password) => {
+export const updateMyPassword = async ({ auth }, password) => {
   await auth.currentUser.updatePassword(password)
 }
 
-export const sendPasswordResetEmail =
-  ({ auth }, email) => auth.sendPasswordResetEmail(
+export const sendPasswordResetEmail = ({ auth }, email) =>
+  auth.sendPasswordResetEmail(
     email,
     {
       url: baseUrl(),
@@ -39,13 +39,13 @@ export const sendPasswordResetEmail =
 export const sendSignInLinkToEmail = ({ auth }, email) => {
   storeRequestedEmail(email)
   return auth.sendSignInLinkToEmail(email, {
-    url: window.location.href,
+    url: baseUrl(),
     handleCodeInApp: true
   })
 }
 
-export const signInWithEmailAndPassword =
-  ({ auth }, email, password) => auth.signInWithEmailAndPassword(
+export const signInWithEmailAndPassword = ({ auth }, email, password) =>
+  auth.signInWithEmailAndPassword(
     email,
     password
   )
@@ -61,7 +61,7 @@ export const setEmailAndPasswordWithInvitation = async (store, {
         email: newEmail,
         password: newPassword
       })
-    } else {
+    } else if (!newPassword && !confirmPassword) {
       await functions.httpsCallable('setEmailWithInvitation')({
         invitation,
         email: newEmail

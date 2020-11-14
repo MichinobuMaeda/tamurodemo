@@ -15,22 +15,6 @@ export const firebase = Firebase.initializeApp({
   appId: '1:1051588852085:web:c88694ba93327e24137b3c'
 })
 
-// if (process.env.NODE_ENV === 'test') {
-//   console.log(process.env.NODE_ENV)
-//   firebase.firestore().settings({
-//     host: 'localhost:8080',
-//     ssl: false
-//   })
-//   firebase.functions().useFunctionsEmulator(
-//     'http://localhost:5001'
-//   )
-// } else if (location.hostname === 'localhost') {
-//   console.log(location.hostname)
-//   firebase.functions().useFunctionsEmulator(
-//     'http://localhost:5001'
-//   )
-// }
-
 export const auth = firebase.auth()
 export const db = firebase.firestore()
 export const functions = firebase.functions()
