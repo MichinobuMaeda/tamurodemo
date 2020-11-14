@@ -1,14 +1,9 @@
 const path = require('path')
-
-const projectId = 'tamuro-test01'
-
-process.env.GCLOUD_PROJECT = projectId
-process.env.FIREBASE_CONFIG = path.join(__dirname, '..', '..', '..', `${projectId}-firebase-adminsdk.json`)
-const serviceAccount = require(process.env.FIREBASE_CONFIG)
 const admin = require('firebase-admin')
 const fs = require('fs')
 const { updateService } = require('../../service')
 
+const projectId = 'tamuro-test01'
 const apiKey = 'test-api-key'
 const admin01 = 'admin01'
 const version = 'testver01'
@@ -23,7 +18,6 @@ fs.writeFileSync(
 )
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
   databaseURL: 'http://localhost:8080'
 })
 
