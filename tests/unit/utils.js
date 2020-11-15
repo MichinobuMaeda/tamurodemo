@@ -57,7 +57,7 @@ export const setFakeWindow = () => {
       this.localStorage.clear()
     },
     location: {
-      protocol: 'http',
+      protocol: 'http:',
       hostname: 'localhost',
       port: '5000',
       href: 'http://localhost:5000/#/path1'
@@ -76,13 +76,40 @@ const currentUser = {
     this.data = {}
   },
   reauthenticateWithCredential (cred) {
-    this.data = { ...this.data, cred }
+    return Promise.resolve(true)
+      .then(() => {
+        this.data.reauthenticateWithCredential = {
+          cred
+        }
+      })
   },
   updateEmail (email) {
-    this.email = email
+    return Promise.resolve(true)
+      .then(() => {
+        this.email = email
+      })
   },
   updatePassword (password) {
-    this.data = { ...this.data, password }
+    return Promise.resolve(true)
+      .then(() => {
+        this.data.password = password
+      })
+  },
+  linkWithRedirect (provider) {
+    return Promise.resolve(true)
+      .then(() => {
+        this.data.linkWithRedirect = {
+          provider
+        }
+      })
+  },
+  unlink (id) {
+    return Promise.resolve(true)
+      .then(() => {
+        this.data.unlink = {
+          id
+        }
+      })
   }
 }
 
@@ -137,6 +164,14 @@ export const auth = {
         }
         this.data.signInWithCustomToken = {
           token
+        }
+      })
+  },
+  signInWithRedirect (provider) {
+    return Promise.resolve(true)
+      .then(() => {
+        this.data.signInWithRedirect = {
+          provider
         }
       })
   }

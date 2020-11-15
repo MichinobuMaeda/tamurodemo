@@ -1,4 +1,3 @@
-// import { fakeWindow } from '../utils'
 import {
   admin,
   clearDb,
@@ -29,7 +28,6 @@ afterAll(async () => {
 
 test('invite()' +
   ' should call function: invite with given id.', async () => {
-
   // prepare
   const id = 'account01'
   const invitation = 'invitation01'
@@ -45,7 +43,6 @@ test('invite()' +
 
 test('invitationUrl()' +
   ' should return the URL for given invitation for given id.', async () => {
-
   // prepare
   const id = 'account01'
   const invitation = 'invitation01'
@@ -67,7 +64,6 @@ test('invitationUrl()' +
 
 test('validateInvitation()' +
   ' should get token for given invitation and sign-in with the token.', async () => {
-
   // prepare #1
   const invitation = 'invitation01'
   const token = 'token01'
@@ -97,7 +93,6 @@ test('validateInvitation()' +
 test('updateInvitationStatus()' +
   ' should reset the invitation of signed-in account' +
   ' if the account has one of more sign-in methods.', async () => {
-
   // prepare #1
   const invitation = 'invitation01'
   const updatedAt = new Date('2020-10-10T11:11:11.111111Z')
@@ -226,5 +221,7 @@ test('updateInvitationStatus()' +
   await updateInvitationStatus(store)
 
   // evaluate #7
-  expect((await accountRef.get()).data().updatedAt.toDate().toISOString()).toEqual(updatedAt.toISOString())
+  expect(
+    (await accountRef.get()).data().updatedAt.toDate().toISOString()
+  ).toEqual(updatedAt.toISOString())
 })

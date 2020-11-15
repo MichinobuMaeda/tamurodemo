@@ -170,7 +170,7 @@ const firestoreTimestampToDate = val => {
     ? val.toDate()
     : (Array.isArray(val)
       ? val.map(item => firestoreTimestampToDate(item))
-      : (typeof val === 'object'
+      : ((val && typeof val === 'object')
         ? Object.keys(val).reduce(
           (ret, cur) => ({
             ...ret,

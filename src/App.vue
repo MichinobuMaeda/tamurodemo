@@ -125,7 +125,8 @@ export default {
       pwaDeferredPrompt: null
     })
 
-    const store = provide(StoreSymbol, createStore(firebase, root))
+    const store = createStore(firebase, root)
+    provide(StoreSymbol, store)
     overrideDefaults(store, root)
     store.goPage = goPage(root.$router)
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
@@ -167,7 +168,7 @@ export default {
       async (me, mePrev) => {
         overrideDefaults(store, root)
         await detectAccountChanged(store, root.$router, me, mePrev)
-        guardRoute(root.$router, root.$route, store.state, store.state.loading)
+        guardRoute(root.$router, root.$route, store.state)
       }
     )
 

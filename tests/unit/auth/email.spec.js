@@ -31,8 +31,8 @@ afterAll(async () => {
 })
 
 test('reauthenticate()' +
-  ' should call "auth.currentUser.reauthenticate()" with given password.', async () => {
-
+  ' should call "auth.currentUser.reauthenticate()"' +
+  ' with given password.', async () => {
   // prepare
   const password = 'password01'
   const email = store.auth.currentUser.email
@@ -41,7 +41,7 @@ test('reauthenticate()' +
   await reauthenticate(store, password)
 
   // evaluate
-  const cred = JSON.parse(JSON.stringify(store.auth.currentUser.data.cred))
+  const cred = JSON.parse(JSON.stringify(store.auth.currentUser.data.reauthenticateWithCredential.cred))
   expect(cred.email).toEqual(email)
   expect(cred.password).toEqual(password)
   expect(cred.signInMethod).toEqual('password')
@@ -50,7 +50,6 @@ test('reauthenticate()' +
 test('updateMyEmail()' +
   ' should call "auth.currentUser.updateMyEmail()" with given email' +
   ' and set email to account in db.', async () => {
-
   // prepare
   const email = 'modified@example.com'
   await admin.firestore()
@@ -71,8 +70,8 @@ test('updateMyEmail()' +
 })
 
 test('updateMyPassword()' +
-  ' should call "auth.currentUser.updateMyPassword()" with given password.', async () => {
-
+  ' should call "auth.currentUser.updateMyPassword()"' +
+  ' with given password.', async () => {
   // prepare
   const password = 'modified'
 
@@ -84,8 +83,8 @@ test('updateMyPassword()' +
 })
 
 test('sendPasswordResetEmail()' +
-  ' should call "auth.sendPasswordResetEmail()" with given email.', async () => {
-
+  ' should call "auth.sendPasswordResetEmail()"' +
+  ' with given email.', async () => {
   // prepare
   const email = 'test01@example.com'
 
@@ -100,8 +99,8 @@ test('sendPasswordResetEmail()' +
 })
 
 test('sendSignInLinkToEmail()' +
-  ' should call "auth.sendSignInLinkToEmail()" with given email.', async () => {
-
+  ' should call "auth.sendSignInLinkToEmail()"' +
+  ' with given email.', async () => {
   // prepare
   const email = 'test01@example.com'
 
@@ -119,7 +118,6 @@ test('sendSignInLinkToEmail()' +
 test('signInWithEmailAndPassword()' +
   ' should call "auth.signInWithEmailAndPassword()"' +
   ' with given email and password.', async () => {
-
   // prepare
   const email = 'test01@example.com'
   const password = 'password01'
@@ -136,7 +134,6 @@ test('signInWithEmailAndPassword()' +
 test('setEmailAndPasswordWithInvitation()' +
   ' should call function: setEmailAndPasswordWithInvitation' +
   ' with given email and password.', async () => {
-
   // prepare #1
   const invitation = 'invitation01'
   const newEmail = 'test01@example.com'
@@ -368,7 +365,6 @@ test('setEmailAndPasswordWithInvitation()' +
 test('setEmailAndPasswordWithInvitation()' +
   ' should call function: setEmailWithInvitation' +
   ' with given email.', async () => {
-
   // prepare #1
   const invitation = 'invitation01'
   const newEmail = 'test01@example.com'
@@ -500,7 +496,6 @@ test('setEmailAndPasswordWithInvitation()' +
 test('onSignInWithEmailLink()' +
   ' should call "auth.signInWithEmailLink()"' +
   ' with saved email.', async () => {
-
   // prepare #1
   const email = 'test01@example.com'
   window.localStorage.data.tamuroEmailLinkRequest = email

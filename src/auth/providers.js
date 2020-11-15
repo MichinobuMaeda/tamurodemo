@@ -73,17 +73,18 @@ const toggleOAuthProvider = (store, id, provider = null) =>
   () => store.setProcForWait(
     async () => {
       const { state, auth, update } = store
-      if (state.me && state.me[id]) {
+      if (state.me && state.me[id.replace(/\./g, '_')]) {
         if (provider) {
           await auth.currentUser.unlink(id)
-        } else {
-          await update('accounts', state.me.id, { [id]: null })
         }
+        await update('accounts', state.me.id, { [id.replace(/\./g, '_')]: null })
       } else {
         if (provider) {
           await auth.currentUser.linkWithRedirect(provider)
+          await update('accounts', state.me.id, { [id.replace(/\./g, '_')]: true })
         } else {
           // TODO
+          // await update('accounts', state.me.id, { [id.replace(/\./g, '_')]: TODO })
         }
       }
       await updateInvitationStatus(store)

@@ -1,11 +1,8 @@
 import { functions } from '../utils'
 import { resetAllSignInSettings } from '../../../src/auth/admin'
 
-console.log(process.env.NODE_ENV)
-
 test('resetAllSignInSettings()' +
   ' should call "resetUserAuth" with given id.', async () => {
-
   // prepare
   const id = 'account01'
   functions.results.resetUserAuth = 'ok'
