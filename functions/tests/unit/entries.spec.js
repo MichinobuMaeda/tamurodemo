@@ -1,5 +1,5 @@
 const path = require('path')
-const functions = require('firebase-functions')
+// const functions = require('firebase-functions')
 const {
   admin01,
   db,
@@ -24,7 +24,7 @@ const {
   notifyMessage,
   handleUpdateServiceVersion,
   handleValidateInvitation
-} = entries({ functions, db, auth, messaging })
+} = entries({ /* functions, */db, auth, messaging })
 
 beforeEach(async () => {
   auth.clear()

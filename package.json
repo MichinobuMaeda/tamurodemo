@@ -50,6 +50,7 @@
     "icon-gen": "^2.0.0",
     "jest": "^26.6.1",
     "jest-serial-runner": "^1.1.0",
+    "nanoid": "^3.1.16",
     "prompts": "^2.3.2",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
