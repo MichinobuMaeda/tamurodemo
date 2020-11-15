@@ -1,4 +1,4 @@
-const { apiKeyValidator, api, router } = require('./api')
+const { apiKeyValidator } = require('./api')
 const { updateVersion } = require('./service')
 const {
   guardValidAccount,
@@ -25,7 +25,7 @@ const {
 const handleUpdateServiceVersion = firebase => async (req, res) => res.send(await updateVersion(firebase))
 const handleValidateInvitation = firebase => async (req, res) => res.send(await validateInvitation(req.params, firebase))
 
-const entries = firebase => {
+const entries = (firebase, api, router) => {
 
   router.use(
     '/updateServiceVersion',

@@ -11,6 +11,18 @@ const {
 } = require('./utils')
 const { entries } = require('../../entries')
 
+const api = {
+  use: () => {}
+}
+
+const router = {
+  use: () => {},
+  get: () => {},
+  post: () => {},
+  put: () => {},
+  delete: () => {}
+}
+
 const {
   createAccount,
   setEmail,
@@ -24,7 +36,7 @@ const {
   notifyMessage,
   handleUpdateServiceVersion,
   handleValidateInvitation
-} = entries({ /* functions, */db, auth, messaging })
+} = entries({ db, auth, messaging }, api, router)
 
 beforeEach(async () => {
   auth.clear()

@@ -1,6 +1,12 @@
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
+const express = require('express')
+const cors = require('cors')
 const { entries } = require('./entries')
+
+const api = express()
+api.use(cors({ origin: true }))
+const router = express.Router()
 
 admin.initializeApp()
 const db = admin.firestore()
@@ -8,7 +14,7 @@ const auth = admin.auth()
 const messaging = admin.messaging()
 const firebase = { functions, db, auth, messaging }
 
-const ent = entries(firebase)
+const ent = entries(firebase, api, router)
 
 exports.api =
   functions.https.onRequest(ent.api)
