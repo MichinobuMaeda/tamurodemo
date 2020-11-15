@@ -7,6 +7,8 @@ on:
       - 'firestore.*'
       - 'storage.rules'
       - '.github/workflows/functions.yaml'
+      - '.github/workflows/firestore.yaml'
+      - '.github/workflows/storage.yaml'
 jobs:
   build:
     runs-on: ubuntu-latest

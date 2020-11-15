@@ -64,7 +64,7 @@ jobs:
       - name: Unit test
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
-        working-directory: ${{ github.workspace }}/functions
+        working-directory: ${{ github.workspace }}
         run: yarn test:unit:ci
 
       - name: Deploy
