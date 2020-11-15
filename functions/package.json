@@ -9,7 +9,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "test:unit": "firebase emulators:exec 'jest --coverage --silent' --only firestore,hosting",
-    "test:unit:ci": "firebase emulators:exec 'jest --coverage --silent && codecov' --only firestore,hosting --token \"$FIREBASE_TOKEN\""
+    "test:unit:ci": "firebase emulators:exec 'jest --coverage --silent && codecov -c -F functions_unit' --only firestore,hosting --token \"$FIREBASE_TOKEN\""
   },
   "engines": {
     "node": "10"
