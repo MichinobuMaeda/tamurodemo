@@ -1,89 +1,80 @@
-// const path = require('path')
-// const fs = require('fs')
-const prompts = require('prompts')
-const firebase = require('@firebase/testing')
+process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099'
+process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080'
+
+const admin = require('firebase-admin')
 const { updateService } = require('../functions/service')
+const accounts = require('../functions/accounts')
 
 const projectId = 'tamuro-test01'
+const name = 'Primary User'
+const email = 'primary@example.com'
+const password = 'password'
+const apiKey = 'api_key'
 
-// const accounts = require('../functions/accounts')
+admin.initializeApp({ projectId })
 
-// const serviceAccount = require('../tamuro-test01-firebase-adminsdk.json')
+const db = admin.firestore()
+const auth = admin.auth()
+const context = { db, auth }
 
-const app = firebase.initializeAdminApp({
-  projectId,
-  databaseURL: 'http://localhost:8080'
-})
+const clearDb = async () => {
+  const getDocRefs = async parent => {
+    const docRefs = []
+    const collections = (await parent.listCollections()).map(collection => collection.id)
+    const result = await Promise.all(
+      collections.map(collection => db.collection(collection).listDocuments())
+    )
+    result.forEach(refs => { refs.forEach(ref => { docRefs.push(ref) }) })
+    await Promise.all(
+      docRefs.map(async ref => {
+        (await getDocRefs(ref)).forEach(ref => {
+          docRefs.push(ref)
+        })
+      })
+    )
+    return docRefs
+  }
+  const docRefs = await getDocRefs(db)
+  await Promise.all(docRefs.map(ref => ref.delete()))
+}
 
-firebase.clearFirestoreData({
-  projectId
-})
+const deleteApp = () => admin.app().delete()
 
 const setupService = async () => {
-  const db = app.firestore()
-  // const auth = admin.auth()
-  await updateService(db)
+  await clearDb()
+  await updateService(context)
 
   // set API Key.
   const serviceConfRef = db.collection('service').doc('conf')
   if (!(await serviceConfRef.get()).data().apiKey) {
-    const { apiKey } = await prompts([
-      {
-        type: 'text',
-        name: 'apiKey',
-        message: 'Web API key:',
-        validate: value => /.{10}/.test(value) || 'Required.'
-      }
-    ])
+    console.log('Set: service.conf.apiKey')
     await serviceConfRef.update({ apiKey })
   }
-  //
-  // // Create primary user.
-  // if ((await db.collection('accounts').get()).docs.length) {
-  //   return true
-  // }
-  // const { name, email, password } = await prompts([
-  //   {
-  //     type: 'text',
-  //     name: 'name',
-  //     message: 'Display name:',
-  //     validate: value => /.{4}/.test(value) || 'The display name should be 4 characters or more.'
-  //   },
-  //   {
-  //     type: 'text',
-  //     name: 'email',
-  //     message: 'E-mail:',
-  //     validate: value => /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/.test(value) || 'Please enter your email address in the correct format.'
-  //   },
-  //   {
-  //     type: 'password',
-  //     name: 'password',
-  //     message: 'Password:',
-  //     validate: value => /.{8}/.test(value) || 'The password name should be 4 characters or more.',
-  //     hidden: true
-  //   }
-  // ])
-  // const id = await accounts.createAccount({ name }, { db, auth })
-  // if (email) {
-  //   await accounts.setEmail({ id, email }, { db, auth })
-  // }
-  // if (password) {
-  //   await accounts.setPassword({ id, password }, { db, auth })
-  // }
-  // console.log(`Add memeber: accounts.${id} to groups.admins`)
-  // await db.collection('groups').doc('admins').update({
-  //   members: admin.firestore.FieldValue.arrayUnion(id)
-  // })
-  // console.log(`Add memeber: accounts.${id} to groups.managers`)
-  // await db.collection('groups').doc('managers').update({
-  //   members: admin.firestore.FieldValue.arrayUnion(id)
-  // })
+
+  // Create primary user.
+  if ((await db.collection('accounts').get()).docs.length) {
+    return true
+  }
+  const { id } = await accounts.createAccount({ name }, context)
+  await accounts.setEmail({ id, email }, context)
+  await accounts.setPassword({ id, password }, context)
+  console.log(`Add memeber: accounts.${id} to groups.admins`)
+  await db.collection('groups').doc('admins').update({
+    members: [id]
+  })
+  console.log(`Add memeber: accounts.${id} to groups.managers`)
+  await db.collection('groups').doc('managers').update({
+    members: [id]
+  })
+  return null
 }
 
 setupService()
   .then(() => {
     console.log('complete')
+    return deleteApp()
   })
   .catch(e => {
     console.error(e)
+    return deleteApp()
   })

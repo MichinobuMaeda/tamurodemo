@@ -33,21 +33,28 @@
     "rules": "storage.rules"
   },
   "emulators": {
-    "functions": {
-      "port": 5001
-    },
     "firestore": {
-      "port": 8080
+      "port": "8080"
     },
-    "pubsub": {
-      "port": 8085
+    "ui": {
+      "enabled": true,
+      "host": "localhost",
+      "port": 4000
+    },
+    "auth": {
+      "port": "9099"
+    },
+    "functions": {
+      "port": "5001"
+    },
+    "database": {
+      "port": "9000"
     },
     "hosting": {
       "port": 5000
     },
-    "ui": {
-      "enabled": true,
-      "port": 8089
+    "pubsub": {
+      "port": "8085"
     }
   }
 }

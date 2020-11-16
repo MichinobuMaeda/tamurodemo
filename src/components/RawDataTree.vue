@@ -1,9 +1,9 @@
 <template>
   <v-dialog
     scrollable max-width="1024px"
-    v-model="dialog"
-    @click:outside="$emit('dialogChange', false)"
-    @keydown.esc="$emit('dialogChange', false)"
+    v-model="open"
+    @click:outside="$emit('dialog-change', false)"
+    @keydown.esc="$emit('dialog-change', false)"
   >
     <v-card>
       <v-card-title>
@@ -13,7 +13,7 @@
         </span>
         <v-spacer />
         <span class="text-body-2 pr-2">Developers only</span>
-        <v-btn icon @click="$emit('dialogChange', false)">
+        <v-btn icon @click="$emit('dialog-change', false)">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
@@ -74,6 +74,7 @@ export default {
   },
   setup (props) {
     return {
+      open: props.dialog,
       tree: computed(() => [...Object.keys(props.items || {})].sort().map(
         key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])
       ))

@@ -7,8 +7,7 @@ const serviceAccount = require(process.env.FIREBASE_CONFIG)
 const admin = require('firebase-admin')
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${projectId}.firebaseio.com`
+  credential: admin.credential.cert(serviceAccount)
 })
 
 const workDir = path.join(__dirname, '..', 'work')

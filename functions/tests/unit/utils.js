@@ -17,9 +17,7 @@ fs.writeFileSync(
   `{"version":"${version}"}`
 )
 
-admin.initializeApp({
-  databaseURL: 'http://localhost:8080'
-})
+admin.initializeApp({ projectId })
 
 const db = admin.firestore()
 

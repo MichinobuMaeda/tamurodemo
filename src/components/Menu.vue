@@ -29,7 +29,7 @@
         v-if="state.menuOpen"
         :value="state.toolChip"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ attrs }">
           <v-btn
             v-bind="attrs"
             :dark="!$vuetify.theme.dark"

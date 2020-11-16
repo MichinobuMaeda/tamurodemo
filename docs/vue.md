@@ -10,7 +10,7 @@ Vue
 $ npm -g install npm n firebase-tools eslint @vue/cli
 $ n 10
 $ node --version
-v10.22.0
+v10....
 $ vue create tamuro
 $ cd tamuro
 $ vue add router

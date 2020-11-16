@@ -21,3 +21,10 @@ export const functions = firebase.functions()
 export const messaging = firebase.messaging()
 export const webPushCertificateKey = 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4'
 export const FieldValue = Firebase.firestore.FieldValue
+
+console.log('ui', process.env.NODE_ENV)
+if (process.env.NODE_ENV === 'development') {
+  auth.useEmulator('http://localhost:9099/')
+  db.useEmulator('localhost', 8080)
+  functions.useEmulator('localhost', 5001)
+}

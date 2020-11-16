@@ -184,7 +184,7 @@ const messaging = {
     this.error = false
     this.data = {}
   },
-  sendMulticast(message) {
+  sendMulticast (message) {
     this.data.message = message
   }
 }
