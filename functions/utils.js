@@ -1,5 +1,5 @@
 const functions = require('firebase-functions')
-const { warn, error } = require("firebase-functions/lib/logger")
+const { warn, error } = require('firebase-functions/lib/logger')
 
 const throwUnauthenticated = (msg, uid) => {
   warn('unauthenticated: ' + msg + ' uid: ' + uid)

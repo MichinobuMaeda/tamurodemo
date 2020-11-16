@@ -7,7 +7,7 @@ const {
   messaging,
   clearDb,
   deleteApp,
-  testData,
+  testData
 } = require('./utils')
 const { entries } = require('../../entries')
 
@@ -52,12 +52,11 @@ afterAll(async () => {
 
 test('createAccount()' +
   ' create account of given name by uid with sufficient privilege', async () => {
-
   // #1 prepare
   const uid = 'account01'
   await db.collection('accounts').doc(uid).set({ valid: true })
   const data = { name: 'name01' }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(createAccount(data, context)).rejects.toThrow()
@@ -76,7 +75,6 @@ test('createAccount()' +
 
 test('setEmail()' +
   ' set email to account of given id by uid with sufficient privilege', async () => {
-
   // #1 prepare
   const uid = 'account01'
   const id = 'account02'
@@ -84,7 +82,7 @@ test('setEmail()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
   const data = { id, email }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(setEmail(data, context)).rejects.toThrow()
@@ -104,7 +102,6 @@ test('setEmail()' +
 
 test('setPassword()' +
   ' set password to account of given id by uid with sufficient privilege', async () => {
-
   // #1 prepare
   const uid = 'account01'
   const id = 'account02'
@@ -112,7 +109,7 @@ test('setPassword()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
   const data = { id, password }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(setPassword(data, context)).rejects.toThrow()
@@ -130,14 +127,13 @@ test('setPassword()' +
 
 test('invite()' +
   ' create invitation code for given id by uid with sufficient privilege', async () => {
-
   // #1 prepare
   const uid = 'account01'
   const id = 'account02'
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
   const data = { id }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(invite(data, context)).rejects.toThrow()
@@ -154,13 +150,12 @@ test('invite()' +
 
 test('validateInvitation()' +
   ' create token for account has valid invitation code', async () => {
-
   // #1 prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
   const data = { invitation: 'invalid invitation' }
-  const context = { auth: { uid: null }}
+  const context = { auth: { uid: null } }
 
   // #1 should fail
   await expect(validateInvitation(data, context)).rejects.toThrow()
@@ -177,16 +172,15 @@ test('validateInvitation()' +
 
 test('setEmailWithInvitation()' +
   ' set email to account of uid with valid invitation code', async () => {
-
   // #1 prepare
   const id = 'account01'
   const uid = 'account02'
   await db.collection('accounts').doc(id).set({ valid: true })
   await db.collection('accounts').doc(uid).set({ valid: true })
   const email = 'dummy@example.com'
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
   const data = { invitation, email }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(setEmailWithInvitation(data, context)).rejects.toThrow()
@@ -206,7 +200,6 @@ test('setEmailWithInvitation()' +
 
 test('setEmailAndPasswordWithInvitation()' +
   ' set email and password to account of uid with valid invitation code', async () => {
-
   // #1 prepare
   const id = 'account01'
   const uid = 'account02'
@@ -214,9 +207,9 @@ test('setEmailAndPasswordWithInvitation()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   const email = 'dummy@example.com'
   const password = 'password01'
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
   const data = { invitation, email, password }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(setEmailAndPasswordWithInvitation(data, context)).rejects.toThrow()
@@ -238,7 +231,6 @@ test('setEmailAndPasswordWithInvitation()' +
 test('resetUserAuth()' +
   ' recreate user in Authentication for given id' +
   ' by uid with sufficient privilege.', async () => {
-
   // #1 prepare
   const uid = 'account01'
   const id = 'account02'
@@ -246,7 +238,7 @@ test('resetUserAuth()' +
   await db.collection('accounts').doc(id).set({ email: 'account02@example.com' })
   auth.data[id] = { email: 'account02@example.com' }
   const data = { id }
-  const context = { auth: { uid }}
+  const context = { auth: { uid } }
 
   // #1 should fail
   await expect(resetUserAuth(data, context)).rejects.toThrow()
@@ -265,7 +257,6 @@ test('resetUserAuth()' +
 
 test('rejectCreateUserWithoutAccount()' +
   ' delete auth user without account doc in db.', async () => {
-
   // prepare
   const uid = 'account01'
   auth.data[uid] = { email: 'account01@example.com' }
@@ -279,7 +270,6 @@ test('rejectCreateUserWithoutAccount()' +
 
 test('notifyMessage()' +
   ' send notification to gtoup members except sender.', async () => {
-
   // prepare
   const token = 'token01'
   const sender = 'account01'
@@ -299,7 +289,6 @@ test('notifyMessage()' +
 
 test('handleUpdateServiceVersion()' +
   ' call updateVersion()', async () => {
-
   // prepare
   const result = {}
   const req = {}
@@ -316,11 +305,10 @@ test('handleUpdateServiceVersion()' +
 
 test('handleValidateInvitation()' +
   ' call validateInvitation()', async () => {
-
   // prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 }})
+  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
   const result = {}
   const req = { params: { invitation } }
   const res = {

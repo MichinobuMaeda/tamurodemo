@@ -22,7 +22,6 @@ afterAll(async () => {
 
 test('notifyMessage()' +
   ' send notification to gtoup members except sender.', async () => {
-
   // prepare #1
   const messageId = '20201030010203000004'
   const account01Id = 'account01'

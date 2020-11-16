@@ -26,7 +26,6 @@ const handleUpdateServiceVersion = firebase => async (req, res) => res.send(awai
 const handleValidateInvitation = firebase => async (req, res) => res.send(await validateInvitation(req.params, firebase))
 
 const entries = (firebase, api, router) => {
-
   router.use(
     '/updateServiceVersion',
     apiKeyValidator(firebase)
@@ -69,9 +68,9 @@ const entries = (firebase, api, router) => {
     ),
     setEmailAndPasswordWithInvitation: (data, context) => {
       console.log(JSON.stringify(data))
-        return guardValidAccount(
-          data, ctx(context), setEmailAndPasswordWithInvitation
-        )
+      return guardValidAccount(
+        data, ctx(context), setEmailAndPasswordWithInvitation
+      )
     },
     resetUserAuth: (data, context) => guardGroups(
       data, ctx(context), adminsOrManagers, resetUserAuth

@@ -3,7 +3,7 @@ const {
   auth,
   clearDb,
   deleteApp,
-  testData,
+  testData
 } = require('./utils')
 const {
   guardValidAccount,
@@ -24,7 +24,6 @@ afterAll(async () => {
 
 test('guardValidAccount()' +
   ' accepts uid of valid account.', async () => {
-
   // prepare
   const callMe = { data: null, context: null }
   const uid = 'account01'
@@ -48,7 +47,6 @@ test('guardValidAccount()' +
 
 test('guardValidAccount()' +
   ' rejects no uid.', async () => {
-
   // prepare
   const uid = 'account01'
   await db.collection('accounts').doc(uid).set({
@@ -64,7 +62,6 @@ test('guardValidAccount()' +
 
 test('guardValidAccount()' +
   ' rejects uid of invalid account.', async () => {
-
   // prepare
   const uid = 'account01'
   await db.collection('accounts').doc(uid).set({
@@ -80,7 +77,6 @@ test('guardValidAccount()' +
 
 test('guardValidAccount()' +
   ' rejects uid of deleted account.', async () => {
-
   // prepare
   const uid = 'account01'
   await db.collection('accounts').doc(uid).set({
@@ -97,7 +93,6 @@ test('guardValidAccount()' +
 
 test('guardValidAccount()' +
   ' rejects uid of account not exist.', async () => {
-
   // prepare
   const uid = 'account01'
   const data = { test: 'test01' }
@@ -114,7 +109,6 @@ test('guardGroups()' +
   ' and rejects that not belongs to any of the specified groups.' +
   ' and rejects invalid account,' +
   ' and accepts uid equals data.id.', async () => {
-
   // #1 prepare
   const callMe = { data: null, context: null }
   const uid = 'account01'
@@ -199,7 +193,6 @@ test('guardUserSelfOrGroups()' +
   ' that belongs to one of the specified groups,' +
   ' and rejects that not belongs to any of the specified groups.' +
   ' and rejects invalid account.', async () => {
-
   // #1 prepare
   const callMe = { data: null, context: null }
   const uid = 'account01'

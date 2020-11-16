@@ -15,7 +15,7 @@ const initialData = ts => [
       notificationIconPath: '/img/icons/apple-touch-icon-120x120.png',
       desc: {
         type: 'markdown',
-        data: '',
+        data: ''
       },
       policy: {
         type: 'markdown',
@@ -56,15 +56,15 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
       invitation: true,
       emailLink: true,
       password: true,
-      'google_com': {},
-      'apple_com': false,
-      'facebook_com': false,
-      'github_com': false,
-      'microsoft_com': false,
-      'twitter_com': false,
-      'line_me': false,
-      'yahoo_co_jp': {},
-      'mixi_jp': false
+      google_com: {},
+      apple_com: false,
+      facebook_com: false,
+      github_com: false,
+      microsoft_com: false,
+      twitter_com: false,
+      line_me: false,
+      yahoo_co_jp: {},
+      mixi_jp: false
     }
   },
   {

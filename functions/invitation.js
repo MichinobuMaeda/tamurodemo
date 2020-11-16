@@ -1,7 +1,7 @@
 const { nanoid } = require('nanoid')
 const crypto = require('crypto')
 const { throwUnauthenticated } = require('./utils')
-const { setEmail, setPassword }  = require('./accounts')
+const { setEmail, setPassword } = require('./accounts')
 
 const hashInvitation = (apiKey, invitation) => {
   const hash = crypto.createHash('sha256')
@@ -27,7 +27,7 @@ const invite = async ({ id }, { db, uid }) => {
 const invitedAccount = async ({ invitation }, { db }) => {
   const conf = await db.collection('service').doc('conf').get()
   const invitedAs = hashInvitation(conf.data().apiKey, invitation)
-  const accounts = await db.collection('accounts').where('invitedAs', "==", invitedAs).get()
+  const accounts = await db.collection('accounts').where('invitedAs', '==', invitedAs).get()
   if (!(accounts && accounts.docs && accounts.docs.length === 1)) {
     throwUnauthenticated('Invalid invitation code: ', invitation)
   }

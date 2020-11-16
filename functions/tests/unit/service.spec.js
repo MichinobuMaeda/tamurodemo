@@ -24,7 +24,6 @@ afterAll(async () => {
 
 test('updateService()' +
   ' create required documents and properties but not overwrite.', async () => {
-
   // prepare
   await db.collection('service').doc('defaults').delete()
   await db.collection('service').doc('defaults').set({
@@ -45,7 +44,6 @@ test('updateService()' +
 
 test('updateVersion()' +
   ' get dist/version.json in hosting and set version of service/conf.', async () => {
-
   // prepare
   await db.collection('service').doc('conf').update({
     version: '0000000000'

@@ -4,7 +4,7 @@ const {
   auth,
   clearDb,
   deleteApp,
-  testData,
+  testData
 } = require('./utils')
 const {
   apiKeyValidator
@@ -23,10 +23,9 @@ afterAll(async () => {
 
 test('apiKeyValidator()' +
   ' accepts valid api key.', async () => {
-
   // prepare
   const callMe = { count: 0 }
-  const req = { query: { key: apiKey }}
+  const req = { query: { key: apiKey } }
   const res = {
     send () { throw new Error("Don't call me") }
   }
@@ -41,10 +40,9 @@ test('apiKeyValidator()' +
 
 test('apiKeyValidator()' +
   ' rejects no api key.', async () => {
-
   // prepare
   const callMe = { count: 0, status: null }
-  const req = { query: {}}
+  const req = { query: {} }
   const res = {
     status (code) { callMe.status = code },
     send () { ++callMe.count }
@@ -61,10 +59,9 @@ test('apiKeyValidator()' +
 
 test('apiKeyValidator()' +
   ' rejects invalid api key.', async () => {
-
   // prepare
   const callMe = { count: 0, status: null }
-  const req = { query: { key: 'invalid api key' }}
+  const req = { query: { key: 'invalid api key' } }
   const res = {
     status (code) { callMe.status = code },
     send () { ++callMe.count }

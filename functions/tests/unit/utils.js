@@ -47,12 +47,12 @@ const deleteApp = () => admin.app().delete()
 const auth = {
   error: false,
   data: {},
-  clear() {
+  clear () {
     this.error = false
     this.data = {}
   },
   createCustomToken: uid => `token for ${uid}`,
-  createUser(userData) {
+  createUser (userData) {
     const { uid, ...data } = userData
     if (this.error) {
       this.error = false
@@ -60,14 +60,14 @@ const auth = {
     }
     this.data[uid] = { ...data }
   },
-  updateUser(uid, data) {
+  updateUser (uid, data) {
     if (this.error) {
       this.error = false
       throw new Error('something bad happened')
     }
     this.data[uid] = { ...this.data[uid], ...data }
   },
-  deleteUser(uid) {
+  deleteUser (uid) {
     if (!this.data[uid]) {
       throw Error('')
     }
@@ -78,11 +78,11 @@ const auth = {
 const messaging = {
   error: false,
   data: {},
-  clear() {
+  clear () {
     this.error = false
     this.data = {}
   },
-  sendMulticast(message) {
+  sendMulticast (message) {
     this.data.message = message
   }
 }

@@ -27,7 +27,6 @@ afterAll(async () => {
 test('createAccount()' +
   ' creates docs of accounts, users, profiles and auth entry with same id,' +
   ' and set name and default settings to user doc.', async () => {
-
   // prepare
   const name = 'account01'
   await db.collection('groups').doc('all').update({ members: null })
@@ -56,14 +55,12 @@ test('createAccount()' +
 test('createAccount()' +
   ' rejects no name.', async () => {
   const name = null
-
   // should fail
   await expect(createAccount({ name }, { db, auth })).rejects.toThrow()
 })
 
 test('createAccount()' +
   ' throw system error.', async () => {
-
   // prepare
   auth.error = true
   const name = 'account01'
@@ -74,7 +71,6 @@ test('createAccount()' +
 
 test('setEmail()' +
   ' set email of connected account.', async () => {
-
   // prepare
   const id = 'account01'
   const email = 'account01@example.com'
@@ -92,7 +88,6 @@ test('setEmail()' +
 
 test('setEmail()' +
   ' throw system error.', async () => {
-
   // prepare
   const id = 'account01'
   const email = 'account01@example.com'
@@ -105,7 +100,6 @@ test('setEmail()' +
 
 test('setPassword()' +
   ' set password of connected account.', async () => {
-
   // prepare
   const id = 'account01'
   const password = 'password01'
@@ -122,7 +116,6 @@ test('setPassword()' +
 
 test('setPassword()' +
   ' throw system error.', async () => {
-
   // prepare
   const id = 'account01'
   const password = 'password01'
@@ -135,7 +128,6 @@ test('setPassword()' +
 
 test('resetUserAuth()' +
   ' delete user if exists and recreate user in Authentication.', async () => {
-
   // prepare #1
   const id = 'account01'
 
@@ -184,7 +176,6 @@ test('resetUserAuth()' +
 
 test('rejectCreateUserWithoutAccount()' +
   ' delete auth user without account doc in db.', async () => {
-
   // prepare
   const uid = 'account01'
   auth.data[uid] = { email: 'account01@example.com' }
@@ -198,7 +189,6 @@ test('rejectCreateUserWithoutAccount()' +
 
 test('rejectCreateUserWithoutAccount()' +
   ' skip to delete auth user with account doc in db.', async () => {
-
   // prepare
   const uid = 'account01'
   auth.data[uid] = { email: 'account01@example.com' }

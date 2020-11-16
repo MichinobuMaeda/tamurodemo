@@ -4,7 +4,7 @@ const {
   auth,
   clearDb,
   deleteApp,
-  testData,
+  testData
 } = require('./utils')
 const {
   invite,
@@ -27,7 +27,6 @@ afterAll(async () => {
 test('invite()' +
   ' issues the invitation for the account of given id code' +
   ' and set hash of the invitation code to account doc', async () => {
-
   // prepare
   const id = 'account01'
   const uid = admin01
@@ -47,7 +46,6 @@ test('invite()' +
 
 test('validateInvitation()' +
   ' get the invited accout and create a token for the account', async () => {
-
   // prepare
   const id = 'account01'
   const uid = admin01
@@ -64,7 +62,6 @@ test('validateInvitation()' +
 
 test('validateInvitation()' +
   ' rejects invalid invitation', async () => {
-
   // should fail
   await expect(
     validateInvitation({ invitation: 'invalid invitation' }, { db, auth })
@@ -73,7 +70,6 @@ test('validateInvitation()' +
 
 test('validateInvitation()' +
   ' reject expired invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = admin01
@@ -90,7 +86,6 @@ test('validateInvitation()' +
 
 test('setEmailAndPasswordWithInvitation()' +
   ' set email and password to the account of given invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = id
@@ -116,7 +111,6 @@ test('setEmailAndPasswordWithInvitation()' +
 
 test('setEmailAndPasswordWithInvitation()' +
   ' rejects unmatched uid for invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = id
@@ -137,7 +131,6 @@ test('setEmailAndPasswordWithInvitation()' +
 
 test('setEmailAndPasswordWithInvitation()' +
   ' rejects invalid invitation', async () => {
-
   // prepare
   const invitation = 'invalid invitation'
   const email = 'account01@example.com'
@@ -154,7 +147,6 @@ test('setEmailAndPasswordWithInvitation()' +
 
 test('setEmailAndPasswordWithInvitation()' +
   ' rejects expired invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = id
@@ -176,7 +168,6 @@ test('setEmailAndPasswordWithInvitation()' +
 
 test('setEmailWithInvitation()' +
   ' set email to the account of given invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = id
@@ -202,7 +193,6 @@ test('setEmailWithInvitation()' +
 
 test('setEmailWithInvitation()' +
   ' rejects unmatched uid for invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = id
@@ -223,7 +213,6 @@ test('setEmailWithInvitation()' +
 
 test('setEmailWithInvitation()' +
   ' rejects invalid invitation', async () => {
-
   // prepare
   const invitation = 'invalid invitation'
   const email = 'account01@example.com'
@@ -240,7 +229,6 @@ test('setEmailWithInvitation()' +
 
 test('setEmailWithInvitation()' +
   ' rejects expired invitation', async () => {
-
   // prepare
   const id = 'account01'
   const uid = id

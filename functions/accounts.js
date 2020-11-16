@@ -1,7 +1,7 @@
 const { throwErrorDataLoss } = require('./utils')
 
 const createAccount = async ({ name }, { db, FieldValue, auth }) => {
-  let id;
+  let id
   if (!name) {
     throwErrorDataLoss('createAccount', name, err)
   }
