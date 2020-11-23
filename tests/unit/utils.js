@@ -2,12 +2,13 @@ import fs from 'fs'
 import path from 'path'
 import * as Firebase from '@firebase/rules-unit-testing'
 import '../../src/plugins/composition-api'
+import { initialData } from '../../functions/initialData'
 import { updateService } from '../../functions/service'
 import { createStore } from '../../src/store/init'
 
 const projectId = 'tamuro-test01'
 const apiKey = 'test-api-key'
-const admin01 = 'admin01'
+const primary = 'primary'
 const uid = 'account01'
 const email = 'account01@example.com'
 
@@ -214,20 +215,20 @@ export const store = createStore(firebase, root)
 export const testData = async () => {
   const db = admin.firestore()
 
-  await updateService({ db })
+  await updateService({ db }, initialData)
   await db.collection('service').doc('conf').update({
     apiKey,
     invitationExpirationTime: 60 * 1000,
     hosting: 'http://localhost:5000'
   })
-  await db.collection('accounts').doc(admin01).set({ valid: true })
+  await db.collection('accounts').doc(primary).set({ valid: true })
   await db.collection('groups').doc('all').update({
-    members: [admin01]
+    members: [primary]
   })
   await db.collection('groups').doc('admins').update({
-    members: [admin01]
+    members: [primary]
   })
   await db.collection('groups').doc('managers').update({
-    members: [admin01]
+    members: [primary]
   })
 }

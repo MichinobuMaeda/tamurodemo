@@ -1,7 +1,7 @@
 Tamuro
 ==========
 
-- [Development](docs/dev)
+- [Development](docs/dev.md)
 - [Vue.js](docs/vue.md)
 - [Firebase](docs/firebase.md)
 - [Configuration](docs/conf.md)

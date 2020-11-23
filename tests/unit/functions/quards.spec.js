@@ -9,7 +9,7 @@ const {
   guardValidAccount,
   guardGroups,
   guardUserSelfOrGroups
-} = require('../../guards')
+} = require('../../../functions/guards')
 
 beforeEach(async () => {
   auth.clear()
@@ -119,7 +119,7 @@ test('guardGroups()' +
   await accountRef.set({
     valid: true
   })
-  const managerMembers = ['admin01']
+  const managerMembers = ['primary']
   await managersRef.update({
     members: [...managerMembers, uid]
   })
@@ -203,7 +203,7 @@ test('guardUserSelfOrGroups()' +
   await accountRef.set({
     valid: true
   })
-  const managerMembers = ['admin01']
+  const managerMembers = ['primary']
   await managersRef.update({
     members: [...managerMembers, uid]
   })

@@ -1,7 +1,5 @@
-const path = require('path')
-// const functions = require('firebase-functions')
 const {
-  admin01,
+  primary,
   db,
   auth,
   messaging,
@@ -9,7 +7,7 @@ const {
   deleteApp,
   testData
 } = require('./utils')
-const { entries } = require('../../entries')
+const { entries } = require('../../../functions/entries')
 
 const api = {
   use: () => {}
@@ -62,7 +60,7 @@ test('createAccount()' +
   await expect(createAccount(data, context)).rejects.toThrow()
 
   // #2 prepare
-  context.auth.uid = admin01
+  context.auth.uid = primary
 
   // #2 run
   const { id } = await createAccount(data, context)
@@ -139,7 +137,7 @@ test('invite()' +
   await expect(invite(data, context)).rejects.toThrow()
 
   // #2 prepare
-  context.auth.uid = admin01
+  context.auth.uid = primary
 
   // #2 run
   const { invitation } = await invite(data, context)
@@ -153,7 +151,7 @@ test('validateInvitation()' +
   // #1 prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
+  const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const data = { invitation: 'invalid invitation' }
   const context = { auth: { uid: null } }
 
@@ -178,7 +176,7 @@ test('setEmailWithInvitation()' +
   await db.collection('accounts').doc(id).set({ valid: true })
   await db.collection('accounts').doc(uid).set({ valid: true })
   const email = 'dummy@example.com'
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
+  const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const data = { invitation, email }
   const context = { auth: { uid } }
 
@@ -207,7 +205,7 @@ test('setEmailAndPasswordWithInvitation()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   const email = 'dummy@example.com'
   const password = 'password01'
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
+  const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const data = { invitation, email, password }
   const context = { auth: { uid } }
 
@@ -244,7 +242,7 @@ test('resetUserAuth()' +
   await expect(resetUserAuth(data, context)).rejects.toThrow()
 
   // #2 prepare
-  context.auth.uid = admin01
+  context.auth.uid = primary
 
   // #2 run
   await resetUserAuth(data, context)
@@ -273,7 +271,7 @@ test('notifyMessage()' +
   // prepare
   const token = 'token01'
   const sender = 'account01'
-  await db.collection('accounts').doc('admin01').update({
+  await db.collection('accounts').doc('primary').update({
     messagingTokens: [{ token, ts: new Date() }]
   })
   const message = await db.collection('groups').doc('admins')
@@ -308,7 +306,7 @@ test('handleValidateInvitation()' +
   // prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await invite({ id }, { auth: { uid: admin01 } })
+  const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const result = {}
   const req = { params: { invitation } }
   const res = {

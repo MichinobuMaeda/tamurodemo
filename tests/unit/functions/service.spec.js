@@ -7,9 +7,12 @@ const {
   version
 } = require('./utils')
 const {
+  initialData
+} = require('../../../functions/initialData')
+const {
   updateService,
   updateVersion
-} = require('../../service')
+} = require('../../../functions/service')
 
 beforeEach(async () => {
   auth.clear()
@@ -32,7 +35,7 @@ test('updateService()' +
   await db.collection('groups').doc('managers').delete()
 
   // run
-  await updateService({ db })
+  await updateService({ db }, initialData)
 
   // evaluate
   const defaults = await db.collection('service').doc('defaults').get()

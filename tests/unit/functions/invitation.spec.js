@@ -1,5 +1,5 @@
 const {
-  admin01,
+  primary,
   db,
   auth,
   clearDb,
@@ -11,7 +11,7 @@ const {
   validateInvitation,
   setEmailWithInvitation,
   setEmailAndPasswordWithInvitation
-} = require('../../invitation')
+} = require('../../../functions/invitation')
 
 beforeEach(async () => {
   auth.clear()
@@ -29,7 +29,7 @@ test('invite()' +
   ' and set hash of the invitation code to account doc', async () => {
   // prepare
   const id = 'account01'
-  const uid = admin01
+  const uid = primary
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
 
@@ -48,7 +48,7 @@ test('validateInvitation()' +
   ' get the invited accout and create a token for the account', async () => {
   // prepare
   const id = 'account01'
-  const uid = admin01
+  const uid = primary
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
 
@@ -72,7 +72,7 @@ test('validateInvitation()' +
   ' reject expired invitation', async () => {
   // prepare
   const id = 'account01'
-  const uid = admin01
+  const uid = primary
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
   const { invitation } = await invite({ id }, { db, uid })

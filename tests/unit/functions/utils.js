@@ -1,11 +1,12 @@
 const path = require('path')
 const admin = require('firebase-admin')
 const fs = require('fs')
-const { updateService } = require('../../service')
+const { initialData } = require('../../../functions/initialData')
+const { updateService } = require('../../../functions/service')
 
 const projectId = 'tamuro-test01'
 const apiKey = 'test-api-key'
-const admin01 = 'admin01'
+const primary = 'primary'
 const version = 'testver01'
 const hostingPath = path.join(__dirname, '..', '..', '..', 'dist')
 
@@ -88,28 +89,28 @@ const messaging = {
 }
 
 const testData = async () => {
-  await updateService({ db })
+  await updateService({ db }, initialData)
   await db.collection('service').doc('conf').update({
     apiKey,
     invitationExpirationTime: 60 * 1000,
     hosting: 'http://localhost:5000'
   })
-  await db.collection('accounts').doc(admin01).set({ valid: true })
+  await db.collection('accounts').doc(primary).set({ valid: true })
   await db.collection('groups').doc('all').update({
-    members: [admin01]
+    members: [primary]
   })
   await db.collection('groups').doc('admins').update({
-    members: [admin01]
+    members: [primary]
   })
   await db.collection('groups').doc('managers').update({
-    members: [admin01]
+    members: [primary]
   })
 }
 
 module.exports = {
   projectId,
   apiKey,
-  admin01,
+  primary,
   version,
   db,
   auth,

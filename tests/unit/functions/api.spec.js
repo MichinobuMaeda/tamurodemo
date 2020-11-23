@@ -8,7 +8,7 @@ const {
 } = require('./utils')
 const {
   apiKeyValidator
-} = require('../../api')
+} = require('../../../functions/api')
 
 beforeEach(async () => {
   auth.clear()

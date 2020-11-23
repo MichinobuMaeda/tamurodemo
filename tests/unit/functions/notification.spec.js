@@ -7,7 +7,7 @@ const {
 } = require('./utils')
 const {
   notifyMessage
-} = require('../../notification')
+} = require('../../../functions/notification')
 
 beforeEach(async () => {
   messaging.clear()
@@ -37,10 +37,10 @@ test('notifyMessage()' +
     messagingTokens: []
   })
   await db.collection('groups').doc('all').update({
-    members: ['admin01', account01Id, account02Id]
+    members: ['primary', account01Id, account02Id]
   })
   await db.collection('groups').doc('admins').update({
-    members: ['admin01', account01Id]
+    members: ['primary', account01Id]
   })
   const messageRef = db.collection('groups').doc('admins')
     .collection('messages').doc(messageId)
@@ -73,7 +73,7 @@ test('notifyMessage()' +
   // prepare #3
   messaging.clear()
   await messageRef.set({
-    sender: 'admin01'
+    sender: 'primary'
   })
   const message02 = await messageRef.get()
 
@@ -125,14 +125,14 @@ test('notifyMessage()' +
   })
   const token02 = 'token02'
   const token03 = 'token03'
-  await db.collection('accounts').doc('admin01').update({
+  await db.collection('accounts').doc('primary').update({
     messagingTokens: [
       { token: token02, ts: new Date() },
       { token: token03, ts: new Date() }
     ]
   })
   await db.collection('groups').doc('admins').update({
-    members: ['admin01', account01Id, 'dummy']
+    members: ['primary', account01Id, 'dummy']
   })
   await messageRef.set({
     sender: account02Id

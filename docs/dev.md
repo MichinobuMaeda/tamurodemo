@@ -66,6 +66,20 @@ $ cat src/plugins/firebase-api-key.js
 export default 'Axxxxxxxxxxxxxxxxxxx'
 ```
 
+## Unit test
+
+Run Unit test on terminal #1
+
+```
+$ yarn test:unit
+i  emulators: Starting emulators: firestore, hosting
+ ... ... ...
+i  hub: Stopping emulator hub
+✨  Done in 113.64s.
+```
+
+Open coverage report with a web browser: ``<Project>/coverage/lcov-report/index.html``
+
 ## Local server
 
 Run emulator on terminal #2
@@ -108,17 +122,3 @@ Stop Vue local server on terminal #3
 Stop emulator on terminal #2
 
 ^C
-
-## Unit test
-
-Run Unit test on terminal #1
-
-```
-$ yarn test:unit
-i  emulators: Starting emulators: firestore, hosting
- ... ... ...
-i  hub: Stopping emulator hub
-✨  Done in 113.64s.
-```
-
-Open coverage report with a web browser: ``<Project>/coverage/lcov-report/index.html``

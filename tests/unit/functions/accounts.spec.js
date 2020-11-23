@@ -11,7 +11,7 @@ const {
   setPassword,
   resetUserAuth,
   rejectCreateUserWithoutAccount
-} = require('../../accounts')
+} = require('../../../functions/accounts')
 
 beforeEach(async () => {
   auth.clear()
@@ -109,7 +109,6 @@ test('setPassword()' +
   const { status } = await setPassword({ id, password }, { db, auth })
 
   // evaluate
-  const account = await db.collection('accounts').doc(id).get()
   expect(status).toEqual('ok')
   expect(auth.data[id].password).toEqual(password)
 })
