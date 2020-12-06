@@ -3,6 +3,7 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080'
 
 const admin = require('firebase-admin')
 const { updateService } = require('../functions/service')
+const { initialData } = require('../functions/initialData')
 const accounts = require('../functions/accounts')
 
 const projectId = 'tamuro-test01'
@@ -42,7 +43,7 @@ const deleteApp = () => admin.app().delete()
 
 const setupService = async () => {
   await clearDb()
-  await updateService(context)
+  await updateService(context, initialData)
 
   // set API Key.
   const serviceConfRef = db.collection('service').doc('conf')
