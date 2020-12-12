@@ -113,7 +113,15 @@ $ yarn serve
 
 Test accounts
 
-- primary@example.com / password -- manager, admin
+| email | password | manager | admin | tester | valid | deleted |
+| --- | --- | --- | --- | --- | --- | --- |
+| primary@example.com | password | o | o | - | o | - |
+| manager@example.com | password | o | - | - | o | - |
+| admin@example.com | password | - | o | - | o | - |
+| tester@example.com | password | - | - | o | o | - |
+| user??@example.com | password | - | - | - | o | - |
+| invalid@example.com | password | - | - | - | - | - |
+| deleted@example.com | password | - | - | - | o | o |
 
 Stop Vue local server on terminal #3
 
