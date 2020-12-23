@@ -1,7 +1,7 @@
 import { findItem } from './state'
 
 export const accountIsValid = account => !!(account && account.id && !account.deletedAt && account.valid)
-export const isMemberOf = (account, group) => ((group || {}).members || []).includes(account.id)
+export const isMemberOf = (account, group) => account && account.id && group && (group.members || []).includes(account.id)
 export const accountPriv = ({ service, groups }, account) => {
   const valid = accountIsValid(account)
   return {

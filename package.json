@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --open --port=8000",
+    "serve": "firebase emulators:exec --ui 'node tools/setupTestService.js && vue-cli-service serve --open --port=8000'",
     "build": "vue-cli-service build",
     "test:unit": "firebase emulators:exec 'vue-cli-service test:unit --coverage --silent' --only firestore,hosting",
     "test:unit:ci": "firebase emulators:exec 'vue-cli-service test:unit --coverage --silent && codecov' --only firestore,hosting --token \"$FIREBASE_TOKEN\"",

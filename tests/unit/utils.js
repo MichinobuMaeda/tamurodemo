@@ -76,105 +76,90 @@ const currentUser = {
   clear () {
     this.data = {}
   },
-  reauthenticateWithCredential (cred) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.reauthenticateWithCredential = {
-          cred
-        }
-      })
+  async reauthenticateWithCredential (cred) {
+    await Promise.resolve(true)
+    this.data.reauthenticateWithCredential = {
+      cred
+    }
   },
-  updateEmail (email) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.email = email
-      })
+  async updateEmail (email) {
+    await Promise.resolve(true)
+    this.email = email
   },
-  updatePassword (password) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.password = password
-      })
+  async updatePassword (password) {
+    await Promise.resolve(true)
+    this.data.password = password
   },
-  linkWithRedirect (provider) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.linkWithRedirect = {
-          provider
-        }
-      })
+  async linkWithRedirect (provider) {
+    await Promise.resolve(true)
+    this.data.linkWithRedirect = {
+      provider
+    }
   },
-  unlink (id) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.unlink = {
-          id
-        }
-      })
+  async unlink (id) {
+    await Promise.resolve(true)
+    this.data.unlink = {
+      id
+    }
   }
 }
 
 export const auth = {
   data: {},
   currentUser,
+  languageCode: null,
   clear () {
     this.data = {}
     this.currentUser.clear()
   },
-  sendPasswordResetEmail (email, options) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.sendPasswordResetEmail = {
-          email,
-          options
-        }
-      })
+  async sendPasswordResetEmail (email, options) {
+    await Promise.resolve(true)
+    this.data.sendPasswordResetEmail = {
+      email,
+      options
+    }
   },
-  sendSignInLinkToEmail (email, options) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.sendSignInLinkToEmail = {
-          email,
-          options
-        }
-      })
+  async sendSignInLinkToEmail (email, options) {
+    await Promise.resolve(true)
+    this.data.sendSignInLinkToEmail = {
+      email,
+      options
+    }
   },
-  signInWithEmailLink (email, url) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.signInWithEmailLink = {
-          email,
-          url
-        }
-      })
+  async signInWithEmailLink (email, url) {
+    await Promise.resolve(true)
+    this.data.signInWithEmailLink = {
+      email,
+      url
+    }
   },
-  signInWithEmailAndPassword (email, password) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.signInWithEmailAndPassword = {
-          email,
-          password
-        }
-      })
+  async signInWithEmailAndPassword (email, password) {
+    await Promise.resolve(true)
+    this.data.signInWithEmailAndPassword = {
+      email,
+      password
+    }
   },
-  signInWithCustomToken (token) {
-    return Promise.resolve(true)
-      .then(() => {
-        if (!token) {
-          throw new Error('Invalid token')
-        }
-        this.data.signInWithCustomToken = {
-          token
-        }
-      })
+  async signInWithCustomToken (token) {
+    await Promise.resolve(true)
+    if (!token) {
+      throw new Error('Invalid token')
+    }
+    this.data.signInWithCustomToken = {
+      token
+    }
   },
-  signInWithRedirect (provider) {
-    return Promise.resolve(true)
-      .then(() => {
-        this.data.signInWithRedirect = {
-          provider
-        }
-      })
+  async signInWithRedirect (provider) {
+    await Promise.resolve(true)
+    this.data.signInWithRedirect = {
+      provider
+    }
+  },
+  async signOut () {
+    await Promise.resolve(true)
+    this.data.signOut = {
+      called: true
+    }
   }
 }
 
@@ -206,6 +191,12 @@ export const root = {
       this.called[key] = this.called[key] || 0
       ++this.called[key]
       return key
+    },
+    locale: null
+  },
+  $vuetify: {
+    theme: {
+      dark: null
     }
   }
 }

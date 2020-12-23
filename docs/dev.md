@@ -3,18 +3,12 @@ Development
 
 [README.md](../README.md)
 
-- terminal #1: exec commands
-- terminal #2: Firebase emulator
-- terminal #3: Vue local server
-
 ## Accounts
 
 - GitHub: ``MichinobuMaeda/tamuro``
 - Firebase: ``tamuro-test01``
 
 ## Prerequisites
-
-on terminal #1
 
 ```
 $ git --version                                                                                  [2:14:32]
@@ -68,8 +62,6 @@ export default 'Axxxxxxxxxxxxxxxxxxx'
 
 ## Unit test
 
-Run Unit test on terminal #1
-
 ```
 $ yarn test:unit
 i  emulators: Starting emulators: firestore, hosting
@@ -82,26 +74,6 @@ Open coverage report with a web browser: ``<Project>/coverage/lcov-report/index.
 
 ## Local server
 
-Run emulator on terminal #2
-
-```
-$ firebase emulators:start
-```
-
-Open emulator UI: http://localhost:4000/
-
-Set up test data on terminal #1
-
-```
-$ node tools/setupTestService.js
-{"severity":"WARNING", ... }
-Create: service.conf
- ... ... ...
-complete
-```
-
-Run Vue local server on terminal #3
-
 ```
 $ yarn serve
  INFO  Starting development server...
@@ -110,6 +82,10 @@ $ yarn serve
   - Local:   http://localhost:8000/
    ... ... ...
 ```
+
+1. Start Firebase emulator. UI: http://localhost:4000/
+2. Insert test data.
+3. Start vue local server without PWA mode.
 
 Test accounts
 
@@ -123,10 +99,7 @@ Test accounts
 | invalid@example.com | password | - | - | - | - | - |
 | deleted@example.com | password | - | - | - | o | o |
 
-Stop Vue local server on terminal #3
 
-^C
-
-Stop emulator on terminal #2
+Stop local server
 
 ^C
