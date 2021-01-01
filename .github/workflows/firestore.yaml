@@ -1,4 +1,4 @@
-name: Firebase Firestore CI/CD
+name: Firestore CI/CD
 on:
   push:
     paths:

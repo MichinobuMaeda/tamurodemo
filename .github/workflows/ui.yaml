@@ -1,4 +1,4 @@
-name: Firebase UI CI/CD
+name: UI CI/CD
 on:
   push:
     paths-ignore:
