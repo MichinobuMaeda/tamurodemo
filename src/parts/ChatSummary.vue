@@ -21,8 +21,8 @@
         v-model="page.id"
       />
 
-      <div v-if="!state.chats[page.id] || !state.chats[page.id].length">{{ $t('No message') }}</div>
-      <div v-for="item in (state.chats[page.id] || []).slice(-3)" v-bind:key="item.id">
+      <div v-if="!state.groupChats[page.id] || !state.groupChats[page.id].length">{{ $t('No message') }}</div>
+      <div v-for="item in (state.groupChats[page.id] || []).slice(-3)" v-bind:key="item.id">
         <v-card
           outlined
           :class="item.sender === state.me.id ? 'ml-8' : 'mr-8'"

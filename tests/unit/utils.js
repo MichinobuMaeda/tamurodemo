@@ -165,13 +165,22 @@ export const auth = {
 
 const messaging = {
   error: false,
-  data: {},
+  data: {
+    token: 'generated token 1'
+  },
   clear () {
     this.error = false
     this.data = {}
   },
   sendMulticast (message) {
     this.data.message = message
+  },
+  getToken (keys) {
+    this.data.getToken = keys
+    return this.data.token
+  },
+  onMessage (cb) {
+    this.data.onMessage = cb
   }
 }
 
@@ -213,6 +222,8 @@ export const testData = async () => {
     hosting: 'http://localhost:5000'
   })
   await db.collection('accounts').doc(primary).set({ valid: true })
+  await db.collection('users').doc(primary).set({ name: 'Primary user' })
+  await db.collection('profiles').doc(primary).set({ test: 'test' })
   await db.collection('groups').doc('all').update({
     members: [primary]
   })
@@ -223,3 +234,5 @@ export const testData = async () => {
     members: [primary]
   })
 }
+
+export const waitRealtimeUpdate = tm => new Promise(resolve => setTimeout(resolve, tm || 500))

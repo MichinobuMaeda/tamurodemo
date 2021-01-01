@@ -21,11 +21,11 @@
       />
 
       <div
-        v-if="!state.chats[page.id] || !state.chats[page.id].length"
+        v-if="!state.groupChats[page.id] || !state.groupChats[page.id].length"
       >
         {{ $t('No message') }}
       </div>
-      <div v-for="item in (state.chats[page.id] || [])" v-bind:key="item.id">
+      <div v-for="item in (state.groupChats[page.id] || [])" v-bind:key="item.id">
         <v-card
           outlined
           :class="item.sender === state.me.id ? 'ml-8' : 'mr-8'"
@@ -67,7 +67,7 @@
         {{ icon('Go top') }}
       </v-icon>
       <ChatGroupSelector
-        v-if="(state.chats[page.id] || []).length"
+        v-if="(state.groupChats[page.id] || []).length"
         id="bottom"
         v-model="page.id"
       />

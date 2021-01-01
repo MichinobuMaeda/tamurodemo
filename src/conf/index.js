@@ -10,6 +10,7 @@ export * from './timezones'
 export * from './menuPositions'
 export * from './validators'
 export * from './permissions'
+export * from './providers'
 export * from './site'
 
 export {

@@ -70,6 +70,12 @@ i  hub: Stopping emulator hub
 ✨  Done in 113.64s.
 ```
 
+Run only one test suites.
+
+```
+$ ./tools/testOnly.sh tests/unit/auth/admin.spec.js
+```
+
 Open coverage report with a web browser: ``<Project>/coverage/lcov-report/index.html``
 
 ## Local server

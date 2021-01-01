@@ -1,3 +1,4 @@
+import { providers } from '../conf'
 import { myPriv } from './accounts'
 import { groupsOfMe } from './groups'
 
@@ -6,23 +7,23 @@ export const clearServiceData = (state = {}) => {
   return state
 }
 
-const unsubscribeAll = state => {
+export const unsubscribeAll = state => {
   if (state.unsubscribers) {
     Object.keys(state.unsubscribers).forEach(key => {
       state.unsubscribers[key]()
     })
   }
+  state.unsubscribers = {}
 }
 
 export const clearUserData = state => {
   unsubscribeAll(state)
-  state.unsubscribers = {}
   state.me = {}
   state.accounts = []
   state.users = []
   state.profiles = []
   state.groups = []
-  state.chats = {}
+  state.groupChats = {}
   state.categories = []
   state.invitations = {}
   state.waitProc = null
@@ -40,25 +41,20 @@ export const initServiceData = async ({ db, state }) => {
   }
   const querySnapshot = await db.collection('service').get()
   onServiceUpdate(querySnapshot)
-  db.collection('service').onSnapshot(
+  return db.collection('service').onSnapshot(
     querySnapshot => onServiceUpdate(querySnapshot)
   )
 }
 
-export const updateMe = ({ auth, state }, me = null) => {
+export const updateMe = ({ auth, state }, doc = null) => {
+  const providerStatus = providers.reduce((ret, cur) => ({ ...ret, [cur.key]: false }), {})
   state.me = {
-    ...me || state.me,
+    ...providerStatus,
+    ...doc || state.me,
     ...((auth.currentUser && auth.currentUser.providerData) || [])
       .reduce(
         (ret, cur) => cur.providerId ? { ...ret, [cur.providerId.replace(/\./g, '_')]: true } : ret,
-        {
-          google_com: false,
-          apple_com: false,
-          facebook_com: false,
-          github_com: false,
-          microsoft_com: false,
-          twitter_com: false
-        }
+        {}
       )
   }
 }
@@ -108,7 +104,7 @@ export const initUserData = async ({ db, auth, state }) => {
     state.accounts = [castDoc(await meRef.get())]
     state.unsubscribers.accounts = meRef.onSnapshot(me => {
       state.accounts = [castDoc(me)]
-      state.me = castDoc(me)
+      updateMe({ auth, state }, findItem(state.accounts, state.me.id))
     })
   }
   if (myPriv(state).manager) {
@@ -117,16 +113,16 @@ export const initUserData = async ({ db, auth, state }) => {
       'profiles',
       db.collection('profiles'))
   } else {
-    const meRef = db.collection('profiles').doc(state.me.id)
-    state.profiles = [castDoc(await meRef.get())]
-    state.unsubscribers.profiles = meRef.onSnapshot(me => {
-      state.profiles = [castDoc(me)]
+    const myProfileRef = db.collection('profiles').doc(state.me.id)
+    state.profiles = [castDoc(await myProfileRef.get())]
+    state.unsubscribers.profiles = myProfileRef.onSnapshot(prof => {
+      state.profiles = [castDoc(prof)]
     })
   }
   state.loading = false
 }
 
-const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) => {
+export const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) => {
   const priv = myPriv(state)
   state[propName] = (await queryRef.get()).docs
     .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
@@ -140,14 +136,19 @@ const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) =>
   })
 }
 
-const onGroupsChange = db => async state => {
-  groupsOfMe(state).forEach(group => {
+export const onGroupsChange = db => state => {
+  state.groups.forEach(group => {
     const id = group.id
     state.unsubscribers[`chat_${id}`] && state.unsubscribers[`chat_${id}`]()
+    delete state.unsubscribers[`chat_${id}`]
+    delete state.groupChats[id]
+  })
+  groupsOfMe(state).forEach(group => {
+    const id = group.id
     state.unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
       .collection('messages').orderBy('createdAt', 'asc')
       .onSnapshot(querySnapshot => {
-        state.chats[id] = querySnapshot.docs.map(doc => castDoc(doc))
+        state.groupChats[id] = querySnapshot.docs.map(doc => castDoc(doc))
       })
   })
 }
