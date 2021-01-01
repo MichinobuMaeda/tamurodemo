@@ -9,10 +9,10 @@ export const authProviders = store => providers.map(provider => ({
     : toggleOAuthProvider(store, provider.id),
   signIn: provider.instance
     ? signInWithFirebaseAuthProvider(store, provider.instance)
-    : () => {}
+    : signInWith(store, provider.id)
 }))
 
-const toggleOAuthProvider = (store, id, provider = null) =>
+export const toggleOAuthProvider = (store, id, provider = null) =>
   () => store.setProcForWait(
     async () => {
       const key = providers.find(item => item.id === id).key
@@ -27,8 +27,8 @@ const toggleOAuthProvider = (store, id, provider = null) =>
           await auth.currentUser.linkWithRedirect(provider)
           await update('accounts', state.me.id, { [key]: true })
         } else {
-          // TODO
-          // await update('accounts', state.me.id, { [id.replace(/\./g, '_')]: TODO })
+          const userKey = await linkith(store, id)
+          await update('accounts', state.me.id, { [key]: userKey })
         }
       }
       await updateInvitationStatus(store)
@@ -36,7 +36,17 @@ const toggleOAuthProvider = (store, id, provider = null) =>
     }
   )
 
-const signInWithFirebaseAuthProvider = (store, provider) =>
+export const signInWithFirebaseAuthProvider = (store, provider) =>
   () => store.setProcForWait(
     () => store.auth.signInWithRedirect(provider)
+  )
+
+export const signInWith = (store, id) =>
+  () => store.setProcForWait(
+    id => {}
+  )
+
+export const linkith = (store, id) =>
+  () => store.setProcForWait(
+    id => 'TODO'
   )

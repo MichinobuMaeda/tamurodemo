@@ -2,6 +2,9 @@
   "name": "tamuro",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "12"
+  },
   "scripts": {
     "serve": "firebase emulators:exec --ui 'node tools/setupTestService.js && vue-cli-service serve --open --port=8000'",
     "build": "vue-cli-service build",
