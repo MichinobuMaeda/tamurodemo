@@ -1,12 +1,12 @@
 import Firebase from 'firebase/app'
 import 'firebase/auth'
-import { appId, baseUrl } from '../conf'
+import { baseUrl } from '../conf'
+import {
+  storeRequestedEmail,
+  restoreRequestedEmail,
+  eraseRequestedEmail
+} from './localStrage'
 import { updateInvitationStatus } from './index'
-
-const LS_REQ_EMAIL = `${appId}EmailLinkRequest`
-const eraseRequestedEmail = () => window.localStorage.setItem(LS_REQ_EMAIL, '')
-const storeRequestedEmail = email => window.localStorage.setItem(LS_REQ_EMAIL, email)
-const restoreRequestedEmail = () => window.localStorage.getItem(LS_REQ_EMAIL)
 
 export const reauthenticate = ({ auth }, password) =>
   auth.currentUser.reauthenticateWithCredential(

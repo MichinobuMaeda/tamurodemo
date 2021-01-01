@@ -1,5 +1,9 @@
 import { initMe } from '../store'
 import { onSignInWithEmailLink } from './email'
+import {
+  restoreRequestedRoute,
+  eraseRequestedRoute
+} from './localStrage'
 
 export const getAuthState = async ({ db, auth, state }) => {
   if (auth.isSignInWithEmailLink(window.location.href)) {
@@ -14,6 +18,12 @@ export const getAuthState = async ({ db, auth, state }) => {
       }
     })
   }
+}
+
+export const returnLastRoute = router => {
+  const route = restoreRequestedRoute()
+  eraseRequestedRoute()
+  route && route.name && router.push(route).catch(() => {})
 }
 
 export const signOut = async ({ auth }) => {

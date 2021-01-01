@@ -86,8 +86,9 @@ import { reactive, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import { menuItems, baseUrl, version } from './conf'
 import {
-  createStore, initServiceData,
-  overrideDefaults, StoreSymbol
+  createStore, initUserData, initServiceData,
+  overrideDefaults, StoreSymbol, accountIsValid,
+  initializeMessaging
 } from './store'
 import {
   getAuthState,
@@ -97,11 +98,10 @@ import {
   guardMenuItem,
   guardRoute,
   goPage,
-  authProviders
+  authProviders,
+  returnLastRoute,
+  signOut
 } from './auth'
-import {
-  initializeMessaging
-} from './store/io'
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
 import AppUpdater from './components/AppUpdater'
@@ -158,7 +158,9 @@ export default {
     watch(
       () => store.state.groups,
       async (groups, groupsPrev) => {
-        await detectPrivilegesChanged(store, groups, groupsPrev)
+        if (detectPrivilegesChanged(store.state.me, groups, groupsPrev)) {
+          await initUserData(store)
+        }
         guardRoute(root.$router, root.$route, store.state)
       }
     )
@@ -167,7 +169,14 @@ export default {
       () => store.state.me,
       async (me, mePrev) => {
         overrideDefaults(store, root)
-        await detectAccountChanged(store, root.$router, me, mePrev)
+        if (detectAccountChanged(me, mePrev)) {
+          if (accountIsValid(me)) {
+            await initUserData(store)
+            returnLastRoute(root.$router)
+          } else {
+            await signOut(store)
+          }
+        }
         guardRoute(root.$router, root.$route, store.state)
       }
     )

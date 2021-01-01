@@ -9,7 +9,7 @@ export const authProviders = store => providers.map(provider => ({
     : toggleOAuthProvider(store, provider.id),
   signIn: provider.instance
     ? signInWithFirebaseAuthProvider(store, provider.instance)
-    : signInWith(store, provider.id)
+    : signInWithCustomProvider(store, provider.id)
 }))
 
 export const toggleOAuthProvider = (store, id, provider = null) =>
@@ -27,8 +27,8 @@ export const toggleOAuthProvider = (store, id, provider = null) =>
           await auth.currentUser.linkWithRedirect(provider)
           await update('accounts', state.me.id, { [key]: true })
         } else {
-          const userKey = await linkith(store, id)
-          await update('accounts', state.me.id, { [key]: userKey })
+          await linkWithCustomProvider(store, id)
+          // await update('accounts', state.me.id, { [key]: userKey })
         }
       }
       await updateInvitationStatus(store)
@@ -41,12 +41,12 @@ export const signInWithFirebaseAuthProvider = (store, provider) =>
     () => store.auth.signInWithRedirect(provider)
   )
 
-export const signInWith = (store, id) =>
+export const signInWithCustomProvider = (store, id) =>
   () => store.setProcForWait(
     id => {}
   )
 
-export const linkith = (store, id) =>
-  () => store.setProcForWait(
-    id => 'TODO'
+export const linkWithCustomProvider = (store, id) =>
+  store.setProcForWait(
+    id => {}
   )

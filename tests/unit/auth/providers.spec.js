@@ -2,7 +2,7 @@ import {
   admin,
   clearDb,
   deleteApp,
-  testData,
+  // testData,
   setFakeWindow,
   store
 } from '../utils'
@@ -13,8 +13,8 @@ import {
 beforeEach(async () => {
   store.auth.clear()
   store.functions.clear()
-  await clearDb()
-  await testData()
+  // await clearDb()
+  // await testData()
   setFakeWindow()
 })
 
@@ -135,4 +135,34 @@ test('signInWithFirebaseAuthProvider()' +
 
   // evaluate
   expect(store.auth.data.signInWithRedirect.provider).toBeDefined()
+})
+
+test('signInWithCustomProvider()' +
+  ' should ... TODO ...', async () => {
+  // prepare
+  const providers = authProviders(store)
+  const line = providers.find(item => item.id === 'line.me')
+
+  // run
+  await line.signIn()
+
+  // evaluate
+  // TODO
+})
+
+test('linkWithCustomProvider()' +
+  ' should ... TODO ...', async () => {
+  // prepare
+  const providers = authProviders(store)
+  const line = providers.find(item => item.id === 'line.me')
+  store.state.me = {
+    id: 'account01',
+    line_me: false
+  }
+
+  // run
+  await line.update()
+
+  // evaluate
+  // TODO
 })

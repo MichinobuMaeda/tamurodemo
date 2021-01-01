@@ -109,7 +109,9 @@ export const auth = {
   currentUser,
   languageCode: null,
   clear () {
-    this.data = {}
+    this.data = {
+      isSignInWithEmailLink: false
+    }
     this.currentUser.clear()
   },
   async sendPasswordResetEmail (email, options) {
@@ -160,6 +162,12 @@ export const auth = {
     this.data.signOut = {
       called: true
     }
+  },
+  isSignInWithEmailLink () {
+    return this.data.isSignInWithEmailLink
+  },
+  onAuthStateChanged (cb) {
+    this.data.onAuthStateChanged = cb
   }
 }
 
@@ -181,6 +189,24 @@ const messaging = {
   },
   onMessage (cb) {
     this.data.onMessage = cb
+  }
+}
+
+export const router = {
+  data: {},
+  clear () {
+    this.data = {}
+  },
+  onRejected () {
+    this.data.pushCatched()
+  },
+  push (route) {
+    this.data.push = route
+    return {
+      catch: func => {
+        this.data.pushCatched = func
+      }
+    }
   }
 }
 

@@ -4,5 +4,10 @@ export const defaults = {
   locale: 'ja_JP',
   menuPosition: 'br',
   tz: 'Asia/Tokyo',
-  waitProcTimeout: 10 * 1000
+  waitProcTimeout: 10 * 1000,
+  routeExcludeFromStorage: [
+    'invitation',
+    'signin',
+    'policy'
+  ]
 }

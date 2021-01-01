@@ -8,3 +8,6 @@ export {
   updateMe,
   findItem
 } from './state'
+export {
+  initializeMessaging
+} from './io'
