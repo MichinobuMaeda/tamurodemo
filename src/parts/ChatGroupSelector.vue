@@ -2,8 +2,7 @@
   <v-chip-group
     active-class="primary--text"
     mandatory
-    v-model="page.id"
-    @change="val => onChange(val)"
+    v-model="selected"
   >
     <v-chip
       v-for="group in groupsOfMe(state)" v-bind:key="group.id"
@@ -16,7 +15,7 @@
 </template>
 
 <script>
-import { reactive } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 import { useStore, groupsOfMe } from '@/store'
 
 export default {
@@ -30,16 +29,13 @@ export default {
   },
   setup (props, { emit }) {
     const store = useStore()
-    const page = reactive({
-      id: props.id
-    })
-
-    const onChange = val => emit('change', val)
 
     return {
-      page,
+      selected: computed({
+        get: () => store.state.me.chatSummaryExpand ? props.id : '',
+        set: v => emit('change', v)
+      }),
       ...store,
-      onChange,
       groupsOfMe
     }
   }

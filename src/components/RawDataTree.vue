@@ -1,9 +1,9 @@
 <template>
   <v-dialog
     scrollable max-width="1024px"
-    v-model="open"
-    @click:outside="$emit('dialog-change', false)"
-    @keydown.esc="$emit('dialog-change', false)"
+    v-model="dialog"
+    @click:outside="dialog = false"
+    @keydown.esc="dialog = false"
   >
     <v-card>
       <v-card-title>
@@ -13,7 +13,7 @@
         </span>
         <v-spacer />
         <span class="text-body-2 pr-2">Developers only</span>
-        <v-btn icon @click="$emit('dialog-change', false)">
+        <v-btn icon @click="dialog = false">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
@@ -48,14 +48,11 @@ import { computed } from '@vue/composition-api'
 export default {
   name: 'RawDataTree',
   model: {
-    prop: 'dialog',
-    event: 'dialogChange'
+    prop: 'show',
+    event: 'showChange'
   },
   props: {
-    dialog: {
-      type: Boolean,
-      default: false
-    },
+    show: Boolean,
     items: Object,
     icon: String,
     title: String,
@@ -72,9 +69,12 @@ export default {
       default: 'blue--text text--darken-3'
     }
   },
-  setup (props) {
+  setup (props, { emit }) {
     return {
-      open: props.dialog,
+      dialog: computed({
+        get: () => props.show,
+        set: v => emit('showChange', v)
+      }),
       tree: computed(() => [...Object.keys(props.items || {})].sort().map(
         key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])
       ))

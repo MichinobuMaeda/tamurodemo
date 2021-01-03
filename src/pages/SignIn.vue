@@ -13,7 +13,7 @@
         dense outlined
         :type="page.result.type"
       >
-        {{ $t(page.result.desc) }}
+        {{ $t(page.result && page.result.desc) }}
       </v-alert>
       <div class="text-right">
         <LinkButton
