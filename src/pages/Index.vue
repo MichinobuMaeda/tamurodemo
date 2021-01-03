@@ -16,25 +16,24 @@
         <template v-slot:title>{{ $t('Top') }}</template>
       </PageTitle>
 
-      <v-sheet
-        v-if="page.edit || (state.service.conf.desc && state.service.conf.desc.data)"
-        outlined rounded class="px-3 pt-3"
-      >
-        <EditableItem
-          type="formatted-text"
-          :label="$t('Description')"
-          v-model="state.service.conf.desc"
-          @save="val => waitForUpdate('service', 'conf', { desc: val })"
-          :editable="page.edit && priv.manager"
-          :disabled="!!state.waitProc"
-        />
-      </v-sheet>
+      <Chats
+        class="my-2"
+        :height="state.chatSummaryPaneHeight"
+      />
 
-      <ChatSummary class="mt-2" />
+      <EditableItem
+        v-if="state.service.conf && (page.edit || (state.service.conf.desc && state.service.conf.desc.data))"
+        type="formatted-text"
+        :label="$t('Description')"
+        v-model="state.service.conf.desc"
+        @save="val => waitForUpdate('service', 'conf', { desc: val })"
+        :editable="page.edit && priv.manager"
+        :disabled="!!state.waitProc"
+      />
 
       <div
         v-for="category in state.categories.filter(item => !item.deletedAt)" :key="category.id"
-        class="my-2"
+        class="mb-2"
       >
         <v-chip color="h3" outlined>
           <v-icon>{{ icon('Category') }}</v-icon>
@@ -102,7 +101,7 @@ import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
-import ChatSummary from '@/parts/ChatSummary'
+import Chats from '@/parts/Chats'
 import CreateGroup from '@/parts/CreateGroup'
 
 export default {
@@ -111,7 +110,7 @@ export default {
     PageTitle,
     EditableItem,
     LinkButton,
-    ChatSummary,
+    Chats,
     CreateGroup
   },
   setup () {

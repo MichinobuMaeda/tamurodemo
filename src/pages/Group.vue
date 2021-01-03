@@ -23,6 +23,13 @@
           />
         </template>
       </PageTitle>
+
+      <Chats
+        class="my-2"
+        :group="group.id"
+        :height="state.chatPaneHeight"
+      />
+
       <EditableItem
         type="formatted-text"
         :label="$t('Description')"
@@ -40,8 +47,6 @@
         :editable="page.edit && priv.manager"
         :disabled="!!state.waitProc"
       />
-
-      <ChatSummary class="mt-2" id="group.id" />
 
       <p class="h3--text text-h3 pt-6">
         <v-icon color="h3">{{ icon('Members') }}</v-icon>
@@ -89,18 +94,18 @@ import { reactive, computed } from '@vue/composition-api'
 import { useStore, findItem } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
-import ChatSummary from '@/parts/ChatSummary'
 import ConfirmButton from '@/components/ConfirmButton'
 import LinkButton from '@/components/LinkButton'
+import Chats from '@/parts/Chats'
 
 export default {
   name: 'PageGroup',
   components: {
     PageTitle,
     EditableItem,
-    ChatSummary,
     ConfirmButton,
-    LinkButton
+    LinkButton,
+    Chats
   },
   setup (prop, { root }) {
     const store = useStore()

@@ -13,11 +13,6 @@ export const menuItems = (myId, myName, showRawData) => {
       route: { name: 'signin' }
     },
     {
-      label: 'Chat',
-      icon: icon('Chat'),
-      route: { name: 'chat' }
-    },
-    {
       label: 'Privacy policy',
       icon: icon('Privacy policy'),
       route: { name: 'policy' }

@@ -33,9 +33,9 @@ export const createStore = (firebase, root) => {
 export const overrideDefaults = (store, root) => {
   const { state, auth } = store
   Object.keys(defaults).forEach(key => {
-    state[key] = myPriv(state).user
+    state[key] = myPriv(state).user && state.me[key] !== undefined
       ? state.me[key]
-      : state.service.defaults
+      : state.service.defaults && state.service.defaults[key] !== undefined
         ? state.service.defaults[key]
         : defaults[key]
   })

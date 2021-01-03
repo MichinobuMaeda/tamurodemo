@@ -9,5 +9,7 @@ export const defaults = {
     'invitation',
     'signin',
     'policy'
-  ]
+  ],
+  chatSummaryPaneHeight: '240px',
+  chatPaneHeight: '360px'
 }
