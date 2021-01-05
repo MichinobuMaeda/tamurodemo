@@ -12,16 +12,16 @@ export const routes = [
     meta: { privs: ['guest'] }
   },
   {
-    path: '/invitation/edit',
-    name: 'invitationForEdit',
-    component: () => import('../pages/Invitation.vue'),
-    meta: { privs: ['manager', 'admin'] }
-  },
-  {
     path: '/inv/:invitation',
     name: 'invitation',
     component: () => import('../pages/Invitation.vue'),
     meta: { privs: ['guest', 'invited'] }
+  },
+  {
+    path: '/inv',
+    name: 'prevwInvitation',
+    component: () => import('../pages/Invitation.vue'),
+    meta: { privs: ['manager', 'admin', 'tester'] }
   },
   {
     path: '/policy',
@@ -64,5 +64,11 @@ export const routes = [
     name: 'service',
     component: () => import('../pages/Service.vue'),
     meta: { privs: ['admin'] }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../components/NotFound.vue'),
+    meta: { privs: ['guest', 'user'] }
   }
 ]

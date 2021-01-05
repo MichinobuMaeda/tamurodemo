@@ -178,6 +178,142 @@ test('accountPriv()' +
   expect(tester.tester).toBeTruthy()
 })
 
+test('accountPriv()' +
+  ' should return the priviliges of the given account' +
+  ' with mask for "manager", "admin" and "tester"' +
+  ' if state.hidePrivilegedItems is true.', async () => {
+  // prepare
+  const TIMEOUT = 100 * 1000
+  const state = {
+    service: {
+      conf: {
+        invitationExpirationTime: TIMEOUT
+      }
+    },
+    groups: [
+      { id: 'managers', members: ['primary', 'manager'] },
+      { id: 'admins', members: ['primary', 'admin'] },
+      { id: 'testers', members: ['tester'] }
+    ],
+    hidePrivilegedItems: true
+  }
+
+  // run
+  const guest = accountPriv(state, {})
+  const deleted = accountPriv({
+    id: 'id0000',
+    valid: true,
+    deletedAt: new Date()
+  })
+  const invalid = accountPriv({
+    id: 'id0000',
+    valid: false
+  })
+  const user = accountPriv(state, {
+    id: 'id0001',
+    valid: true
+  })
+  const invied = accountPriv(state, {
+    id: 'id0001',
+    valid: true,
+    invitedAs: 'invitasion',
+    invitedAt: new Date()
+  })
+  const exired = accountPriv(state, {
+    id: 'id0001',
+    valid: true,
+    invitedAs: 'invitasion',
+    invitedAt: new Date(new Date().getTime() - TIMEOUT - 1)
+  })
+  const primary = accountPriv(state, {
+    id: 'primary',
+    valid: true
+  })
+  const manager = accountPriv(state, {
+    id: 'manager',
+    valid: true
+  })
+  const admin = accountPriv(state, {
+    id: 'admin',
+    valid: true
+  })
+  const tester = accountPriv(state, {
+    id: 'tester',
+    valid: true
+  })
+
+  // evaluate
+  expect(guest.guest).toBeTruthy()
+  expect(guest.user).toBeFalsy()
+  expect(guest.invited).toBeFalsy()
+  expect(guest.manager).toBeFalsy()
+  expect(guest.admin).toBeFalsy()
+  expect(guest.tester).toBeFalsy()
+
+  expect(deleted.guest).toBeTruthy()
+  expect(deleted.user).toBeFalsy()
+  expect(deleted.invited).toBeFalsy()
+  expect(deleted.manager).toBeFalsy()
+  expect(deleted.admin).toBeFalsy()
+  expect(deleted.tester).toBeFalsy()
+
+  expect(invalid.guest).toBeTruthy()
+  expect(invalid.user).toBeFalsy()
+  expect(invalid.invited).toBeFalsy()
+  expect(invalid.manager).toBeFalsy()
+  expect(invalid.admin).toBeFalsy()
+  expect(invalid.tester).toBeFalsy()
+
+  expect(user.guest).toBeFalsy()
+  expect(user.user).toBeTruthy()
+  expect(user.invited).toBeFalsy()
+  expect(user.manager).toBeFalsy()
+  expect(user.admin).toBeFalsy()
+  expect(user.tester).toBeFalsy()
+
+  expect(invied.guest).toBeFalsy()
+  expect(invied.user).toBeTruthy()
+  expect(invied.invited).toBeTruthy()
+  expect(invied.manager).toBeFalsy()
+  expect(invied.admin).toBeFalsy()
+  expect(invied.tester).toBeFalsy()
+
+  expect(exired.guest).toBeFalsy()
+  expect(exired.user).toBeTruthy()
+  expect(exired.invited).toBeFalsy()
+  expect(exired.manager).toBeFalsy()
+  expect(exired.admin).toBeFalsy()
+  expect(exired.tester).toBeFalsy()
+
+  expect(primary.guest).toBeFalsy()
+  expect(primary.user).toBeTruthy()
+  expect(primary.invited).toBeFalsy()
+  expect(primary.manager).toBeFalsy()
+  expect(primary.admin).toBeFalsy()
+  expect(primary.tester).toBeFalsy()
+
+  expect(manager.guest).toBeFalsy()
+  expect(manager.user).toBeTruthy()
+  expect(manager.invited).toBeFalsy()
+  expect(manager.manager).toBeFalsy()
+  expect(manager.admin).toBeFalsy()
+  expect(manager.tester).toBeFalsy()
+
+  expect(admin.guest).toBeFalsy()
+  expect(admin.user).toBeTruthy()
+  expect(admin.invited).toBeFalsy()
+  expect(admin.manager).toBeFalsy()
+  expect(admin.admin).toBeFalsy()
+  expect(admin.tester).toBeFalsy()
+
+  expect(tester.guest).toBeFalsy()
+  expect(tester.user).toBeTruthy()
+  expect(tester.invited).toBeFalsy()
+  expect(tester.manager).toBeFalsy()
+  expect(tester.admin).toBeFalsy()
+  expect(tester.tester).toBeFalsy()
+})
+
 test('myPriv()' +
   ' should return the priviliges of me.', async () => {
   // prepare

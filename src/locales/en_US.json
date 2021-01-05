@@ -142,8 +142,14 @@
   "No message": "No message",
   "Recent messages": "Recent messages",
   "Guide": "Guide",
-  "Don't touch buttons except 'edit'": "Don't touch buttons except 'Edit'.",
+  "Guidance to invited members": "Guidance to invited members",
+  "Buttons are disabled": "Buttons are disabled.",
   "Set the sign-in method": "Please set the sign-in method",
+  "Priviliged items": "Priviliged items: {value}",
+  "Show": "Show",
+  "Hide": "Hide",
+  "Return to": "Return to {target}",
+  "Preview": "Preview",
   "Update app": "Please update this app",
   "Install app": "Install app"
 }

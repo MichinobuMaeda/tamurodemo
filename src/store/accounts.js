@@ -2,7 +2,7 @@ import { findItem } from './state'
 
 export const accountIsValid = account => !!(account && account.id && !account.deletedAt && account.valid)
 export const isMemberOf = (account, group) => account && account.id && group && (group.members || []).includes(account.id)
-export const accountPriv = ({ service, groups }, account) => {
+export const accountPriv = ({ service, groups, hidePrivilegedItems }, account) => {
   const valid = accountIsValid(account)
   return {
     guest: !valid,
@@ -11,12 +11,12 @@ export const accountPriv = ({ service, groups }, account) => {
       account.invitedAt &&
       account.invitedAt.getTime() >= (new Date().getTime() - service.conf.invitationExpirationTime)),
     user: valid,
-    admin: valid && isMemberOf(account, findItem(groups, 'admins')),
-    manager: valid && isMemberOf(account, findItem(groups, 'managers')),
-    tester: valid && isMemberOf(account, findItem(groups, 'testers'))
+    manager: valid && isMemberOf(account, findItem(groups, 'managers')) && !hidePrivilegedItems,
+    admin: valid && isMemberOf(account, findItem(groups, 'admins')) && !hidePrivilegedItems,
+    tester: valid && isMemberOf(account, findItem(groups, 'testers')) && !hidePrivilegedItems
   }
 }
-export const myPriv = ({ service, groups, me }) => accountPriv({ service, groups }, me)
+export const myPriv = state => accountPriv(state, state.me)
 
 export const accountStatus = (state, id) => {
   const account = (state.accounts && state.accounts.find(account => account.id === id)) || null

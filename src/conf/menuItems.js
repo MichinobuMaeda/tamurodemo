@@ -40,12 +40,6 @@ export const menuItems = (myId, myName, showRawData) => {
       route: { name: 'users' }
     },
     {
-      label: 'Guide',
-      icon: icon('Guide'),
-      color: 'menu-item-manager',
-      route: { name: 'invitationForEdit' }
-    },
-    {
       label: 'Service settings',
       icon: icon('Service settings'),
       color: 'menu-item-manager',

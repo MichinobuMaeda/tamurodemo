@@ -18,7 +18,7 @@ const iconList = {
   'For all': 'sentiment_satisfied_alt',
   'For permitted': 'supervised_user_circle',
   'For managers': 'lock',
-  Service: 'settings',
+  'Service settings': 'settings_applications',
   Upward: 'arrow_upward',
   Downward: 'arrow_downward',
   'Top Left': 'north_west',
@@ -47,8 +47,8 @@ const iconList = {
   Invisible: 'visibility_off',
   Confirm: 'notifications',
   Send: 'send',
-  Defaults: 'settings_applications',
-  Preferences: 'settings_applications',
+  Defaults: 'settings',
+  Preferences: 'settings',
   'Update app': 'system_update_alt',
   'Update service': 'sync',
   'Checkbox On': 'check_box',
@@ -60,6 +60,7 @@ const iconList = {
   Chat: 'chat',
   'Go top': 'arrow_upward',
   'Go bottom': 'arrow_downward',
+  Preview: 'preview',
   'Install app': 'get_app'
 }
 

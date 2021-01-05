@@ -111,10 +111,35 @@
           />
         </v-col>
       </v-row>
+
+      <p class="h3--text text-h3 pt-6">
+        <v-icon color="h3">{{ icon('Guide') }}</v-icon>
+        {{ $t('Guidance to invited members') }}
+      </p>
+
+      <v-row>
+        <v-col class="col-12">
+          <EditableItem
+            type="formatted-text"
+            :label="$t('Description')"
+            v-model="state.service.conf.guide"
+            @save="val => waitForUpdate('service', 'conf', { guide: val })"
+            :editable="page.edit && (priv.manager || priv.admin)"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
+      <LinkButton
+        :icon="icon('Preview')"
+        :label="$t('Preview')"
+        @click="goPage({ name: 'prevwInvitation' })"
+      />
+
       <p class="h3--text text-h3 pt-6">
         <v-icon color="h3">{{ icon('Defaults') }}</v-icon>
         {{ $t('Defaults') }}
       </p>
+
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Dark theme') }}</v-col>
         <v-col class="col-8">
@@ -171,10 +196,12 @@
           />
         </v-col>
       </v-row>
+
       <p class="h3--text text-h3 pt-6">
         <v-icon color="h3">{{ icon('Sign in') }}</v-icon>
         {{ $t('Authentication') }}
       </p>
+
       <v-row v-for="provider in providers.filter(provider => ['oauth', 'custom'].includes(provider.type))" :key="provider.id">
         <v-col class="title--text col-4 text-right">{{ provider.name }}</v-col>
         <v-col class="col-8">
@@ -198,16 +225,18 @@
 <script>
 import { reactive, computed } from '@vue/composition-api'
 import { locales, menuPositions, timezones } from '@/conf'
-import { useStore } from '@/store'
-import { authProviders } from '@/auth'
-import PageTitle from '@/components/PageTitle'
-import EditableItem from '@/components/EditableItem'
+import { useStore } from '../store'
+import { authProviders } from '../auth'
+import PageTitle from '../components/PageTitle'
+import EditableItem from '../components/EditableItem'
+import LinkButton from '../components/LinkButton'
 
 export default {
   name: 'PageService',
   components: {
     PageTitle,
-    EditableItem
+    EditableItem,
+    LinkButton
   },
   setup (prop, { root }) {
     const store = useStore()

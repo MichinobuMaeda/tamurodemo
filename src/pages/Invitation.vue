@@ -2,19 +2,17 @@
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
       <v-alert
-        v-if="!page.invitation && (priv.manager || priv.admin)"
+        v-if="page.preview"
         type="warning" outlined
       >
         <div>{{ $t('Administrators only') }}</div>
-        <div>{{ $t("Don't touch buttons except 'edit'") }}</div>
+        <div>{{ $t('Buttons are disabled') }}</div>
+        <LinkButton
+          :icon="icon('Service settings')"
+          :label="$t('Return to', { target: $t('Service settings') })"
+          @click="goPage({ name: 'service' })"
+        />
       </v-alert>
-      <v-switch
-        v-if="!page.invitation && (priv.manager || priv.admin)"
-        color="primary"
-        class="float-right my-0"
-        v-model="page.edit"
-        :label="$t('Edit')"
-      />
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -64,11 +62,11 @@
             :label="$t('Description')"
             v-model="state.service.conf.guide"
             @save="val => waitForUpdate('service', 'conf', { guide: val })"
-            :editable="page.edit && (priv.manager || priv.admin)"
-            :disabled="!!state.waitProc"
+            :editable="false"
+            :disabled="true"
           />
         </v-sheet>
-        <div v-if="state.me.email">
+        <div v-if="state.me.email && !page.preview">
           <v-alert type="info" outlined dense>
             <div>{{ $t('E-mail address for sign-inhas been set') }}</div>
             <v-icon>{{ icon('E-mail') }}</v-icon> {{ state.me.email }}
@@ -135,14 +133,14 @@
                 color="primary"
                 :icon="icon('Save')"
                 :label="$t('Save')"
-                @click="setEmailAndPasswordWithInvitation"
+                @click="page.preview ? () => {} : setEmailAndPasswordWithInvitation"
                 :disabled="!!state.waitProc || !page.newEmail || !page.confirmEmail || !page.setEmail || page.newEmail !== page.confirmEmail || page.newPassword !== page.confirmPassword"
               />
             </div>
           </v-form>
         </div>
         <v-divider class="my-2" />
-        <SelectAuthProviders />
+        <SelectAuthProviders :noaction="page.preview" />
       </div>
     </v-col>
   </v-row>
@@ -150,14 +148,15 @@
 
 <script>
 import { reactive, watch, onMounted } from '@vue/composition-api'
-import { locales, menuPositions, timezones } from '@/conf'
-import { useStore } from '@/store'
+import { locales, menuPositions, timezones } from '../conf'
+import { useStore } from '../store'
 import { validateInvitation, setEmailAndPasswordWithInvitation } from '@/auth'
-import PageTitle from '@/components/PageTitle'
-import Loading from '@/components/Loading.vue'
-import DefaultButton from '@/components/DefaultButton'
-import EditableItem from '@/components/EditableItem'
-import SelectAuthProviders from '@/parts/SelectAuthProviders'
+import PageTitle from '../components/PageTitle'
+import Loading from '../components/Loading.vue'
+import DefaultButton from '../components/DefaultButton'
+import LinkButton from '../components/LinkButton'
+import EditableItem from '../components/EditableItem'
+import SelectAuthProviders from '../parts/SelectAuthProviders'
 
 export default {
   name: 'PageInvitation',
@@ -165,6 +164,7 @@ export default {
     PageTitle,
     Loading,
     DefaultButton,
+    LinkButton,
     EditableItem,
     SelectAuthProviders
   },
@@ -182,7 +182,8 @@ export default {
       newPassword: '',
       confirmPassword: '',
       showNewPassword: false,
-      showConfirmPassword: false
+      showConfirmPassword: false,
+      preview: !root.$route.params.invitation
     })
 
     watch(

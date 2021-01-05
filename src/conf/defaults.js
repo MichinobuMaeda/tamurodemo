@@ -8,8 +8,10 @@ export const defaults = {
   routeExcludeFromStorage: [
     'invitation',
     'signin',
-    'policy'
+    'policy',
+    'preferences'
   ],
   chatSummaryPaneHeight: '240px',
-  chatPaneHeight: '360px'
+  chatPaneHeight: '360px',
+  hidePrivilegedItems: false
 }
