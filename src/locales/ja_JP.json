@@ -144,11 +144,12 @@
   "Guidance to invited members": "招待時のご案内",
   "Buttons are disabled": "ボタンは無効になっています。",
   "Set the sign-in method": "ログイン方法を設定してください",
-  "Priviliged items": "管理者向けの機能: {value}",
+  "Priviliged items": "管理者向けの機能",
   "Show": "表示",
   "Hide": "非表示",
   "Return to": "{target} に戻る",
   "Preview": "プレビュー",
+  "Administration": "管理者機能",
   "Update app": "アプリを更新してください",
   "Install app": "アプリをインストールする"
 }

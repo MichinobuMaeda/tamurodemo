@@ -4,6 +4,9 @@ export const accountIsValid = account => !!(account && account.id && !account.de
 export const isMemberOf = (account, group) => account && account.id && group && (group.members || []).includes(account.id)
 export const accountPriv = ({ service, groups, hidePrivilegedItems }, account) => {
   const valid = accountIsValid(account)
+  const managerReal = valid && isMemberOf(account, findItem(groups, 'managers'))
+  const adminReal = valid && isMemberOf(account, findItem(groups, 'admins'))
+  const testerReal = valid && isMemberOf(account, findItem(groups, 'testers'))
   return {
     guest: !valid,
     invited: !!(valid &&
@@ -11,9 +14,12 @@ export const accountPriv = ({ service, groups, hidePrivilegedItems }, account) =
       account.invitedAt &&
       account.invitedAt.getTime() >= (new Date().getTime() - service.conf.invitationExpirationTime)),
     user: valid,
-    manager: valid && isMemberOf(account, findItem(groups, 'managers')) && !hidePrivilegedItems,
-    admin: valid && isMemberOf(account, findItem(groups, 'admins')) && !hidePrivilegedItems,
-    tester: valid && isMemberOf(account, findItem(groups, 'testers')) && !hidePrivilegedItems
+    manager: managerReal && !hidePrivilegedItems,
+    admin: adminReal && !hidePrivilegedItems,
+    tester: testerReal && !hidePrivilegedItems,
+    managerReal,
+    adminReal,
+    testerReal
   }
 }
 export const myPriv = state => accountPriv(state, state.me)

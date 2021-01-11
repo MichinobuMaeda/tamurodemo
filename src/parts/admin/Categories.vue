@@ -1,14 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <PageTitle
-        text-color="h2--text"
-        icon-color="h2"
-        :icon="icon('Categories')"
-      >
-        <template v-slot:title>{{ $t('Categories') }}</template>
-      </PageTitle>
-      <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
+  <v-row>
+    <v-col class="col-12">
       <v-row
         v-for="(item, index) in page.items" :key="item.id"
         :class="item.deletedAt ? 'deleted' : ''"
@@ -74,17 +66,15 @@
 
 <script>
 import { reactive, computed, onMounted } from '@vue/composition-api'
-import { useStore, findItem } from '@/store'
-import PageTitle from '@/components/PageTitle'
-import MiniButton from '@/components/MiniButton'
-import DefaultButton from '@/components/DefaultButton'
+import { useStore, findItem } from '../../store'
+import MiniButton from '../../components/MiniButton'
+import DefaultButton from '../../components/DefaultButton'
 
 export default {
-  name: 'PageCategories',
+  name: 'SectionCategories',
   components: {
     MiniButton,
-    DefaultButton,
-    PageTitle
+    DefaultButton
   },
   setup () {
     const store = useStore()

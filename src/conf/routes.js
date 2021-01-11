@@ -30,18 +30,6 @@ export const routes = [
     meta: { privs: ['guest', 'user'] }
   },
   {
-    path: '/categories',
-    name: 'categories',
-    component: () => import('../pages/Categories.vue'),
-    meta: { privs: ['manager'] }
-  },
-  {
-    path: '/users',
-    name: 'users',
-    component: () => import('../pages/Users.vue'),
-    meta: { privs: ['manager', 'admin'] }
-  },
-  {
     path: '/users/:id/:mode?',
     name: 'user',
     component: () => import('../pages/User.vue'),
@@ -60,10 +48,10 @@ export const routes = [
     meta: { privs: ['user'] }
   },
   {
-    path: '/service',
-    name: 'service',
-    component: () => import('../pages/Service.vue'),
-    meta: { privs: ['admin'] }
+    path: '/admin/:target?',
+    name: 'admin',
+    component: () => import('../pages/Admin.vue'),
+    meta: { privs: ['manager', 'admin'] }
   },
   {
     path: '/:pathMatch(.*)*',

@@ -113,6 +113,9 @@ test('accountPriv()' +
   expect(guest.manager).toBeFalsy()
   expect(guest.admin).toBeFalsy()
   expect(guest.tester).toBeFalsy()
+  expect(guest.managerReal).toBeFalsy()
+  expect(guest.adminReal).toBeFalsy()
+  expect(guest.testerReal).toBeFalsy()
 
   expect(deleted.guest).toBeTruthy()
   expect(deleted.user).toBeFalsy()
@@ -120,6 +123,9 @@ test('accountPriv()' +
   expect(deleted.manager).toBeFalsy()
   expect(deleted.admin).toBeFalsy()
   expect(deleted.tester).toBeFalsy()
+  expect(deleted.managerReal).toBeFalsy()
+  expect(deleted.adminReal).toBeFalsy()
+  expect(deleted.testerReal).toBeFalsy()
 
   expect(invalid.guest).toBeTruthy()
   expect(invalid.user).toBeFalsy()
@@ -127,6 +133,9 @@ test('accountPriv()' +
   expect(invalid.manager).toBeFalsy()
   expect(invalid.admin).toBeFalsy()
   expect(invalid.tester).toBeFalsy()
+  expect(invalid.managerReal).toBeFalsy()
+  expect(invalid.adminReal).toBeFalsy()
+  expect(invalid.testerReal).toBeFalsy()
 
   expect(user.guest).toBeFalsy()
   expect(user.user).toBeTruthy()
@@ -134,6 +143,9 @@ test('accountPriv()' +
   expect(user.manager).toBeFalsy()
   expect(user.admin).toBeFalsy()
   expect(user.tester).toBeFalsy()
+  expect(user.managerReal).toBeFalsy()
+  expect(user.adminReal).toBeFalsy()
+  expect(user.testerReal).toBeFalsy()
 
   expect(invied.guest).toBeFalsy()
   expect(invied.user).toBeTruthy()
@@ -141,6 +153,9 @@ test('accountPriv()' +
   expect(invied.manager).toBeFalsy()
   expect(invied.admin).toBeFalsy()
   expect(invied.tester).toBeFalsy()
+  expect(invied.managerReal).toBeFalsy()
+  expect(invied.adminReal).toBeFalsy()
+  expect(invied.testerReal).toBeFalsy()
 
   expect(exired.guest).toBeFalsy()
   expect(exired.user).toBeTruthy()
@@ -148,6 +163,9 @@ test('accountPriv()' +
   expect(exired.manager).toBeFalsy()
   expect(exired.admin).toBeFalsy()
   expect(exired.tester).toBeFalsy()
+  expect(exired.managerReal).toBeFalsy()
+  expect(exired.adminReal).toBeFalsy()
+  expect(exired.testerReal).toBeFalsy()
 
   expect(primary.guest).toBeFalsy()
   expect(primary.user).toBeTruthy()
@@ -155,6 +173,9 @@ test('accountPriv()' +
   expect(primary.manager).toBeTruthy()
   expect(primary.admin).toBeTruthy()
   expect(primary.tester).toBeFalsy()
+  expect(primary.managerReal).toBeTruthy()
+  expect(primary.adminReal).toBeTruthy()
+  expect(primary.testerReal).toBeFalsy()
 
   expect(manager.guest).toBeFalsy()
   expect(manager.user).toBeTruthy()
@@ -162,6 +183,9 @@ test('accountPriv()' +
   expect(manager.manager).toBeTruthy()
   expect(manager.admin).toBeFalsy()
   expect(manager.tester).toBeFalsy()
+  expect(manager.managerReal).toBeTruthy()
+  expect(manager.adminReal).toBeFalsy()
+  expect(manager.testerReal).toBeFalsy()
 
   expect(admin.guest).toBeFalsy()
   expect(admin.user).toBeTruthy()
@@ -169,6 +193,9 @@ test('accountPriv()' +
   expect(admin.manager).toBeFalsy()
   expect(admin.admin).toBeTruthy()
   expect(admin.tester).toBeFalsy()
+  expect(admin.managerReal).toBeFalsy()
+  expect(admin.adminReal).toBeTruthy()
+  expect(admin.testerReal).toBeFalsy()
 
   expect(tester.guest).toBeFalsy()
   expect(tester.user).toBeTruthy()
@@ -176,6 +203,9 @@ test('accountPriv()' +
   expect(tester.manager).toBeFalsy()
   expect(tester.admin).toBeFalsy()
   expect(tester.tester).toBeTruthy()
+  expect(tester.managerReal).toBeFalsy()
+  expect(tester.adminReal).toBeFalsy()
+  expect(tester.testerReal).toBeTruthy()
 })
 
 test('accountPriv()' +
@@ -249,6 +279,9 @@ test('accountPriv()' +
   expect(guest.manager).toBeFalsy()
   expect(guest.admin).toBeFalsy()
   expect(guest.tester).toBeFalsy()
+  expect(guest.managerReal).toBeFalsy()
+  expect(guest.adminReal).toBeFalsy()
+  expect(guest.testerReal).toBeFalsy()
 
   expect(deleted.guest).toBeTruthy()
   expect(deleted.user).toBeFalsy()
@@ -256,6 +289,9 @@ test('accountPriv()' +
   expect(deleted.manager).toBeFalsy()
   expect(deleted.admin).toBeFalsy()
   expect(deleted.tester).toBeFalsy()
+  expect(deleted.managerReal).toBeFalsy()
+  expect(deleted.adminReal).toBeFalsy()
+  expect(deleted.testerReal).toBeFalsy()
 
   expect(invalid.guest).toBeTruthy()
   expect(invalid.user).toBeFalsy()
@@ -263,6 +299,9 @@ test('accountPriv()' +
   expect(invalid.manager).toBeFalsy()
   expect(invalid.admin).toBeFalsy()
   expect(invalid.tester).toBeFalsy()
+  expect(invalid.managerReal).toBeFalsy()
+  expect(invalid.adminReal).toBeFalsy()
+  expect(invalid.testerReal).toBeFalsy()
 
   expect(user.guest).toBeFalsy()
   expect(user.user).toBeTruthy()
@@ -270,6 +309,9 @@ test('accountPriv()' +
   expect(user.manager).toBeFalsy()
   expect(user.admin).toBeFalsy()
   expect(user.tester).toBeFalsy()
+  expect(user.managerReal).toBeFalsy()
+  expect(user.adminReal).toBeFalsy()
+  expect(user.testerReal).toBeFalsy()
 
   expect(invied.guest).toBeFalsy()
   expect(invied.user).toBeTruthy()
@@ -277,6 +319,9 @@ test('accountPriv()' +
   expect(invied.manager).toBeFalsy()
   expect(invied.admin).toBeFalsy()
   expect(invied.tester).toBeFalsy()
+  expect(invied.managerReal).toBeFalsy()
+  expect(invied.adminReal).toBeFalsy()
+  expect(invied.testerReal).toBeFalsy()
 
   expect(exired.guest).toBeFalsy()
   expect(exired.user).toBeTruthy()
@@ -284,6 +329,9 @@ test('accountPriv()' +
   expect(exired.manager).toBeFalsy()
   expect(exired.admin).toBeFalsy()
   expect(exired.tester).toBeFalsy()
+  expect(exired.managerReal).toBeFalsy()
+  expect(exired.adminReal).toBeFalsy()
+  expect(exired.testerReal).toBeFalsy()
 
   expect(primary.guest).toBeFalsy()
   expect(primary.user).toBeTruthy()
@@ -291,6 +339,9 @@ test('accountPriv()' +
   expect(primary.manager).toBeFalsy()
   expect(primary.admin).toBeFalsy()
   expect(primary.tester).toBeFalsy()
+  expect(primary.managerReal).toBeTruthy()
+  expect(primary.adminReal).toBeTruthy()
+  expect(primary.testerReal).toBeFalsy()
 
   expect(manager.guest).toBeFalsy()
   expect(manager.user).toBeTruthy()
@@ -298,6 +349,9 @@ test('accountPriv()' +
   expect(manager.manager).toBeFalsy()
   expect(manager.admin).toBeFalsy()
   expect(manager.tester).toBeFalsy()
+  expect(manager.managerReal).toBeTruthy()
+  expect(manager.adminReal).toBeFalsy()
+  expect(manager.testerReal).toBeFalsy()
 
   expect(admin.guest).toBeFalsy()
   expect(admin.user).toBeTruthy()
@@ -305,6 +359,9 @@ test('accountPriv()' +
   expect(admin.manager).toBeFalsy()
   expect(admin.admin).toBeFalsy()
   expect(admin.tester).toBeFalsy()
+  expect(admin.managerReal).toBeFalsy()
+  expect(admin.adminReal).toBeTruthy()
+  expect(admin.testerReal).toBeFalsy()
 
   expect(tester.guest).toBeFalsy()
   expect(tester.user).toBeTruthy()
@@ -312,6 +369,9 @@ test('accountPriv()' +
   expect(tester.manager).toBeFalsy()
   expect(tester.admin).toBeFalsy()
   expect(tester.tester).toBeFalsy()
+  expect(tester.managerReal).toBeFalsy()
+  expect(tester.adminReal).toBeFalsy()
+  expect(tester.testerReal).toBeTruthy()
 })
 
 test('myPriv()' +

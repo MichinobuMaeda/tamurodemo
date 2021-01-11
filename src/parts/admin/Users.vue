@@ -1,14 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <PageTitle
-        text-color="h2--text"
-        icon-color="h2"
-        :icon="icon('Users')"
-      >
-        <template v-slot:title>{{ $t('Users') }}</template>
-      </PageTitle>
-      <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
+  <v-row>
+    <v-col class="col-12">
       <div
         v-for="user in state.users" :key="user.id"
         :class="user.deletedAt ? 'deleted' : ''"
@@ -31,16 +23,14 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { useStore, accountStatus } from '@/store'
-import PageTitle from '@/components/PageTitle'
-import DefaultButton from '@/components/DefaultButton'
-import GroupsOfUser from '@/parts/GroupsOfUser'
-import CreateUser from '@/parts/CreateUser'
+import { useStore, accountStatus } from '../../store'
+import DefaultButton from '../../components/DefaultButton'
+import GroupsOfUser from '../../parts/GroupsOfUser'
+import CreateUser from '../../parts/CreateUser'
 
 export default {
-  name: 'PageAccounts',
+  name: 'SectionUsers',
   components: {
-    PageTitle,
     DefaultButton,
     GroupsOfUser,
     CreateUser

@@ -60,7 +60,7 @@
       v-if="!state.loading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, () => { page.rawData = true }), $router, priv, goPage)"
+      :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, priviligedItems, togglehPriviligedItems, () => { page.rawData = true }), $router, priv, goPage)"
       :position="state.menuPosition"
       @move="menuPosition => state.me && state.me.valid && waitForUpdate('accounts', state.me.id, { menuPosition })"
     />
@@ -82,7 +82,7 @@
 </style>
 
 <script>
-import { reactive, onMounted, watch, provide } from '@vue/composition-api'
+import { reactive, onMounted, watch, provide, computed } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import { menuItems, baseUrl, version } from './conf'
 import {
@@ -132,6 +132,7 @@ export default {
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
     store.goPageUser = (id, edit = false) => store.goPage({ name: 'user', params: { id, mode: (edit ? 'edit' : null) } })
     store.standalone = window.matchMedia('(display-mode: standalone)').matches
+    const { state, update } = store
 
     onMounted(async () => {
       await getAuthState(store)
@@ -143,30 +144,30 @@ export default {
     watch(
       () => root.$route,
       () => {
-        guardRoute(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, state)
       }
     )
 
     watch(
-      () => store.state.service,
+      () => state.service,
       () => {
         overrideDefaults(store, root)
-        guardRoute(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, state)
       }
     )
 
     watch(
-      () => store.state.groups,
+      () => state.groups,
       async (groups, groupsPrev) => {
-        if (detectPrivilegesChanged(store.state.me, groups, groupsPrev)) {
+        if (detectPrivilegesChanged(state.me, groups, groupsPrev)) {
           await initUserData(store)
         }
-        guardRoute(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, state)
       }
     )
 
     watch(
-      () => store.state.me,
+      () => state.me,
       async (me, mePrev) => {
         overrideDefaults(store, root)
         if (detectAccountChanged(me, mePrev)) {
@@ -177,14 +178,14 @@ export default {
             await signOut(store)
           }
         }
-        guardRoute(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, state)
       }
     )
 
     watch(
-      () => store.state.loading,
+      () => state.loading,
       () => {
-        guardRoute(root.$router, root.$route, store.state)
+        guardRoute(root.$router, root.$route, state)
       }
     )
 
@@ -193,6 +194,8 @@ export default {
       page,
       guardMenuItem,
       menuItems,
+      togglehPriviligedItems: () => update('accounts', state.me.id, { hidePrivilegedItems: !state.me.hidePrivilegedItems }),
+      priviligedItems: computed(() => !state.me.hidePrivilegedItems),
       baseUrl: baseUrl(),
       noSignInMethod: state => state.me.valid && ![...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
       updateAvailable: state => state.service.conf && state.service.conf.version !== version,

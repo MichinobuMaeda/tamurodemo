@@ -10,15 +10,6 @@
       </PageTitle>
 
       <v-row>
-        <v-col
-          v-if="realPriv.manager || realPriv.admin || realPriv.tester"
-          class="col-12 col-12"
-        >
-          <v-switch
-            v-model="showPrivilegedItems"
-            :label="$t('Priviliged items', { value: $t(showPrivilegedItems ? 'Show' : 'Hide') })"
-          />
-        </v-col>
         <v-col class="col-12 col-sm-6">
           <v-switch
             v-model="state.me.darkTheme"
@@ -255,7 +246,7 @@ export default {
   },
   setup (props, { root, emit }) {
     const store = useStore()
-    const { auth, state, update, setProcForWait } = store
+    const { auth, state, setProcForWait } = store
     const page = reactive({
       now: new Date().getTime(),
       everySecondUpdater: null,
@@ -351,10 +342,6 @@ export default {
       locales,
       menuPositions,
       timezones,
-      showPrivilegedItems: computed({
-        get: () => !state.hidePrivilegedItems,
-        set: v => update('accounts', state.me.id, { hidePrivilegedItems: !v })
-      }),
       realPriv: computed(() => accountPriv({ ...state, hidePrivilegedItems: false }, state.me))
     }
   }
