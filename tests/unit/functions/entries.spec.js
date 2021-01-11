@@ -3,6 +3,7 @@ const {
   db,
   auth,
   messaging,
+  logger,
   clearDb,
   deleteApp,
   testData
@@ -34,7 +35,7 @@ const {
   notifyMessage,
   handleUpdateServiceVersion,
   handleValidateInvitation
-} = entries({ db, auth, messaging }, api, router)
+} = entries({ db, auth, logger, messaging }, api, router)
 
 beforeEach(async () => {
   auth.clear()
@@ -54,7 +55,7 @@ test('createAccount()' +
   const uid = 'account01'
   await db.collection('accounts').doc(uid).set({ valid: true })
   const data = { name: 'name01' }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(createAccount(data, context)).rejects.toThrow()
@@ -80,7 +81,7 @@ test('setEmail()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
   const data = { id, email }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(setEmail(data, context)).rejects.toThrow()
@@ -107,7 +108,7 @@ test('setPassword()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
   const data = { id, password }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(setPassword(data, context)).rejects.toThrow()
@@ -131,7 +132,7 @@ test('invite()' +
   await db.collection('accounts').doc(uid).set({ valid: true })
   await db.collection('accounts').doc(id).set({ valid: true })
   const data = { id }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(invite(data, context)).rejects.toThrow()
@@ -153,7 +154,7 @@ test('validateInvitation()' +
   await db.collection('accounts').doc(id).set({ valid: true })
   const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const data = { invitation: 'invalid invitation' }
-  const context = { auth: { uid: null } }
+  const context = { auth: { uid: null }, logger }
 
   // #1 should fail
   await expect(validateInvitation(data, context)).rejects.toThrow()
@@ -178,7 +179,7 @@ test('setEmailWithInvitation()' +
   const email = 'dummy@example.com'
   const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const data = { invitation, email }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(setEmailWithInvitation(data, context)).rejects.toThrow()
@@ -207,7 +208,7 @@ test('setEmailAndPasswordWithInvitation()' +
   const password = 'password01'
   const { invitation } = await invite({ id }, { auth: { uid: primary } })
   const data = { invitation, email, password }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(setEmailAndPasswordWithInvitation(data, context)).rejects.toThrow()
@@ -236,7 +237,7 @@ test('resetUserAuth()' +
   await db.collection('accounts').doc(id).set({ email: 'account02@example.com' })
   auth.data[id] = { email: 'account02@example.com' }
   const data = { id }
-  const context = { auth: { uid } }
+  const context = { auth: { uid }, logger }
 
   // #1 should fail
   await expect(resetUserAuth(data, context)).rejects.toThrow()
@@ -306,7 +307,7 @@ test('handleValidateInvitation()' +
   // prepare
   const id = 'account01'
   await db.collection('accounts').doc(id).set({ valid: true })
-  const { invitation } = await invite({ id }, { auth: { uid: primary } })
+  const { invitation } = await invite({ id }, { auth: { uid: primary }, logger })
   const result = {}
   const req = { params: { invitation } }
   const res = {

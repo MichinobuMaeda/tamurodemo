@@ -2,12 +2,14 @@ const { admin } = require('./env')
 const prompts = require('prompts')
 const { updateService } = require('../functions/service')
 const accounts = require('../functions/accounts')
+const { initialData } = require('../functions/initialData')
 
 const setupService = async () => {
   const db = admin.firestore()
   const auth = admin.auth()
-  const context = { db, auth }
-  await updateService(context)
+  const logger = console
+  const context = { db, auth, logger }
+  await updateService(context, initialData)
 
   // set API Key.
   const serviceConfRef = db.collection('service').doc('conf')

@@ -9,6 +9,7 @@ const apiKey = 'test-api-key'
 const primary = 'primary'
 const version = 'testver01'
 const hostingPath = path.join(__dirname, '..', '..', '..', 'dist')
+const logger = console
 
 if (!fs.existsSync(hostingPath)) {
   fs.mkdirSync(hostingPath)
@@ -89,7 +90,7 @@ const messaging = {
 }
 
 const testData = async () => {
-  await updateService({ db }, initialData)
+  await updateService({ db, logger }, initialData)
   await db.collection('service').doc('conf').update({
     apiKey,
     invitationExpirationTime: 60 * 1000,
@@ -115,6 +116,7 @@ module.exports = {
   db,
   auth,
   messaging,
+  logger,
   clearDb,
   deleteApp,
   testData

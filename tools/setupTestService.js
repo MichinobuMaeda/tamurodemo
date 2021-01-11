@@ -15,7 +15,8 @@ admin.initializeApp({ projectId })
 
 const db = admin.firestore()
 const auth = admin.auth()
-const context = { db, auth }
+const logger = console
+const context = { db, auth, logger }
 
 const clearDb = async () => {
   const getDocRefs = async parent => {

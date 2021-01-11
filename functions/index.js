@@ -12,7 +12,8 @@ admin.initializeApp()
 const db = admin.firestore()
 const auth = admin.auth()
 const messaging = admin.messaging()
-const firebase = { functions, db, auth, messaging }
+const logger = functions.logger
+const firebase = { functions, db, auth, messaging, logger }
 
 const ent = entries(firebase, api, router)
 

@@ -1,6 +1,7 @@
 const {
   db,
   auth,
+  logger,
   clearDb,
   deleteApp,
   testData
@@ -32,7 +33,7 @@ test('createAccount()' +
   await db.collection('groups').doc('all').update({ members: null })
 
   // run
-  const { id } = await createAccount({ name }, { db, auth })
+  const { id } = await createAccount({ name }, { db, auth, logger })
 
   // evaluate
   const account = await db.collection('accounts').doc(id).get()
@@ -56,7 +57,7 @@ test('createAccount()' +
   ' rejects no name.', async () => {
   const name = null
   // should fail
-  await expect(createAccount({ name }, { db, auth })).rejects.toThrow()
+  await expect(createAccount({ name }, { db, auth, logger })).rejects.toThrow()
 })
 
 test('createAccount()' +
@@ -66,7 +67,7 @@ test('createAccount()' +
   const name = 'account01'
 
   // should fail
-  await expect(createAccount({ name }, { db, auth })).rejects.toThrow()
+  await expect(createAccount({ name }, { db, auth, logger })).rejects.toThrow()
 })
 
 test('setEmail()' +
@@ -77,7 +78,7 @@ test('setEmail()' +
   await db.collection('accounts').doc(id).set({ email: '' })
 
   // run
-  const { status } = await setEmail({ id, email }, { db, auth })
+  const { status } = await setEmail({ id, email }, { db, auth, logger })
 
   // evaluate
   const account = await db.collection('accounts').doc(id).get()
@@ -95,7 +96,7 @@ test('setEmail()' +
   auth.error = true
 
   // should fail
-  await expect(setEmail({ id, email }, { db, auth })).rejects.toThrow()
+  await expect(setEmail({ id, email }, { db, auth, logger })).rejects.toThrow()
 })
 
 test('setPassword()' +
@@ -106,7 +107,7 @@ test('setPassword()' +
   await db.collection('accounts').doc(id).set({ email: '' })
 
   // run
-  const { status } = await setPassword({ id, password }, { db, auth })
+  const { status } = await setPassword({ id, password }, { db, auth, logger })
 
   // evaluate
   expect(status).toEqual('ok')
@@ -122,7 +123,7 @@ test('setPassword()' +
   auth.error = true
 
   // should fail
-  await expect(setPassword({ id, password }, { db, auth })).rejects.toThrow()
+  await expect(setPassword({ id, password }, { db, auth, logger })).rejects.toThrow()
 })
 
 test('resetUserAuth()' +
@@ -131,7 +132,7 @@ test('resetUserAuth()' +
   const id = 'account01'
 
   // run #1
-  await expect(resetUserAuth({ id }, { db, auth })).rejects.toThrow()
+  await expect(resetUserAuth({ id }, { db, auth, logger })).rejects.toThrow()
 
   // prepare $2
   await db.collection('accounts').doc(id).set({
@@ -142,7 +143,7 @@ test('resetUserAuth()' +
   })
 
   // run #2
-  await resetUserAuth({ id }, { db, auth })
+  await resetUserAuth({ id }, { db, auth, logger })
 
   // evaluate #2
   const account1 = await db.collection('accounts').doc(id).get()
@@ -162,7 +163,7 @@ test('resetUserAuth()' +
   auth.data[id] = { email: 'account01@example.com' }
 
   // run #3
-  await resetUserAuth({ id }, { db, auth })
+  await resetUserAuth({ id }, { db, auth, logger })
 
   // evaluate #3
   const account2 = await db.collection('accounts').doc(id).get()
@@ -180,7 +181,7 @@ test('rejectCreateUserWithoutAccount()' +
   auth.data[uid] = { email: 'account01@example.com' }
 
   // run
-  await rejectCreateUserWithoutAccount({ uid }, { db, auth })
+  await rejectCreateUserWithoutAccount({ uid }, { db, auth, logger })
 
   // evaluate
   expect(auth.data[uid]).not.toBeDefined()
@@ -194,7 +195,7 @@ test('rejectCreateUserWithoutAccount()' +
   await db.collection('accounts').doc(uid).set({ email: 'account01@example.com' })
 
   // run
-  await rejectCreateUserWithoutAccount({ uid }, { db, auth })
+  await rejectCreateUserWithoutAccount({ uid }, { db, auth, logger })
 
   // evaluate
   expect(auth.data[uid]).toBeDefined()

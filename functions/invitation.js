@@ -12,14 +12,14 @@ const hashInvitation = (apiKey, invitation) => {
 
 // id: invitee
 // uid: inviter
-const invite = async ({ id }, { db, uid }) => {
+const invite = async ({ id }, { db, logger, uid }) => {
   const conf = await db.collection('service').doc('conf').get()
   const invitation = await nanoid()
   const invitedAs = hashInvitation(conf.data().apiKey, invitation)
   const invitedAt = new Date()
   const invitedBy = uid
   await db.collection('accounts').doc(id).update({ invitedAs, invitedAt, invitedBy })
-  console.log('invited ' + id + ' by ' + invitedBy)
+  logger.log('invited ' + id + ' by ' + invitedBy)
   return { invitation }
 }
 
@@ -48,24 +48,22 @@ const invitedAccount = async ({ invitation }, { db }) => {
   return account
 }
 
-const validateInvitation = async ({ invitation }, { db, auth }) => {
+const validateInvitation = async ({ invitation }, { db, auth, logger }) => {
   const account = await invitedAccount({ invitation }, { db })
   const token = await auth.createCustomToken(account.id)
-  console.log('create token for: ' + account.id)
+  logger.log('create token for: ' + account.id)
   return { token }
 }
 
-const setEmailAndPasswordWithInvitation = async (
-  { invitation, email, password },
-  { db, auth, uid }
-) => {
-  const account = await invitedAccount({ invitation }, { db })
+const setEmailAndPasswordWithInvitation = async ({ invitation, email, password }, context) => {
+  const { uid } = context
+  const account = await invitedAccount({ invitation }, context)
   const id = account.id
   if (id !== uid) {
     throwUnauthenticated('Account has not invited: ', invitation, id, uid)
   }
-  const result = await setEmail({ id, email }, { db, auth })
-  return password ? setPassword({ id, password }, { db, auth }) : result
+  const result = await setEmail({ id, email }, context)
+  return password ? setPassword({ id, password }, context) : result
 }
 
 const setEmailWithInvitation = async ({ invitation, email }, context) =>

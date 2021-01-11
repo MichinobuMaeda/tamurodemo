@@ -2,6 +2,7 @@ const {
   primary,
   db,
   auth,
+  logger,
   clearDb,
   deleteApp,
   testData
@@ -34,7 +35,7 @@ test('invite()' +
   await docRef.set({ email: '' })
 
   // run
-  const result = await invite({ id }, { db, uid })
+  const result = await invite({ id }, { db, logger, uid })
 
   // evaluate
   const account = await docRef.get()
@@ -53,10 +54,10 @@ test('validateInvitation()' +
   await docRef.set({ email: '' })
 
   // run
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
 
   // evaluate
-  const result = await validateInvitation({ invitation }, { db, auth })
+  const result = await validateInvitation({ invitation }, { db, auth, logger })
   expect(result.token).toEqual(`token for ${id}`)
 })
 
@@ -64,7 +65,7 @@ test('validateInvitation()' +
   ' rejects invalid invitation', async () => {
   // should fail
   await expect(
-    validateInvitation({ invitation: 'invalid invitation' }, { db, auth })
+    validateInvitation({ invitation: 'invalid invitation' }, { db, auth, logger })
   ).rejects.toThrow()
 })
 
@@ -75,12 +76,12 @@ test('validateInvitation()' +
   const uid = primary
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   await docRef.update({ invitedAt: new Date(new Date().getTime() - 999999 * 1000) })
 
   // should fail
   await expect(
-    validateInvitation({ invitation }, { db, auth })
+    validateInvitation({ invitation }, { db, auth, logger })
   ).rejects.toThrow()
 })
 
@@ -91,14 +92,14 @@ test('setEmailAndPasswordWithInvitation()' +
   const uid = id
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   const email = 'account01@example.com'
   const password = 'password01'
 
   // run
   const result = await setEmailAndPasswordWithInvitation(
     { invitation, email, password },
-    { db, auth, uid }
+    { db, auth, logger, uid }
   )
 
   // evaluate
@@ -116,7 +117,7 @@ test('setEmailAndPasswordWithInvitation()' +
   const uid = id
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   const email = 'account01@example.com'
   const password = 'password01'
 
@@ -124,7 +125,7 @@ test('setEmailAndPasswordWithInvitation()' +
   await expect(
     setEmailAndPasswordWithInvitation(
       { invitation, email, password },
-      { db, auth, uid: 'unmatched' }
+      { db, auth, logger, uid: 'unmatched' }
     )
   ).rejects.toThrow()
 })
@@ -140,7 +141,7 @@ test('setEmailAndPasswordWithInvitation()' +
   await expect(
     setEmailAndPasswordWithInvitation(
       { invitation, email, password },
-      { db, auth, uid: 'unmatched' }
+      { db, auth, logger, uid: 'unmatched' }
     )
   ).rejects.toThrow()
 })
@@ -152,7 +153,7 @@ test('setEmailAndPasswordWithInvitation()' +
   const uid = id
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   const email = 'account01@example.com'
   const password = 'password01'
   await docRef.update({ invitedAt: new Date(new Date().getTime() - 999999 * 1000) })
@@ -161,7 +162,7 @@ test('setEmailAndPasswordWithInvitation()' +
   await expect(
     setEmailAndPasswordWithInvitation(
       { invitation, email, password },
-      { db, auth, uid: 'unmatched' }
+      { db, auth, logger, uid: 'unmatched' }
     )
   ).rejects.toThrow()
 })
@@ -173,14 +174,14 @@ test('setEmailWithInvitation()' +
   const uid = id
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   const email = 'account01@example.com'
   const password = 'password01'
 
   // run
   const result = await setEmailWithInvitation(
     { invitation, email, password },
-    { db, auth, uid }
+    { db, auth, logger, uid }
   )
 
   // evaluate
@@ -198,7 +199,7 @@ test('setEmailWithInvitation()' +
   const uid = id
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   const email = 'account01@example.com'
   const password = 'password01'
 
@@ -206,7 +207,7 @@ test('setEmailWithInvitation()' +
   await expect(
     setEmailWithInvitation(
       { invitation, email, password },
-      { db, auth, uid: 'unmatched' }
+      { db, auth, logger, uid: 'unmatched' }
     )
   ).rejects.toThrow()
 })
@@ -222,7 +223,7 @@ test('setEmailWithInvitation()' +
   await expect(
     setEmailWithInvitation(
       { invitation, email, password },
-      { db, auth, uid: 'unmatched' }
+      { db, auth, logger, uid: 'unmatched' }
     )
   ).rejects.toThrow()
 })
@@ -234,7 +235,7 @@ test('setEmailWithInvitation()' +
   const uid = id
   const docRef = db.collection('accounts').doc(id)
   await docRef.set({ email: '' })
-  const { invitation } = await invite({ id }, { db, uid })
+  const { invitation } = await invite({ id }, { db, logger, uid })
   const email = 'account01@example.com'
   const password = 'password01'
   await docRef.update({ invitedAt: new Date(new Date().getTime() - 999999 * 1000) })
@@ -243,7 +244,7 @@ test('setEmailWithInvitation()' +
   await expect(
     setEmailWithInvitation(
       { invitation, email, password },
-      { db, auth, uid: 'unmatched' }
+      { db, auth, logger, uid: 'unmatched' }
     )
   ).rejects.toThrow()
 })

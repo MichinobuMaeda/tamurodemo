@@ -2,7 +2,7 @@ const moment = require('moment-timezone')
 const axios = require('axios')
 const { initialData } = require('./initialData')
 
-const updateService = async ({ db }, initialData) => {
+const updateService = async ({ db, logger }, initialData) => {
   const ts = new Date()
   const createdAt = ts
   const updatedAt = ts
@@ -17,7 +17,7 @@ const updateService = async ({ db }, initialData) => {
             doc.data()[key] !== false &&
             doc.data()[key] !== ''
         )) {
-          console.log(`Update: ${collection}.${id}`)
+          logger.log(`Update: ${collection}.${id}`)
           await docRef.set({
             ...data,
             ...doc.data(),
@@ -25,7 +25,7 @@ const updateService = async ({ db }, initialData) => {
           })
         }
       } else {
-        console.log(`Create: ${collection}.${id}`)
+        logger.log(`Create: ${collection}.${id}`)
         await docRef.set({
           ...data,
           updatedAt,
@@ -36,13 +36,13 @@ const updateService = async ({ db }, initialData) => {
   )
 }
 
-const updateVersion = async ({ db }) => {
+const updateVersion = async ({ db, logger }) => {
   const confRef = db.collection('service').doc('conf')
   const conf = await confRef.get()
   const response = await axios.get(`${conf.data().hosting}/version.json`)
   const version = response.data.version
   if (conf.data().version !== response.data.version) {
-    console.log(`update from ${conf.data().version} to ${version}`)
+    logger.log(`update from ${conf.data().version} to ${version}`)
     await updateService({ db }, initialData)
     await confRef.update({ version })
   }

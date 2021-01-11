@@ -1,6 +1,6 @@
 const { throwErrorDataLoss } = require('./utils')
 
-const createAccount = async ({ name }, { db, auth }) => {
+const createAccount = async ({ name }, { db, auth, logger }) => {
   let id
   if (!name) {
     throwErrorDataLoss('createAccount', name, err)
@@ -35,7 +35,7 @@ const createAccount = async ({ name }, { db, auth }) => {
         updatedAt
       })
       await auth.createUser({ uid: id })
-      console.log(`Create account "${id}"`)
+      logger.log(`Create account "${id}"`)
     })
   } catch (err) {
     try {
@@ -47,7 +47,7 @@ const createAccount = async ({ name }, { db, auth }) => {
   return { id }
 }
 
-const setEmail = async ({ id, email }, { db, auth }) => {
+const setEmail = async ({ id, email }, { db, auth, logger }) => {
   try {
     const updatedAt = new Date()
     await auth.updateUser(id, { email })
@@ -55,24 +55,24 @@ const setEmail = async ({ id, email }, { db, auth }) => {
       email,
       updatedAt
     })
-    console.log(`Update account "${id}" set email "${email}"`)
+    logger.log(`Update account "${id}" set email "${email}"`)
   } catch (err) {
     throwErrorDataLoss('setEmail', id, err)
   }
   return { status: 'ok' }
 }
 
-const setPassword = async ({ id, password }, { auth }) => {
+const setPassword = async ({ id, password }, { auth, logger }) => {
   try {
     await auth.updateUser(id, { password })
-    console.log(`Update account "${id}" set password`)
+    logger.log(`Update account "${id}" set password`)
   } catch (err) {
     throwErrorDataLoss('setEmail', id, err)
   }
   return { status: 'ok' }
 }
 
-const resetUserAuth = async ({ id }, { db, auth }) => {
+const resetUserAuth = async ({ id }, { db, auth, logger }) => {
   try {
     await db.collection('accounts').doc(id).update({
       email: null,
@@ -87,7 +87,7 @@ const resetUserAuth = async ({ id }, { db, auth }) => {
   try {
     await auth.deleteUser(id)
   } catch (e) {
-    console.log('Fail to delete account: ' + id)
+    logger.log('Fail to delete account: ' + id)
   }
   await auth.createUser({ uid: id })
 }

@@ -4,7 +4,7 @@ const {
 } = require('./utils')
 
 const guardValidAccount = async (data, context, next) => {
-  const { db, uid } = context
+  const { db, uid, logger } = context
   if (!uid) {
     throwUnauthenticated('failed to get an authenticated user id.')
   }
@@ -15,7 +15,7 @@ const guardValidAccount = async (data, context, next) => {
   if (!account.data().valid) {
     throwUnauthenticated('the account is invalid.', uid)
   }
-  console.log(JSON.stringify(data))
+  logger.log(JSON.stringify(data))
   return next(data, context)
 }
 

@@ -1,6 +1,7 @@
 const {
   db,
   auth,
+  logger,
   clearDb,
   deleteApp,
   testData
@@ -31,7 +32,7 @@ test('guardValidAccount()' +
     valid: true
   })
   const data = { test: 'test01' }
-  const context = { db, uid }
+  const context = { db, logger, uid }
   const next = (data, context) => {
     callMe.data = data
     callMe.context = context
@@ -53,7 +54,7 @@ test('guardValidAccount()' +
     valid: false
   })
   const data = { test: 'test01' }
-  const context = { db }
+  const context = { db, logger }
   const next = (data, context) => { throw new Error("Don't call me") }
 
   // should fail
@@ -68,7 +69,7 @@ test('guardValidAccount()' +
     valid: false
   })
   const data = { test: 'test01' }
-  const context = { db, uid }
+  const context = { db, logger, uid }
   const next = (data, context) => { throw new Error("Don't call me") }
 
   // should fail
@@ -84,7 +85,7 @@ test('guardValidAccount()' +
     deletedAt: new Date()
   })
   const data = { test: 'test01' }
-  const context = { db, uid }
+  const context = { db, logger, uid }
   const next = (data, context) => { throw new Error("Don't call me") }
 
   // should fail
@@ -96,7 +97,7 @@ test('guardValidAccount()' +
   // prepare
   const uid = 'account01'
   const data = { test: 'test01' }
-  const context = { db, uid }
+  const context = { db, logger, uid }
   const next = (data, context) => { throw new Error("Don't call me") }
 
   // should fail
@@ -124,7 +125,7 @@ test('guardGroups()' +
     members: [...managerMembers, uid]
   })
   const data = { test: 'test01' }
-  const context = { db, uid }
+  const context = { db, logger, uid }
   const next = (data, context) => {
     callMe.data = data
     callMe.context = context
@@ -208,7 +209,7 @@ test('guardUserSelfOrGroups()' +
     members: [...managerMembers, uid]
   })
   const data = { test: 'test01', id: 'account02' }
-  const context = { db, uid }
+  const context = { db, logger, uid }
   const next = (data, context) => {
     callMe.data = data
     callMe.context = context

@@ -1,6 +1,7 @@
 const {
   db,
   auth,
+  logger,
   clearDb,
   deleteApp,
   testData,
@@ -35,7 +36,7 @@ test('updateService()' +
   await db.collection('groups').doc('managers').delete()
 
   // run
-  await updateService({ db }, initialData)
+  await updateService({ db, logger }, initialData)
 
   // evaluate
   const defaults = await db.collection('service').doc('defaults').get()
@@ -53,7 +54,7 @@ test('updateVersion()' +
   })
 
   // #1 run
-  const version1 = await updateVersion({ db })
+  const version1 = await updateVersion({ db, logger })
 
   // #1 evaluate
   const conf1 = await db.collection('service').doc('conf').get()
@@ -61,7 +62,7 @@ test('updateVersion()' +
   expect(conf1.data().version).toEqual(version)
 
   // #2 run
-  const version2 = await updateVersion({ db })
+  const version2 = await updateVersion({ db, logger })
 
   // #3 evaluate
   const conf2 = await db.collection('service').doc('conf').get()

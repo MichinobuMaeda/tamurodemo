@@ -11,6 +11,7 @@ const apiKey = 'test-api-key'
 const primary = 'primary'
 const uid = 'account01'
 const email = 'account01@example.com'
+const logger = console
 
 Firebase.loadFirestoreRules({
   projectId,
@@ -241,7 +242,7 @@ export const store = createStore(firebase, root)
 export const testData = async () => {
   const db = admin.firestore()
 
-  await updateService({ db }, initialData)
+  await updateService({ db, logger }, initialData)
   await db.collection('service').doc('conf').update({
     apiKey,
     invitationExpirationTime: 60 * 1000,

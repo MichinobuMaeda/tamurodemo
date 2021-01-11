@@ -44,6 +44,7 @@ const entries = (firebase, api, router) => {
   api.use('/', router)
 
   const ctx = context => ({ ...context.auth, ...firebase })
+  const { logger } = firebase
   const adminsOrManagers = ['admins', 'managers']
 
   return {
@@ -67,7 +68,7 @@ const entries = (firebase, api, router) => {
       data, ctx(context), setEmailWithInvitation
     ),
     setEmailAndPasswordWithInvitation: (data, context) => {
-      console.log(JSON.stringify(data))
+      logger.log(JSON.stringify(data))
       return guardValidAccount(
         data, ctx(context), setEmailAndPasswordWithInvitation
       )

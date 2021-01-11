@@ -1,6 +1,7 @@
 const {
   db,
   messaging,
+  logger,
   clearDb,
   deleteApp,
   testData
@@ -50,7 +51,7 @@ test('notifyMessage()' +
   const message01 = await messageRef.get()
 
   // run #1
-  await notifyMessage(message01, { db, messaging })
+  await notifyMessage(message01, { db, messaging, logger })
 
   // evaluate #1
   expect(messaging.data.message).toBeUndefined()
@@ -65,7 +66,7 @@ test('notifyMessage()' +
   })
 
   // run #2
-  await notifyMessage(message01, { db, messaging })
+  await notifyMessage(message01, { db, messaging, logger })
 
   // evaluate #2
   expect(messaging.data.message).toBeUndefined()
@@ -94,7 +95,7 @@ test('notifyMessage()' +
   })
 
   // run #4
-  await notifyMessage(message02, { db, messaging })
+  await notifyMessage(message02, { db, messaging, logger })
 
   // evaluate #4
   expect(messaging.data.message.tokens.length).toEqual(1)
@@ -110,7 +111,7 @@ test('notifyMessage()' +
   })
 
   // run #5
-  await notifyMessage(message02, { db, messaging })
+  await notifyMessage(message02, { db, messaging, logger })
 
   // evaluate #5
   expect(messaging.data.message).toBeUndefined()
@@ -140,7 +141,7 @@ test('notifyMessage()' +
   const message03 = await messageRef.get()
 
   // run #6
-  await notifyMessage(message03, { db, messaging })
+  await notifyMessage(message03, { db, messaging, logger })
 
   // evaluate #4
   expect(messaging.data.message.tokens.length).toEqual(3)
