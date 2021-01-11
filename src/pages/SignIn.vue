@@ -110,7 +110,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait } = store
+    const { state, setProcForWait } = store
     const page = reactive({
       result: {},
       valid: true,
@@ -130,6 +130,7 @@ export default {
       async () => {
         try {
           await signInWithEmailAndPassword(store, page.newEmail, page.password)
+          state.loading = true
         } catch (e) {
           page.result = { type: 'error', desc: 'Invalid email or password' }
         }

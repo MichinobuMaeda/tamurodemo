@@ -9,8 +9,8 @@
         <div>{{ $t('Buttons are disabled') }}</div>
         <LinkButton
           :icon="icon('Service settings')"
-          :label="$t('Return to', { target: $t('Service settings') })"
-          @click="goPage({ name: 'service' })"
+          :label="$t('Return to', { target: $t('Administration') })"
+          @click="goPage({ name: 'admin', params: { target: 'invitation' } })"
         />
       </v-alert>
       <PageTitle

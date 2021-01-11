@@ -16,7 +16,7 @@
 import { useStore } from '../../store'
 
 export default {
-  name: 'PageAdmin',
+  name: 'AdminSectionHeader',
   model: {
     prop: 'current',
     event: 'change'

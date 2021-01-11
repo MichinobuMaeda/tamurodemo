@@ -1,6 +1,8 @@
 <template>
   <v-row>
     <v-col class="col-12">
+      <CreateUser class="text-right" />
+
       <div
         v-for="user in state.users" :key="user.id"
         :class="user.deletedAt ? 'deleted' : ''"
@@ -14,9 +16,6 @@
         <GroupsOfUser :id="user.id" :edit="page.edit" />
         <v-divider class="my-2"  />
       </div>
-
-      <CreateUser />
-
     </v-col>
   </v-row>
 </template>
@@ -26,7 +25,7 @@ import { reactive } from '@vue/composition-api'
 import { useStore, accountStatus } from '../../store'
 import DefaultButton from '../../components/DefaultButton'
 import GroupsOfUser from '../../parts/GroupsOfUser'
-import CreateUser from '../../parts/CreateUser'
+import CreateUser from './CreateUser'
 
 export default {
   name: 'SectionUsers',

@@ -3,7 +3,7 @@
     <DefaultButton
       color="primary"
       :icon="icon('Add')"
-      :label="$t('Create new', { type: $t('user') })"
+      :label="$t('Create new', { type: $t('group') })"
       @click="page.dialog = true; page.name = ''"
     />
     <v-dialog
@@ -14,7 +14,7 @@
 
         <v-card-title class="headline dialogTitle">
           <v-icon class="mr-2">{{ icon('Add') }}</v-icon>
-          {{ $t('Create new', { type: $t('user') }) }}
+          {{ $t('Create new', { type: $t('group') }) }}
           <v-spacer />
           <v-icon
             color="gray"
@@ -26,9 +26,9 @@
 
         <v-card-text>
           <v-text-field
-            :label="$t('Display name')"
+            :label="$t('Group name')"
             v-model="page.name"
-            :rules="[ruleRequired]"
+            :rules="rulesName"
           />
         </v-card-text>
 
@@ -46,7 +46,7 @@
             :icon="icon('OK')"
             :label="$t('Create')"
             :disabled="!!state.waitProc || !page.name"
-            @click="createUser"
+            @click="createGroup"
           />
         </v-card-actions>
 
@@ -57,31 +57,38 @@
 
 <script>
 import { reactive } from '@vue/composition-api'
-import { useStore } from '@/store'
-import DefaultButton from '@/components/DefaultButton'
+import { useStore } from '../../store'
+import DefaultButton from '../../components/DefaultButton'
 
 export default {
-  name: 'CreateUser',
+  name: 'CreateGroup',
   components: {
     DefaultButton
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, functions, goPageUser } = store
+    const { waitForAdd, goPageGroup } = store
     const page = reactive({
       dialog: false,
       name: ''
     })
 
-    const createUser = () => setProcForWait(async () => {
-      const result = await functions.httpsCallable('createAccount')({ name: page.name })
-      return goPageUser(result.data.id)
-    })
+    const createGroup = async () => {
+      const group = await waitForAdd('groups', {
+        name: page.name,
+        desc: { type: 'plain', data: '' },
+        members: []
+      })
+      return goPageGroup(group.id)
+    }
 
     return {
       ...store,
       page,
-      createUser
+      rulesName: [
+        v => !!v || root.$i18n.t('Required')
+      ],
+      createGroup
     }
   }
 }
