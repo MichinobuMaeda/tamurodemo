@@ -17,7 +17,7 @@
           <EditableItem
             :label="$t('Group name')"
             v-model="group.name"
-            @save="val => waitForUpdate('groups', group.id, { name: val })"
+            @save="val => waitFor(() => update(group, { name: val }))"
             :editable="page.edit && priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -34,7 +34,7 @@
         type="formatted-text"
         :label="$t('Description')"
         v-model="group.desc"
-        @save="val => waitForUpdate('groups', group.id, { desc: val })"
+        @save="val => waitFor(() => update(group, { desc: val }))"
         :editable="page.edit && (priv.manager || (group.members || []).includes(state.me.id))"
         :disabled="!!state.waitProc"
       />
@@ -70,7 +70,7 @@
           :iconProc="icon('Delete')"
           :labelProc="$t('Delete')"
           :message="$t('Confirm deletion', { name: group.name })"
-          @confirm="() => waitForRemove('groups', group.id)"
+          @confirm="() => waitFor(() => remove(group))"
           :disabled="!!state.waitProc"
         />
         <ConfirmButton
@@ -80,7 +80,7 @@
           :iconProc="icon('Restore')"
           :labelProc="$t('Restore')"
           :message="$t('Confirm restore', { name: group.name })"
-          @confirm="() => waitForRestore('groups', group.id)"
+          @confirm="() => waitFor(() => restore(group))"
           :disabled="!!state.waitProc"
         />
       </div>
@@ -109,7 +109,7 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    const { icon, setProcForWait, update, FieldValue } = store
+    const { icon, waitFor, update, FieldValue } = store
     const page = reactive({
       edit: false
     })
@@ -118,18 +118,18 @@ export default {
       .filter(item => (item.groups || []).includes(id))
       .map(item => item.id)
 
-    const setCategories = (state, id) => categories => setProcForWait(
+    const setCategories = (state, id) => categories => waitFor(
       async () => Promise.all(
         state.categories.map(async c => {
           if ((categories || []).includes(c.id)) {
             if (!(c.groups || []).includes(id)) {
-              await update('categories', c.id, {
+              await update(c, {
                 groups: FieldValue.arrayUnion(id)
               })
             }
           } else {
             if ((c.groups || []).includes(id)) {
-              await update('categories', c.id, {
+              await update(c, {
                 groups: FieldValue.arrayRemove(id)
               })
             }

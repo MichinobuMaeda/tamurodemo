@@ -97,18 +97,17 @@ test('updateInvitationStatus()' +
   const invitation = 'invitation01'
   const updatedAt = new Date('2020-10-10T11:11:11.111111Z')
   const email = store.auth.currentUser.email
-  const accountRef = admin.firestore()
-    .collection('accounts')
-    .doc(store.auth.currentUser.uid)
-  await accountRef.set({
-    invitedAs: invitation,
-    updatedAt
-  })
   store.state.me = {
+    _ref: admin.firestore().collection('accounts').doc(store.auth.currentUser.uid),
     id: store.auth.currentUser.uid,
     invitedAs: invitation,
     updatedAt
   }
+  const accountRef = store.state.me._ref
+  await accountRef.set({
+    invitedAs: invitation,
+    updatedAt
+  })
   store.auth.currentUser.email = null
 
   // run #1

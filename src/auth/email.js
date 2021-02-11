@@ -17,9 +17,9 @@ export const reauthenticate = ({ auth }, password) =>
   )
 
 // reauthenticate is required
-export const updateMyEmail = async ({ auth, update }, email) => {
+export const updateMyEmail = async ({ state, auth, update }, email) => {
   await auth.currentUser.updateEmail(email)
-  await update('accounts', auth.currentUser.uid, { email })
+  await update(state.me, { email })
 }
 
 // reauthenticate is required

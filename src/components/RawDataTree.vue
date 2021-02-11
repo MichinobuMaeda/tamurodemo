@@ -126,20 +126,22 @@ const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
             : {
               id: `${parent}_${key}`,
               name: key,
-              value: '[ ]'
+              value: '[ 0 ]'
             }
           : Object.keys(val).length
             ? {
               id: `${parent}_${key}`,
               name: key,
-              value: '{...}',
-              children: [...Object.keys(val).filter(item => item !== 'id' || val[item] !== key)].sort().map(
-                item => obj2RawTree(
-                  `${parent}_${key}`,
-                  item,
-                  val[item]
+              value: (key === '_ref' && val.firestore) ? '{ ... firestore }' : '{...}',
+              children: (key === '_ref' && val.firestore)
+                ? []
+                : [...Object.keys(val).filter(item => item !== 'id' || val[item] !== key)].sort().map(
+                  item => obj2RawTree(
+                    `${parent}_${key}`,
+                    item,
+                    val[item]
+                  )
                 )
-              )
             }
             : {
               id: `${parent}_${key}`,

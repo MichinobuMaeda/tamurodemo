@@ -1,6 +1,7 @@
 export * from './accounts'
 export * from './groups'
 export * from './init'
+export * from './messaging'
 export {
   initServiceData,
   initUserData,
@@ -8,6 +9,3 @@ export {
   updateMe,
   findItem
 } from './state'
-export {
-  initializeMessaging
-} from './io'

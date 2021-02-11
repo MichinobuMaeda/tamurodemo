@@ -27,7 +27,7 @@
             v-model="state.me.locale"
             :label="$t('Locale')"
             :items="locales"
-            @change="waitForUpdate('accounts', state.me.id, { locale: state.me.locale })"
+            @change="waitFor(() => update(state.me, { locale: state.me.locale }))"
           />
         </v-col>
 
@@ -36,7 +36,7 @@
             v-model="state.me.tz"
             :label="$t('Timezone')"
             :items="timezones"
-            @change="waitForUpdate('accounts', state.me.id, { tz: state.me.tz })"
+            @change="waitFor(() => update(state.me, { tz: state.me.tz }))"
           />
         </v-col>
       </v-row>
@@ -61,7 +61,7 @@
             type="formatted-text"
             :label="$t('Description')"
             v-model="state.service.conf.guide"
-            @save="val => waitForUpdate('service', 'conf', { guide: val })"
+            @save="val => waitFor(() => update(state.service.conf, { guide: val }))"
             :editable="false"
             :disabled="true"
           />
@@ -170,7 +170,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait } = store
+    const { waitFor } = store
     const page = reactive({
       edit: false,
       invitation: root.$route.params.invitation || '',
@@ -205,7 +205,7 @@ export default {
     return {
       page,
       ...store,
-      setEmailAndPasswordWithInvitation: () => setProcForWait(async () => {
+      setEmailAndPasswordWithInvitation: () => waitFor(async () => {
         try {
           await setEmailAndPasswordWithInvitation(store, page)
           page.newEmail = ''

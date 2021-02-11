@@ -38,7 +38,7 @@
           <EditableItem
             :label="$t('Display name')"
             v-model="user.name"
-            @save="val => waitForUpdate('users', user.id, { name: val })"
+            @save="val => waitFor(() => update(user, { name: val }))"
             :editable="edit && (priv.manager || user.id === state.me.id)"
             :disabled="!!state.waitProc"
           />
@@ -110,7 +110,7 @@
               :iconProc="icon('Lock')"
               :labelProc="$t('Lock')"
               :message="$t('Confirm to revoke sign-in privilege', { name: user.name })"
-              @confirm="waitForUpdate('accounts', user.id, { valid: false })"
+              @confirm="waitFor(() => update(user, { valid: false }))"
               :disabled="!!state.waitProc"
             />
             <ConfirmButton
@@ -120,7 +120,7 @@
               :iconProc="icon('Unlock')"
               :labelProc="$t('Unlock')"
               :message="$t('Confirm to grant sign-in privilege', { name: user.name })"
-              @confirm="waitForUpdate('accounts', user.id, { valid: true })"
+              @confirm="waitFor(() => update(user, { valid: true }))"
               :disabled="!!state.waitProc"
             />
           </v-col>
@@ -132,7 +132,7 @@
               :iconProc="icon('Delete')"
               :labelProc="$t('Delete')"
               :message="$t('Confirm deletion', { name: user.name })"
-              @confirm="waitForRemove('accounts', user.id)"
+              @confirm="waitFor(() => remove(user))"
               :disabled="!!state.waitProc"
             />
             <ConfirmButton
@@ -142,7 +142,7 @@
               :iconProc="icon('Restore')"
               :labelProc="$t('Restore')"
               :message="$t('Confirm restore', { name: user.name })"
-              @confirm="waitForRestore('accounts', user.id)"
+              @confirm="waitFor(() => restore(user))"
               :disabled="!!state.waitProc"
             />
           </v-col>
@@ -176,7 +176,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, icon, goPageUser } = store
+    const { waitFor, icon, goPageUser } = store
     const page = reactive({
       preview: 2
     })
@@ -217,8 +217,8 @@ export default {
       })),
       preview: computed(() => permissions[page.preview].value),
       ...store,
-      invite: id => setProcForWait(() => invite(store, id)),
-      resetAllSignInSettings: id => setProcForWait(() => resetAllSignInSettings(store, id)),
+      invite: id => waitFor(() => invite(store, id)),
+      resetAllSignInSettings: id => waitFor(() => resetAllSignInSettings(store, id)),
       invitationUrl,
       accountStatus
     }

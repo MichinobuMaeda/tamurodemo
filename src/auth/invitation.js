@@ -36,7 +36,7 @@ export const updateInvitationStatus = async ({ db, auth, state, update }) => {
       state.me.mixi_jp
     )
   ) {
-    await update('accounts', state.me.id, {
+    await update(state.me, {
       invitedAs: null
     })
   }

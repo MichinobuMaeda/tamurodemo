@@ -67,18 +67,18 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { waitForAdd, goPageGroup } = store
+    const { db, waitFor, add, goPageGroup } = store
     const page = reactive({
       dialog: false,
       name: ''
     })
 
     const createGroup = async () => {
-      const group = await waitForAdd('groups', {
+      const group = await waitFor(() => add(db.collection('groups'), {
         name: page.name,
         desc: { type: 'plain', data: '' },
         members: []
-      })
+      }))
       return goPageGroup(group.id)
     }
 

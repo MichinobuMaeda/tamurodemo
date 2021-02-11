@@ -144,7 +144,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { icon, waitForUpdate } = store
+    const { icon, waitFor, update } = store
     const page = reactive({
     })
 
@@ -165,7 +165,7 @@ export default {
         text: root.$i18n.t(item.text)
       })),
       picon: permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: icon(cur.icon) }), {}),
-      waitForUpdateUser: (key, val) => waitForUpdate('users', props.id, { [key]: val }),
+      waitForUpdateUser: (key, val) => waitFor(() => update(findItem(store.state.users, props.id), { [key]: val })),
       locales,
       menuPositions,
       timezones

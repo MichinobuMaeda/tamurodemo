@@ -19,7 +19,7 @@
         type="formatted-text"
         :label="$t('Privacy policy')"
         v-model="state.service.conf.policy"
-        @save="val => waitForUpdate('service', 'conf', { policy: val })"
+        @save="val => waitFor(() => update(state.service.conf, { policy: val }))"
         :editable="page.edit && priv.manager"
         :disabled="!!state.waitProc"
       />

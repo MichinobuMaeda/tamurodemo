@@ -17,8 +17,7 @@ import {
   initUserData,
   getInitialAndRealtimeData,
   onGroupsChange,
-  findItem,
-  castDoc
+  findItem
 } from '../../../src/store/state'
 
 beforeEach(async () => {
@@ -133,7 +132,7 @@ test('initServiceData()' +
   const unsub = await initServiceData({ db, state })
 
   // evaluate #0
-  expect(state).toEqual({
+  expect(state).toMatchObject({
     service: {
       conf: {
         test01: 'test01'
@@ -151,7 +150,7 @@ test('initServiceData()' +
   await waitRealtimeUpdate()
 
   // evaluate #1
-  expect(state).toEqual({
+  expect(state).toMatchObject({
     service: {
       conf: {
         test01: 'test01a'
@@ -177,7 +176,7 @@ test('updateMe()' +
   updateMe({ state, auth }, doc)
 
   // evaluate #0
-  expect(state.me).toEqual({
+  expect(state.me).toMatchObject({
     id: 'id01',
     valid: true,
     google_com: false,
@@ -205,7 +204,7 @@ test('updateMe()' +
   updateMe({ state, auth }, doc)
 
   // evaluate #1
-  expect(state.me).toEqual({
+  expect(state.me).toMatchObject({
     id: 'id02',
     valid: true,
     google_com: false,
@@ -252,7 +251,7 @@ test('updateMe()' +
   updateMe({ state, auth })
 
   // evaluate
-  expect(state.me).toEqual({
+  expect(state.me).toMatchObject({
     id: 'id01',
     valid: true,
     google_com: false,
@@ -281,7 +280,7 @@ test('initMe()' +
   await initMe({ db, state, auth }, 'id01')
 
   // evaluate
-  expect(state.me).toEqual({
+  expect(state.me).toMatchObject({
     id: 'id01',
     valid: true,
     google_com: false,
@@ -402,7 +401,7 @@ test('getInitialAndRealtimeData()' +
 
   // evaluate #1
   expect(state.groups).toHaveLength(1)
-  expect(state.groups[0]).toEqual({
+  expect(state.groups[0]).toMatchObject({
     id: 'group1',
     name: 'Group 1'
   })
@@ -414,7 +413,7 @@ test('getInitialAndRealtimeData()' +
 
   // evaluate #2
   expect(state.groups).toHaveLength(1)
-  expect(state.groups[0]).toEqual({
+  expect(state.groups[0]).toMatchObject({
     id: 'group1',
     name: 'modified name'
   })
@@ -512,42 +511,4 @@ test('findItem()' +
   expect(ret5).toEqual({})
   expect(ret6).toEqual({ id: 'id01' })
   expect(ret7).toEqual({ id: 'id02' })
-})
-
-test('castDoc()' +
-  ' should return the plain object of the given firebase document.', async () => {
-  // prepare
-  const id = 'test'
-  const data = {
-    obj1: {
-      str11: 'String 11',
-      dt12: new Date('2020-12-31T01:23:45.012Z'),
-      obj13: {
-        str131: 'String 131',
-        dt132: new Date('2020-12-31T01:23:45.132Z')
-      },
-      arr14: [
-        'String 141',
-        new Date('2020-12-31T01:23:45.142Z')
-      ]
-    },
-    arr2: [
-      'String 21',
-      new Date('2020-12-31T01:23:45.022Z'),
-      {
-        str231: 'String 231',
-        dt232: new Date('2020-12-31T01:23:45.232Z')
-      }
-    ],
-    createdAt: new Date('2020-12-31T01:23:45.001Z')
-  }
-  const docRef = db.collection('tests').doc(id)
-  await docRef.set(data)
-  const doc = await docRef.get()
-
-  // run
-  const ret = castDoc(doc)
-
-  // evaluate
-  expect(ret).toEqual({ id, ...data })
 })

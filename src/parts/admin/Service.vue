@@ -6,9 +6,8 @@
         <v-col class="col-8">
           <EditableItem
             :label="$t('Site name')"
-            v-model="state.service.conf.name"
+            v-model="name"
             :rules="[ruleRequired]"
-            @save="val => waitForUpdate('service', 'conf', { name: val })"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -19,9 +18,8 @@
         <v-col class="col-8">
           <EditableItem
             label="URL"
-            v-model="state.service.conf.hosting"
+            v-model="hosting"
             :rules="[ruleRequired, ruleUrl]"
-            @save="val => waitForUpdate('service', 'conf', { hosting: val })"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -56,9 +54,8 @@
         <v-col class="col-8">
           <EditableItem
             :label="$t('Notification icon')"
-            v-model="state.service.conf.notificationIconPath"
+            v-model="notificationIconPath"
             :rules="[ruleRequired]"
-            @save="val => waitForUpdate('service', 'conf', { notificationIconPath: val })"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -69,9 +66,8 @@
         <v-col class="col-8">
           <EditableItem
             label="API key"
-            v-model="state.service.conf.apiKey"
+            v-model="apiKey"
             :rules="[ruleRequired]"
-            @save="val => waitForUpdate('service', 'conf', { apiKey: val })"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -82,7 +78,7 @@
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 import { useStore } from '../../store'
 import EditableItem from '../../components/EditableItem'
 
@@ -91,13 +87,9 @@ export default {
   components: {
     EditableItem
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
-    const { waitForUpdate } = store
-    const page = reactive({
-      name: store.state.service.conf.name,
-      hosting: store.state.service.conf.hosting
-    })
+    const { waitFor, update } = store
 
     const dateToDaysAndTime = val => {
       const d = Math.floor(val / (24 * 60 * 60 * 1000))
@@ -114,14 +106,29 @@ export default {
 
     return {
       ...store,
-      page,
+      name: computed({
+        get: () => store.state.service.conf.name,
+        set: str => waitFor(() => update(store.state.service.conf, { name: str }))
+      }),
+      hosting: computed({
+        get: () => store.state.service.conf.hosting,
+        set: str => waitFor(() => update(store.state.service.conf, { hosting: str }))
+      }),
       notificationExpirationTime: computed({
         get: () => dateToDaysAndTime(store.state.service.conf.notificationExpirationTime),
-        set: str => waitForUpdate('service', 'conf', { notificationExpirationTime: daysAndTimeToDate(str) })
+        set: str => waitFor(() => update(store.state.service.conf, { notificationExpirationTime: daysAndTimeToDate(str) }))
       }),
       notificationPauseRepetitionTime: computed({
         get: () => dateToDaysAndTime(store.state.service.conf.notificationPauseRepetitionTime),
-        set: str => waitForUpdate('service', 'conf', { notificationPauseRepetitionTime: daysAndTimeToDate(str) })
+        set: str => waitFor(() => update(store.state.service.conf, { notificationPauseRepetitionTime: daysAndTimeToDate(str) }))
+      }),
+      notificationIconPath: computed({
+        get: () => store.state.service.conf.notificationIconPath,
+        set: str => waitFor(() => update(store.state.service.conf, { notificationIconPath: str }))
+      }),
+      apiKey: computed({
+        get: () => store.state.service.conf.apiKey,
+        set: str => waitFor(() => update(store.state.service.conf, { apiKey: str }))
       }),
       rulesDaysAndTime: [
         v => daysAndTimeToDate(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'

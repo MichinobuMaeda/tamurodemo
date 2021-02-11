@@ -52,10 +52,15 @@ test('updateMyEmail()' +
   ' and set email to account in db.', async () => {
   // prepare
   const email = 'modified@example.com'
+  store.state.me = {
+    _ref: admin.firestore().collection('accounts').doc(store.auth.currentUser.uid),
+    id: store.auth.currentUser.uid,
+    email: store.auth.currentUser.email
+  }
   await admin.firestore()
     .collection('accounts')
-    .doc(store.auth.currentUser.uid).set({
-      email: store.auth.currentUser.email
+    .doc(store.state.me.id).set({
+      email: store.state.me.email
     })
 
   // run

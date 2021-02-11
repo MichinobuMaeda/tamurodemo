@@ -67,13 +67,13 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { setProcForWait, functions, goPageUser } = store
+    const { waitFor, functions, goPageUser } = store
     const page = reactive({
       dialog: false,
       name: ''
     })
 
-    const createUser = () => setProcForWait(async () => {
+    const createUser = () => waitFor(async () => {
       const result = await functions.httpsCallable('createAccount')({ name: page.name })
       return goPageUser(result.data.id)
     })

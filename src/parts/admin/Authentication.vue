@@ -10,7 +10,7 @@
             :label="provider.name"
             v-model="state.service.auth[provider.id.replace(/\./g, '_')]"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
-            @save="val => waitForUpdate('service', 'auth', { [provider.id.replace(/\./g, '_')]: val })"
+            @save="val => waitFor(() => update(state.service.auth, { [provider.id.replace(/\./g, '_')]: val }))"
             :editable="priv.admin"
             :disabled="!!state.waitProc"
           />

@@ -78,7 +78,7 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { setProcForWait, add, update, remove } = store
+    const { db, waitFor, add, update, remove } = store
     const page = reactive({
       items: []
     })
@@ -140,7 +140,7 @@ export default {
       page.items = reOrder(store.state.categories)
     }
 
-    const onSave = () => setProcForWait(
+    const onSave = () => waitFor(
       async () => {
         page.items = reOrder(page.items)
         await Promise.all(
@@ -156,14 +156,14 @@ export default {
             const { seq, name } = item
             if (item.id) {
               if (item.seq) {
-                return update('categories', item.id, {
+                return update(item, {
                   seq, name, deletedAt: null
                 })
               } else {
-                return remove('categories', item.id)
+                return remove(item)
               }
             } else {
-              return add('categories', { seq, name, groups: [] })
+              return add(db.collection('categories'), { seq, name, groups: [] })
             }
           })
         )
@@ -191,7 +191,7 @@ export default {
       onDelete,
       onUndoDelete,
       onCancel,
-      onSave: () => setProcForWait(onSave),
+      onSave: () => waitFor(onSave),
       modified
     }
   }

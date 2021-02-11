@@ -1,6 +1,7 @@
 import { providers } from '../conf'
 import { myPriv } from './accounts'
 import { groupsOfMe } from './groups'
+import { castDoc } from './io'
 
 export const clearServiceData = (state = {}) => {
   state.service = {}
@@ -156,28 +157,3 @@ export const onGroupsChange = db => state => {
 export const findItem = (list, id) => ({
   ...((list || []).find(item => item.id === id) || {})
 })
-
-/**
- * { id, data() } => { id, ...data }
- * Firestore Timestamp => Date
- */
-export const castDoc = doc => ({
-  id: doc.id,
-  ...firestoreTimestampToDate(doc.data())
-})
-
-const firestoreTimestampToDate = val => {
-  return val && val.toDate
-    ? val.toDate()
-    : (Array.isArray(val)
-      ? val.map(item => firestoreTimestampToDate(item))
-      : ((val && typeof val === 'object')
-        ? Object.keys(val).reduce(
-          (ret, cur) => ({
-            ...ret,
-            [cur]: firestoreTimestampToDate(val[cur])
-          }), ({}))
-        : val
-      )
-    )
-}

@@ -3,14 +3,12 @@ import moment from 'moment-timezone'
 import { icon, locales, defaults, validators } from '../conf'
 import { clearServiceData, clearUserData, findItem } from './state'
 import { myPriv } from './accounts'
-import { ioHelpers } from './io'
+import { waitFor, add, update, remove, restore } from './io'
 
 export const StoreSymbol = Symbol('store')
 export const useStore = () => inject(StoreSymbol)
 
 export const createStore = (firebase, root) => {
-  const { db } = firebase
-
   const state = reactive(clearUserData(clearServiceData({
     ...defaults,
     loading: true
@@ -19,7 +17,11 @@ export const createStore = (firebase, root) => {
   const store = {
     state,
     ...firebase,
-    ...ioHelpers(db, state),
+    waitFor: waitFor(state),
+    add,
+    update,
+    remove,
+    restore,
     ...validators(state, root),
     icon,
     withTz: date => moment(date).tz(state.tz),

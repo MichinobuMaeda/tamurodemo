@@ -112,7 +112,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { state, waitForUpdate } = store
+    const { state, waitFor, update } = store
     const page = reactive({
       dialog: false,
       groups: [],
@@ -142,10 +142,10 @@ export default {
         page.users = [...users]
       },
       onSave: async (groups, users) => {
-        await waitForUpdate('users', props.id, {
+        await waitFor(() => update(findItem(state.users, props.id), {
           permittedGroups: groups.filter(group => group.checked).map(group => group.id),
           permittedUsers: users.filter(user => user.checked).map(user => user.id)
-        })
+        }))
         page.dialog = false
       }
     }

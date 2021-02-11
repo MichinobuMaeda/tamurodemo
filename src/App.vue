@@ -62,7 +62,7 @@
       menu-item-color="menu-item"
       :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, priviligedItems, togglehPriviligedItems, () => { page.rawData = true }), $router, priv, goPage)"
       :position="state.menuPosition"
-      @move="menuPosition => state.me && state.me.valid && waitForUpdate('accounts', state.me.id, { menuPosition })"
+      @move="menuPosition => state.me && state.me.valid && waitFor(() => update(state.me, { menuPosition }))"
     />
 
     <RawDataTree
@@ -194,7 +194,7 @@ export default {
       page,
       guardMenuItem,
       menuItems,
-      togglehPriviligedItems: () => update('accounts', state.me.id, { hidePrivilegedItems: !state.me.hidePrivilegedItems }),
+      togglehPriviligedItems: () => update(state.me, { hidePrivilegedItems: !state.me.hidePrivilegedItems }),
       priviligedItems: computed(() => !state.me.hidePrivilegedItems),
       baseUrl: baseUrl(),
       noSignInMethod: state => state.me.valid && ![...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),

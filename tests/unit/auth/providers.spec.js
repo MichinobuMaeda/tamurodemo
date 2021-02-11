@@ -49,13 +49,11 @@ test('toggleOAuthProvider()' +
   // prepare
   store.auth.currentUser.uid = 'account01'
   store.state.me = {
-    id: 'account01',
+    _ref: admin.firestore().collection('accounts').doc(store.auth.currentUser.uid),
+    id: store.auth.currentUser.uid,
     google_com: true
   }
-  const accountRef = admin.firestore()
-    .collection('accounts')
-    .doc(store.auth.currentUser.uid)
-  await accountRef.set({
+  await store.state.me._ref.set({
     google_com: true
   })
   const providers = authProviders(store)
@@ -66,7 +64,7 @@ test('toggleOAuthProvider()' +
 
   // evaluate
   expect(store.auth.currentUser.data.unlink.id).toEqual('google.com')
-  const account01 = await accountRef.get()
+  const account01 = await store.state.me._ref.get()
   expect(account01.data().google_com).toBeNull()
 })
 
@@ -76,13 +74,11 @@ test('toggleOAuthProvider()' +
   // prepare
   store.auth.currentUser.uid = 'account01'
   store.state.me = {
-    id: 'account01',
+    _ref: admin.firestore().collection('accounts').doc(store.auth.currentUser.uid),
+    id: store.auth.currentUser.uid,
     line_me: true
   }
-  const accountRef = admin.firestore()
-    .collection('accounts')
-    .doc(store.auth.currentUser.uid)
-  await accountRef.set({
+  await store.state.me._ref.set({
     line_me: true
   })
   const providers = authProviders(store)
@@ -93,7 +89,7 @@ test('toggleOAuthProvider()' +
 
   // evaluate
   expect(store.auth.currentUser.data.unlink).not.toBeDefined()
-  const account01 = await accountRef.get()
+  const account01 = await store.state.me._ref.get()
   expect(account01.data().line_me).toBeNull()
 })
 
@@ -103,13 +99,11 @@ test('toggleOAuthProvider()' +
   // prepare
   store.auth.currentUser.uid = 'account01'
   store.state.me = {
-    id: 'account01',
+    _ref: admin.firestore().collection('accounts').doc(store.auth.currentUser.uid),
+    id: store.auth.currentUser.uid,
     google_com: null
   }
-  const accountRef = admin.firestore()
-    .collection('accounts')
-    .doc(store.auth.currentUser.uid)
-  await accountRef.set({
+  await store.state.me._ref.set({
     google_com: null
   })
   const providers = authProviders(store)
@@ -120,7 +114,7 @@ test('toggleOAuthProvider()' +
 
   // evaluate
   expect(store.auth.currentUser.data.linkWithRedirect.provider).toBeDefined()
-  const account01 = await accountRef.get()
+  const account01 = await store.state.me._ref.get()
   expect(account01.data().google_com).toBeTruthy()
 })
 

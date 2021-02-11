@@ -14,7 +14,7 @@
           <v-switch
             v-model="state.me.darkTheme"
             :label="$t('Dark theme value', { on: $vuetify.theme.dark ? 'On' : 'Off' })"
-            @change="waitForUpdate('accounts', state.me.id, { darkTheme: state.me.darkTheme })"
+            @change="waitFor(() => update(state.me, { darkTheme: state.me.darkTheme }))"
           />
         </v-col>
 
@@ -23,7 +23,7 @@
             v-model="state.me.menuPosition"
             :label="$t('Menu position')"
             :items="menuPositions"
-            @change="waitForUpdate('accounts', state.me.id, { menuPosition: state.me.menuPosition })"
+            @change="waitFor(() => update(state.me, { menuPosition: state.me.menuPosition }))"
           >
             <template slot="selection" slot-scope="data">
               <v-icon>{{ icon(data.item.text) }}</v-icon>
@@ -42,7 +42,7 @@
             v-model="state.me.locale"
             :label="$t('Locale')"
             :items="locales"
-            @change="waitForUpdate('accounts', state.me.id, { locale: state.me.locale })"
+            @change="waitFor(() => update(state.me, { locale: state.me.locale }))"
           />
         </v-col>
 
@@ -51,7 +51,7 @@
             v-model="state.me.tz"
             :label="$t('Timezone')"
             :items="timezones"
-            @change="waitForUpdate('accounts', state.me.id, { tz: state.me.tz })"
+            @change="waitFor(() => update(state.me, { tz: state.me.tz }))"
           />
         </v-col>
 
@@ -246,7 +246,7 @@ export default {
   },
   setup (props, { root, emit }) {
     const store = useStore()
-    const { auth, state, setProcForWait } = store
+    const { auth, state, waitFor } = store
     const page = reactive({
       now: new Date().getTime(),
       everySecondUpdater: null,
@@ -278,7 +278,7 @@ export default {
 
     onUnmounted(() => { clearInterval(page.everySecondUpdater) })
 
-    const changeEmail = () => setProcForWait(
+    const changeEmail = () => waitFor(
       async () => {
         try {
           await reauthenticate(store, page.changeEmailPassword)
@@ -297,7 +297,7 @@ export default {
       }
     )
 
-    const changePassword = () => setProcForWait(
+    const changePassword = () => waitFor(
       async () => {
         try {
           await reauthenticate(store, page.oldPassword)
@@ -318,7 +318,7 @@ export default {
       }
     )
 
-    const resetPassword = () => setProcForWait(
+    const resetPassword = () => waitFor(
       async () => {
         try {
           const user = auth.currentUser
@@ -338,7 +338,7 @@ export default {
       changeEmail,
       changePassword,
       resetPassword,
-      signOut: () => setProcForWait(() => signOut(store)),
+      signOut: () => waitFor(() => signOut(store)),
       locales,
       menuPositions,
       timezones,

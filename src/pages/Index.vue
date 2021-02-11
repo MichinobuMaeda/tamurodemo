@@ -26,7 +26,7 @@
         type="formatted-text"
         :label="$t('Description')"
         v-model="state.service.conf.desc"
-        @save="val => waitForUpdate('service', 'conf', { desc: val })"
+        @save="val => waitFor(() => update(state.service.conf, { desc: val }))"
         :editable="page.edit && priv.manager"
         :disabled="!!state.waitProc"
       />

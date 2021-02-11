@@ -112,7 +112,7 @@ export default {
       ...store,
       expand: computed({
         get: () => state.me.chatSummaryExpand ? 0 : undefined,
-        set: v => update('accounts', state.me.id, { chatSummaryExpand: v === 0 })
+        set: v => update(state.me, { chatSummaryExpand: v === 0 })
       }),
       summary: !props.group,
       groups: computed(() => props.group ? [findItem(state.groups, props.group)] : groupsOfMe(state)),

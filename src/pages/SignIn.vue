@@ -110,7 +110,7 @@ export default {
   },
   setup (props, { root }) {
     const store = useStore()
-    const { state, setProcForWait } = store
+    const { state, waitFor } = store
     const page = reactive({
       result: {},
       valid: true,
@@ -119,14 +119,14 @@ export default {
       showPassword: false
     })
 
-    const signInWithEmailLink = () => setProcForWait(
+    const signInWithEmailLink = () => waitFor(
       async () => {
         await sendSignInLinkToEmail(store, page.newEmail)
         page.result = { type: 'success', desc: 'Sent message' }
       }
     )
 
-    const signInWithPassword = () => setProcForWait(
+    const signInWithPassword = () => waitFor(
       async () => {
         try {
           await signInWithEmailAndPassword(store, page.newEmail, page.password)
@@ -137,7 +137,7 @@ export default {
       }
     )
 
-    const resetPassword = () => setProcForWait(
+    const resetPassword = () => waitFor(
       async () => {
         await sendPasswordResetEmail(store, page.newEmail)
         page.result = { type: 'success', desc: 'Sent message' }

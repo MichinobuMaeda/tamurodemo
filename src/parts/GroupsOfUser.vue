@@ -27,24 +27,24 @@ export default {
   setup (props, { root }) {
     const store = useStore()
     const { icon } = store
-    const { setProcForWait, update, FieldValue } = store
+    const { waitFor, update, FieldValue } = store
 
     const getGroups = (state, id) => sortedGroups(state)
       .filter(item => (item.members || []).includes(id))
       .map(item => item.id)
 
-    const setGroups = (state, id) => groups => setProcForWait(
+    const setGroups = (state, id) => groups => waitFor(
       async () => Promise.all(
         state.groups.map(async group => {
           if ((groups || []).includes(group.id)) {
             if (!(group.members || []).includes(id)) {
-              await update('groups', group.id, {
+              await update(group, {
                 members: FieldValue.arrayUnion(id)
               })
             }
           } else {
             if ((group.members || []).includes(id)) {
-              await update('groups', group.id, {
+              await update(group, {
                 members: FieldValue.arrayRemove(id)
               })
             }

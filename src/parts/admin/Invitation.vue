@@ -9,7 +9,7 @@
             :label="$t('Invitation')"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
             v-model="state.service.auth.invitation"
-            @save="val => waitForUpdate('service', 'auth', { invitation: val })"
+            @save="val => waitFor(() => update(state.service.auth, { invitation: val }))"
             :editable="priv.admin || priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -33,7 +33,7 @@
             type="formatted-text"
             :label="$t('Description')"
             v-model="state.service.conf.guide"
-            @save="val => waitForUpdate('service', 'conf', { guide: val })"
+            @save="val => waitFor(() => update(state.service.conf, { guide: val }))"
             :editable="priv.manager || priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -62,7 +62,7 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    const { waitForUpdate } = store
+    const { waitFor, update } = store
 
     const dateToDaysAndTime = val => {
       const d = Math.floor(val / (24 * 60 * 60 * 1000))
@@ -81,7 +81,7 @@ export default {
       ...store,
       invitationExpirationTime: computed({
         get: () => dateToDaysAndTime(store.state.service.conf.invitationExpirationTime),
-        set: str => waitForUpdate('service', 'conf', { invitationExpirationTime: daysAndTimeToDate(str) })
+        set: str => waitFor(() => update(store.state.service.conf, { invitationExpirationTime: daysAndTimeToDate(str) }))
       }),
       rulesDaysAndTime: [
         v => daysAndTimeToDate(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'

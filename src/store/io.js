@@ -1,98 +1,69 @@
 import { defaults } from '../conf'
 
-export const initializeMessaging = async (
-  { standalone, webPushCertificateKey, messaging, db, state }
-) => {
-  if (standalone && webPushCertificateKey && process.env.NODE_ENV === 'production') {
-    const token = await messaging.getToken({ vapidKey: webPushCertificateKey })
-    messaging.onMessage(payload => {
-      console.log('Message received. ', payload)
-    })
-    if (token && state.me.id) {
-      const ts = new Date()
-      await db.runTransaction(async transaction => {
-        const accountRef = db.collection('accounts').doc(state.me.id)
-        const account = await transaction.get(accountRef)
-        await transaction.update(accountRef, {
-          messagingTokens: [
-            ...(account.data().messagingTokens || []).filter(item => item.token !== token),
-            { token, ts }
-          ],
-          updatedAt: ts
-        })
-      })
-    }
-  }
-}
-
-export const ioHelpers = (db, state) => {
-  const setProcForWait = async (proc, next = null) => {
-    const ts = new Date().getTime()
-    state.waitProc = ts
-    setTimeout(
-      () => {
-        if (state.waitProc === ts) {
-          state.waitProc = null
-        }
-      },
-      defaults.waitProcTimeout
+const firestoreTimestampToDate = val => {
+  return val && val.toDate
+    ? val.toDate()
+    : (Array.isArray(val)
+      ? val.map(item => firestoreTimestampToDate(item))
+      : ((val && typeof val === 'object')
+        ? Object.keys(val).reduce(
+          (ret, cur) => ({
+            ...ret,
+            [cur]: firestoreTimestampToDate(val[cur])
+          }), ({}))
+        : val
+      )
     )
-    try {
-      const ret = await proc()
-      if (next) { await next() }
-      return ret
-    } finally {
-      state.waitProc = null
-    }
-  }
+}
 
-  const add = (collection, data) => {
-    const ts = new Date()
-    return db.collection(collection)
-      .add({
-        ...data,
-        createdAt: ts,
-        updatedAt: ts
-      })
-  }
+/**
+ * { id, data() } => { id, ...data }
+ * Firestore Timestamp => Date
+ */
+export const castDoc = doc => ({
+  _ref: doc.ref,
+  id: doc.id,
+  ...firestoreTimestampToDate(doc.data())
+})
 
-  const update = (collection, id, data) => db.collection(collection)
-    .doc(id).update({
-      ...data,
-      updatedAt: new Date()
-    })
-
-  const remove = (collection, id) => db.collection(collection)
-    .doc(id).update({
-      deletedAt: new Date()
-    })
-
-  const restore = (collection, id) => db.collection(collection)
-    .doc(id).update({
-      deletedAt: null
-    })
-
-  const waitForAdd = (collection, data) =>
-    setProcForWait(() => add(collection, data))
-
-  const waitForUpdate = (collection, id, data) =>
-    setProcForWait(() => update(collection, id, data))
-
-  const waitForRemove = (collection, id) =>
-    setProcForWait(() => remove(collection, id))
-
-  const waitForRestore = (collection, id) =>
-    setProcForWait(() => restore(collection, id))
-
-  return {
-    setProcForWait,
-    add,
-    update,
-    remove,
-    restore,
-    waitForAdd,
-    waitForUpdate,
-    waitForRemove,
-    waitForRestore
+export const waitFor = state => async (proc, next = null) => {
+  const ts = new Date().getTime()
+  state.waitProc = ts
+  setTimeout(
+    () => {
+      if (state.waitProc === ts) {
+        state.waitProc = null
+      }
+    },
+    defaults.waitProcTimeout
+  )
+  try {
+    const ret = await proc()
+    if (next) { await next() }
+    return ret
+  } finally {
+    state.waitProc = null
   }
 }
+
+export const add = (collection, data) => {
+  const ts = new Date()
+  return collection.add({
+    ...data,
+    createdAt: ts,
+    updatedAt: ts
+  })
+}
+
+export const update = (item, data) => item._ref.update({
+  ...data,
+  updatedAt: new Date()
+})
+
+export const remove = item => item._ref.update({
+  deletedAt: new Date()
+})
+
+export const restore = item => item._ref.update({
+  deletedAt: null
+})

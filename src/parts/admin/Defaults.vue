@@ -9,7 +9,7 @@
             :label="$t('Dark theme')"
             v-model="state.service.defaults.darkTheme"
             :items="[{ text: 'On', value: true }, { text: 'Off', value: false }]"
-            @save="val => waitForUpdate('service', 'defaults', { darkTheme: val })"
+            @save="val => waitFor(() => update(state.service.defaults, { darkTheme: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -23,7 +23,7 @@
             :label="$t('Menu position')"
             v-model="state.service.defaults.menuPosition"
             :items="menuPositions.map(item => ({ ...item, text: $t(item.text) }))"
-            @save="val => waitForUpdate('service', 'defaults', { menuPosition: val })"
+            @save="val => waitFor(() => update(state.service.defaults, { menuPosition: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -37,7 +37,7 @@
             :label="$t('Locale')"
             v-model="state.service.defaults.locale"
             :items="locales"
-            @save="val => waitForUpdate('service', 'defaults', { locale: val })"
+            @save="val => waitFor(() => update(state.service.defaults, { locale: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -51,7 +51,7 @@
             :label="$t('Timezone')"
             v-model="state.service.defaults.tz"
             :items="timezones"
-            @save="val => waitForUpdate('service', 'defaults', { tz: val })"
+            @save="val => waitFor(() => update(state.service.defaults, { tz: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
