@@ -28,7 +28,7 @@
           <v-text-field
             :label="$t('Group name')"
             v-model="page.name"
-            :rules="rulesName"
+            :rules="[ruleRequired]"
           />
         </v-card-text>
 
@@ -65,7 +65,7 @@ export default {
   components: {
     DefaultButton
   },
-  setup (props, { root }) {
+  setup () {
     const store = useStore()
     const { db, waitFor, add, goPageGroup } = store
     const page = reactive({
@@ -85,9 +85,6 @@ export default {
     return {
       ...store,
       page,
-      rulesName: [
-        v => !!v || root.$i18n.t('Required')
-      ],
       createGroup
     }
   }

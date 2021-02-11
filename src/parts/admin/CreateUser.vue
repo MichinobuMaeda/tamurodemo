@@ -65,7 +65,7 @@ export default {
   components: {
     DefaultButton
   },
-  setup (props, { root }) {
+  setup () {
     const store = useStore()
     const { waitFor, functions, goPageUser } = store
     const page = reactive({

@@ -147,7 +147,7 @@ export const onGroupsChange = db => state => {
   groupsOfMe(state).forEach(group => {
     const id = group.id
     state.unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
-      .collection('messages').orderBy('createdAt', 'asc')
+      .collection('chat').orderBy('createdAt', 'asc')
       .onSnapshot(querySnapshot => {
         state.groupChats[id] = querySnapshot.docs.map(doc => castDoc(doc))
       })

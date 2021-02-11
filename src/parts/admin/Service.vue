@@ -27,26 +27,32 @@
       </v-row>
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Notification expiration') }}</v-col>
-        <v-col class="col-8">
+        <v-col class="col-4">
           <EditableItem
             :label="$t('Notification expiration')"
             v-model="notificationExpirationTime"
-            :rules="rulesDaysAndTime"
+            :rules="[ruleNotNegative]"
             :editable="priv.admin || priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
+        <v-col class="col-4">
+          {{ msecToDaysAndTime(notificationExpirationTime) }}
+        </v-col>
       </v-row>
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Notification pause repetition') }}</v-col>
-        <v-col class="col-8">
+        <v-col class="col-4">
           <EditableItem
             :label="$t('Notification pause repetition')"
             v-model="notificationPauseRepetitionTime"
-            :rules="rulesDaysAndTime"
+            :rules="[ruleNotNegative]"
             :editable="priv.admin || priv.manager"
             :disabled="!!state.waitProc"
           />
+        </v-col>
+        <v-col class="col-4">
+          {{ msecToDaysAndTime(notificationPauseRepetitionTime) }}
         </v-col>
       </v-row>
       <v-row>
@@ -89,50 +95,34 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { waitFor, update } = store
-
-    const dateToDaysAndTime = val => {
-      const d = Math.floor(val / (24 * 60 * 60 * 1000))
-      return `${d} ${new Date(val % (24 * 60 * 60 * 1000)).toISOString().slice(11, 19)}`
-    }
-
-    const daysAndTimeToDate = val => {
-      const str = (val || '').trim()
-      const dt = (/ /.test(str) ? str.replace(/ .*/, '') : (/:/.test(str) ? '' : str)) || '0'
-      const tm = (/ /.test(str) ? str.replace(/.* /, '') : (/:/.test(str) ? str : '')) || '0:00'
-      return Number(dt) * 24 * 60 * 60 * 1000 +
-        new Date('1970-01-01 ' + tm).getTime() - new Date('1970-01-01T00:00:00').getTime()
-    }
+    const { state, waitFor, update } = store
 
     return {
       ...store,
       name: computed({
-        get: () => store.state.service.conf.name,
-        set: str => waitFor(() => update(store.state.service.conf, { name: str }))
+        get: () => state.service.conf.name,
+        set: str => waitFor(() => update(state.service.conf, { name: str }))
       }),
       hosting: computed({
-        get: () => store.state.service.conf.hosting,
-        set: str => waitFor(() => update(store.state.service.conf, { hosting: str }))
+        get: () => state.service.conf.hosting,
+        set: str => waitFor(() => update(state.service.conf, { hosting: str }))
       }),
       notificationExpirationTime: computed({
-        get: () => dateToDaysAndTime(store.state.service.conf.notificationExpirationTime),
-        set: str => waitFor(() => update(store.state.service.conf, { notificationExpirationTime: daysAndTimeToDate(str) }))
+        get: () => state.service.conf.notificationExpirationTime,
+        set: str => waitFor(() => update(state.service.conf, { notificationExpirationTime: str }))
       }),
       notificationPauseRepetitionTime: computed({
-        get: () => dateToDaysAndTime(store.state.service.conf.notificationPauseRepetitionTime),
-        set: str => waitFor(() => update(store.state.service.conf, { notificationPauseRepetitionTime: daysAndTimeToDate(str) }))
+        get: () => state.service.conf.notificationPauseRepetitionTime,
+        set: str => waitFor(() => update(state.service.conf, { notificationPauseRepetitionTime: str }))
       }),
       notificationIconPath: computed({
-        get: () => store.state.service.conf.notificationIconPath,
-        set: str => waitFor(() => update(store.state.service.conf, { notificationIconPath: str }))
+        get: () => state.service.conf.notificationIconPath,
+        set: str => waitFor(() => update(state.service.conf, { notificationIconPath: str }))
       }),
       apiKey: computed({
-        get: () => store.state.service.conf.apiKey,
-        set: str => waitFor(() => update(store.state.service.conf, { apiKey: str }))
-      }),
-      rulesDaysAndTime: [
-        v => daysAndTimeToDate(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
-      ]
+        get: () => state.service.conf.apiKey,
+        set: str => waitFor(() => update(state.service.conf, { apiKey: str }))
+      })
     }
   }
 }

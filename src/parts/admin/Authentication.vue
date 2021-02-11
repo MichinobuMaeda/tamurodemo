@@ -30,7 +30,7 @@ export default {
   components: {
     EditableItem
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
 
     return {

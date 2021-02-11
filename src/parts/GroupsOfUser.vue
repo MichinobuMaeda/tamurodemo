@@ -24,7 +24,7 @@ export default {
     id: String,
     edit: Boolean
   },
-  setup (props, { root }) {
+  setup (props) {
     const store = useStore()
     const { icon } = store
     const { waitFor, update, FieldValue } = store

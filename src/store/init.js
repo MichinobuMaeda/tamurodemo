@@ -4,6 +4,7 @@ import { icon, locales, defaults, validators } from '../conf'
 import { clearServiceData, clearUserData, findItem } from './state'
 import { myPriv } from './accounts'
 import { waitFor, add, update, remove, restore } from './io'
+import * as ui from './ui'
 
 export const StoreSymbol = Symbol('store')
 export const useStore = () => inject(StoreSymbol)
@@ -22,7 +23,8 @@ export const createStore = (firebase, root) => {
     update,
     remove,
     restore,
-    ...validators(state, root),
+    ...validators(root),
+    ...ui,
     icon,
     withTz: date => moment(date).tz(state.tz),
     myName: computed(() => findItem(state.users, state.me.id).name || 'Guest'),

@@ -7,9 +7,8 @@
           <EditableItem
             type="select"
             :label="$t('Dark theme')"
-            v-model="state.service.defaults.darkTheme"
+            v-model="darkTheme"
             :items="[{ text: 'On', value: true }, { text: 'Off', value: false }]"
-            @save="val => waitFor(() => update(state.service.defaults, { darkTheme: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -21,9 +20,8 @@
           <EditableItem
             type="select"
             :label="$t('Menu position')"
-            v-model="state.service.defaults.menuPosition"
+            v-model="menuPosition"
             :items="menuPositions.map(item => ({ ...item, text: $t(item.text) }))"
-            @save="val => waitFor(() => update(state.service.defaults, { menuPosition: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -35,9 +33,8 @@
           <EditableItem
             type="select"
             :label="$t('Locale')"
-            v-model="state.service.defaults.locale"
+            v-model="locale"
             :items="locales"
-            @save="val => waitFor(() => update(state.service.defaults, { locale: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -49,9 +46,8 @@
           <EditableItem
             type="select"
             :label="$t('Timezone')"
-            v-model="state.service.defaults.tz"
+            v-model="tz"
             :items="timezones"
-            @save="val => waitFor(() => update(state.service.defaults, { tz: val }))"
             :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -62,7 +58,7 @@
 </template>
 
 <script>
-import { reactive } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 import { locales, menuPositions, timezones } from '../../conf'
 import { useStore } from '../../store'
 import EditableItem from '../../components/EditableItem'
@@ -72,17 +68,28 @@ export default {
   components: {
     EditableItem
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
-    const page = reactive({
-      locale: store.state.service.defaults.locale,
-      menuPosition: store.state.service.defaults.menuPosition,
-      tz: store.state.service.defaults.tz
-    })
+    const { state, waitFor, update } = store
 
     return {
       ...store,
-      page,
+      darkTheme: computed({
+        get: () => state.service.defaults.darkTheme,
+        set: str => waitFor(() => update(state.service.defaults, { darkTheme: str }))
+      }),
+      menuPosition: computed({
+        get: () => state.service.defaults.menuPosition,
+        set: str => waitFor(() => update(state.service.defaults, { menuPosition: str }))
+      }),
+      locale: computed({
+        get: () => state.service.defaults.locale,
+        set: str => waitFor(() => update(state.service.defaults, { locale: str }))
+      }),
+      tz: computed({
+        get: () => state.service.defaults.tz,
+        set: str => waitFor(() => update(state.service.defaults, { tz: str }))
+      }),
       locales,
       menuPositions,
       timezones

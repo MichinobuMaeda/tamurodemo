@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import { reactive } from '@vue/composition-api'
 import { useStore, accountStatus } from '../../store'
 import DefaultButton from '../../components/DefaultButton'
 import GroupsOfUser from '../../parts/GroupsOfUser'
@@ -36,11 +35,9 @@ export default {
   },
   setup () {
     const store = useStore()
-    const page = reactive({})
 
     return {
       ...store,
-      page,
       accountStatus
     }
   }

@@ -51,13 +51,13 @@
           v-if="!summary"
           dense outlined autofocus auto-grow clearable
           rows="2"
-          v-model="page.message"
+          v-model="message"
         >
           <template v-slot:append-outer>
             <v-icon
-              :disabled="!page.message"
-              :color="page.message ? 'primary' : 'secondary'"
-              @click="sendMessage"
+              :disabled="!message"
+              :color="message ? 'primary' : 'secondary'"
+              @click="postMessage"
             >
               {{ icon('Send') }}
             </v-icon>
@@ -70,8 +70,9 @@
 
 <script>
 import { useStore, findItem, groupsOfMe } from '@/store'
-import { reactive, computed } from '@vue/composition-api'
+import { ref, computed } from '@vue/composition-api'
 import LinkButton from '@/components/LinkButton'
+import { postGroupChat } from '../store/messaging'
 
 export default {
   name: 'Chats',
@@ -87,28 +88,17 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { db, state, update } = store
-    const page = reactive({
-      message: null
-    })
+    const { state, update } = store
 
-    const sendMessage = async () => {
-      const ts = new Date()
-      const doc = ts.toISOString().replace(/[^0-9]/g, '')
-      await db.collection('groups').doc(props.group)
-        .collection('messages').doc(doc)
-        .set({
-          sender: state.me.id,
-          message: page.message,
-          likes: [],
-          createdAt: ts,
-          updatedAt: ts
-        })
-      page.message = null
+    const message = ref(null)
+
+    const postMessage = async () => {
+      await postGroupChat(store, props.group, message.value)
+      message.value = null
     }
 
     return {
-      page,
+      message,
       ...store,
       expand: computed({
         get: () => state.me.chatSummaryExpand ? 0 : undefined,
@@ -117,7 +107,7 @@ export default {
       summary: !props.group,
       groups: computed(() => props.group ? [findItem(state.groups, props.group)] : groupsOfMe(state)),
       userName: id => findItem(state.users, id).name || 'Unknown',
-      sendMessage
+      postMessage
     }
   }
 }

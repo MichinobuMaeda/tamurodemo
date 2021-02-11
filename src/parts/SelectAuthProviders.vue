@@ -44,7 +44,7 @@ export default {
       default: false
     }
   },
-  setup (props, { root, emit }) {
+  setup () {
     const store = useStore()
 
     return {

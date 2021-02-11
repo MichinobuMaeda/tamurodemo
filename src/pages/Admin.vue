@@ -9,30 +9,30 @@
         <template v-slot:title>{{ $t('Administration') }}</template>
       </PageTitle>
 
-      <AdminSectionHeader v-model="page.target" target="users" :sectionIcon="icon('Users')" :label="$t('Users')" />
-      <Users v-if="page.target === 'users'" />
+      <AdminSectionHeader v-model="target" target="users" :sectionIcon="icon('Users')" :label="$t('Users')" />
+      <Users v-if="target === 'users'" />
 
-      <AdminSectionHeader v-model="page.target" target="categories" :sectionIcon="icon('Categories')" :label="$t('Categories')" />
-      <Categories v-if="page.target === 'categories'" />
+      <AdminSectionHeader v-model="target" target="categories" :sectionIcon="icon('Categories')" :label="$t('Categories')" />
+      <Categories v-if="target === 'categories'" />
 
-      <AdminSectionHeader v-model="page.target" target="invitation" :sectionIcon="icon('Invitation')" :label="$t('Invitation')" />
-      <Invitation v-if="page.target === 'invitation'" />
+      <AdminSectionHeader v-model="target" target="invitation" :sectionIcon="icon('Invitation')" :label="$t('Invitation')" />
+      <Invitation v-if="target === 'invitation'" />
 
-      <AdminSectionHeader v-model="page.target" target="defaults" :sectionIcon="icon('Defaults')" :label="$t('Defaults')" />
-      <Defaults v-if="page.target === 'defaults'" />
+      <AdminSectionHeader v-model="target" target="defaults" :sectionIcon="icon('Defaults')" :label="$t('Defaults')" />
+      <Defaults v-if="target === 'defaults'" />
 
-      <AdminSectionHeader v-model="page.target" target="auth" :sectionIcon="icon('Sign in')" :label="$t('Authentication')" />
-      <Authentication v-if="page.target === 'auth'" />
+      <AdminSectionHeader v-model="target" target="auth" :sectionIcon="icon('Sign in')" :label="$t('Authentication')" />
+      <Authentication v-if="target === 'auth'" />
 
-      <AdminSectionHeader v-model="page.target" target="service" :sectionIcon="icon('Service settings')" :label="$t('Service settings')" />
-      <Service v-if="page.target === 'service'" />
+      <AdminSectionHeader v-model="target" target="service" :sectionIcon="icon('Service settings')" :label="$t('Service settings')" />
+      <Service v-if="target === 'service'" />
 
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { reactive, watch } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 import { useStore } from '../store'
 import PageTitle from '../components/PageTitle'
 import AdminSectionHeader from '../parts/admin/AdminSectionHeader'
@@ -57,15 +57,13 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    const page = reactive({
-      target: root.$route.params ? root.$route.params.target : ''
-    })
 
-    watch(() => root.$route, route => { page.target = route.params.target || '' })
+    // const target = ref(root.$route.params ? root.$route.params.target : '')
+    // watch(() => root.$route, route => { target.value = route.params.target || '' })
 
     return {
       ...store,
-      page
+      target: computed(() => root.$route.params ? root.$route.params.target : '')
     }
   }
 }

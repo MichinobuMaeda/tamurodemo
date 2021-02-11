@@ -5,7 +5,7 @@
         v-if="priv.manager || priv.admin"
         color="primary"
         class="float-right my-0"
-        v-model="page.edit"
+        v-model="edit"
         :label="$t('Edit')"
       />
       <PageTitle
@@ -22,12 +22,12 @@
       />
 
       <EditableItem
-        v-if="state.service.conf && (page.edit || (state.service.conf.desc && state.service.conf.desc.data))"
+        v-if="state.service.conf && (edit || (state.service.conf.desc && state.service.conf.desc.data))"
         type="formatted-text"
         :label="$t('Description')"
         v-model="state.service.conf.desc"
         @save="val => waitFor(() => update(state.service.conf, { desc: val }))"
-        :editable="page.edit && priv.manager"
+        :editable="edit && priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -47,7 +47,7 @@
         />
       </div>
 
-      <div v-if="page.edit && (priv.manager || priv.admin)">
+      <div v-if="edit && (priv.manager || priv.admin)">
 
         <v-divider class="my-4" />
 
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
+import { ref, computed } from '@vue/composition-api'
 import { useStore } from '../store'
 import PageTitle from '../components/PageTitle'
 import EditableItem from '../components/EditableItem'
@@ -116,9 +116,6 @@ export default {
   setup () {
     const store = useStore()
     const { state } = store
-    const page = reactive({
-      edit: false
-    })
 
     const groupsOfCategory = category => (category.groups || [])
       .map(id => state.groups.find(group => group.id === id))
@@ -142,7 +139,7 @@ export default {
     )
 
     return {
-      page,
+      edit: ref(false),
       ...store,
       groupsOfCategory,
       uncategorizedGroups,

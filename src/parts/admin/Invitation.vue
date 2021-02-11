@@ -8,32 +8,34 @@
             type="select"
             :label="$t('Invitation')"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
-            v-model="state.service.auth.invitation"
-            @save="val => waitFor(() => update(state.service.auth, { invitation: val }))"
-            :editable="priv.admin || priv.manager"
-            :disabled="!!state.waitProc"
-          />
-        </v-col>
-      </v-row>
-      <v-row v-if="state.service.auth.invitation">
-        <v-col class="title--text col-4 text-right">{{ $t('Invitation expiration') }}</v-col>
-        <v-col class="col-8">
-          <EditableItem
-            :label="$t('Invitation expiration')"
-            v-model="invitationExpirationTime"
-            :rules="rulesDaysAndTime"
+            v-model="invitation"
             :editable="priv.admin || priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
       </v-row>
       <v-row>
-        <v-col class="col-12">
+        <v-col class="title--text col-4 text-right">{{ $t('Invitation expiration') }}</v-col>
+        <v-col class="col-4">
+          <EditableItem
+            :label="$t('Invitation expiration')"
+            v-model="invitationExpirationTime"
+            :rules="[ruleNotNegative]"
+            :editable="priv.admin || priv.manager"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+        <v-col class="col-4">
+          {{ msecToDaysAndTime(invitationExpirationTime) }}
+        </v-col>
+      </v-row>
+      <v-row>
+         <v-col class="title--text col-12">{{ $t('GuidanceText') }}</v-col>
+         <v-col class="col-12">
           <EditableItem
             type="formatted-text"
             :label="$t('Description')"
-            v-model="state.service.conf.guide"
-            @save="val => waitFor(() => update(state.service.conf, { guide: val }))"
+            v-model="guide"
             :editable="priv.manager || priv.admin"
             :disabled="!!state.waitProc"
           />
@@ -60,32 +62,24 @@ export default {
     EditableItem,
     LinkButton
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
-    const { waitFor, update } = store
-
-    const dateToDaysAndTime = val => {
-      const d = Math.floor(val / (24 * 60 * 60 * 1000))
-      return `${d} ${new Date(val % (24 * 60 * 60 * 1000)).toISOString().slice(11, 19)}`
-    }
-
-    const daysAndTimeToDate = val => {
-      const str = (val || '').trim()
-      const dt = (/ /.test(str) ? str.replace(/ .*/, '') : (/:/.test(str) ? '' : str)) || '0'
-      const tm = (/ /.test(str) ? str.replace(/.* /, '') : (/:/.test(str) ? str : '')) || '0:00'
-      return Number(dt) * 24 * 60 * 60 * 1000 +
-        new Date('1970-01-01 ' + tm).getTime() - new Date('1970-01-01T00:00:00').getTime()
-    }
+    const { state, waitFor, update } = store
 
     return {
       ...store,
-      invitationExpirationTime: computed({
-        get: () => dateToDaysAndTime(store.state.service.conf.invitationExpirationTime),
-        set: str => waitFor(() => update(store.state.service.conf, { invitationExpirationTime: daysAndTimeToDate(str) }))
+      invitation: computed({
+        get: () => state.service.auth.invitation,
+        set: str => waitFor(() => update(state.service.auth, { invitation: str }))
       }),
-      rulesDaysAndTime: [
-        v => daysAndTimeToDate(v) > 0 || '"d" or "h:mm:ss" or  "d h:mm:ss"'
-      ]
+      invitationExpirationTime: computed({
+        get: () => state.service.conf.invitationExpirationTime,
+        set: str => waitFor(() => update(state.service.conf, { invitationExpirationTime: str }))
+      }),
+      guide: computed({
+        get: () => state.service.conf.guide,
+        set: str => waitFor(() => update(state.service.conf, { guide: str }))
+      })
     }
   }
 }

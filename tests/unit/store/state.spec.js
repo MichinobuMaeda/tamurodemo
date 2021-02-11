@@ -473,7 +473,7 @@ test('onGroupsChange()' +
   expect(state.unsubscribers.chat_group2).toBeDefined()
 
   // run #2
-  await db.collection('groups').doc('group1').collection('messages').doc('202012312459').set({
+  await db.collection('groups').doc('group1').collection('chat').doc('202012312459').set({
     sender: 'id01',
     message: 'chat message',
     createdAt: new Date()

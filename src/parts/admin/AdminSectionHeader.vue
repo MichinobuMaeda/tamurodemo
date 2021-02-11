@@ -27,7 +27,7 @@ export default {
     sectionIcon: String,
     label: String
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
 
     return {
