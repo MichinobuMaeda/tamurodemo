@@ -5,8 +5,8 @@
     <v-expansion-panel>
       <v-expansion-panel-header>
         <div>
-          <v-icon>{{ icon('Chat') }}</v-icon>
-          {{ $t(summary ? 'Recent messages' : 'Chat') }}
+          <v-icon>{{ icon(account ? 'Contact the administrator' : 'Chat') }}</v-icon>
+          {{ $t(summary ? 'Recent messages' : (account ? 'Contact the administrator' : 'Chat')) }}
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content
@@ -14,36 +14,44 @@
         id="chat-scroll-target"
         :style="'max-height: ' + height"
       >
-        <div
-          v-for="group in groups" :key="group.id"
-        >
-          <LinkButton
-            v-if="summary"
-            :icon="icon('Group')"
-            :label="group.name"
-            @click="goPageGroup(group.id)"
-          />
-          <div v-else-if="!(state.groupChats[group.id] || []).length">
-            {{ $t('No message') }}
-          </div>
+        <div v-if="!group">
           <div
-            v-for="item in (state.groupChats[group.id] || []).slice(summary ? -3 : 0)" v-bind:key="item.id"
+            v-for="account in accounts" :key="account.id"
           >
-            <v-card
-              outlined
-              :class="item.sender === state.me.id ? 'ml-8' : 'mr-8'"
-              :color="item.sender === state.me.id ? 'green lighten-5' : ''"
-            >
-              <v-card-text class="pa-1">
-                <div v-for="(line, index) in (item.message || '').split('\n')" v-bind:key="index">
-                  {{ line || '\u200C' }}
-                </div>
-              </v-card-text>
-            </v-card>
-            <div :class="item.sender === state.me.id ? 'pl-8 text-right' : 'pr-8'">
-              <span class="info--text">{{ withTz(item.createdAt).format('lll') }}</span>
-              {{ userName(item.sender) }}
+            <LinkButton
+              v-if="summary && (state.hotlines[account.id] || []).length"
+              :icon="icon('User')"
+              :label="findItem(state.users, account.id).name || 'unknown'"
+              @click="goPageUser(account.id)"
+            />
+            <div v-else-if="!summary && !(state.hotlines[account.id] || []).length">
+              {{ $t('No message') }}
             </div>
+            <ChatTimeline
+              v-if="(state.hotlines[account.id] || []).length"
+              :summary="summary"
+              :messages="state.hotlines[account.id] || []"
+            />
+          </div>
+        </div>
+
+        <div v-if="!account">
+          <div
+            v-for="group in groups" :key="group.id"
+          >
+            <LinkButton
+              v-if="summary"
+              :icon="icon('Group')"
+              :label="group.name"
+              @click="goPageGroup(group.id)"
+            />
+            <div v-else-if="!(state.groupChats[group.id] || []).length">
+              {{ $t('No message') }}
+            </div>
+            <ChatTimeline
+              :summary="summary"
+              :messages="state.groupChats[group.id] || []"
+            />
           </div>
         </div>
 
@@ -71,16 +79,19 @@
 <script>
 import { useStore, findItem, groupsOfMe } from '@/store'
 import { ref, computed } from '@vue/composition-api'
-import LinkButton from '@/components/LinkButton'
-import { postGroupChat } from '../store/messaging'
+import LinkButton from '../components/LinkButton'
+import ChatTimeline from './ChatTimeline'
+import { postGroupChat, postHotline } from '../store/messaging'
 
 export default {
   name: 'Chats',
   components: {
-    LinkButton
+    LinkButton,
+    ChatTimeline
   },
   props: {
     group: String,
+    account: String,
     height: {
       type: String,
       default: '240px'
@@ -93,7 +104,11 @@ export default {
     const message = ref(null)
 
     const postMessage = async () => {
-      await postGroupChat(store, props.group, message.value)
+      if (props.group) {
+        await postGroupChat(store, props.group, message.value)
+      } else if (props.account) {
+        await postHotline(store, props.account, message.value)
+      }
       message.value = null
     }
 
@@ -104,10 +119,12 @@ export default {
         get: () => state.me.chatSummaryExpand ? 0 : undefined,
         set: v => update(state.me, { chatSummaryExpand: v === 0 })
       }),
-      summary: !props.group,
+      summary: !(props.group || props.account),
       groups: computed(() => props.group ? [findItem(state.groups, props.group)] : groupsOfMe(state)),
+      accounts: computed(() => props.account ? [findItem(state.accounts, props.account)] : state.accounts),
       userName: id => findItem(state.users, id).name || 'Unknown',
-      postMessage
+      postMessage,
+      findItem
     }
   }
 }

@@ -25,6 +25,7 @@ export const clearUserData = state => {
   state.profiles = []
   state.groups = []
   state.groupChats = {}
+  state.hotlines = {}
   state.categories = []
   state.invitations = {}
   state.waitProc = null
@@ -96,16 +97,19 @@ export const initUserData = async ({ db, auth, state }) => {
       state,
       'accounts',
       db.collection('accounts'),
-      (state) => {
+      state => {
         updateMe({ auth, state }, findItem(state.accounts, state.me.id))
+        onAccountChange(db)(state)
       }
     )
   } else {
     const meRef = db.collection('accounts').doc(state.me.id)
     state.accounts = [castDoc(await meRef.get())]
+    onAccountChange(db)(state)
     state.unsubscribers.accounts = meRef.onSnapshot(me => {
       state.accounts = [castDoc(me)]
       updateMe({ auth, state }, findItem(state.accounts, state.me.id))
+      onAccountChange(db)(state)
     })
   }
   if (myPriv(state).manager) {
@@ -138,20 +142,58 @@ export const getInitialAndRealtimeData = async (state, propName, queryRef, onCha
 }
 
 export const onGroupsChange = db => state => {
-  state.groups.forEach(group => {
-    const id = group.id
-    state.unsubscribers[`chat_${id}`] && state.unsubscribers[`chat_${id}`]()
-    delete state.unsubscribers[`chat_${id}`]
-    delete state.groupChats[id]
-  })
-  groupsOfMe(state).forEach(group => {
-    const id = group.id
-    state.unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
-      .collection('chat').orderBy('createdAt', 'asc')
-      .onSnapshot(querySnapshot => {
-        state.groupChats[id] = querySnapshot.docs.map(doc => castDoc(doc))
-      })
-  })
+  var changed = false
+  const groupChats = { ...state.groupChats }
+  const groups = groupsOfMe(state)
+  Object.keys(state.unsubscribers)
+    .filter(key => key.slice(0, 5) === 'chat_' && !groups.includes(key.slice(5)))
+    .forEach(key => {
+      state.unsubscribers[key]()
+      delete state.unsubscribers[key]
+      delete groupChats[key.slice(5)]
+      changed = true
+    })
+  groups
+    .filter(group => !Object.keys(groupChats).includes(group.id))
+    .forEach(group => {
+      const id = group.id
+      state.unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
+        .collection('chat').orderBy('createdAt', 'asc')
+        .onSnapshot(querySnapshot => {
+          groupChats[id] = querySnapshot.docs.map(doc => castDoc(doc))
+        })
+      changed = true
+    })
+  if (changed) {
+    state.groupChats = groupChats
+  }
+}
+
+export const onAccountChange = db => state => {
+  var changed = false
+  const hotlines = { ...state.hotlines }
+  Object.keys(state.unsubscribers)
+    .filter(key => key.slice(0, 8) === 'hotline_' && !state.accounts.includes(key.slice(8)))
+    .forEach(key => {
+      state.unsubscribers[key]()
+      delete state.unsubscribers[key]
+      delete hotlines[key.slice(8)]
+      changed = true
+    })
+  state.accounts
+    .filter(account => !Object.keys(hotlines).includes(account.id))
+    .forEach(account => {
+      const { id } = account
+      state.unsubscribers[`hotline_${id}`] = db.collection('accounts').doc(id)
+        .collection('hotline').orderBy('createdAt', 'asc')
+        .onSnapshot(querySnapshot => {
+          hotlines[id] = querySnapshot.docs.map(doc => castDoc(doc))
+        })
+      changed = true
+    })
+  if (changed) {
+    state.hotlines = hotlines
+  }
 }
 
 export const findItem = (list, id) => ({

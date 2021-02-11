@@ -13,7 +13,7 @@
           :label="user.name"
           @click="() => goPageUser(user.id, true)"
         />
-        <GroupsOfUser :id="user.id" :edit="page.edit" />
+        <GroupsOfUser :id="user.id" :edit="edit" />
         <v-divider class="my-2"  />
       </div>
     </v-col>
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { ref } from '@vue/composition-api'
 import { useStore, accountStatus } from '../../store'
 import DefaultButton from '../../components/DefaultButton'
 import GroupsOfUser from '../../parts/GroupsOfUser'
@@ -37,6 +38,7 @@ export default {
     const store = useStore()
 
     return {
+      edit: ref(false),
       ...store,
       accountStatus
     }

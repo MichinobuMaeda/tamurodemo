@@ -6,7 +6,7 @@
     v-model="groups"
     :editable="edit && priv.manager"
     :disabled="!!state.waitProc"
-    @click="id => goPage($router, { name: 'group', params: { id } })"
+    @click="id => goPageGroup(id)"
   />
 </template>
 

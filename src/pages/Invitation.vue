@@ -21,6 +21,12 @@
         <template v-slot:title>{{ $t('Guide') }}</template>
       </PageTitle>
 
+      <Chats
+        class="my-2"
+        :account="state.me.id"
+        :height="state.chatPaneHeight"
+      />
+
       <v-row v-if="state.me && state.me.valid">
         <v-col class="col-12 col-sm-6">
           <v-select
@@ -54,7 +60,7 @@
       </div>
       <div v-else>
         <v-sheet
-          v-if="page.edit || (state.service.conf.guide && state.service.conf.guide.data)"
+          v-if="state.service.conf.guide && state.service.conf.guide.data"
           outlined rounded class="px-3 pt-3 mb-4"
         >
           <EditableItem
@@ -157,6 +163,7 @@ import DefaultButton from '../components/DefaultButton'
 import LinkButton from '../components/LinkButton'
 import EditableItem from '../components/EditableItem'
 import SelectAuthProviders from '../parts/SelectAuthProviders'
+import Chats from '../parts/Chats'
 
 export default {
   name: 'PageInvitation',
@@ -166,13 +173,13 @@ export default {
     DefaultButton,
     LinkButton,
     EditableItem,
-    SelectAuthProviders
+    SelectAuthProviders,
+    Chats
   },
   setup (props, { root }) {
     const store = useStore()
     const { waitFor } = store
     const page = reactive({
-      edit: false,
       invitation: root.$route.params.invitation || '',
       error: '',
       setEmail: false,

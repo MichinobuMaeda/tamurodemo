@@ -17,6 +17,7 @@ import {
   initUserData,
   getInitialAndRealtimeData,
   onGroupsChange,
+  onAccountChange,
   findItem
 } from '../../../src/store/state'
 
@@ -111,6 +112,7 @@ test('clearUserData()' +
     profiles: [],
     groups: [],
     groupChats: {},
+    hotlines: {},
     categories: [],
     invitations: {},
     waitProc: null
@@ -481,7 +483,81 @@ test('onGroupsChange()' +
   await waitRealtimeUpdate()
 
   // evaluate #2
-  expect(state.groupChats.group1[0].id).toEqual('202012312459')
+  expect(state.groupChats.group1[0]).toMatchObject({
+    id: '202012312459',
+    sender: 'id01'
+  })
+
+  // clear
+  unsubscribeAll(state)
+})
+
+test('onAccountChange()' +
+  ' should update hotline subscribes.', async () => {
+  // prepare
+  const id = 'account0'
+  await db.collection('accounts').doc('account0').set({ valid: true })
+  await db.collection('accounts').doc('account1').set({ valid: true })
+  await db.collection('accounts').doc('account2').set({ valid: false })
+  await db.collection('accounts').doc('account3').set({ valid: true })
+  const counter = {
+    unsub0: 0,
+    unsub1: 0,
+    unsub2: 0,
+    unsub3: 0
+  }
+  const state = {
+    me: {
+      id,
+      valid: true
+    },
+    categories: [],
+    accounts: [
+      { id: 'account0', valid: true },
+      { id: 'account2', valid: false },
+      { id: 'account3', valid: true }
+    ],
+    hotlines: {
+      account0: [],
+      account1: [],
+      account2: []
+    },
+    unsubscribers: {
+      hotline_account0: () => { counter.unsub0++ },
+      hotline_account1: () => { counter.unsub1++ },
+      hotline_account2: () => { counter.unsub2++ }
+    }
+  }
+
+  // run #1
+  onAccountChange(db)(state)
+
+  // evaluate #1
+  expect(counter).toEqual({
+    unsub0: 1,
+    unsub1: 1,
+    unsub2: 1,
+    unsub3: 0
+  })
+  expect(Object.keys(state.unsubscribers)).toHaveLength(3)
+  expect(state.unsubscribers.hotline_account0).toBeDefined()
+  expect(state.unsubscribers.hotline_account1).not.toBeDefined()
+  expect(state.unsubscribers.hotline_account2).toBeDefined()
+  expect(state.unsubscribers.hotline_account3).toBeDefined()
+
+  // run #2
+  await db.collection('accounts').doc('account2').collection('hotline').doc('202012312459').set({
+    sender: 'account0',
+    message: 'hotline message',
+    createdAt: new Date()
+  })
+  await waitRealtimeUpdate()
+
+  // evaluate #2
+  expect(state.hotlines.account2[0]).toMatchObject({
+    id: '202012312459',
+    sender: 'account0'
+  })
 
   // clear
   unsubscribeAll(state)

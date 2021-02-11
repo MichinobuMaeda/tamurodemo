@@ -19,6 +19,7 @@ const iconList = {
   'For permitted': 'supervised_user_circle',
   'For managers': 'lock',
   Administration: 'admin_panel_settings',
+  'Contact the administrator': 'contact_mail',
   'Service settings': 'miscellaneous_services',
   Upward: 'arrow_upward',
   Downward: 'arrow_downward',

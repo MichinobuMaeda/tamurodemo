@@ -50,6 +50,13 @@
       >
         {{ $t('This user is deleted.') }}
       </v-alert>
+
+      <Chats
+        class="my-2"
+        :account="account.id"
+        :height="state.chatPaneHeight"
+      />
+
       <div v-if="(!account.deletedAt) || (edit && priv.manager)">
         <GroupsOfUser class="mb-2" :id="user.id" :edit="edit" />
         <Profile :id="user.id" :edit="edit" :preview="preview" />
@@ -159,11 +166,12 @@ import { reactive, computed, watch } from '@vue/composition-api'
 import { permissions } from '@/conf'
 import { useStore, findItem, accountStatus } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
-import PageTitle from '@/components/PageTitle'
-import EditableItem from '@/components/EditableItem'
-import ConfirmButton from '@/components/ConfirmButton'
-import GroupsOfUser from '@/parts/GroupsOfUser'
-import Profile from '@/parts/Profile'
+import PageTitle from '../components/PageTitle'
+import EditableItem from '../components/EditableItem'
+import ConfirmButton from '../components/ConfirmButton'
+import GroupsOfUser from '../parts/GroupsOfUser'
+import Profile from '../parts/Profile'
+import Chats from '../parts/Chats'
 
 export default {
   name: 'PageUser',
@@ -172,7 +180,8 @@ export default {
     EditableItem,
     ConfirmButton,
     GroupsOfUser,
-    Profile
+    Profile,
+    Chats
   },
   setup (props, { root }) {
     const store = useStore()

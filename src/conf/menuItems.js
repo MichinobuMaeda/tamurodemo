@@ -34,7 +34,7 @@ export const menuItems = (myId, myName, priviligedItems, togglehPriviligedItems,
       route: { name: 'admin' }
     },
     {
-      label: 'Priviliged items',
+      label: ['Priviliged items', { visible: (priviligedItems ? 'On' : 'Off') }],
       icon: icon(priviligedItems ? 'Visible' : 'Invisible'),
       color: 'menu-item-manager',
       privs: ['managerReal', 'adminReal', 'testerReal'],
