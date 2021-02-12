@@ -151,8 +151,8 @@ export default {
     return {
       page,
       ...store,
-      user: computed(() => store.state.users.find(item => item.id === props.id)),
-      profile: computed(() => store.state.profiles.find(item => item.id === props.id)),
+      user: computed(() => findItem(store.state.user, props.id)),
+      profile: computed(() => findItem(store.state.profiles, props.id)),
       permittedGroups: user => (user.permittedGroups || [])
         .map(id => findItem(store.state.groups, id))
         .filter(group => !group.deletedAt),

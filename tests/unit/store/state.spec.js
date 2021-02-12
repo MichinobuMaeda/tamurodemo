@@ -16,8 +16,8 @@ import {
   initMe,
   initUserData,
   getInitialAndRealtimeData,
-  onGroupsChange,
-  onAccountChange,
+  subscribeGroupChats,
+  subscribeHotlines,
   findItem
 } from '../../../src/store/state'
 
@@ -312,7 +312,6 @@ test('initUserData()' +
 
   // run
   await initUserData({ db, auth, state })
-  await waitRealtimeUpdate()
 
   // evaluate
   expect(state.groups).toHaveLength(4)
@@ -340,7 +339,6 @@ test('initUserData()' +
 
   // run
   await initUserData({ db, auth, state })
-  await waitRealtimeUpdate()
 
   // evaluate
   expect(state.groups).toHaveLength(4)
@@ -368,6 +366,7 @@ test('initUserData()' +
 
   // run
   await initUserData({ db, auth, state })
+  await db.collection('accounts').doc('primary').update({ valid: false })
   await waitRealtimeUpdate()
 
   // evaluate
@@ -424,9 +423,9 @@ test('getInitialAndRealtimeData()' +
   unsubscribeAll(state)
 })
 
-test('onGroupsChange()' +
+test('subscribeGroupChats()' +
   ' should update group chat subscribes.', async () => {
-  // prepare
+  // prepare #1
   const id = 'id01'
   await db.collection('groups').doc('all').set({ members: [id] })
   await db.collection('groups').doc('group0').set({ members: [] })
@@ -459,13 +458,13 @@ test('onGroupsChange()' +
   }
 
   // run #1
-  onGroupsChange(db)(state)
+  subscribeGroupChats({ db, state })
 
   // evaluate #1
   expect(counter).toEqual({
-    all: 1,
+    all: 0,
     unsub0: 1,
-    unsub1: 1,
+    unsub1: 0,
     unsub2: 0
   })
   expect(Object.keys(state.unsubscribers)).toHaveLength(3)
@@ -473,6 +472,8 @@ test('onGroupsChange()' +
   expect(state.unsubscribers.chat_group0).not.toBeDefined()
   expect(state.unsubscribers.chat_group1).toBeDefined()
   expect(state.unsubscribers.chat_group2).toBeDefined()
+
+  // prepare #2
 
   // run #2
   await db.collection('groups').doc('group1').collection('chat').doc('202012312459').set({
@@ -488,13 +489,35 @@ test('onGroupsChange()' +
     sender: 'id01'
   })
 
+  // prepare #3
+  counter.all = 0
+  counter.unsub0 = 0
+  counter.unsub1 = 0
+  counter.unsub2 = 0
+
+  // evaluate #1
+  expect(counter).toEqual({
+    all: 0,
+    unsub0: 0,
+    unsub1: 0,
+    unsub2: 0
+  })
+  expect(Object.keys(state.unsubscribers)).toHaveLength(3)
+  expect(state.unsubscribers.chat_all).toBeDefined()
+  expect(state.unsubscribers.chat_group0).not.toBeDefined()
+  expect(state.unsubscribers.chat_group1).toBeDefined()
+  expect(state.unsubscribers.chat_group2).toBeDefined()
+
+  // run #3
+  subscribeGroupChats({ db, state })
+
   // clear
   unsubscribeAll(state)
 })
 
-test('onAccountChange()' +
+test('subscribeHotlines()' +
   ' should update hotline subscribes.', async () => {
-  // prepare
+  // prepare #1
   const id = 'account0'
   await db.collection('accounts').doc('account0').set({ valid: true })
   await db.collection('accounts').doc('account1').set({ valid: true })
@@ -530,13 +553,13 @@ test('onAccountChange()' +
   }
 
   // run #1
-  onAccountChange(db)(state)
+  subscribeHotlines({ db, state })
 
   // evaluate #1
   expect(counter).toEqual({
-    unsub0: 1,
+    unsub0: 0,
     unsub1: 1,
-    unsub2: 1,
+    unsub2: 0,
     unsub3: 0
   })
   expect(Object.keys(state.unsubscribers)).toHaveLength(3)
@@ -545,8 +568,10 @@ test('onAccountChange()' +
   expect(state.unsubscribers.hotline_account2).toBeDefined()
   expect(state.unsubscribers.hotline_account3).toBeDefined()
 
+  // prepare #2
+
   // run #2
-  await db.collection('accounts').doc('account2').collection('hotline').doc('202012312459').set({
+  await db.collection('accounts').doc('account3').collection('hotline').doc('202012312459').set({
     sender: 'account0',
     message: 'hotline message',
     createdAt: new Date()
@@ -554,10 +579,32 @@ test('onAccountChange()' +
   await waitRealtimeUpdate()
 
   // evaluate #2
-  expect(state.hotlines.account2[0]).toMatchObject({
+  expect(state.hotlines.account3[0]).toMatchObject({
     id: '202012312459',
     sender: 'account0'
   })
+
+  // prepare #3
+  counter.unsub0 = 0
+  counter.unsub1 = 0
+  counter.unsub2 = 0
+  counter.unsub3 = 0
+
+  // run #3
+  subscribeHotlines({ db, state })
+
+  // evaluate #3
+  expect(counter).toEqual({
+    unsub0: 0,
+    unsub1: 0,
+    unsub2: 0,
+    unsub3: 0
+  })
+  expect(Object.keys(state.unsubscribers)).toHaveLength(3)
+  expect(state.unsubscribers.hotline_account0).toBeDefined()
+  expect(state.unsubscribers.hotline_account1).not.toBeDefined()
+  expect(state.unsubscribers.hotline_account2).toBeDefined()
+  expect(state.unsubscribers.hotline_account3).toBeDefined()
 
   // clear
   unsubscribeAll(state)

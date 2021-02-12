@@ -19,5 +19,5 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'
   ],
-  testTimeout: 10 * 1000
+  testTimeout: 20 * 1000
 }

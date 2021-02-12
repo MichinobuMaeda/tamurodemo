@@ -1,6 +1,5 @@
 import { providers } from '../conf'
 import { myPriv } from './accounts'
-import { groupsOfMe } from './groups'
 import { castDoc } from './io'
 
 export const clearServiceData = (state = {}) => {
@@ -62,6 +61,9 @@ export const updateMe = ({ auth, state }, doc = null) => {
 }
 
 export const initMe = async ({ db, auth, state }, id) => {
+  await db.collection('accounts').doc(id).update({
+    signedInAt: new Date()
+  })
   const me = castDoc(await db.collection('accounts').doc(id).get())
   updateMe({ auth, state }, me)
 }
@@ -70,16 +72,11 @@ export const initUserData = async ({ db, auth, state }) => {
   state.loading = true
   unsubscribeAll(state)
   state.authMessage = ''
-  // window.localStorage.setItem('tamuroAuthMessage', '')
-  await db.collection('accounts').doc(state.me.id).update({
-    signedInAt: new Date()
-  })
 
   await getInitialAndRealtimeData(
     state,
     'groups',
-    db.collection('groups').orderBy('name', 'asc'),
-    onGroupsChange(db)
+    db.collection('groups').orderBy('name', 'asc')
   )
   await getInitialAndRealtimeData(
     state,
@@ -92,61 +89,42 @@ export const initUserData = async ({ db, auth, state }) => {
     db.collection('users').orderBy('name', 'asc')
   )
   const priv = myPriv(state)
-  if (priv.admin || priv.manager) {
-    await getInitialAndRealtimeData(
-      state,
-      'accounts',
-      db.collection('accounts'),
-      state => {
-        updateMe({ auth, state }, findItem(state.accounts, state.me.id))
-        onAccountChange(db)(state)
-      }
-    )
-  } else {
-    const meRef = db.collection('accounts').doc(state.me.id)
-    state.accounts = [castDoc(await meRef.get())]
-    onAccountChange(db)(state)
-    state.unsubscribers.accounts = meRef.onSnapshot(me => {
-      state.accounts = [castDoc(me)]
-      updateMe({ auth, state }, findItem(state.accounts, state.me.id))
-      onAccountChange(db)(state)
-    })
-  }
-  if (myPriv(state).manager) {
-    await getInitialAndRealtimeData(
-      state,
-      'profiles',
-      db.collection('profiles'))
-  } else {
-    const myProfileRef = db.collection('profiles').doc(state.me.id)
-    state.profiles = [castDoc(await myProfileRef.get())]
-    state.unsubscribers.profiles = myProfileRef.onSnapshot(prof => {
-      state.profiles = [castDoc(prof)]
-    })
-  }
+  await getInitialAndRealtimeData(
+    state,
+    'accounts',
+    (priv.admin || priv.manager) ? db.collection('accounts') : db.collection('accounts').doc(state.me.id),
+    state => updateMe({ auth, state }, findItem(state.accounts, state.me.id))
+  )
+  await getInitialAndRealtimeData(
+    state,
+    'profiles',
+    priv.manager ? db.collection('profiles') : db.collection('profiles').doc(state.me.id)
+  )
   state.loading = false
 }
 
-export const getInitialAndRealtimeData = async (state, propName, queryRef, onChange) => {
-  const priv = myPriv(state)
-  state[propName] = (await queryRef.get()).docs
-    .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
-    .map(doc => castDoc(doc))
-  state.unsubscribers[propName] = queryRef.onSnapshot(querySnapshot => {
+export const getInitialAndRealtimeData = async (state, propName, queryRef, next) => {
+  const castSnapshot = snapshot => {
     const priv = myPriv(state)
-    state[propName] = querySnapshot.docs
-      .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
-      .map(doc => castDoc(doc))
-    return onChange && onChange(state)
+    return snapshot.docs
+      ? snapshot.docs
+        .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
+        .map(doc => castDoc(doc))
+      : [castDoc(snapshot)]
+  }
+  state[propName] = castSnapshot(await queryRef.get())
+  state.unsubscribers[propName] = queryRef.onSnapshot(async snapshot => {
+    state[propName] = castSnapshot(snapshot)
+    return next ? next(state) : null
   })
 }
 
-export const onGroupsChange = db => state => {
+export const subscribeGroupChats = ({ db, state }) => {
   var changed = false
   const groupChats = { ...state.groupChats }
-  const groups = groupsOfMe(state)
+  const groups = state.groups.filter(group => !group.deletedAt && group.members.includes(state.me.id))
   Object.keys(state.unsubscribers)
-    .filter(key => key.slice(0, 5) === 'chat_' && !groups.includes(key.slice(5)))
+    .filter(key => key.slice(0, 5) === 'chat_' && !groups.map(item => item.id).includes(key.slice(5)))
     .forEach(key => {
       state.unsubscribers[key]()
       delete state.unsubscribers[key]
@@ -169,11 +147,11 @@ export const onGroupsChange = db => state => {
   }
 }
 
-export const onAccountChange = db => state => {
+export const subscribeHotlines = ({ db, state }) => {
   var changed = false
   const hotlines = { ...state.hotlines }
   Object.keys(state.unsubscribers)
-    .filter(key => key.slice(0, 8) === 'hotline_' && !state.accounts.includes(key.slice(8)))
+    .filter(key => key.slice(0, 8) === 'hotline_' && !state.accounts.map(item => item.id).includes(key.slice(8)))
     .forEach(key => {
       state.unsubscribers[key]()
       delete state.unsubscribers[key]

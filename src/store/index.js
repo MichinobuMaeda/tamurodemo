@@ -7,5 +7,7 @@ export {
   initUserData,
   initMe,
   updateMe,
+  subscribeGroupChats,
+  subscribeHotlines,
   findItem
 } from './state'

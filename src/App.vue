@@ -88,6 +88,7 @@ import { menuItems, baseUrl, version } from './conf'
 import {
   createStore, initUserData, initServiceData,
   overrideDefaults, StoreSymbol, accountIsValid,
+  subscribeGroupChats, subscribeHotlines,
   initializeMessaging
 } from './store'
 import {
@@ -163,6 +164,14 @@ export default {
           await initUserData(store)
         }
         guardRoute(root.$router, root.$route, state)
+        subscribeGroupChats(store)
+      }
+    )
+
+    watch(
+      () => state.accounts,
+      async () => {
+        subscribeHotlines(store)
       }
     )
 
