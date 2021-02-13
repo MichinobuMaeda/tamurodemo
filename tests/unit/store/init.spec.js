@@ -45,6 +45,7 @@ test('createStore()' +
   expect(store.functions).toBeDefined()
   expect(store.icon).toBeDefined()
   expect(store.withTz).toBeDefined()
+  expect(store.nameOf).toBeDefined()
   expect(store.myName).toBeDefined()
   expect(store.priv).toBeDefined()
 
@@ -56,6 +57,9 @@ test('createStore()' +
   store.state.me = { id: 'myId' }
   store.state.users = [{ id: store.state.me.id, name: 'My Name' }]
   expect(store.myName.value).toEqual('My Name')
+
+  expect(store.nameOf('')).toEqual('Unknown')
+  expect(store.nameOf('myId')).toEqual('My Name')
 
   expect(store.priv.value.user).toBeFalsy()
   store.state.me = { id: 'myId', valid: true }

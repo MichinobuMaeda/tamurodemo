@@ -1,6 +1,6 @@
 import { providers } from '../conf'
 import { myPriv } from './accounts'
-import { castDoc } from './io'
+import { castDoc } from './firestore'
 
 export const clearServiceData = (state = {}) => {
   state.service = {}

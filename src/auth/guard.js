@@ -1,6 +1,6 @@
 import { defaults } from '../conf'
 import {
-  findItem, myPriv, accountIsValid, isMemberOf
+  findItem, myPriv, isValidAccount, isMemberOf
 } from '../store'
 import {
   storeRequestedRoute
@@ -61,8 +61,8 @@ export const detectPrivilegesChanged = (me, groups, groupsPrev) => {
 }
 
 export const detectAccountChanged = (me, mePrev) =>
-  ((!mePrev.id || accountIsValid(mePrev)) && !accountIsValid(me)) ||
-  (!accountIsValid(mePrev) && accountIsValid(me))
+  ((!mePrev.id || isValidAccount(mePrev)) && !isValidAccount(me)) ||
+  (!isValidAccount(mePrev) && isValidAccount(me))
 
 export const goPage = router => route => {
   if (!defaults.routeExcludeFromStorage.includes(route.name)) {

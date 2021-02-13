@@ -21,7 +21,7 @@
             <LinkButton
               v-if="summary && (state.hotlines[account.id] || []).length"
               :icon="icon('User')"
-              :label="findItem(state.users, account.id).name || 'unknown'"
+              :label="nameOf(account.id)"
               @click="goPageUser(account.id)"
             />
             <div v-else-if="!summary && !(state.hotlines[account.id] || []).length">
@@ -119,12 +119,10 @@ export default {
         get: () => state.me.chatSummaryExpand ? 0 : undefined,
         set: v => update(state.me, { chatSummaryExpand: v === 0 })
       }),
-      summary: !(props.group || props.account),
+      summary: computed(() => !(props.group || props.account)),
       groups: computed(() => props.group ? [findItem(state.groups, props.group)] : groupsOfMe(state)),
       accounts: computed(() => props.account ? [findItem(state.accounts, props.account)] : state.accounts),
-      userName: id => findItem(state.users, id).name || 'Unknown',
-      postMessage,
-      findItem
+      postMessage
     }
   }
 }

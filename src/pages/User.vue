@@ -88,7 +88,7 @@
             :disabled="!!state.waitProc"
           />
           {{ account.invitedAt ? withTz(account.invitedAt).format('l') : '--/--/--' }}
-          {{ account.invitedBy ? `( ${userName(account.invitedBy)} )` : '' }}
+          {{ account.invitedBy ? `( ${nameOf(account.invitedBy)} )` : '' }}
         </div>
         <v-alert
           v-if="state.invitations[account.id] && invitationStatus === 'Sent'"
@@ -218,7 +218,6 @@ export default {
       edit,
       invitationStatus,
       page,
-      userName: id => findItem(store.state.users, id).name,
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),
         value: item.value,

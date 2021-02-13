@@ -16,14 +16,14 @@
       </v-card>
       <div :class="item.sender === state.me.id ? 'pl-8 text-right' : 'pr-8'">
         <span class="info--text">{{ withTz(item.createdAt).format('lll') }}</span>
-        {{ userName(item.sender) }}
+        {{ nameOf(item.sender) }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useStore, findItem } from '@/store'
+import { useStore } from '@/store'
 
 export default {
   name: 'ChatTimeline',
@@ -33,12 +33,8 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { state } = store
 
-    return {
-      ...store,
-      userName: id => findItem(state.users, id).name || 'Unknown'
-    }
+    return store
   }
 }
 </script>

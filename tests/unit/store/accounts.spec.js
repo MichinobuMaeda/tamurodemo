@@ -3,7 +3,7 @@ import {
   store
 } from '../utils'
 import {
-  accountIsValid,
+  isValidAccount,
   isMemberOf,
   accountPriv,
   myPriv,
@@ -19,16 +19,16 @@ afterAll(async () => {
   await deleteApp()
 })
 
-test('accountIsValid()' +
+test('isValidAccount()' +
   ' should return the given account is valid user.', async () => {
-  expect(accountIsValid()).toBeFalsy()
-  expect(accountIsValid(null)).toBeFalsy()
-  expect(accountIsValid({})).toBeFalsy()
-  expect(accountIsValid({ id: 'id0001' })).toBeFalsy()
-  expect(accountIsValid({ id: 'id0001', valid: false })).toBeFalsy()
-  expect(accountIsValid({ id: 'id0001', valid: true })).toBeTruthy()
-  expect(accountIsValid({ id: 'id0001', valid: true, deletedAt: null })).toBeTruthy()
-  expect(accountIsValid({ id: 'id0001', valid: true, deletedAt: new Date() })).toBeFalsy()
+  expect(isValidAccount()).toBeFalsy()
+  expect(isValidAccount(null)).toBeFalsy()
+  expect(isValidAccount({})).toBeFalsy()
+  expect(isValidAccount({ id: 'id0001' })).toBeFalsy()
+  expect(isValidAccount({ id: 'id0001', valid: false })).toBeFalsy()
+  expect(isValidAccount({ id: 'id0001', valid: true })).toBeTruthy()
+  expect(isValidAccount({ id: 'id0001', valid: true, deletedAt: null })).toBeTruthy()
+  expect(isValidAccount({ id: 'id0001', valid: true, deletedAt: new Date() })).toBeFalsy()
 })
 
 test('isMemberOf()' +

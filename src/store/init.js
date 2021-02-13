@@ -3,8 +3,8 @@ import moment from 'moment-timezone'
 import { icon, locales, defaults, validators } from '../conf'
 import { clearServiceData, clearUserData, findItem } from './state'
 import { myPriv } from './accounts'
-import { waitFor, add, update, remove, restore } from './io'
-import * as ui from './ui'
+import { add, update, remove, restore } from './firestore'
+import { waitFor, msecToDaysAndTime } from './ui'
 
 export const StoreSymbol = Symbol('store')
 export const useStore = () => inject(StoreSymbol)
@@ -18,15 +18,16 @@ export const createStore = (firebase, root) => {
   const store = {
     state,
     ...firebase,
-    waitFor: waitFor(state),
     add,
     update,
     remove,
     restore,
+    msecToDaysAndTime,
+    waitFor: waitFor(state),
     ...validators(root),
-    ...ui,
     icon,
     withTz: date => moment(date).tz(state.tz),
+    nameOf: id => findItem(state.users, id).name || 'Unknown',
     myName: computed(() => findItem(state.users, state.me.id).name || 'Guest'),
     priv: computed(() => myPriv(state))
   }

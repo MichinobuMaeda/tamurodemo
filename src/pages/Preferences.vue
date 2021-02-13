@@ -12,18 +12,16 @@
       <v-row>
         <v-col class="col-12 col-sm-6">
           <v-switch
-            v-model="state.me.darkTheme"
+            v-model="darkTheme"
             :label="$t('Dark theme value', { on: $vuetify.theme.dark ? 'On' : 'Off' })"
-            @change="waitFor(() => update(state.me, { darkTheme: state.me.darkTheme }))"
           />
         </v-col>
 
         <v-col class="col-12 col-sm-6">
           <v-select
-            v-model="state.me.menuPosition"
+            v-model="menuPosition"
             :label="$t('Menu position')"
-            :items="menuPositions"
-            @change="waitFor(() => update(state.me, { menuPosition: state.me.menuPosition }))"
+            :items="conf.menuPositions"
           >
             <template slot="selection" slot-scope="data">
               <v-icon>{{ icon(data.item.text) }}</v-icon>
@@ -39,19 +37,17 @@
 
         <v-col class="col-12 col-sm-6">
           <v-select
-            v-model="state.me.locale"
+            v-model="locale"
             :label="$t('Locale')"
-            :items="locales"
-            @change="waitFor(() => update(state.me, { locale: state.me.locale }))"
+            :items="conf.locales"
           />
         </v-col>
 
         <v-col class="col-12 col-sm-6">
           <v-select
-            v-model="state.me.tz"
+            v-model="tz"
             :label="$t('Timezone')"
-            :items="timezones"
-            @change="waitFor(() => update(state.me, { tz: state.me.tz }))"
+            :items="conf.timezones"
           />
         </v-col>
 
@@ -63,113 +59,37 @@
       <v-divider class="my-4" v-if="state.me.email" />
 
       <v-row v-if="state.me.email">
+
         <v-col class="col-12 col-sm-6">
-          <v-form v-model="page.changeEmail">
-
-            <div class="text-h3 h3--text mb-4">
-              <v-icon color="h3">{{ icon('E-mail') }}</v-icon>
-              {{ $t('Change e-mail') }}
-            </div>
-
-            <v-text-field
-              v-model="page.changeEmailPassword"
-              :type="page.showChangeEmailPassword ? 'text' : 'password'"
-              :rules="[rulePassword]"
-              :label="$t('Password')"
-              :append-icon="page.showChangeEmailPassword ? icon('Visible') : icon('Invisible')"
-              @click:append="page.showChangeEmailPassword = !page.showChangeEmailPassword"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="page.newEmail"
-              type="text"
-              :rules="[ruleEmail]"
-              :label="$t('New e-mail')"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="page.confirmEmail"
-              type="text"
-              :rules="[ruleEmail]"
-              :label="$t('Confirm new e-mail')"
-            ></v-text-field>
-            <div
-              v-if="page.newEmail && page.confirmEmail && (page.newEmail !== page.confirmEmail)"
-              class="error--text" style="font-size: 12px;"
-            >
-              {{ $t('E-mail confirmation failed') }}
-            </div>
-
-            <v-alert dense outlined text type="warning" v-if="page.changeEmailMessage">
-              {{ page.changeEmailMessage }}
-            </v-alert>
-            <div class="text-right">
-              <DefaultButton
-                color="primary"
-                :icon="icon('Save')"
-                :label="$t('Save')"
-                @click="changeEmail"
-                :disabled="!!state.waitProc || !page.changeEmailPassword || !page.newEmail || !page.confirmEmail || page.newEmail !== page.confirmEmail || !page.changeEmail"
-              />
-            </div>
-          </v-form>
+          <FormWithConfirmatioin
+            titleIcon="E-mail"
+            titleText="Change e-mail"
+            labelCurrentPassword="Password"
+            labelValue="New e-mail"
+            labelConfirmation="Confirm new e-mail"
+            messageComfirmationFailed="E-mail confirmation failed"
+            messageUpdateFailed="Incorrect password"
+            :password="false"
+            :rules="[ruleEmail]"
+            @click="updateMyEmail"
+          />
         </v-col>
 
         <v-col class="col-12 col-sm-6">
-          <v-form v-model="page.changePassword">
-
-            <div class="text-h3 h3--text mb-4">
-              <v-icon color="h3">{{ icon('Password') }}</v-icon>
-              {{ $t('Change password') }}
-            </div>
-
-            <v-text-field
-              v-model="page.oldPassword"
-              :type="page.showOldPassword ? 'text' : 'password'"
-              :rules="[rulePassword]"
-              :label="$t('Old password')"
-              :append-icon="page.showOldPassword ? icon('Visible') : icon('Invisible')"
-              @click:append="page.showOldPassword = !page.showOldPassword"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="page.newPassword"
-              :type="page.showNewPassword ? 'text' : 'password'"
-              :rules="[rulePassword]"
-              :label="$t('New password')"
-              :append-icon="page.showNewPassword ? icon('Visible') : icon('Invisible')"
-              @click:append="page.showNewPassword = !page.showNewPassword"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="page.confirmPassword"
-              :type="page.showConfirmPassword ? 'text' : 'password'"
-              :rules="[rulePassword]"
-              :label="$t('Confirm new password')"
-              :append-icon="page.showConfirmPassword ? icon('Visible') : icon('Invisible')"
-              @click:append="page.showConfirmPassword = !page.showConfirmPassword"
-            ></v-text-field>
-            <div
-              v-if="page.newPassword && page.confirmPassword && (page.newPassword !== page.confirmPassword)"
-              class="error--text" style="font-size: 12px;"
-            >
-              {{ $t('New password confirmation failed') }}
-            </div>
-
-            <v-alert dense outlined text type="warning" v-if="page.changePasswordMessage">
-              {{ page.changePasswordMessage }}
-            </v-alert>
-            <div class="text-right">
-              <DefaultButton
-                color="primary"
-                :icon="icon('Save')"
-                :label="$t('Save')"
-                @click="changePassword"
-                :disabled="!!state.waitProc || !page.oldPassword || !page.newPassword || !page.confirmPassword || page.newPassword !== page.confirmPassword || !page.changePassword"
-              />
-            </div>
-          </v-form>
+          <FormWithConfirmatioin
+            titleIcon="Password"
+            titleText="Change password"
+            labelCurrentPassword="Old password"
+            labelValue="New password"
+            labelConfirmation="Confirm new password"
+            messageComfirmationFailed="New password confirmation failed"
+            messageUpdateFailed="Incorrect password"
+            :password="true"
+            :rules="[rulePassword]"
+            @click="updateMyPassword"
+          />
         </v-col>
+
       </v-row>
 
       <div v-if="state.me.email">
@@ -194,7 +114,7 @@
           v-if="page.resetPasswordMessage"
           type="info" dense outlined class="my-2"
         >
-          {{ page.resetPasswordMessage }}
+          {{ $t(page.resetPasswordMessage) }}
         </v-alert>
       </div>
       <div v-else>
@@ -224,17 +144,18 @@
 </template>
 
 <script>
-import { reactive, onMounted, onUnmounted, computed } from '@vue/composition-api'
-import { locales, menuPositions, timezones } from '@/conf'
-import { useStore, accountPriv } from '../store'
+import { reactive, computed, onMounted, onUnmounted } from '@vue/composition-api'
+import * as conf from '@/conf'
+import { useStore } from '../store'
 import {
-  reauthenticate, updateMyEmail, updateMyPassword, sendPasswordResetEmail,
+  updateMyEmail, updateMyPassword, sendPasswordResetEmail,
   signOut
 } from '../auth'
 import PageTitle from '../components/PageTitle'
 import DefaultButton from '../components/DefaultButton'
 import ConfirmButton from '../components/ConfirmButton'
 import SelectAuthProviders from '../parts/SelectAuthProviders'
+import FormWithConfirmatioin from '../parts/FormWithConfirmatioin'
 
 export default {
   name: 'Preferences',
@@ -242,90 +163,28 @@ export default {
     PageTitle,
     DefaultButton,
     ConfirmButton,
-    SelectAuthProviders
+    SelectAuthProviders,
+    FormWithConfirmatioin
   },
-  setup (props, { root, emit }) {
+  setup () {
     const store = useStore()
-    const { auth, state, waitFor } = store
+    const { auth, state, waitFor, update } = store
     const page = reactive({
       now: new Date().getTime(),
       everySecondUpdater: null,
-      changePassword: false,
-      changePasswordMessage: '',
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-      showOldPassword: false,
-      showNewPassword: false,
-      showConfirmPassword: false,
-      changeEmail: false,
-      changeEmailMessage: '',
-      changeEmailPassword: '',
-      newEmail: '',
-      confirmEmail: '',
-      showChangeEmailPassword: false,
       resetPasswordMessage: ''
     })
 
-    onMounted(
-      () => {
-        page.everySecondUpdater = setInterval(
-          () => { page.now = new Date().getTime() },
-          1000
-        )
-      }
-    )
-
+    onMounted(() => { page.everySecondUpdater = setInterval(() => { page.now = new Date().getTime() }, 1000) })
     onUnmounted(() => { clearInterval(page.everySecondUpdater) })
-
-    const changeEmail = () => waitFor(
-      async () => {
-        try {
-          await reauthenticate(store, page.changeEmailPassword)
-          await updateMyEmail(store, page.newEmail)
-
-          page.changeEmailPassword = ''
-          page.newEmail = ''
-          page.confirmEmail = ''
-          page.showChangeEmailPassword = false
-          page.changeEmailMessage = root.$i18n.t('Completed')
-        } catch (e) {
-          page.changeEmailMessage = root.$i18n.t('Incorrect password')
-        } finally {
-          setTimeout(() => { page.changeEmailMessage = '' }, 10 * 1000)
-        }
-      }
-    )
-
-    const changePassword = () => waitFor(
-      async () => {
-        try {
-          await reauthenticate(store, page.oldPassword)
-          await updateMyPassword(store, page.newPassword)
-
-          page.oldPassword = ''
-          page.newPassword = ''
-          page.confirmPassword = ''
-          page.showOldPassword = false
-          page.showNewPassword = false
-          page.showConfirmPassword = false
-          page.changePasswordMessage = root.$i18n.t('Completed')
-        } catch (e) {
-          page.changePasswordMessage = root.$i18n.t('Incorrect password')
-        } finally {
-          setTimeout(() => { page.changePasswordMessage = '' }, 10 * 1000)
-        }
-      }
-    )
 
     const resetPassword = () => waitFor(
       async () => {
         try {
-          const user = auth.currentUser
-          await sendPasswordResetEmail(store, user.email)
-          page.resetPasswordMessage = root.$i18n.t('Sent message')
+          await sendPasswordResetEmail(store, auth.currentUser.email)
+          page.resetPasswordMessage = 'Sent message'
         } catch (e) {
-          page.resetPasswordMessage = root.$i18n.t('System error')
+          page.resetPasswordMessage = 'System error'
         } finally {
           setTimeout(() => { page.resetPasswordMessage = '' }, 1000 * 1000)
         }
@@ -333,16 +192,29 @@ export default {
     )
 
     return {
+      conf,
       page,
       ...store,
-      changeEmail,
-      changePassword,
+      darkTheme: computed({
+        get: () => state.me.darkTheme,
+        set: val => waitFor(() => update(state.me, { darkTheme: val }))
+      }),
+      menuPosition: computed({
+        get: () => state.me.menuPosition,
+        set: val => waitFor(() => update(state.me, { menuPosition: val }))
+      }),
+      locale: computed({
+        get: () => state.me.locale,
+        set: val => waitFor(() => update(state.me, { locale: val }))
+      }),
+      tz: computed({
+        get: () => state.me.tz,
+        set: val => waitFor(() => update(state.me, { tz: val }))
+      }),
       resetPassword,
-      signOut: () => waitFor(() => signOut(store)),
-      locales,
-      menuPositions,
-      timezones,
-      realPriv: computed(() => accountPriv({ ...state, hidePrivilegedItems: false }, state.me))
+      updateMyEmail: value => updateMyEmail(store, value),
+      updateMyPassword: value => updateMyPassword(store, value),
+      signOut: () => waitFor(() => signOut(store))
     }
   }
 }

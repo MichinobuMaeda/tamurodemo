@@ -4,18 +4,16 @@ import {
   clearDb,
   deleteApp,
   // testData,
-  store,
-  waitRealtimeUpdate
+  store
+  // waitRealtimeUpdate
 } from '../utils'
 import {
   castDoc,
-  waitFor,
   add,
   update,
   remove,
   restore
-} from '../../../src/store/io'
-import { defaults } from '../../../src/conf'
+} from '../../../src/store/firestore'
 
 beforeEach(async () => {
   store.auth.clear()
@@ -68,90 +66,6 @@ test('castDoc()' +
 
   // evaluate
   expect(ret).toMatchObject({ id, ...data })
-})
-
-test('waitFor()' +
-  ' should set timeout and call the given function and the given next function.', async () => {
-  // prepare
-  defaults.waitProcTimeout = 450
-  const state = {}
-  const counter = {
-    func: 0,
-    next: 0
-  }
-  const func = async () => {
-    await waitRealtimeUpdate(100)
-    counter.func++
-  }
-  const next = () => { counter.next++ }
-  const testFunc = waitFor(state)
-
-  // run #1
-  const ret = testFunc(func, next)
-
-  // evaluate #1
-  expect(state.waitProc).not.toBeNull()
-  expect(counter).toEqual({
-    func: 0,
-    next: 0
-  })
-
-  // run #2
-  await Promise.resolve(ret)
-
-  // evaluate #2
-  expect(state.waitProc).toBeNull()
-  expect(counter).toEqual({
-    func: 1,
-    next: 1
-  })
-})
-
-test('waitFor()' +
-  ' should set timeout and call the given function and the given next function.', async () => {
-  // prepare
-  defaults.waitProcTimeout = 450
-  const state = {}
-  const counter = {
-    func: 0,
-    next: 0
-  }
-  const func = async () => {
-    await waitRealtimeUpdate(750)
-    counter.func++
-  }
-  const next = () => { counter.next++ }
-  const testFunc = waitFor(state)
-
-  // run #1
-  const ret = testFunc(func, next)
-
-  // evaluate #1
-  expect(state.waitProc).not.toBeNull()
-  expect(counter).toEqual({
-    func: 0,
-    next: 0
-  })
-
-  // run #2
-  await waitRealtimeUpdate(500)
-
-  // evaluate #2
-  expect(state.waitProc).toBeNull()
-  expect(counter).toEqual({
-    func: 0,
-    next: 0
-  })
-
-  // run #3
-  await Promise.resolve(ret)
-
-  // evaluate #3
-  expect(state.waitProc).toBeNull()
-  expect(counter).toEqual({
-    func: 1,
-    next: 1
-  })
 })
 
 test('add()' +

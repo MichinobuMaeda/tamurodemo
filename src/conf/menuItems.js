@@ -1,6 +1,6 @@
 import { icon } from './icons'
 
-export const menuItems = (myId, myName, priviligedItems, togglehPriviligedItems, showRawData) => {
+export const menuItems = (myId, myName, hidePrivilegedItems, togglehPriviligedItems, showRawData) => {
   return [
     {
       label: 'Top',
@@ -34,8 +34,8 @@ export const menuItems = (myId, myName, priviligedItems, togglehPriviligedItems,
       route: { name: 'admin' }
     },
     {
-      label: ['Priviliged items', { visible: (priviligedItems ? 'On' : 'Off') }],
-      icon: icon(priviligedItems ? 'Visible' : 'Invisible'),
+      label: ['Priviliged items', { visible: (hidePrivilegedItems ? 'Off' : 'On') }],
+      icon: icon(hidePrivilegedItems ? 'Invisible' : 'Visible'),
       color: 'menu-item-manager',
       privs: ['managerReal', 'adminReal', 'testerReal'],
       action: togglehPriviligedItems

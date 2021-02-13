@@ -1,9 +1,9 @@
 import { findItem } from './state'
 
-export const accountIsValid = account => !!(account && account.id && !account.deletedAt && account.valid)
+export const isValidAccount = account => !!(account && account.id && !account.deletedAt && account.valid)
 export const isMemberOf = (account, group) => account && account.id && group && (group.members || []).includes(account.id)
 export const accountPriv = ({ service, groups, hidePrivilegedItems }, account) => {
-  const valid = accountIsValid(account)
+  const valid = isValidAccount(account)
   const managerReal = valid && isMemberOf(account, findItem(groups, 'managers'))
   const adminReal = valid && isMemberOf(account, findItem(groups, 'admins'))
   const testerReal = valid && isMemberOf(account, findItem(groups, 'testers'))

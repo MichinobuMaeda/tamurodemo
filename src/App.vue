@@ -34,7 +34,7 @@
           @click="goPage({ name: 'preferences' })"
         />
         <AppUpdater
-          v-if="updateAvailable(state)"
+          v-if="state.service.conf && state.service.conf.version !== version"
           :label="$t('Update app')"
           :icon="icon('Update app')"
         />
@@ -60,7 +60,7 @@
       v-if="!state.loading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, priviligedItems, togglehPriviligedItems, () => { page.rawData = true }), $router, priv, goPage)"
+      :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, state.me.hidePrivilegedItems, togglehPriviligedItems, () => { page.rawData = true }), $router, priv, goPage)"
       :position="state.menuPosition"
       @move="menuPosition => state.me && state.me.valid && waitFor(() => update(state.me, { menuPosition }))"
     />
@@ -82,12 +82,12 @@
 </style>
 
 <script>
-import { reactive, onMounted, watch, provide, computed } from '@vue/composition-api'
+import { reactive, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import { menuItems, baseUrl, version } from './conf'
 import {
   createStore, initUserData, initServiceData,
-  overrideDefaults, StoreSymbol, accountIsValid,
+  overrideDefaults, StoreSymbol, isValidAccount,
   subscribeGroupChats, subscribeHotlines,
   initializeMessaging
 } from './store'
@@ -122,8 +122,7 @@ export default {
   },
   setup (props, { root }) {
     const page = reactive({
-      rawData: false,
-      pwaDeferredPrompt: null
+      rawData: false
     })
 
     const store = createStore(firebase, root)
@@ -180,7 +179,7 @@ export default {
       async (me, mePrev) => {
         overrideDefaults(store, root)
         if (detectAccountChanged(me, mePrev)) {
-          if (accountIsValid(me)) {
+          if (isValidAccount(me)) {
             await initUserData(store)
             returnLastRoute(root.$router)
           } else {
@@ -204,10 +203,8 @@ export default {
       guardMenuItem,
       menuItems,
       togglehPriviligedItems: () => update(state.me, { hidePrivilegedItems: !state.me.hidePrivilegedItems }),
-      priviligedItems: computed(() => !state.me.hidePrivilegedItems),
       baseUrl: baseUrl(),
       noSignInMethod: state => state.me.valid && ![...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
-      updateAvailable: state => state.service.conf && state.service.conf.version !== version,
       version
     }
   }

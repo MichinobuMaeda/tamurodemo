@@ -1,5 +1,3 @@
-import { defaults } from '../conf'
-
 const firestoreTimestampToDate = val => {
   return val && val.toDate
     ? val.toDate()
@@ -25,26 +23,6 @@ export const castDoc = doc => ({
   id: doc.id,
   ...firestoreTimestampToDate(doc.data())
 })
-
-export const waitFor = state => async (proc, next = null) => {
-  const ts = new Date().getTime()
-  state.waitProc = ts
-  setTimeout(
-    () => {
-      if (state.waitProc === ts) {
-        state.waitProc = null
-      }
-    },
-    defaults.waitProcTimeout
-  )
-  try {
-    const ret = await proc()
-    if (next) { await next() }
-    return ret
-  } finally {
-    state.waitProc = null
-  }
-}
 
 export const add = (collection, data) => {
   const ts = new Date()
