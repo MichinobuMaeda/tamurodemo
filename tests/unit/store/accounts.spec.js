@@ -6,7 +6,6 @@ import {
   isValidAccount,
   isMemberOf,
   accountPriv,
-  myPriv,
   accountStatus
 } from '../../../src/store/accounts'
 
@@ -372,30 +371,6 @@ test('accountPriv()' +
   expect(tester.managerReal).toBeFalsy()
   expect(tester.adminReal).toBeFalsy()
   expect(tester.testerReal).toBeTruthy()
-})
-
-test('myPriv()' +
-  ' should return the priviliges of me.', async () => {
-  // prepare
-  const state = {
-    accounts: [
-      { id: 'id0000', valid: false },
-      { id: 'id0001', valid: true }
-    ],
-    groups: []
-  }
-
-  // run
-  state.me = state.accounts.find(item => item.id === 'id0000')
-  const priv1 = myPriv(state)
-  state.me = state.accounts.find(item => item.id === 'id0001')
-  const priv2 = myPriv(state)
-
-  // evaluate
-  expect(priv1.guest).toBeTruthy()
-  expect(priv1.user).toBeFalsy()
-  expect(priv2.guest).toBeFalsy()
-  expect(priv2.user).toBeTruthy()
 })
 
 test('accountStatus()' +

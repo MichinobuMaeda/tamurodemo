@@ -4,61 +4,16 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :icon="icon('Preferences')"
+        :icon="conf.icon('Preferences')"
       >
         <template v-slot:title>{{ $t('Preferences') }}</template>
       </PageTitle>
 
-      <v-row>
-        <v-col class="col-12 col-sm-6">
-          <v-switch
-            v-model="darkTheme"
-            :label="$t('Dark theme value', { on: $vuetify.theme.dark ? 'On' : 'Off' })"
-          />
-        </v-col>
+      <UiPreferences :entity="state.me" />
 
-        <v-col class="col-12 col-sm-6">
-          <v-select
-            v-model="menuPosition"
-            :label="$t('Menu position')"
-            :items="conf.menuPositions"
-          >
-            <template slot="selection" slot-scope="data">
-              <v-icon>{{ icon(data.item.text) }}</v-icon>
-              {{ $t(data.item.text) }}
-            </template>
-            <template slot="item" slot-scope="data">
-              <v-icon>{{ icon(data.item.text) }}</v-icon>
-              {{ $t(data.item.text) }}
-            </template>
-          </v-select>
+      <v-divider class="my-4" v-if="me.email" />
 
-        </v-col>
-
-        <v-col class="col-12 col-sm-6">
-          <v-select
-            v-model="locale"
-            :label="$t('Locale')"
-            :items="conf.locales"
-          />
-        </v-col>
-
-        <v-col class="col-12 col-sm-6">
-          <v-select
-            v-model="tz"
-            :label="$t('Timezone')"
-            :items="conf.timezones"
-          />
-        </v-col>
-
-        <v-col class="col-12 text-right">
-          <div>{{ withTz(page.now).format('llll') }}</div>
-        </v-col>
-      </v-row>
-
-      <v-divider class="my-4" v-if="state.me.email" />
-
-      <v-row v-if="state.me.email">
+      <v-row v-if="me.email">
 
         <v-col class="col-12 col-sm-6">
           <FormWithConfirmatioin
@@ -105,7 +60,7 @@
 
         <DefaultButton
           color="secondary"
-          :icon="icon('E-mail')"
+          :icon="conf.icon('E-mail')"
           :label="$t('Reset password')"
           :disabled="!!state.waitProc"
           @click="resetPassword"
@@ -133,7 +88,7 @@
       <ConfirmButton
         type="error"
         :title="$t('Sign out')"
-        :iconProc="icon('Sign out')"
+        :iconProc="conf.icon('Sign out')"
         :labelProc="$t('Sign out')"
         :message="$t('Confirm sign out')"
         @confirm="signOut"
@@ -144,8 +99,7 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, onUnmounted } from '@vue/composition-api'
-import * as conf from '@/conf'
+import { reactive } from '@vue/composition-api'
 import { useStore } from '../store'
 import {
   updateMyEmail, updateMyPassword, sendPasswordResetEmail,
@@ -156,6 +110,7 @@ import DefaultButton from '../components/DefaultButton'
 import ConfirmButton from '../components/ConfirmButton'
 import SelectAuthProviders from '../parts/SelectAuthProviders'
 import FormWithConfirmatioin from '../parts/FormWithConfirmatioin'
+import UiPreferences from '../parts/UiPreferences'
 
 export default {
   name: 'Preferences',
@@ -164,19 +119,15 @@ export default {
     DefaultButton,
     ConfirmButton,
     SelectAuthProviders,
-    FormWithConfirmatioin
+    FormWithConfirmatioin,
+    UiPreferences
   },
   setup () {
     const store = useStore()
-    const { auth, state, waitFor, update } = store
+    const { auth, waitFor } = store
     const page = reactive({
-      now: new Date().getTime(),
-      everySecondUpdater: null,
       resetPasswordMessage: ''
     })
-
-    onMounted(() => { page.everySecondUpdater = setInterval(() => { page.now = new Date().getTime() }, 1000) })
-    onUnmounted(() => { clearInterval(page.everySecondUpdater) })
 
     const resetPassword = () => waitFor(
       async () => {
@@ -192,25 +143,8 @@ export default {
     )
 
     return {
-      conf,
       page,
       ...store,
-      darkTheme: computed({
-        get: () => state.me.darkTheme,
-        set: val => waitFor(() => update(state.me, { darkTheme: val }))
-      }),
-      menuPosition: computed({
-        get: () => state.me.menuPosition,
-        set: val => waitFor(() => update(state.me, { menuPosition: val }))
-      }),
-      locale: computed({
-        get: () => state.me.locale,
-        set: val => waitFor(() => update(state.me, { locale: val }))
-      }),
-      tz: computed({
-        get: () => state.me.tz,
-        set: val => waitFor(() => update(state.me, { tz: val }))
-      }),
       resetPassword,
       updateMyEmail: value => updateMyEmail(store, value),
       updateMyPassword: value => updateMyPassword(store, value),

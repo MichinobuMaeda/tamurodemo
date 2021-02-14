@@ -4,7 +4,7 @@ import {
 } from '../utils'
 import {
   sortedGroups,
-  groupsOfMe
+  accountGroups
 } from '../../../src/store/groups'
 
 beforeEach(async () => {
@@ -49,7 +49,7 @@ test('sortedGroups()' +
   ])
 })
 
-test('groupsOfMe()' +
+test('accountGroups()' +
   ' should return the list of groups which has me as member.', async () => {
   // prepare #0
   const state = {
@@ -61,7 +61,7 @@ test('groupsOfMe()' +
   }
 
   // run #0
-  const ret0 = groupsOfMe(state)
+  const ret0 = accountGroups(state, 'id01')
 
   // evaluate #0
   expect(ret0).toEqual([
@@ -83,7 +83,7 @@ test('groupsOfMe()' +
   ]
 
   // run #1
-  const ret1 = groupsOfMe(state)
+  const ret1 = accountGroups(state, 'id01')
 
   // evaluate #1
   expect(ret1).toEqual([

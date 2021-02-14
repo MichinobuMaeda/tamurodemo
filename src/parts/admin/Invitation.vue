@@ -9,7 +9,7 @@
             :label="$t('Invitation')"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
             v-model="invitation"
-            :editable="priv.admin || priv.manager"
+            :editable="me.priv.admin || me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -21,7 +21,7 @@
             :label="$t('Invitation expiration')"
             v-model="invitationExpirationTime"
             :rules="[ruleNotNegative]"
-            :editable="priv.admin || priv.manager"
+            :editable="me.priv.admin || me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -36,13 +36,13 @@
             type="formatted-text"
             :label="$t('Description')"
             v-model="guide"
-            :editable="priv.manager || priv.admin"
+            :editable="me.priv.manager || me.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
       </v-row>
       <LinkButton
-        :icon="icon('Preview')"
+        :icon="conf.icon('Preview')"
         :label="$t('Preview')"
         @click="goPage({ name: 'prevwInvitation' })"
       />
@@ -57,7 +57,7 @@ import EditableItem from '../../components/EditableItem'
 import LinkButton from '../../components/LinkButton'
 
 export default {
-  name: 'SectionInvitation',
+  name: 'AdminInvitation',
   components: {
     EditableItem,
     LinkButton

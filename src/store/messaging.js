@@ -22,31 +22,3 @@ export const initializeMessaging = async (
     }
   }
 }
-
-const messageId = ts => ts.toISOString().replace(/[^0-9]/g, '').slice(0, 17)
-
-export const postGroupChat = async ({ db, state }, id, message) => {
-  const ts = new Date()
-  await db.collection('groups').doc(id)
-    .collection('chat').doc(messageId(ts))
-    .set({
-      sender: state.me.id,
-      message,
-      likes: [],
-      createdAt: ts,
-      updatedAt: ts
-    })
-}
-
-export const postHotline = async ({ db, state }, id, message) => {
-  const ts = new Date()
-  await db.collection('accounts').doc(id)
-    .collection('hotline').doc(messageId(ts))
-    .set({
-      sender: state.me.id,
-      message,
-      likes: [],
-      createdAt: ts,
-      updatedAt: ts
-    })
-}

@@ -4,7 +4,7 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :icon="icon('Top')"
+        :icon="conf.icon('Top')"
       >
         <template v-slot:title>{{ $t('Top') }}</template>
       </PageTitle>
@@ -18,7 +18,7 @@
         type="formatted-text"
         :label="$t('Description')"
         v-model="desc"
-        :editable="priv.manager"
+        :editable="me.priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -27,18 +27,18 @@
         class="mb-2"
       >
         <v-chip color="h3" outlined>
-          <v-icon>{{ icon('Category') }}</v-icon>
+          <v-icon>{{ conf.icon('Category') }}</v-icon>
           {{ category.name }}
         </v-chip>
         <LinkButton
           v-for="group in (category.groups || []).map(id => state.groups.find(group => group.id === id)).filter(group => group && !group.deletedAt)" :key="group.id"
-          :icon="icon('Group')"
+          :icon="conf.icon('Group')"
           :label="group.name"
           @click="goPageGroup(group.id)"
         />
       </div>
 
-      <div v-if="priv.manager || priv.admin">
+      <div v-if="me.priv.manager || me.priv.admin">
 
         <v-divider class="my-4" />
 
@@ -49,12 +49,12 @@
           class="my-2"
         >
           <v-chip color="h3" outlined>
-            <v-icon>{{ icon('Category') }}</v-icon>
+            <v-icon>{{ conf.icon('Category') }}</v-icon>
             {{ $t('Uncategorized') }}
           </v-chip>
           <LinkButton
             v-for="group in uncategorizedGroups" :key="group.id"
-            :icon="icon('Group')"
+            :icon="conf.icon('Group')"
             :label="group.name"
             @click="goPageGroup(group.id)"
           />
@@ -65,12 +65,12 @@
           class="my-2"
         >
           <v-chip color="h3" outlined>
-            <v-icon>{{ icon('Category') }}</v-icon>
+            <v-icon>{{ conf.icon('Category') }}</v-icon>
             {{ $t('Deleted groups') }}
           </v-chip>
           <LinkButton
             v-for="group in deletedGroups" :key="group.id"
-            :icon="icon('Group')"
+            :icon="conf.icon('Group')"
             :label="group.name"
             @click="goPageGroup(group.id)"
           />

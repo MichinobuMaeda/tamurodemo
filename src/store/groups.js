@@ -22,7 +22,7 @@ export const sortedGroups = state => {
   ]
 }
 
-export const groupsOfMe = state => [
+export const accountGroups = (state, id) => [
   findItem(state.groups, 'all'),
-  ...sortedGroups(state).filter(group => group.members.includes(state.me.id))
+  ...sortedGroups(state).filter(group => group.members.includes(id))
 ]

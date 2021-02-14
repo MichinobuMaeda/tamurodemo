@@ -1,19 +1,19 @@
 <template>
   <div class="mt-2">
     <v-row v-if="edit">
-      <PermittedMembers class="float-right" :id="user.id" />
+      <PermittedMembers class="float-right" :id="id" />
       <v-col class="col-12">
         <LinkButton
-          v-for="group in permittedGroups(user)" :key="group.id"
-          :icon="icon('Group')"
+          v-for="group in permittedGroups" :key="group.id"
+          :icon="conf.icon('Group')"
           :label="group.name"
           @click="goPageGroup(group.id)"
         />
         <LinkButton
-          v-for="user in permittedUsers(user)" :key="user.id"
-          :icon="icon('User')"
-          :label="user.name"
-          @click="goPageUser(user.id)"
+          v-for="item in permittedUsers" :key="item.id"
+          :icon="conf.icon('User')"
+          :label="user(item.id).name"
+          @click="goPageUser(item.id)"
         />
       </v-col>
     </v-row>
@@ -21,92 +21,89 @@
 
     <v-row v-if="!edit">
       <v-col class="title--text col-4">
-        <v-icon>{{ picon.a }}</v-icon>
+        <v-icon>{{ conf.icon(picon.a) }}</v-icon>
         {{ $t('User name') }}
       </v-col>
-      <v-col class="col-8" v-if="/^ja_/.test(state.me.locale)">
-        {{ user.lastName }}
-        <span v-if="user.previousName">
-          ( {{ user.previousName }} )
+      <v-col class="col-8" v-if="/^ja_/.test(me.locale)">
+        {{ user(id).lastName }}
+        <span v-if="user(id).previousName">
+          ( {{ user(id).previousName }} )
         </span>
-        {{ user.firstName }}
-        <span v-if="user.middleName">
-          ( {{ $t('Middle name') }}: {{ user.middleName }} )
+        {{ user(id).firstName }}
+        <span v-if="user(id).middleName">
+          ( {{ $t('Middle name') }}: {{ user(id).middleName }} )
         </span>
       </v-col>
       <v-col class="col-8" v-else>
-        {{ user.firstName }}
-        {{ user.middleName }}
-        {{ user.lastName }}
-        <span v-if="user.previousName">
-          ( {{ $t('Previous name') }}: {{ user.previousName }} )
+        {{ user(id).firstName }}
+        {{ user(id).middleName }}
+        {{ user(id).lastName }}
+        <span v-if="user(id).previousName">
+          ( {{ $t('Previous name') }}: {{ user(id).previousName }} )
         </span>
       </v-col>
     </v-row>
     <v-row
       v-else
-      v-for="item in conf.locales.find(item => item.value === state.me.locale).names" :key="item.key"
+      v-for="item in conf.locales.find(item => item.value === me.locale).names" :key="item.key"
     >
       <v-col class="title--text col-4">
-        <v-icon>{{ picon.a }}</v-icon>
+        <v-icon>{{ conf.icon(picon.a) }}</v-icon>
         {{ $t(item.label) }}
       </v-col>
       <v-col class="col-8">
         <EditableItem
           :label="$t(item.label)"
           v-model="user[item.key]"
-          @save="val => waitForUpdateUser(item.key, val)"
+          @save="val => waitFor(() => update(user(id), { [item.key]: val }))"
           :disabled="!!state.waitProc"
         />
       </v-col>
     </v-row>
     <v-divider />
 
-    <div v-if="edit || user.desc">
+    <div v-if="edit || profile(id).desc">
       <div class="title--text my-2">
-        <v-icon>{{ picon.a }}</v-icon>
+        <v-icon>{{ conf.icon(picon.a) }}</v-icon>
         {{ $t('Self‐introduction') }}
       </div>
       <v-sheet outlined class="pa-2">
         <EditableItem
           type="textarea"
           :label="$t('Self‐introduction')"
-          v-model="user.desc"
-          @save="val => waitForUpdateUser('desc', val)"
+          v-model="desc"
           :editable="edit"
           :disabled="!!state.waitProc"
         />
       </v-sheet>
     </div>
 
-    <div v-if="(edit || (user.descForPermitted && (preview !== 'a'))) && (user.id === state.me.id || priv.manager)">
+    <div v-if="(edit || (profile(id).descForPermitted && (preview !== 'a'))) && (id === me.id || me.priv.manager)">
       <div class="title--text my-2">
-        <v-icon>{{ picon.c }}</v-icon>
+        <v-icon>{{ conf.icon(picon.c) }}</v-icon>
         {{ $t('Message for close members') }}
       </div>
       <v-sheet outlined class="pa-2">
         <EditableItem
           type="textarea"
           :label="$t('Message for close members')"
-          v-model="user.descForPermitted"
-          @save="val => waitForUpdateUser('descForPermitted', val)"
+          v-model="descForPermitted"
           :editable="edit"
           :disabled="!!state.waitProc"
         />
       </v-sheet>
     </div>
 
-    <div v-if="(edit || (user.descForManagers && (preview === 'm'))) && (user.id === state.me.id || priv.manager)">
+    <div v-if="(edit || (profile(id).descForManagers && (preview === 'm'))) && (id === me.id || me.priv.manager)">
       <div class="title--text my-2">
-        <v-icon>{{ picon.m }}</v-icon>
+        <v-icon>{{ conf.icon(picon.m) }}</v-icon>
         {{ $t('Note for managers') }}
       </div>
       <v-sheet outlined class="pa-2">
         <EditableItem
           type="textarea"
           :label="$t('Note for managers')"
-          v-model="user.descForManagers"
-          @save="val => waitForUpdateUser('descForManagers', val)"
+          v-model="descForManagers"
           :editable="edit"
           :disabled="!!state.waitProc"
         />
@@ -118,8 +115,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import * as conf from '@/conf'
-import { useStore, findItem } from '@/store'
+import { useStore } from '@/store'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/parts/PermittedMembers'
@@ -144,24 +140,32 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { icon, waitFor, update } = store
+    const { waitFor, update, conf, account, user, profile, group } = store
     const page = reactive({
     })
 
     return {
       page,
       ...store,
-      user: computed(() => findItem(store.state.user, props.id)),
-      profile: computed(() => findItem(store.state.profiles, props.id)),
-      permittedGroups: user => (user.permittedGroups || [])
-        .map(id => findItem(store.state.groups, id))
-        .filter(group => !group.deletedAt),
-      permittedUsers: user => (user.permittedUsers || [])
-        .map(id => findItem(store.state.users, id))
-        .filter(user => !user.deletedAt),
-      picon: conf.permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: icon(cur.icon) }), {}),
-      waitForUpdateUser: (key, val) => waitFor(() => update(findItem(store.state.users, props.id), { [key]: val })),
-      conf
+      permittedGroups: computed(() => (account(props.id).permittedGroups || [])
+        .map(id => group(id))
+        .filter(group => !group.deletedAt)),
+      permittedUsers: computed(() => (account(props.id).permittedUsers || [])
+        .map(id => user(id))
+        .filter(user => !user.deletedAt)),
+      picon: conf.permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: cur.icon }), {}),
+      desc: computed({
+        get: () => profile(props.id).desc,
+        set: val => waitFor(() => update(profile(props.id), { desc: val }))
+      }),
+      descForPermitted: computed({
+        get: () => profile(props.id).descForPermitted,
+        set: val => waitFor(() => update(profile(props.id), { descForPermitted: val }))
+      }),
+      descForManagers: computed({
+        get: () => profile(props.id).descForManagers,
+        set: val => waitFor(() => update(profile(props.id), { descForManagers: val }))
+      })
     }
   }
 }

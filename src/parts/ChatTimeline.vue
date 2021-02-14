@@ -5,8 +5,8 @@
     >
       <v-card
         outlined
-        :class="item.sender === state.me.id ? 'ml-8' : 'mr-8'"
-        :color="item.sender === state.me.id ? 'green lighten-5' : ''"
+        :class="item.sender === me.id ? 'ml-8' : 'mr-8'"
+        :color="item.sender === me.id ? 'green lighten-5' : ''"
       >
         <v-card-text class="pa-1">
           <div v-for="(line, index) in (item.message || '').split('\n')" v-bind:key="index">
@@ -14,9 +14,9 @@
           </div>
         </v-card-text>
       </v-card>
-      <div :class="item.sender === state.me.id ? 'pl-8 text-right' : 'pr-8'">
+      <div :class="item.sender === me.id ? 'pl-8 text-right' : 'pr-8'">
         <span class="info--text">{{ withTz(item.createdAt).format('lll') }}</span>
-        {{ nameOf(item.sender) }}
+        {{ account(item.sender).name }}
       </div>
     </div>
   </div>

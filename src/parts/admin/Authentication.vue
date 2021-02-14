@@ -11,7 +11,7 @@
             v-model="state.service.auth[provider.id.replace(/\./g, '_')]"
             :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
             @save="val => waitFor(() => update(state.service.auth, { [provider.id.replace(/\./g, '_')]: val }))"
-            :editable="priv.admin"
+            :editable="me.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -26,7 +26,7 @@ import { authProviders } from '../../auth'
 import EditableItem from '../../components/EditableItem'
 
 export default {
-  name: 'SectionAuthentication',
+  name: 'AdminAuthentication',
   components: {
     EditableItem
   },

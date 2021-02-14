@@ -2,7 +2,7 @@
   <div>
     <DefaultButton
       color="primary"
-      :icon="icon('Add')"
+      :icon="conf.icon('Add')"
       :label="$t('Create new', { type: $t('group') })"
       @click="page.dialog = true; page.name = ''"
     />
@@ -13,14 +13,14 @@
       <v-card>
 
         <v-card-title class="headline dialogTitle">
-          <v-icon class="mr-2">{{ icon('Add') }}</v-icon>
+          <v-icon class="mr-2">{{ conf.icon('Add') }}</v-icon>
           {{ $t('Create new', { type: $t('group') }) }}
           <v-spacer />
           <v-icon
             color="gray"
             @click="page.dialog = false; page.name = ''"
           >
-            {{ icon('Cancel') }}
+            {{ conf.icon('Cancel') }}
           </v-icon>
         </v-card-title>
 
@@ -37,13 +37,13 @@
           <DefaultButton
             color="secondary"
             class="mr-2"
-            :icon="icon('Cancel')"
+            :icon="conf.icon('Cancel')"
             :label="$t('Cancel')"
             @click="page.dialog = false; page.name = ''"
           />
           <DefaultButton
             color="primary"
-            :icon="icon('OK')"
+            :icon="conf.icon('OK')"
             :label="$t('Create')"
             :disabled="!!state.waitProc || !page.name"
             @click="createGroup"

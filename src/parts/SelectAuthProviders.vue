@@ -5,8 +5,8 @@
       :type="providerEnabled(state, provider.id) ? 'warning' : 'info'"
       :color="provider.id.replace(/\./g, '_')"
       buttonClass="white--text mr-2"
-      :buttonIcon="providerEnabled(state, provider.id) ? icon('Checkbox On') : icon('Checkbox Off')"
-      :iconProc="providerEnabled(state, provider.id) ? icon('Confirm to remove') : icon('Confirm to add')"
+      :buttonIcon="providerEnabled(state, provider.id) ? conf.icon('Checkbox On') : conf.icon('Checkbox Off')"
+      :iconProc="providerEnabled(state, provider.id) ? conf.icon('Confirm to remove') : conf.icon('Confirm to add')"
       :title="$t('Sign in with provider', { provider: provider.name })"
       :message="$t((providerEnabled(state, provider.id) ? 'Remove': 'Add') + ' setting to sign in with provider', { provider: provider.name })"
       @confirm="provider.update"
@@ -19,7 +19,7 @@
       :type="providerEnabled(state, provider.id) ? 'warning' : 'info'"
       :color="provider.id.replace(/\./g, '_')"
       class="white--text mr-2"
-      :icon="providerEnabled(state, provider.id) ? icon('Checkbox On') : icon('Checkbox Off')"
+      :icon="providerEnabled(state, provider.id) ? conf.icon('Checkbox On') : conf.icon('Checkbox Off')"
       :label="$t('Sign in with provider', { provider: provider.name })"
     />
   </div>

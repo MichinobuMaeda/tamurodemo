@@ -8,7 +8,7 @@
             :label="$t('Site name')"
             v-model="name"
             :rules="[ruleRequired]"
-            :editable="priv.manager"
+            :editable="me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -20,7 +20,7 @@
             label="URL"
             v-model="hosting"
             :rules="[ruleRequired, ruleUrl]"
-            :editable="priv.admin"
+            :editable="me.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -32,7 +32,7 @@
             :label="$t('Notification expiration')"
             v-model="notificationExpirationTime"
             :rules="[ruleNotNegative]"
-            :editable="priv.admin || priv.manager"
+            :editable="me.priv.admin || me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -47,7 +47,7 @@
             :label="$t('Notification pause repetition')"
             v-model="notificationPauseRepetitionTime"
             :rules="[ruleNotNegative]"
-            :editable="priv.admin || priv.manager"
+            :editable="me.priv.admin || me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -62,7 +62,7 @@
             :label="$t('Notification icon')"
             v-model="notificationIconPath"
             :rules="[ruleRequired]"
-            :editable="priv.admin"
+            :editable="me.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -74,7 +74,7 @@
             label="API key"
             v-model="apiKey"
             :rules="[ruleRequired]"
-            :editable="priv.admin"
+            :editable="me.priv.admin"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -89,7 +89,7 @@ import { useStore } from '../../store'
 import EditableItem from '../../components/EditableItem'
 
 export default {
-  name: 'SectionService',
+  name: 'AdminService',
   components: {
     EditableItem
   },

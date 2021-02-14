@@ -8,7 +8,7 @@
         <div>{{ $t('Administrators only') }}</div>
         <div>{{ $t('Buttons are disabled') }}</div>
         <LinkButton
-          :icon="icon('Service settings')"
+          :icon="conf.icon('Service settings')"
           :label="$t('Return to', { target: $t('Administration') })"
           @click="goPage({ name: 'admin', params: { target: 'invitation' } })"
         />
@@ -16,43 +16,25 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :icon="icon('Guide')"
+        :icon="conf.icon('Guide')"
       >
         <template v-slot:title>{{ $t('Guide') }}</template>
       </PageTitle>
 
       <Chats
         class="my-2"
-        :account="state.me.id"
+        :accountId="me.id"
         :height="state.chatPaneHeight"
       />
 
-      <v-row v-if="state.me && state.me.valid">
-        <v-col class="col-12 col-sm-6">
-          <v-select
-            v-model="state.me.locale"
-            :label="$t('Locale')"
-            :items="locales"
-            @change="waitFor(() => update(state.me, { locale: state.me.locale }))"
-          />
-        </v-col>
-
-        <v-col class="col-12 col-sm-6">
-          <v-select
-            v-model="state.me.tz"
-            :label="$t('Timezone')"
-            :items="timezones"
-            @change="waitFor(() => update(state.me, { tz: state.me.tz }))"
-          />
-        </v-col>
-      </v-row>
+      <UiPreferences :entity="state.me" v-if="me.valid" />
 
       <div v-if="page.error">
         <v-alert type="error" outlined text class="mt-4">
           {{ $t('Invitation link authentication error') }}
         </v-alert>
       </div>
-      <div v-else-if="!state.me || !state.me.valid">
+      <div v-else-if="!me || !me.valid">
         <v-alert type="info" outlined text class="mt-4">
           {{ $t('Please wait') }}
         </v-alert>
@@ -72,10 +54,10 @@
             :disabled="true"
           />
         </v-sheet>
-        <div v-if="state.me.email && !page.preview">
+        <div v-if="me.email && !page.preview">
           <v-alert type="info" outlined dense>
             <div>{{ $t('E-mail address for sign-inhas been set') }}</div>
-            <v-icon>{{ icon('E-mail') }}</v-icon> {{ state.me.email }}
+            <v-icon>{{ conf.icon('E-mail') }}</v-icon> {{ me.email }}
             <div>{{ $t('Ask system admin to change e-mail address for sign-in') }}</div>
           </v-alert>
         </div>
@@ -110,7 +92,7 @@
                   :type="page.showNewPassword ? 'text' : 'password'"
                   :rules="[rulePassword]"
                   :label="$t('Password')"
-                  :append-icon="page.showNewPassword ? icon('Visible') : icon('Invisible')"
+                  :append-icon="page.showNewPassword ? conf.icon('Visible') : conf.icon('Invisible')"
                   @click:append="page.showNewPassword = !page.showNewPassword"
                 ></v-text-field>
               </v-col>
@@ -120,7 +102,7 @@
                   :type="page.showConfirmPassword ? 'text' : 'password'"
                   :rules="[rulePassword]"
                   :label="$t('Confirm password')"
-                  :append-icon="page.showConfirmPassword ? icon('Visible') : icon('Invisible')"
+                  :append-icon="page.showConfirmPassword ? conf.icon('Visible') : conf.icon('Invisible')"
                   @click:append="page.showConfirmPassword = !page.showConfirmPassword"
                 ></v-text-field>
               </v-col>
@@ -137,7 +119,7 @@
             <div class="text-right">
               <DefaultButton
                 color="primary"
-                :icon="icon('Save')"
+                :icon="conf.icon('Save')"
                 :label="$t('Save')"
                 @click="page.preview ? () => {} : setEmailAndPasswordWithInvitation"
                 :disabled="!!state.waitProc || !page.newEmail || !page.confirmEmail || !page.setEmail || page.newEmail !== page.confirmEmail || page.newPassword !== page.confirmPassword"
@@ -164,6 +146,7 @@ import LinkButton from '../components/LinkButton'
 import EditableItem from '../components/EditableItem'
 import SelectAuthProviders from '../parts/SelectAuthProviders'
 import Chats from '../parts/Chats'
+import UiPreferences from '../parts/UiPreferences'
 
 export default {
   name: 'PageInvitation',
@@ -174,7 +157,8 @@ export default {
     LinkButton,
     EditableItem,
     SelectAuthProviders,
-    Chats
+    Chats,
+    UiPreferences
   },
   setup (props) {
     const store = useStore()

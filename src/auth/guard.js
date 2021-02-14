@@ -1,5 +1,5 @@
 import { defaults } from '../conf'
-import { findItem, myPriv, isMemberOf } from '../store'
+import { findItem, accountPriv, isMemberOf } from '../store'
 import {
   storeRequestedRoute
 } from './localStrage'
@@ -28,7 +28,7 @@ export const compareRoutes = (r1, r2) => {
 }
 
 export const guardRoute = (router, route, state) => {
-  const priv = myPriv(state)
+  const priv = accountPriv(state, state.me)
   if (state.loading || !route || !route.name || routePermission(priv, router.match(route))) {
     return true
   } else {

@@ -4,7 +4,7 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :icon="icon('Privacy policy')"
+        :icon="conf.icon('Privacy policy')"
       >
         <template v-slot:title>{{ $t('Privacy policy') }}</template>
       </PageTitle>
@@ -12,7 +12,7 @@
         type="formatted-text"
         :label="$t('Privacy policy')"
         v-model="policy"
-        :editable="priv.manager"
+        :editable="me.priv.manager"
         :disabled="!!state.waitProc"
       />
     </v-col>

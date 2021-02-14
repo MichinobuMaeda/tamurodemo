@@ -22,7 +22,6 @@ export const accountPriv = ({ service, groups, hidePrivilegedItems }, account) =
     testerReal
   }
 }
-export const myPriv = state => accountPriv(state, state.me)
 
 export const accountStatus = (state, id) => {
   const account = (state.accounts && state.accounts.find(account => account.id === id)) || null

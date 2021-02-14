@@ -5,8 +5,8 @@
     <v-expansion-panel>
       <v-expansion-panel-header>
         <div>
-          <v-icon>{{ icon(account ? 'Contact the administrator' : 'Chat') }}</v-icon>
-          {{ $t(summary ? 'Recent messages' : (account ? 'Contact the administrator' : 'Chat')) }}
+          <v-icon>{{ conf.icon(accountId ? 'Contact the administrator' : 'Chat') }}</v-icon>
+          {{ $t(summary ? 'Recent messages' : (accountId ? 'Contact the administrator' : 'Chat')) }}
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content
@@ -14,43 +14,43 @@
         id="chat-scroll-target"
         :style="'max-height: ' + height"
       >
-        <div v-if="!group">
+        <div v-if="!groupId">
           <div
-            v-for="account in accounts" :key="account.id"
+            v-for="item in (accountId ? [account(accountId)] : state.accounts)" :key="item.id"
           >
             <LinkButton
-              v-if="summary && (state.hotlines[account.id] || []).length"
-              :icon="icon((account && account.id === state.me.id) ? 'Contact the administrator' : 'User')"
-              :label="(account && account.id === state.me.id) ? $t('Contact the administrator') : nameOf(account.id)"
-              @click="goPageUser(account.id)"
+              v-if="summary && (state.hotlines[item.id] || []).length"
+              :icon="conf.icon((item.id === me.id) ? 'Contact the administrator' : 'User')"
+              :label="(item.id === me.id) ? $t('Contact the administrator') : account(item.id).name"
+              @click="goPageUser(item.id)"
             />
-            <div v-else-if="!summary && !(state.hotlines[account.id] || []).length">
+            <div v-else-if="!summary && !(state.hotlines[item.id] || []).length">
               {{ $t('No message') }}
             </div>
             <ChatTimeline
-              v-if="(state.hotlines[account.id] || []).length"
+              v-if="(state.hotlines[item.id] || []).length"
               :summary="summary"
-              :messages="state.hotlines[account.id] || []"
+              :messages="state.hotlines[item.id] || []"
             />
           </div>
         </div>
 
-        <div v-if="!account">
+        <div v-if="!accountId">
           <div
-            v-for="group in groups" :key="group.id"
+            v-for="item in (groupId ? [group(groupId)] : me.groups)" :key="item.id"
           >
             <LinkButton
               v-if="summary"
-              :icon="icon('Group')"
-              :label="group.name"
-              @click="goPageGroup(group.id)"
+              :icon="conf.icon('Group')"
+              :label="item.name"
+              @click="goPageGroup(item.id)"
             />
-            <div v-else-if="!(state.groupChats[group.id] || []).length">
+            <div v-else-if="!(state.groupChats[item.id] || []).length">
               {{ $t('No message') }}
             </div>
             <ChatTimeline
               :summary="summary"
-              :messages="state.groupChats[group.id] || []"
+              :messages="state.groupChats[item.id] || []"
             />
           </div>
         </div>
@@ -67,7 +67,7 @@
               :color="message ? 'primary' : 'secondary'"
               @click="postMessage"
             >
-              {{ icon('Send') }}
+              {{ conf.icon('Send') }}
             </v-icon>
           </template>
         </v-textarea>
@@ -77,11 +77,10 @@
 </template>
 
 <script>
-import { useStore, findItem, groupsOfMe } from '@/store'
+import { useStore, postGroupChat, postHotline } from '@/store'
 import { ref, computed } from '@vue/composition-api'
 import LinkButton from '../components/LinkButton'
 import ChatTimeline from './ChatTimeline'
-import { postGroupChat, postHotline } from '../store/messaging'
 
 export default {
   name: 'Chats',
@@ -90,8 +89,8 @@ export default {
     ChatTimeline
   },
   props: {
-    group: String,
-    account: String,
+    groupId: String,
+    accountId: String,
     height: {
       type: String,
       default: '240px'
@@ -104,10 +103,10 @@ export default {
     const message = ref(null)
 
     const postMessage = async () => {
-      if (props.group) {
-        await postGroupChat(store, props.group, message.value)
-      } else if (props.account) {
-        await postHotline(store, props.account, message.value)
+      if (props.groupId) {
+        await postGroupChat(store, props.groupId, message.value)
+      } else if (props.accountId) {
+        await postHotline(store, props.accountId, message.value)
       }
       message.value = null
     }
@@ -119,9 +118,7 @@ export default {
         get: () => state.me.chatSummaryExpand ? 0 : undefined,
         set: v => update(state.me, { chatSummaryExpand: v === 0 })
       }),
-      summary: computed(() => !(props.group || props.account)),
-      groups: computed(() => props.group ? [findItem(state.groups, props.group)] : groupsOfMe(state)),
-      accounts: computed(() => props.account ? [findItem(state.accounts, props.account)] : state.accounts),
+      summary: computed(() => !(props.groupId || props.accountId)),
       postMessage
     }
   }

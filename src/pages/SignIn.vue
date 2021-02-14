@@ -4,7 +4,7 @@
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
-        :icon="icon('Sign in')"
+        :icon="conf.icon('Sign in')"
       >
         <template v-slot:title>{{ $t('Sign in') }}</template>
       </PageTitle>
@@ -17,7 +17,7 @@
       </v-alert>
       <div class="text-right">
         <LinkButton
-          :icon="icon('Privacy policy')"
+          :icon="conf.icon('Privacy policy')"
           :label="$t('Privacy policy')"
           @click="() => goPage({ name: 'policy' })"
         />
@@ -34,7 +34,7 @@
         <div class="text-right">
           <DefaultButton
             color="primary"
-            :icon="icon('E-mail')"
+            :icon="conf.icon('E-mail')"
             :label="$t('Get sign in link')"
             :disabled="!!state.waitProc || !page.valid || !page.newEmail"
             @click="signInWithEmailLink"
@@ -45,13 +45,13 @@
           :type="page.showPassword ? 'text' : 'password'"
           :rules="[rulePassword]"
           :label="$t('Password')"
-          :append-icon="page.showPassword ? icon('Visible') : icon('Invisible')"
+          :append-icon="page.showPassword ? conf.icon('Visible') : conf.icon('Invisible')"
           @click:append="page.showPassword = !page.showPassword"
         ></v-text-field>
         <div class="text-right">
           <DefaultButton
             color="primary"
-            :icon="icon('Sign in')"
+            :icon="conf.icon('Sign in')"
             :label="$t('Sign in with password')"
             :disabled="!!state.waitProc || !page.valid || !page.newEmail || !page.password"
             @click="signInWithPassword"
@@ -63,7 +63,7 @@
         <div class="text-right">
           <DefaultButton
             color="secondary"
-            :icon="icon('E-mail')"
+            :icon="conf.icon('E-mail')"
             :label="$t('Reset password')"
             :disabled="!!state.waitProc || !page.valid || !page.newEmail"
             @click="resetPassword"

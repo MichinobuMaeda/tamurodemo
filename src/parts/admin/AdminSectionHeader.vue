@@ -7,7 +7,7 @@
       <v-icon color="h3">{{ sectionIcon }}</v-icon>
       {{ label }}
       <v-spacer />
-      <v-icon>{{ icon(current === target ? 'Shrink' : 'Expand') }}</v-icon>
+      <v-icon>{{ conf.icon(current === target ? 'Shrink' : 'Expand') }}</v-icon>
     </v-card-title>
   </v-card>
 </template>

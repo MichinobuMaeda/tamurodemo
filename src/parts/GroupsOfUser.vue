@@ -4,7 +4,7 @@
     :label="$t('Groups')"
     :items="groupList"
     v-model="groups"
-    :editable="edit && priv.manager"
+    :editable="edit && me.priv.manager"
     :disabled="!!state.waitProc"
     @click="id => goPageGroup(id)"
   />
@@ -26,7 +26,7 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { icon } = store
+    const { conf } = store
     const { waitFor, update, FieldValue } = store
 
     const getGroups = (state, id) => sortedGroups(state)
@@ -57,7 +57,7 @@ export default {
       ...store,
       groupList: computed(() => sortedGroups(store.state)
         .map(item => ({
-          icon: icon('Group'),
+          icon: conf.icon('Group'),
           text: item.name,
           value: item.id
         }))

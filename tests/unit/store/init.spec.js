@@ -43,30 +43,53 @@ test('createStore()' +
   expect(store.db).toBeDefined()
   expect(store.auth).toBeDefined()
   expect(store.functions).toBeDefined()
-  expect(store.icon).toBeDefined()
-  expect(store.accountStatus).toBeDefined()
+  expect(store.conf).toBeDefined()
   expect(store.withTz).toBeDefined()
-  expect(store.nameOf).toBeDefined()
-  expect(store.myName).toBeDefined()
-  expect(store.priv).toBeDefined()
+  expect(store.me).toBeDefined()
+  expect(store.account).toBeDefined()
+  expect(store.user).toBeDefined()
+  expect(store.profile).toBeDefined()
+  expect(store.group).toBeDefined()
+  expect(store.category).toBeDefined()
 
   store.state.tz = 'Asia/Tokyo'
   expect(store.withTz('2020-12-21T01:23:45.123Z')
     .format('YYYY-MM-DDTHH:mm:ss.SSSZ')).toEqual('2020-12-21T10:23:45.123+09:00')
 
-  expect(store.myName.value).toEqual('Guest')
-  store.state.me = { id: 'myId' }
-  store.state.users = [{ id: store.state.me.id, name: 'My Name' }]
-  expect(store.myName.value).toEqual('My Name')
+  expect(store.me.value.name).toEqual('Unknown')
 
-  expect(store.nameOf('')).toEqual('Unknown')
-  expect(store.nameOf('myId')).toEqual('My Name')
+  store.state.groups = [
+    { id: 'group01', name: 'Group 01', members: ['account01'] },
+    { id: 'group02', name: 'Group 02', members: [] }
+  ]
+  store.state.accounts = [
+    { id: 'account01' },
+    { id: 'account02' }
+  ]
+  store.state.me = { ...store.state.accounts[0] }
+  store.state.users = [
+    { id: 'account01', name: 'User 01' },
+    { id: 'account02', name: 'User 02' }
+  ]
+  expect(store.me.value.name).toEqual('User 01')
+  expect(store.me.value.status).toEqual('Account locked')
+  expect(store.me.value.groups).toHaveLength(2)
+  expect(store.me.value.priv.user).toBeFalsy()
+  expect(store.account('account02').name).toEqual('User 02')
+  expect(store.account('account02').status).toEqual('Account locked')
+  expect(store.account('account02').groups).toHaveLength(1)
+  expect(store.account('account02').priv.user).toBeFalsy()
 
-  expect(store.accountStatus('myId')).toEqual('Account deleted')
+  store.state.accounts[0] = { id: 'account01', valid: true }
+  store.state.accounts[1] = { id: 'account02', valid: true }
+  store.state.me = { ...store.state.accounts[0] }
+  expect(store.me.value.priv.user).toBeTruthy()
+  expect(store.account('account02').priv.user).toBeTruthy()
 
-  expect(store.priv.value.user).toBeFalsy()
-  store.state.me = { id: 'myId', valid: true }
-  expect(store.priv.value.user).toBeTruthy()
+  expect(store.user('account01').name).toEqual('User 01')
+  expect(store.profile('account01').name).toBeUndefined()
+  expect(store.group('group01').name).toEqual('Group 01')
+  expect(store.category('category01').name).toBeUndefined()
 })
 
 test('overrideDefaults()' +

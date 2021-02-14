@@ -2,7 +2,7 @@
   <v-form v-model="page.valid">
 
     <div class="text-h3 h3--text mb-4">
-      <v-icon color="h3">{{ icon(titleIcon) }}</v-icon>
+      <v-icon color="h3">{{ conf.icon(titleIcon) }}</v-icon>
       {{ $t(titleText) }}
     </div>
 
@@ -12,7 +12,7 @@
       :type="page.showPassword ? 'text' : 'password'"
       :rules="[rulePassword]"
       :label="$t(labelCurrentPassword)"
-      :append-icon="page.showPassword ? icon('Visible') : icon('Invisible')"
+      :append-icon="page.showPassword ? conf.icon('Visible') : conf.icon('Invisible')"
       @click:append="() => { page.showPassword = !page.showPassword }"
       @input ="page.statusMessage = ''"
     ></v-text-field>
@@ -22,7 +22,7 @@
       :type="page.showValue ? 'text' : 'password'"
       :rules="rules"
       :label="$t(labelValue)"
-      :append-icon="password ? page.showValue ? icon('Visible') : icon('Invisible') : null"
+      :append-icon="password ? page.showValue ? conf.icon('Visible') : conf.icon('Invisible') : null"
       @click:append="() => { if (password) { page.showValue = !page.showValue } }"
       @input="page.statusMessage = ''"
     ></v-text-field>
@@ -32,7 +32,7 @@
       :type="page.showConfirmation ? 'text' : 'password'"
       :rules="rules"
       :label="$t(labelConfirmation)"
-      :append-icon="password ? page.showConfirmation ? icon('Visible') : icon('Invisible') : null"
+      :append-icon="password ? page.showConfirmation ? conf.icon('Visible') : conf.icon('Invisible') : null"
       @click:append="() => { if (password) { page.showConfirmation = !page.showConfirmation } }"
       @input="page.statusMessage = ''"
     ></v-text-field>
@@ -49,7 +49,7 @@
     <div class="text-right">
       <DefaultButton
         color="primary"
-        :icon="icon('Save')"
+        :icon="conf.icon('Save')"
         :label="$t('Save')"
         @click="onClick"
         :disabled="!!state.waitProc || (reauthentication && !page.password) || !page.value || !page.confirmation || page.value !== page.confirmation || !page.valid"

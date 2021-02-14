@@ -11,7 +11,7 @@
     >
       <img
         :style="`width: 40px; filter: brightness(${ this.$vuetify.theme.dark ? '300%' : '100%' });`"
-        :src="baseUrl + 'img/icons/apple-touch-icon-120x120.png'"
+        :src="conf.baseUrl() + 'img/icons/apple-touch-icon-120x120.png'"
         :alt="(state.service.conf && state.service.conf.name)"
       />
       <v-toolbar-title
@@ -21,7 +21,7 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <v-main v-if="state.loading || (state.me && state.me.id && $route.name === 'signin')">
+    <v-main v-if="state.loading || (me && me.id && $route.name === 'signin')">
       <Loading color="h2" :size="96" />
     </v-main>
     <v-main class="px-4" v-else>
@@ -29,18 +29,18 @@
         <DefaultButton
           v-if="noSignInMethod(state)"
           color="warning"
-          :icon="icon('Sign in')"
+          :icon="conf.icon('Sign in')"
           :label="$t('Set the sign-in method')"
           @click="goPage({ name: 'preferences' })"
         />
         <AppUpdater
-          v-if="state.service.conf && state.service.conf.version !== version"
+          v-if="state.service.conf && state.service.conf.version !== conf.version"
           :label="$t('Update app')"
-          :icon="icon('Update app')"
+          :icon="conf.icon('Update app')"
         />
         <AppInstaller
-          v-if="state.me.valid"
-          :icon="icon('Install app')"
+          v-if="me.valid"
+          :icon="conf.icon('Install app')"
           :label="$t('Install app')"
         />
       </div>
@@ -53,21 +53,21 @@
       class="theme1 my-2"
       height="48px"
     >
-      <span>Ver. {{ version }}</span>
+      <span>Ver. {{ conf.version }}</span>
     </v-footer>
 
     <Menu
       v-if="!state.loading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menuItems="() => guardMenuItem(menuItems(state.me.id, myName, state.me.hidePrivilegedItems, togglehPriviligedItems, () => { page.rawData = true }), $router, priv, goPage)"
+      :menuItems="() => menuItems(me, $router)"
       :position="state.menuPosition"
-      @move="menuPosition => state.me && state.me.valid && waitFor(() => update(state.me, { menuPosition }))"
+      @move="menuPosition => me && me.valid && waitFor(() => update(me, { menuPosition }))"
     />
 
     <RawDataTree
       v-model="page.rawData"
-      :icon="icon('Raw data')"
+      :icon="conf.icon('Raw data')"
       :title="$t('Raw data')"
       icon-color="h2"
       title-color="h2--text"
@@ -84,7 +84,6 @@
 <script>
 import { reactive, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
-import { menuItems, baseUrl, version } from './conf'
 import {
   createStore, initUserData, clearUserData, initServiceData,
   overrideDefaults, StoreSymbol, isValidAccount,
@@ -131,7 +130,7 @@ export default {
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
     store.goPageUser = (id, edit = false) => store.goPage({ name: 'user', params: { id, mode: (edit ? 'edit' : null) } })
     store.standalone = window.matchMedia('(display-mode: standalone)').matches
-    const { state, update } = store
+    const { state, update, conf } = store
 
     onMounted(async () => {
       await getAuthState(store)
@@ -204,11 +203,18 @@ export default {
       ...store,
       page,
       guardMenuItem,
-      menuItems,
-      togglehPriviligedItems: () => update(state.me, { hidePrivilegedItems: !state.me.hidePrivilegedItems }),
-      baseUrl: baseUrl(),
       noSignInMethod: state => state.me.valid && ![...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
-      version
+      menuItems: (me, router) => guardMenuItem(
+        conf.menuItems(me.id,
+          me.name,
+          me.hidePrivilegedItems,
+          () => update(state.me, { hidePrivilegedItems: !state.me.hidePrivilegedItems }),
+          () => { page.rawData = true }
+        ),
+        router,
+        me.priv,
+        store.goPage
+      )
     }
   }
 }

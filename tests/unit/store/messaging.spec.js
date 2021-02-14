@@ -7,9 +7,7 @@ import {
   store
 } from '../utils'
 import {
-  initializeMessaging,
-  postGroupChat,
-  postHotline
+  initializeMessaging
 } from '../../../src/store/messaging'
 
 beforeEach(async () => {
@@ -133,82 +131,4 @@ test('initializeMessaging()' +
 
   // clear
   process.env.NODE_ENV = orgEnv
-})
-
-test('postGroupChat()' +
-  ' should add a chat message of the group.', async () => {
-  // prepare
-  const state = {
-    me: {
-      id: 'account01',
-      valid: true
-    }
-  }
-  const groupRef = db.collection('groups').doc('group1')
-  await groupRef.set({ name: 'Group 1', members: [state.me.id] })
-
-  // run #1
-  await postGroupChat({ db, state }, groupRef.id, 'Message 1')
-
-  // evaluate #2
-  const messages1 = (await groupRef.collection('chat').orderBy('createdAt', 'asc').get()).docs
-  expect(messages1).toHaveLength(1)
-  expect(messages1[0].data()).toMatchObject({
-    sender: state.me.id,
-    message: 'Message 1'
-  })
-
-  // run #1
-  await postGroupChat({ db, state }, groupRef.id, 'Message 2')
-
-  // evaluate #2
-  const messages2 = (await groupRef.collection('chat').orderBy('createdAt', 'asc').get()).docs
-  expect(messages2).toHaveLength(2)
-  expect(messages2[0].data()).toMatchObject({
-    sender: state.me.id,
-    message: 'Message 1'
-  })
-  expect(messages2[1].data()).toMatchObject({
-    sender: state.me.id,
-    message: 'Message 2'
-  })
-})
-
-test('postHotline()' +
-  ' should add an hotline message of the account.', async () => {
-  // prepare
-  const state = {
-    me: {
-      id: 'account01',
-      valid: true
-    }
-  }
-  const accountRef = db.collection('accounts').doc('account2')
-  await accountRef.set({ name: 'Account 1' })
-
-  // run #1
-  await postHotline({ db, state }, accountRef.id, 'Message 1')
-
-  // evaluate #2
-  const messages1 = (await accountRef.collection('hotline').orderBy('createdAt', 'asc').get()).docs
-  expect(messages1).toHaveLength(1)
-  expect(messages1[0].data()).toMatchObject({
-    sender: state.me.id,
-    message: 'Message 1'
-  })
-
-  // run #1
-  await postHotline({ db, state }, accountRef.id, 'Message 2')
-
-  // evaluate #2
-  const messages2 = (await accountRef.collection('hotline').orderBy('createdAt', 'asc').get()).docs
-  expect(messages2).toHaveLength(2)
-  expect(messages2[0].data()).toMatchObject({
-    sender: state.me.id,
-    message: 'Message 1'
-  })
-  expect(messages2[1].data()).toMatchObject({
-    sender: state.me.id,
-    message: 'Message 2'
-  })
 })

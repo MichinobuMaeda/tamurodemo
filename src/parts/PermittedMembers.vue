@@ -2,7 +2,7 @@
   <div>
     <DefaultButton
       color="primary"
-      :icon="icon('For permitted')"
+      :icon="conf.icon('For permitted')"
       :label="$t('Close members')"
       @click="onEdit(groups, users)"
     />
@@ -13,14 +13,14 @@
       <v-card>
 
         <v-card-title class="headline dialogTitle">
-          <v-icon class="mr-2">{{ icon('For permitted') }}</v-icon>
+          <v-icon class="mr-2">{{ conf.icon('For permitted') }}</v-icon>
           {{ $t('Close members') }}
           <v-spacer />
           <v-icon
             color="gray"
             @click="page.dialog = false"
           >
-            {{ icon('Cancel') }}
+            {{ conf.icon('Cancel') }}
           </v-icon>
         </v-card-title>
 
@@ -37,7 +37,7 @@
                     @click.native="e => { e.cancelBubble = true }"
                   >
                     <template v-slot:label>
-                      <v-icon class="float-left">{{ icon('Group') }}</v-icon>
+                      <v-icon class="float-left">{{ conf.icon('Group') }}</v-icon>
                       {{ group.name }}
                     </template>
                   </v-checkbox>
@@ -54,7 +54,7 @@
                     :disabled="true"
                   >
                     <template v-slot:label>
-                      <v-icon class="float-left">{{ icon('User') }}</v-icon>
+                      <v-icon class="float-left">{{ conf.icon('User') }}</v-icon>
                       {{ user.name }}
                     </template>
                   </v-checkbox>
@@ -64,7 +64,7 @@
                     v-model="user.checked"
                   >
                     <template v-slot:label>
-                      <v-icon class="float-left">{{ icon('User') }}</v-icon>
+                      <v-icon class="float-left">{{ conf.icon('User') }}</v-icon>
                       {{ user.name }}
                     </template>
                   </v-checkbox>
@@ -79,13 +79,13 @@
           <DefaultButton
             color="secondary"
             class="mr-2"
-            :icon="icon('Cancel')"
+            :icon="conf.icon('Cancel')"
             :label="$t('Cancel')"
             @click="page.dialog = false"
           />
           <DefaultButton
             color="primary"
-            :icon="icon('OK')"
+            :icon="conf.icon('OK')"
             :label="$t('Save')"
             :disabled="!!state.waitProc"
             @click="onSave(page.groups, page.users)"
@@ -99,7 +99,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { useStore, findItem, sortedGroups } from '@/store'
+import { useStore, sortedGroups } from '@/store'
 import DefaultButton from '@/components/DefaultButton'
 
 export default {
@@ -112,7 +112,7 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { state, waitFor, update } = store
+    const { state, waitFor, update, account } = store
     const page = reactive({
       dialog: false,
       groups: [],
@@ -127,13 +127,13 @@ export default {
         .filter(group => group.id !== 'managers')
         .map(group => ({
           ...group,
-          checked: (findItem(state.users, props.id).permittedGroups || []).includes(group.id)
+          checked: (account(props.id).permittedGroups || []).includes(group.id)
         }))
       ),
       users: computed(() => state.users
-        .map(user => ({
-          ...user,
-          checked: user.id !== props.id && (findItem(state.users, props.id).permittedUsers || []).includes(user.id)
+        .map(item => ({
+          ...item,
+          checked: item.id !== props.id && (account(props.id).permittedUsers || []).includes(item.id)
         }))
       ),
       onEdit: (groups, users) => {
@@ -142,9 +142,9 @@ export default {
         page.users = [...users]
       },
       onSave: async (groups, users) => {
-        await waitFor(() => update(findItem(state.users, props.id), {
-          permittedGroups: groups.filter(group => group.checked).map(group => group.id),
-          permittedUsers: users.filter(user => user.checked).map(user => user.id)
+        await waitFor(() => update(account(props.id), {
+          permittedGroups: groups.filter(item => item.checked).map(item => item.id),
+          permittedUsers: users.filter(item => item.checked).map(item => item.id)
         }))
         page.dialog = false
       }

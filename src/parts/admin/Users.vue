@@ -9,7 +9,7 @@
       >
         <DefaultButton
           color="secondary"
-          :icon="icon(accountStatus(user.id))"
+          :icon="conf.icon(account(user.id).status)"
           :label="user.name"
           @click="() => goPageUser(user.id, true)"
         />
@@ -28,7 +28,7 @@ import GroupsOfUser from '../../parts/GroupsOfUser'
 import CreateUser from './CreateUser'
 
 export default {
-  name: 'SectionUsers',
+  name: 'AdminUsers',
   components: {
     DefaultButton,
     GroupsOfUser,

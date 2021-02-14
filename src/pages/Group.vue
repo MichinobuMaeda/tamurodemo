@@ -4,31 +4,31 @@
       <PageTitle
         :text-color="group.deletedAt ? 'grey--text' : 'h2--text'"
         :icon-color="group.deletedAt ? 'grey' : 'h2'"
-        :icon="icon(group.deletedAt ? 'Delete' : 'Group')"
+        :icon="conf.icon(group.deletedAt ? 'Delete' : 'Group')"
       >
         <template v-slot:title>
           <EditableItem
             :label="$t('Group name')"
             v-model="name"
-            :editable="priv.manager"
+            :editable="me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </template>
       </PageTitle>
 
       <Chats
-        v-if="(group.members || []).includes(state.me.id)"
+        v-if="(group.members || []).includes(me.id)"
         class="my-2"
-        :group="group.id"
+        :groupId="group.id"
         :height="state.chatPaneHeight"
       />
 
       <EditableItem
-        v-if="priv.manager || (group.members || []).includes(state.me.id) || (group.desc && group.desc.data)"
+        v-if="me.priv.manager || (group.members || []).includes(me.id) || (group.desc && group.desc.data)"
         type="formatted-text"
         :label="$t('Description')"
         v-model="desc"
-        :editable="priv.manager || (group.members || []).includes(state.me.id)"
+        :editable="me.priv.manager || (group.members || []).includes(me.id)"
         :disabled="!!state.waitProc"
       />
 
@@ -37,30 +37,30 @@
         :label="$t('Categories')"
         :items="categoryList"
         v-model="categories"
-        :editable="priv.manager"
+        :editable="me.priv.manager"
         :disabled="!!state.waitProc"
       />
 
       <p class="h3--text text-h3 pt-6">
-        <v-icon color="h3">{{ icon('Members') }}</v-icon>
+        <v-icon color="h3">{{ conf.icon('Members') }}</v-icon>
         {{ $t('Members') }}
       </p>
 
       <LinkButton
-        v-for="user in members" :key="user.id"
-        :icon="icon('User')"
+        v-for="user in state.users.filter(user => (me.priv.mamanger || me.priv.admin || !(account(user.id)).deletedAt) && (group.members || []).includes(user.id))" :key="user.id"
+        :icon="conf.icon('User')"
         :label="user.name"
         @click="goPageUser(user.id)"
       />
 
-      <div v-if="priv.manager">
+      <div v-if="me.priv.manager">
         <v-divider class="my-6" />
 
         <ConfirmButton
           v-if="!group.deletedAt"
           type="error"
           :title="$t('Delete item', { name: group.name })"
-          :iconProc="icon('Delete')"
+          :iconProc="conf.icon('Delete')"
           :labelProc="$t('Delete')"
           :message="$t('Confirm deletion', { name: group.name })"
           @confirm="() => waitFor(() => remove(group))"
@@ -70,7 +70,7 @@
           v-else
           type="warning"
           :title="$t('Restore item', { name: group.name })"
-          :iconProc="icon('Restore')"
+          :iconProc="conf.icon('Restore')"
           :labelProc="$t('Restore')"
           :message="$t('Confirm restore', { name: group.name })"
           @confirm="() => waitFor(() => restore(group))"
@@ -84,7 +84,7 @@
 
 <script>
 import { computed } from '@vue/composition-api'
-import { useStore, findItem } from '@/store'
+import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
@@ -102,8 +102,8 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { state, icon, waitFor, update, FieldValue, priv } = store
-    const group = computed(() => findItem(store.state.groups, state.route && state.route.params.id))
+    const { state, conf, waitFor, update, FieldValue } = store
+    const group = computed(() => store.group(state.route.params && state.route.params.id))
 
     return {
       ...store,
@@ -117,7 +117,7 @@ export default {
         set: val => waitFor(() => update(group.value, { desc: val }))
       }),
       categoryList: computed(() => state.categories.map(item => ({
-        icon: icon('Category'),
+        icon: conf.icon('Category'),
         color: 'h3',
         text: item.name,
         value: item.id
@@ -143,8 +143,7 @@ export default {
             }
           })
         ))
-      }),
-      members: computed(() => state.users.filter(user => (priv.value.mamanger || priv.value.admin || !(findItem(state.accounts, user.id)).deletedAt) && (group.value.members || []).includes(user.id)))
+      })
     }
   }
 }

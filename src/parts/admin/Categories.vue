@@ -7,14 +7,14 @@
       >
         <v-col class="col-1 pt-4">
           <MiniButton
-            :icon="icon('Upward')"
+            :icon="conf.icon('Upward')"
             :disabled="!!item.deletedAt || index === 0"
             @click="onUpward(index)"
           />
         </v-col>
         <v-col class="col-1 pt-4">
           <MiniButton
-            :icon="icon('Downward')"
+            :icon="conf.icon('Downward')"
             :disabled="!!item.deletedAt || index === (page.items.length - 1) || !!page.items[index + 1].deletedAt"
             @click="onDownward(index)"
           />
@@ -30,17 +30,17 @@
         <v-col class="col-2 pt-4 text-center">
           <MiniButton
             v-if="item.id && !item.deletedAt"
-            :icon="icon('Delete')"
+            :icon="conf.icon('Delete')"
             @click="onDelete(index)"
           />
           <MiniButton
             v-if="item.id && item.deletedAt"
-            :icon="icon('Restore')"
+            :icon="conf.icon('Restore')"
             @click="onUndoDelete(index)"
           />
           <MiniButton
             v-if="!item.id && item.name"
-            :icon="icon('Cancel')"
+            :icon="conf.icon('Cancel')"
             @click="item.name = ''"
           />
         </v-col>
@@ -66,19 +66,19 @@
 
 <script>
 import { reactive, computed, onMounted } from '@vue/composition-api'
-import { useStore, findItem } from '../../store'
+import { useStore } from '../../store'
 import MiniButton from '../../components/MiniButton'
 import DefaultButton from '../../components/DefaultButton'
 
 export default {
-  name: 'SectionCategories',
+  name: 'AdminCategories',
   components: {
     MiniButton,
     DefaultButton
   },
   setup () {
     const store = useStore()
-    const { db, waitFor, add, update, remove } = store
+    const { db, waitFor, add, update, remove, category } = store
     const page = reactive({
       items: []
     })
@@ -147,9 +147,9 @@ export default {
           page.items.filter(item => (!item.id && item.name) ||
             (item.id &&
               (
-                (findItem(store.state.categories, item.id).seq !== item.seq) ||
-                (findItem(store.state.categories, item.id).name !== item.name) ||
-                (findItem(store.state.categories, item.id).deletedAt !== item.deletedAt)
+                (category(store.state.categories, item.id).seq !== item.seq) ||
+                (category(store.state.categories, item.id).name !== item.name) ||
+                (category(store.state.categories, item.id).deletedAt !== item.deletedAt)
               )
             )
           ).map(async item => {

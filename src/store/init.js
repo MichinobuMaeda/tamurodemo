@@ -1,10 +1,13 @@
 import { computed, inject, reactive } from '@vue/composition-api'
 import moment from 'moment-timezone'
-import { icon, locales, defaults, validators } from '../conf'
+import * as confAll from '../conf'
 import { clearServiceData, clearUserData, findItem } from './state'
-import { myPriv, accountStatus } from './accounts'
+import { accountStatus, accountPriv } from './accounts'
+import { accountGroups } from './groups'
 import { add, update, remove, restore } from './firestore'
 import { waitFor, msecToDaysAndTime } from './ui'
+
+const { validators, defaults, ...conf } = confAll
 
 export const StoreSymbol = Symbol('store')
 export const useStore = () => inject(StoreSymbol)
@@ -14,6 +17,18 @@ export const createStore = (firebase, root) => {
     ...defaults,
     loading: true
   })))
+
+  const account = (state, id) => {
+    const account = state.me.id === id ? state.me : findItem(state.accounts, id)
+    const user = findItem(state.users, id)
+    return {
+      ...account,
+      status: accountStatus(state, id),
+      name: user.name || 'Unknown',
+      groups: accountGroups(state, id),
+      priv: accountPriv(state, account)
+    }
+  }
 
   const store = {
     state,
@@ -25,12 +40,14 @@ export const createStore = (firebase, root) => {
     msecToDaysAndTime,
     waitFor: waitFor(state),
     ...validators(root),
-    icon,
+    conf,
     withTz: date => moment(date).tz(state.tz),
-    accountStatus: id => accountStatus(state, id),
-    nameOf: id => findItem(state.users, id).name || 'Unknown',
-    myName: computed(() => findItem(state.users, state.me.id).name || 'Guest'),
-    priv: computed(() => myPriv(state))
+    me: computed(() => account(state, state.me.id)),
+    account: id => account(state, id),
+    user: id => findItem(state.users, id),
+    profile: id => findItem(state.profiles, id),
+    group: id => findItem(state.groups, id),
+    category: id => findItem(state.categories, id)
   }
 
   return store
@@ -39,15 +56,15 @@ export const createStore = (firebase, root) => {
 export const overrideDefaults = (store, root) => {
   const { state, auth } = store
   Object.keys(defaults).forEach(key => {
-    state[key] = myPriv(state).user && state.me[key] !== undefined
-      ? state.me[key]
-      : state.service.defaults && state.service.defaults[key] !== undefined
-        ? state.service.defaults[key]
-        : defaults[key]
+    if (accountPriv(state, state.me).user && state.me[key] !== undefined) {
+      state[key] = state.me[key]
+    } else if (state.service.defaults && state.service.defaults[key] !== undefined) {
+      state[key] = state.service.defaults[key]
+    }
   })
   root.$vuetify.theme.dark = state.darkTheme
   root.$i18n.locale = state.locale
-  const lang = locales.find(item => item.value === state.locale).lang
+  const lang = conf.locales.find(item => item.value === state.locale).lang
   moment.locale(lang)
   auth.languageCode = lang
 }
