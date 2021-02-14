@@ -5,7 +5,7 @@
         v-if="priv.manager || priv.admin"
         color="primary"
         class="float-right my-0"
-        v-model="page.edit"
+        v-model="edit"
         :label="$t('Edit')"
       />
       <PageTitle
@@ -18,13 +18,14 @@
             :label="$t('Group name')"
             v-model="group.name"
             @save="val => waitFor(() => update(group, { name: val }))"
-            :editable="page.edit && priv.manager"
+            :editable="edit && priv.manager"
             :disabled="!!state.waitProc"
           />
         </template>
       </PageTitle>
 
       <Chats
+        v-if="(group.members || []).includes(state.me.id)"
         class="my-2"
         :group="group.id"
         :height="state.chatPaneHeight"
@@ -35,7 +36,7 @@
         :label="$t('Description')"
         v-model="group.desc"
         @save="val => waitFor(() => update(group, { desc: val }))"
-        :editable="page.edit && (priv.manager || (group.members || []).includes(state.me.id))"
+        :editable="edit && (priv.manager || (group.members || []).includes(state.me.id))"
         :disabled="!!state.waitProc"
       />
 
@@ -44,7 +45,7 @@
         :label="$t('Categories')"
         :items="categoryList"
         v-model="categories"
-        :editable="page.edit && priv.manager"
+        :editable="edit && priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -60,7 +61,7 @@
         @click="goPageUser(user.id)"
       />
 
-      <div v-if="page.edit && (priv.manager || priv.admin)">
+      <div v-if="edit && (priv.manager || priv.admin)">
         <v-divider class="my-6" />
 
         <ConfirmButton
@@ -90,7 +91,7 @@
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
+import { ref, computed } from '@vue/composition-api'
 import { useStore, findItem } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -110,9 +111,6 @@ export default {
   setup (prop, { root }) {
     const store = useStore()
     const { icon, waitFor, update, FieldValue } = store
-    const page = reactive({
-      edit: false
-    })
 
     const getCategories = (state, id) => state.categories
       .filter(item => (item.groups || []).includes(id))
@@ -139,11 +137,8 @@ export default {
     )
 
     return {
-      page,
+      edit: ref(false),
       ...store,
-      rulesName: [
-        v => !!v || root.$i18n.t('Required')
-      ],
       group: computed(() => findItem(store.state.groups, root.$route.params.id)),
       categoryList: computed(() => store.state.categories
         .map(item => ({

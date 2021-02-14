@@ -9,7 +9,7 @@
       >
         <DefaultButton
           color="secondary"
-          :icon="icon(accountStatus(state, user.id))"
+          :icon="icon(accountStatus(user.id))"
           :label="user.name"
           @click="() => goPageUser(user.id, true)"
         />
@@ -22,7 +22,7 @@
 
 <script>
 import { ref } from '@vue/composition-api'
-import { useStore, accountStatus } from '../../store'
+import { useStore } from '../../store'
 import DefaultButton from '../../components/DefaultButton'
 import GroupsOfUser from '../../parts/GroupsOfUser'
 import CreateUser from './CreateUser'
@@ -39,8 +39,7 @@ export default {
 
     return {
       edit: ref(false),
-      ...store,
-      accountStatus
+      ...store
     }
   }
 }

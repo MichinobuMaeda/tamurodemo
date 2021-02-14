@@ -4,7 +4,6 @@ export {
   guardRoute,
   guardMenuItem,
   detectPrivilegesChanged,
-  detectAccountChanged,
   goPage
 } from './guard'
 export * from './init'

@@ -4,6 +4,7 @@ export * from './init'
 export * from './messaging'
 export {
   initServiceData,
+  clearUserData,
   initUserData,
   initMe,
   updateMe,

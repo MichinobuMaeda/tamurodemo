@@ -58,9 +58,6 @@ export default {
   setup (prop, { root }) {
     const store = useStore()
 
-    // const target = ref(root.$route.params ? root.$route.params.target : '')
-    // watch(() => root.$route, route => { target.value = route.params.target || '' })
-
     return {
       ...store,
       target: computed(() => root.$route.params ? root.$route.params.target : '')

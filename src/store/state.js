@@ -135,6 +135,7 @@ export const subscribeGroupChats = ({ db, state }) => {
     .filter(group => !Object.keys(groupChats).includes(group.id))
     .forEach(group => {
       const id = group.id
+      groupChats[id] = []
       state.unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
         .collection('chat').orderBy('createdAt', 'asc')
         .onSnapshot(querySnapshot => {
@@ -162,6 +163,7 @@ export const subscribeHotlines = ({ db, state }) => {
     .filter(account => !Object.keys(hotlines).includes(account.id))
     .forEach(account => {
       const { id } = account
+      hotlines[id] = []
       state.unsubscribers[`hotline_${id}`] = db.collection('accounts').doc(id)
         .collection('hotline').orderBy('createdAt', 'asc')
         .onSnapshot(querySnapshot => {

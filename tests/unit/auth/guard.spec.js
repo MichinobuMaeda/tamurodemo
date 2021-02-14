@@ -1,8 +1,7 @@
 import {
   router,
   setFakeWindow,
-  deleteApp,
-  store
+  deleteApp
 } from '../utils'
 import {
   routePermission,
@@ -10,7 +9,6 @@ import {
   guardRoute,
   guardMenuItem,
   detectPrivilegesChanged,
-  detectAccountChanged,
   goPage
 } from '../../../src/auth/guard'
 import {
@@ -341,53 +339,6 @@ test('detectPrivilegesChanged()' +
 
   // run / evaluate #11
   expect(detectPrivilegesChanged(me, groupsCurr, [])).toBeFalsy()
-})
-
-test('detectAccountChanged()' +
-  ' should detect status of the login account.', async () => {
-  // prepare #0
-  const mePrev = {}
-  const meCurr = {
-    id: 'id01',
-    valid: false
-  }
-
-  // run / evaluate #0
-  expect(detectAccountChanged(meCurr, mePrev)).toBeTruthy()
-
-  // prepare #1
-  mePrev.id = 'id01'
-  mePrev.valid = true
-  meCurr.id = 'id01'
-  meCurr.valid = true
-
-  // run / evaluate #1
-  expect(detectAccountChanged(meCurr, mePrev)).toBeFalsy()
-
-  // prepare #2
-  delete mePrev.id
-  delete mePrev.valid
-  meCurr.id = 'id01'
-  meCurr.valid = true
-
-  // run / evaluate #2
-  expect(detectAccountChanged(meCurr, mePrev)).toBeTruthy()
-
-  // prepare #3
-  mePrev.id = 'id01'
-  mePrev.valid = true
-  meCurr.id = 'id01'
-  meCurr.valid = false
-
-  // run / evaluate #3
-  expect(detectAccountChanged(meCurr, mePrev)).toBeTruthy()
-
-  // prepare #4
-  delete meCurr.id
-  delete meCurr.valid
-
-  // run / evaluate #4
-  expect(detectAccountChanged(meCurr, mePrev)).toBeTruthy()
 })
 
 test('goPage()' +

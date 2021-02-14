@@ -2,7 +2,7 @@ import { computed, inject, reactive } from '@vue/composition-api'
 import moment from 'moment-timezone'
 import { icon, locales, defaults, validators } from '../conf'
 import { clearServiceData, clearUserData, findItem } from './state'
-import { myPriv } from './accounts'
+import { myPriv, accountStatus } from './accounts'
 import { add, update, remove, restore } from './firestore'
 import { waitFor, msecToDaysAndTime } from './ui'
 
@@ -27,6 +27,7 @@ export const createStore = (firebase, root) => {
     ...validators(root),
     icon,
     withTz: date => moment(date).tz(state.tz),
+    accountStatus: id => accountStatus(state, id),
     nameOf: id => findItem(state.users, id).name || 'Unknown',
     myName: computed(() => findItem(state.users, state.me.id).name || 'Guest'),
     priv: computed(() => myPriv(state))

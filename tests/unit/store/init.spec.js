@@ -44,6 +44,7 @@ test('createStore()' +
   expect(store.auth).toBeDefined()
   expect(store.functions).toBeDefined()
   expect(store.icon).toBeDefined()
+  expect(store.accountStatus).toBeDefined()
   expect(store.withTz).toBeDefined()
   expect(store.nameOf).toBeDefined()
   expect(store.myName).toBeDefined()
@@ -60,6 +61,8 @@ test('createStore()' +
 
   expect(store.nameOf('')).toEqual('Unknown')
   expect(store.nameOf('myId')).toEqual('My Name')
+
+  expect(store.accountStatus('myId')).toEqual('Account deleted')
 
   expect(store.priv.value.user).toBeFalsy()
   store.state.me = { id: 'myId', valid: true }

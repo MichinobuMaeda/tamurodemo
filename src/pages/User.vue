@@ -68,8 +68,8 @@
         <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
         <v-row>
           <v-col class="col-12 col-sm-6">
-            <v-icon>{{ icon(accountStatus(state, account.id)) }}</v-icon>
-            {{ $t(accountStatus(state, account.id)) }}
+            <v-icon>{{ icon(accountStatus(account.id)) }}</v-icon>
+            {{ $t(accountStatus(account.id)) }}
           </v-col>
           <v-col class="col-12 col-sm-6">
             <v-icon>{{ icon('Sign in') }}</v-icon>
@@ -164,7 +164,7 @@
 <script>
 import { reactive, computed, watch } from '@vue/composition-api'
 import { permissions } from '@/conf'
-import { useStore, findItem, accountStatus } from '@/store'
+import { useStore, findItem } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import PageTitle from '../components/PageTitle'
 import EditableItem from '../components/EditableItem'
@@ -190,45 +190,37 @@ export default {
       preview: 2
     })
 
-    const user = computed(() => findItem(store.state.users, root.$route.params.id))
-    const account = computed(() => findItem(store.state.accounts, root.$route.params.id))
-    const profile = computed(() => findItem(store.state.profiles, root.$route.params.id))
-    const edit = computed({
-      get: () => root.$route.params.mode === 'edit',
-      set: edit => goPageUser(root.$route.params.id, edit)
-    })
-
-    const invitationStatus = computed(() => {
-      const account = findItem(store.state.accounts, root.$route.params.id)
-      return account.invitedAt
-        ? (account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime())
-          ? 'Accepted'
-          : (account.invitedAt.getTime() >= (new Date().getTime() - store.state.service.conf.invitationExpirationTime))
-            ? 'Sent'
-            : 'Timeout'
-        : ''
-    })
-
     watch(() => root.$route, route => { page.preview = 2 })
 
     return {
-      user,
-      account,
-      profile,
-      edit,
-      invitationStatus,
       page,
+      ...store,
+      account: computed(() => findItem(store.state.accounts, root.$route.params.id)),
+      user: computed(() => findItem(store.state.users, root.$route.params.id)),
+      profile: computed(() => findItem(store.state.profiles, root.$route.params.id)),
+      edit: computed({
+        get: () => root.$route.params.mode === 'edit',
+        set: edit => goPageUser(root.$route.params.id, edit)
+      }),
       permissionList: permissions.map(item => ({
         icon: icon(item.icon),
         value: item.value,
         text: root.$i18n.t(item.text)
       })),
       preview: computed(() => permissions[page.preview].value),
-      ...store,
+      invitationStatus: computed(() => {
+        const account = findItem(store.state.accounts, root.$route.params.id)
+        return account.invitedAt
+          ? (account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime())
+            ? 'Accepted'
+            : (account.invitedAt.getTime() >= (new Date().getTime() - store.state.service.conf.invitationExpirationTime))
+              ? 'Sent'
+              : 'Timeout'
+          : ''
+      }),
       invite: id => waitFor(() => invite(store, id)),
-      resetAllSignInSettings: id => waitFor(() => resetAllSignInSettings(store, id)),
       invitationUrl,
-      accountStatus
+      resetAllSignInSettings: id => waitFor(() => resetAllSignInSettings(store, id))
     }
   }
 }

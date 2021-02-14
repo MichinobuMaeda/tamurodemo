@@ -20,8 +20,8 @@
           >
             <LinkButton
               v-if="summary && (state.hotlines[account.id] || []).length"
-              :icon="icon('User')"
-              :label="nameOf(account.id)"
+              :icon="icon((account && account.id === state.me.id) ? 'Contact the administrator' : 'User')"
+              :label="(account && account.id === state.me.id) ? $t('Contact the administrator') : nameOf(account.id)"
               @click="goPageUser(account.id)"
             />
             <div v-else-if="!summary && !(state.hotlines[account.id] || []).length">

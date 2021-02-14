@@ -12,16 +12,16 @@
       <img
         :style="`width: 40px; filter: brightness(${ this.$vuetify.theme.dark ? '300%' : '100%' });`"
         :src="baseUrl + 'img/icons/apple-touch-icon-120x120.png'"
-        :alt="(state.service.conf && state.service.conf.name) || 'Tamuro'"
+        :alt="(state.service.conf && state.service.conf.name)"
       />
       <v-toolbar-title
         class="theme1r--text text-h1 ml-2"
       >
-        {{ (state.service.conf && state.service.conf.name) || 'Tamuro' }}
+        {{ (state.service.conf && state.service.conf.name) }}
       </v-toolbar-title>
     </v-app-bar>
 
-    <v-main v-if="state.loading">
+    <v-main v-if="state.loading || (state.me && state.me.id && $route.name === 'signin')">
       <Loading color="h2" :size="96" />
     </v-main>
     <v-main class="px-4" v-else>
@@ -50,7 +50,7 @@
     <v-footer
       id="footer"
       color="theme1r--text"
-      class="theme1"
+      class="theme1 my-2"
       height="48px"
     >
       <span>Ver. {{ version }}</span>
@@ -86,7 +86,7 @@ import { reactive, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import { menuItems, baseUrl, version } from './conf'
 import {
-  createStore, initUserData, initServiceData,
+  createStore, initUserData, clearUserData, initServiceData,
   overrideDefaults, StoreSymbol, isValidAccount,
   subscribeGroupChats, subscribeHotlines,
   initializeMessaging
@@ -95,7 +95,6 @@ import {
   getAuthState,
   updateInvitationStatus,
   detectPrivilegesChanged,
-  detectAccountChanged,
   guardMenuItem,
   guardRoute,
   goPage,
@@ -178,11 +177,12 @@ export default {
       () => state.me,
       async (me, mePrev) => {
         overrideDefaults(store, root)
-        if (detectAccountChanged(me, mePrev)) {
+        if (mePrev.id !== me.id || mePrev.valid !== me.valid || (!!mePrev.deletedAt) !== (!!me.deletedAt)) {
           if (isValidAccount(me)) {
             await initUserData(store)
             returnLastRoute(root.$router)
           } else {
+            clearUserData(state)
             await signOut(store)
           }
         }

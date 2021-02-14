@@ -1,7 +1,5 @@
 import { defaults } from '../conf'
-import {
-  findItem, myPriv, isValidAccount, isMemberOf
-} from '../store'
+import { findItem, myPriv, isMemberOf } from '../store'
 import {
   storeRequestedRoute
 } from './localStrage'
@@ -59,10 +57,6 @@ export const detectPrivilegesChanged = (me, groups, groupsPrev) => {
     hasPriv(groupsPrev, 'testers') !== hasPriv(groups, 'testers')
   )
 }
-
-export const detectAccountChanged = (me, mePrev) =>
-  ((!mePrev.id || isValidAccount(mePrev)) && !isValidAccount(me)) ||
-  (!isValidAccount(mePrev) && isValidAccount(me))
 
 export const goPage = router => route => {
   if (!defaults.routeExcludeFromStorage.includes(route.name)) {

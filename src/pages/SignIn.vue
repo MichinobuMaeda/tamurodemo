@@ -89,7 +89,6 @@
 
 <script>
 import { computed, reactive } from '@vue/composition-api'
-import { locales, menuPositions, timezones } from '@/conf'
 import { useStore } from '@/store'
 import {
   authProviders,
@@ -108,7 +107,7 @@ export default {
     DefaultButton,
     LinkButton
   },
-  setup (props, { root }) {
+  setup () {
     const store = useStore()
     const { state, waitFor } = store
     const page = reactive({
@@ -152,10 +151,7 @@ export default {
       resetPassword,
       providers: computed(() => authProviders(store)
         .filter(provider => store.state.service.auth && store.state.service.auth[provider.id.replace(/\./g, '_')])
-      ),
-      locales,
-      menuPositions,
-      timezones
+      )
     }
   }
 }

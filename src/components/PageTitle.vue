@@ -1,5 +1,5 @@
 <template>
-  <div class="text-h2">
+  <div class="text-h2 pt-1">
     <v-icon
       v-if="icon"
       :color="iconColor"
