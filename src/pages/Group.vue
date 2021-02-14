@@ -47,7 +47,7 @@
       </p>
 
       <LinkButton
-        v-for="user in state.users.filter(user => !user.deletedAt && (group.members || []).includes(user.id))" :key="user.id"
+        v-for="user in members" :key="user.id"
         :icon="icon('User')"
         :label="user.name"
         @click="goPageUser(user.id)"
@@ -100,10 +100,10 @@ export default {
     LinkButton,
     Chats
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
-    const { state, icon, waitFor, update, FieldValue } = store
-    const group = computed(() => findItem(store.state.groups, root.$route.params.id))
+    const { state, icon, waitFor, update, FieldValue, priv } = store
+    const group = computed(() => findItem(store.state.groups, state.route && state.route.params.id))
 
     return {
       ...store,
@@ -143,7 +143,8 @@ export default {
             }
           })
         ))
-      })
+      }),
+      members: computed(() => state.users.filter(user => (priv.value.mamanger || priv.value.admin || !(findItem(state.accounts, user.id)).deletedAt) && (group.value.members || []).includes(user.id)))
     }
   }
 }

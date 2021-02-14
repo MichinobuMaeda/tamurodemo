@@ -27,6 +27,7 @@ export const clearUserData = state => {
   state.hotlines = {}
   state.categories = []
   state.invitations = {}
+  state.route = {}
   state.waitProc = null
   return state
 }
@@ -92,13 +93,13 @@ export const initUserData = async ({ db, auth, state }) => {
   await getInitialAndRealtimeData(
     state,
     'accounts',
-    (priv.admin || priv.manager) ? db.collection('accounts') : db.collection('accounts').doc(state.me.id),
+    (priv.adminReal || priv.managerReal) ? db.collection('accounts') : db.collection('accounts').doc(state.me.id),
     state => updateMe({ auth, state }, findItem(state.accounts, state.me.id))
   )
   await getInitialAndRealtimeData(
     state,
     'profiles',
-    priv.manager ? db.collection('profiles') : db.collection('profiles').doc(state.me.id)
+    priv.managerReal ? db.collection('profiles') : db.collection('profiles').doc(state.me.id)
   )
   state.loading = false
 }
@@ -108,7 +109,7 @@ export const getInitialAndRealtimeData = async (state, propName, queryRef, next)
     const priv = myPriv(state)
     return snapshot.docs
       ? snapshot.docs
-        .filter(doc => priv.admin || priv.manager || !doc.data().deletedAt)
+        .filter(doc => priv.adminReal || priv.managerReal || !doc.data().deletedAt)
         .map(doc => castDoc(doc))
       : [castDoc(snapshot)]
   }

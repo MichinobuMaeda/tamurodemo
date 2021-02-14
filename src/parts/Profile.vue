@@ -45,7 +45,7 @@
     </v-row>
     <v-row
       v-else
-      v-for="item in locales.find(item => item.value === state.me.locale).names" :key="item.key"
+      v-for="item in conf.locales.find(item => item.value === state.me.locale).names" :key="item.key"
     >
       <v-col class="title--text col-4">
         <v-icon>{{ picon.a }}</v-icon>
@@ -118,7 +118,7 @@
 
 <script>
 import { reactive, computed } from '@vue/composition-api'
-import { permissions, locales, menuPositions, timezones } from '@/conf'
+import * as conf from '@/conf'
 import { useStore, findItem } from '@/store'
 import EditableItem from '@/components/EditableItem'
 import LinkButton from '@/components/LinkButton'
@@ -142,7 +142,7 @@ export default {
       default: 'm'
     }
   },
-  setup (props, { root }) {
+  setup (props) {
     const store = useStore()
     const { icon, waitFor, update } = store
     const page = reactive({
@@ -159,16 +159,9 @@ export default {
       permittedUsers: user => (user.permittedUsers || [])
         .map(id => findItem(store.state.users, id))
         .filter(user => !user.deletedAt),
-      permissionList: permissions.map(item => ({
-        icon: icon(item.icon),
-        value: item.value,
-        text: root.$i18n.t(item.text)
-      })),
-      picon: permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: icon(cur.icon) }), {}),
+      picon: conf.permissions.reduce((ret, cur) => ({ ...ret, [cur.value]: icon(cur.icon) }), {}),
       waitForUpdateUser: (key, val) => waitFor(() => update(findItem(store.state.users, props.id), { [key]: val })),
-      locales,
-      menuPositions,
-      timezones
+      conf
     }
   }
 }

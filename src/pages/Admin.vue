@@ -55,12 +55,13 @@ export default {
     Authentication,
     Service
   },
-  setup (prop, { root }) {
+  setup () {
     const store = useStore()
+    const { state } = store
 
     return {
       ...store,
-      target: computed(() => root.$route.params ? root.$route.params.target : '')
+      target: computed(() => state.route.params ? state.route.params.target : '')
     }
   }
 }

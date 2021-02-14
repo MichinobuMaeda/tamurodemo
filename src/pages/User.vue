@@ -1,29 +1,29 @@
 <template>
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <div v-if="user.id === state.me.id || priv.manager || priv.admin">
+      <div v-if="id === state.me.id || priv.manager || priv.admin">
         <span class="float-sm-left mt-2 mr-2">{{ $t('Visible for') }}</span>
         <v-chip-group
           v-if="!edit"
           mandatory column
           active-class="info--text"
-          v-model="page.preview"
+          v-model="preview"
         >
-          <v-chip v-for="p in permissionList" :key="p.value">
-            <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
+          <v-chip v-for="p in conf.permissions" :key="p.value">
+            <v-icon>{{ icon(p.icon) }}</v-icon> {{ $t(p.text) }}
           </v-chip>
         </v-chip-group>
         <v-chip
           v-else
-          v-for="p in permissionList" :key="p.value"
+          v-for="p in conf.permissions" :key="p.value"
           outlined class="my-2 mr-2"
         >
-          <v-icon>{{ p.icon }}</v-icon> {{ p.text }}
+          <v-icon>{{ icon(p.icon) }}</v-icon> {{ $t(p.text) }}
         </v-chip>
       </div>
       <v-divider class="my-2" />
       <v-switch
-        v-if="user.id === state.me.id || priv.manager || priv.admin"
+        v-if="id === state.me.id || priv.manager || priv.admin"
         color="primary"
         class="my-0 float-right"
         v-model="edit"
@@ -39,7 +39,7 @@
             :label="$t('Display name')"
             v-model="user.name"
             @save="val => waitFor(() => update(user, { name: val }))"
-            :editable="edit && (priv.manager || user.id === state.me.id)"
+            :editable="edit && (priv.manager || id === state.me.id)"
             :disabled="!!state.waitProc"
           />
         </template>
@@ -53,23 +53,23 @@
 
       <Chats
         class="my-2"
-        :account="account.id"
+        :account="id"
         :height="state.chatPaneHeight"
       />
 
-      <div v-if="(!account.deletedAt) || (edit && priv.manager)">
-        <GroupsOfUser class="mb-2" :id="user.id" :edit="edit" />
-        <Profile :id="user.id" :edit="edit" :preview="preview" />
+      <div v-if="(!account.deletedAt) || priv.manager">
+        <GroupsOfUser class="mb-2" :id="id" :edit="edit" />
+        <Profile :id="id" :edit="edit" :preview="conf.permissions[preview].value" />
       </div>
 
-      <div v-if="edit && priv.manager">
+      <div v-if="priv.manager">
 
         <v-divider class="my-6" />
         <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
         <v-row>
           <v-col class="col-12 col-sm-6">
-            <v-icon>{{ icon(accountStatus(account.id)) }}</v-icon>
-            {{ $t(accountStatus(account.id)) }}
+            <v-icon>{{ icon(accountStatus(id)) }}</v-icon>
+            {{ $t(accountStatus(id)) }}
           </v-col>
           <v-col class="col-12 col-sm-6">
             <v-icon>{{ icon('Sign in') }}</v-icon>
@@ -84,17 +84,17 @@
             :iconProc="icon('Invitation')"
             :labelProc="$t('Invitation')"
             :message="$t('Confirm to invite', { name: user.name })"
-            @confirm="invite(account.id)"
+            @confirm="invite(id)"
             :disabled="!!state.waitProc"
           />
           {{ account.invitedAt ? withTz(account.invitedAt).format('l') : '--/--/--' }}
           {{ account.invitedBy ? `( ${nameOf(account.invitedBy)} )` : '' }}
         </div>
         <v-alert
-          v-if="state.invitations[account.id] && invitationStatus === 'Sent'"
+          v-if="state.invitations[id] && invitationStatus === 'Sent'"
           type="info" outlined dense class="my-2" style="word-break: break-all;"
         >
-          {{ $t('Send invitation', { url: invitationUrl(state, $router, account.id) }) }}
+          {{ $t('Send invitation', { url: invitationUrl(state, $router, id) }) }}
         </v-alert>
 
         <v-row>
@@ -105,7 +105,7 @@
               :iconProc="icon('Reset all sign-in settings')"
               :labelProc="$t('Reset all sign-in settings')"
               :message="$t('Confirm to reset all sign-in settings', { name: user.name })"
-              @confirm="resetAllSignInSettings(account.id)"
+              @confirm="resetAllSignInSettings(id)"
               :disabled="!!state.waitProc"
             />
           </v-col>
@@ -162,8 +162,8 @@
 </template>
 
 <script>
-import { reactive, computed, watch } from '@vue/composition-api'
-import { permissions } from '@/conf'
+import { computed, ref, watch } from '@vue/composition-api'
+import * as conf from '@/conf'
 import { useStore, findItem } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import PageTitle from '../components/PageTitle'
@@ -183,37 +183,37 @@ export default {
     Profile,
     Chats
   },
-  setup (props, { root }) {
+  setup () {
     const store = useStore()
-    const { waitFor, icon, goPageUser } = store
-    const page = reactive({
-      preview: 2
-    })
+    const { state, waitFor, goPageUser } = store
 
-    watch(() => root.$route, route => { page.preview = 2 })
+    const preview = ref(2)
+    const id = computed(() => state.route.params ? state.route.params.id : '')
+    const account = computed(() => findItem(store.state.accounts, id.value))
+    const user = computed(() => findItem(store.state.users, id.value))
+    const profile = computed(() => findItem(store.state.profiles, id.value))
+
+    watch(() => state.route, () => { preview.value = 2 })
 
     return {
-      page,
       ...store,
-      account: computed(() => findItem(store.state.accounts, root.$route.params.id)),
-      user: computed(() => findItem(store.state.users, root.$route.params.id)),
-      profile: computed(() => findItem(store.state.profiles, root.$route.params.id)),
+      id,
+      account,
+      user,
+      profile,
       edit: computed({
-        get: () => root.$route.params.mode === 'edit',
-        set: edit => goPageUser(root.$route.params.id, edit)
+        get: () => state.route.params && state.route.params.mode === 'edit',
+        set: edit => goPageUser(id.value, edit)
       }),
-      permissionList: permissions.map(item => ({
-        icon: icon(item.icon),
-        value: item.value,
-        text: root.$i18n.t(item.text)
-      })),
-      preview: computed(() => permissions[page.preview].value),
+      conf,
+      preview,
       invitationStatus: computed(() => {
-        const account = findItem(store.state.accounts, root.$route.params.id)
-        return account.invitedAt
-          ? (account.signedInAt && account.invitedAt.getTime() < account.signedInAt.getTime())
+        const invitedAt = account.value.invitedAt ? account.value.invitedAt.getTime() : 0
+        const signedInAt = account.value.signedInAt ? account.value.signedInAt.getTime() : 0
+        return invitedAt
+          ? (signedInAt && invitedAt < signedInAt)
             ? 'Accepted'
-            : (account.invitedAt.getTime() >= (new Date().getTime() - store.state.service.conf.invitationExpirationTime))
+            : (invitedAt >= (new Date().getTime() - state.service.conf.invitationExpirationTime))
               ? 'Sent'
               : 'Timeout'
           : ''

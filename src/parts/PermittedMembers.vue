@@ -110,7 +110,7 @@ export default {
   props: {
     id: String
   },
-  setup (props, { root }) {
+  setup (props) {
     const store = useStore()
     const { state, waitFor, update } = store
     const page = reactive({

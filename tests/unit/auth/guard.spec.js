@@ -109,6 +109,12 @@ test('guardRoute()' +
       { meta: { privs: ['user'] } }
     ]
   }
+  router.match = route => ({
+    ...route,
+    matched: [
+      { meta: { privs: route.name === 'name1' ? ['user'] : ['manager'] } }
+    ]
+  })
 
   // run #1
   guardRoute(router, route, state)
@@ -345,33 +351,58 @@ test('goPage()' +
   ' should store the geven route except conf.defaults.routeExcludeFromStorage' +
   ' and push to router.', async () => {
   // prepare #1
-  const names = ['name1', 'name2']
-  const org = defaults.routeExcludeFromStorage
-  defaults.routeExcludeFromStorage = names
-  names.forEach(name => {
-    router.clear()
-    window.clear()
-
-    // run #1
-    goPage(router)({ name })
-
-    // evaluate #1
-    expect(router.data.push).toEqual({ name })
-    expect(restoreRequestedRoute()).toBeNull()
+  defaults.routeExcludeFromStorage = ['name2']
+  const state = {
+    loading: false,
+    me: {
+      id: 'id01',
+      valid: true
+    },
+    groups: []
+  }
+  router.match = route => ({
+    ...route,
+    matched: [
+      { meta: { privs: route.name === 'name3' ? ['manager'] : ['user'] } }
+    ]
   })
+  window.clear()
 
-  // clear #1
-  defaults.routeExcludeFromStorage = org
+  // run #1
+  goPage(state, router)({ name: 'name1' })
+
+  // evaluate #1
+  expect(router.data.push).toEqual({ name: 'name1' })
+  expect(restoreRequestedRoute()).toEqual({ name: 'name1' })
 
   // prepare #2
-  router.clear()
   window.clear()
 
   // run #2
-  goPage(router)({ name: 'testRouteName' })
-  router.onRejected()
+  goPage(state, router)({ name: 'name2' })
 
   // evaluate #2
+  expect(router.data.push).toEqual({ name: 'name2' })
+  expect(restoreRequestedRoute()).toBeNull()
+
+  // prepare #3
+  window.clear()
+
+  // run #3
+  goPage(state, router)({ name: 'name3' })
+
+  // evaluate #3
+  expect(router.data.push).toEqual({ name: 'top' })
+  expect(restoreRequestedRoute()).toBeNull()
+
+  // prepare #4
+  window.clear()
+
+  // run #4
+  goPage(state, router)({ name: 'testRouteName' })
+  router.onRejected()
+
+  // evaluate #4
   expect(router.data.push).toEqual({ name: 'testRouteName' })
   expect(restoreRequestedRoute()).toEqual({ name: 'testRouteName' })
 })

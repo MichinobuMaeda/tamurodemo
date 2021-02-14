@@ -115,6 +115,7 @@ test('clearUserData()' +
     hotlines: {},
     categories: [],
     invitations: {},
+    route: {},
     waitProc: null
   })
 })

@@ -134,7 +134,7 @@ export default {
       groupsOfCategory,
       uncategorizedGroups,
       deletedGroups,
-      polidesccy: computed({
+      desc: computed({
         get: () => state.service.conf && state.service.conf.desc,
         set: str => waitFor(() => update(state.service.conf, { desc: str }))
       })

@@ -127,7 +127,7 @@ export default {
     const store = createStore(firebase, root)
     provide(StoreSymbol, store)
     overrideDefaults(store, root)
-    store.goPage = goPage(root.$router)
+    store.goPage = goPage(store.state, root.$router)
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
     store.goPageUser = (id, edit = false) => store.goPage({ name: 'user', params: { id, mode: (edit ? 'edit' : null) } })
     store.standalone = window.matchMedia('(display-mode: standalone)').matches
@@ -143,7 +143,10 @@ export default {
     watch(
       () => root.$route,
       () => {
-        guardRoute(root.$router, root.$route, state)
+        if (guardRoute(root.$router, root.$route, state)) {
+          const { name, params } = root.$route
+          state.route = { name, params }
+        }
       }
     )
 

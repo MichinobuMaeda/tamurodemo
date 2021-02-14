@@ -132,7 +132,7 @@
               </v-col>
             </v-row>
             <v-alert dense outlined text type="warning" v-if="page.setEmailMessage">
-              {{ page.setEmailMessage }}
+              {{ $t(page.setEmailMessage) }}
             </v-alert>
             <div class="text-right">
               <DefaultButton
@@ -176,11 +176,11 @@ export default {
     SelectAuthProviders,
     Chats
   },
-  setup (props, { root }) {
+  setup (props) {
     const store = useStore()
-    const { waitFor } = store
+    const { state, waitFor } = store
     const page = reactive({
-      invitation: root.$route.params.invitation || '',
+      invitation: (state.route.params && state.route.params.invitation) ? state.route.params.invitation : '',
       error: '',
       setEmail: false,
       setEmailMessage: '',
@@ -190,13 +190,13 @@ export default {
       confirmPassword: '',
       showNewPassword: false,
       showConfirmPassword: false,
-      preview: !root.$route.params.invitation
+      preview: !state.route.params || !state.route.params.invitation
     })
 
     watch(
-      () => root.$route,
-      route => {
-        page.invitation = route.params.invitation || ''
+      () => state.route,
+      () => {
+        page.invitation = (state.route.params && state.route.params.invitation) ? state.route.params.invitation : ''
       }
     )
 
@@ -217,9 +217,9 @@ export default {
           await setEmailAndPasswordWithInvitation(store, page)
           page.newEmail = ''
           page.confirmEmail = ''
-          page.setEmailMessage = root.$i18n.t('Completed')
+          page.setEmailMessage = 'Completed'
         } catch (e) {
-          page.setEmailMessage = root.$i18n.t('System error')
+          page.setEmailMessage = 'System error'
         } finally {
           page.newPassword = ''
           page.confirmPassword = ''

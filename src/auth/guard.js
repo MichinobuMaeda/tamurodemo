@@ -29,13 +29,14 @@ export const compareRoutes = (r1, r2) => {
 
 export const guardRoute = (router, route, state) => {
   const priv = myPriv(state)
-  if (state.loading || !route || !route.name || routePermission(priv, route)) {
-    // to do nothing
+  if (state.loading || !route || !route.name || routePermission(priv, router.match(route))) {
+    return true
   } else {
     const target = priv.user ? { name: 'top' } : { name: 'signin' }
     if (!compareRoutes(target, route)) {
       router.push(target).catch(() => {})
     }
+    return false
   }
 }
 
@@ -58,9 +59,11 @@ export const detectPrivilegesChanged = (me, groups, groupsPrev) => {
   )
 }
 
-export const goPage = router => route => {
-  if (!defaults.routeExcludeFromStorage.includes(route.name)) {
-    storeRequestedRoute(route)
+export const goPage = (state, router) => route => {
+  if (guardRoute(router, route, state)) {
+    if (!defaults.routeExcludeFromStorage.includes(route.name)) {
+      storeRequestedRoute(route)
+    }
+    router.push(route).catch(() => {})
   }
-  router.push(route).catch(() => {})
 }
