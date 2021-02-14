@@ -1,13 +1,6 @@
 <template>
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <v-switch
-        v-if="priv.manager || priv.admin"
-        color="primary"
-        class="float-right my-0"
-        v-model="edit"
-        :label="$t('Edit')"
-      />
       <PageTitle
         text-color="h2--text"
         icon-color="h2"
@@ -22,12 +15,10 @@
       />
 
       <EditableItem
-        v-if="state.service.conf && (edit || (state.service.conf.desc && state.service.conf.desc.data))"
         type="formatted-text"
         :label="$t('Description')"
-        v-model="state.service.conf.desc"
-        @save="val => waitFor(() => update(state.service.conf, { desc: val }))"
-        :editable="edit && priv.manager"
+        v-model="desc"
+        :editable="priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -47,7 +38,7 @@
         />
       </div>
 
-      <div v-if="edit && (priv.manager || priv.admin)">
+      <div v-if="priv.manager || priv.admin">
 
         <v-divider class="my-4" />
 
@@ -96,7 +87,7 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 import { useStore } from '../store'
 import PageTitle from '../components/PageTitle'
 import EditableItem from '../components/EditableItem'
@@ -115,7 +106,7 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { state } = store
+    const { state, waitFor, update } = store
 
     const groupsOfCategory = category => (category.groups || [])
       .map(id => state.groups.find(group => group.id === id))
@@ -139,11 +130,14 @@ export default {
     )
 
     return {
-      edit: ref(false),
       ...store,
       groupsOfCategory,
       uncategorizedGroups,
-      deletedGroups
+      deletedGroups,
+      polidesccy: computed({
+        get: () => state.service.conf && state.service.conf.desc,
+        set: str => waitFor(() => update(state.service.conf, { desc: str }))
+      })
     }
   }
 }

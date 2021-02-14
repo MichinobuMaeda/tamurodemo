@@ -1,13 +1,6 @@
 <template>
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <v-switch
-        v-if="priv.manager || priv.admin"
-        color="primary"
-        class="float-right my-0"
-        v-model="edit"
-        :label="$t('Edit')"
-      />
       <PageTitle
         :text-color="group.deletedAt ? 'grey--text' : 'h2--text'"
         :icon-color="group.deletedAt ? 'grey' : 'h2'"
@@ -16,9 +9,8 @@
         <template v-slot:title>
           <EditableItem
             :label="$t('Group name')"
-            v-model="group.name"
-            @save="val => waitFor(() => update(group, { name: val }))"
-            :editable="edit && priv.manager"
+            v-model="name"
+            :editable="priv.manager"
             :disabled="!!state.waitProc"
           />
         </template>
@@ -32,11 +24,11 @@
       />
 
       <EditableItem
+        v-if="priv.manager || (group.members || []).includes(state.me.id) || (group.desc && group.desc.data)"
         type="formatted-text"
         :label="$t('Description')"
-        v-model="group.desc"
-        @save="val => waitFor(() => update(group, { desc: val }))"
-        :editable="edit && (priv.manager || (group.members || []).includes(state.me.id))"
+        v-model="desc"
+        :editable="priv.manager || (group.members || []).includes(state.me.id)"
         :disabled="!!state.waitProc"
       />
 
@@ -45,7 +37,7 @@
         :label="$t('Categories')"
         :items="categoryList"
         v-model="categories"
-        :editable="edit && priv.manager"
+        :editable="priv.manager"
         :disabled="!!state.waitProc"
       />
 
@@ -61,7 +53,7 @@
         @click="goPageUser(user.id)"
       />
 
-      <div v-if="edit && (priv.manager || priv.admin)">
+      <div v-if="priv.manager">
         <v-divider class="my-6" />
 
         <ConfirmButton
@@ -91,7 +83,7 @@
 </template>
 
 <script>
-import { ref, computed } from '@vue/composition-api'
+import { computed } from '@vue/composition-api'
 import { useStore, findItem } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import EditableItem from '@/components/EditableItem'
@@ -110,47 +102,47 @@ export default {
   },
   setup (prop, { root }) {
     const store = useStore()
-    const { icon, waitFor, update, FieldValue } = store
-
-    const getCategories = (state, id) => state.categories
-      .filter(item => (item.groups || []).includes(id))
-      .map(item => item.id)
-
-    const setCategories = (state, id) => categories => waitFor(
-      async () => Promise.all(
-        state.categories.map(async c => {
-          if ((categories || []).includes(c.id)) {
-            if (!(c.groups || []).includes(id)) {
-              await update(c, {
-                groups: FieldValue.arrayUnion(id)
-              })
-            }
-          } else {
-            if ((c.groups || []).includes(id)) {
-              await update(c, {
-                groups: FieldValue.arrayRemove(id)
-              })
-            }
-          }
-        })
-      )
-    )
+    const { state, icon, waitFor, update, FieldValue } = store
+    const group = computed(() => findItem(store.state.groups, root.$route.params.id))
 
     return {
-      edit: ref(false),
       ...store,
-      group: computed(() => findItem(store.state.groups, root.$route.params.id)),
-      categoryList: computed(() => store.state.categories
-        .map(item => ({
-          icon: icon('Category'),
-          color: 'h3',
-          text: item.name,
-          value: item.id
-        }))
-      ),
+      group,
+      name: computed({
+        get: () => group.value.name,
+        set: val => waitFor(() => update(group.value, { name: val }))
+      }),
+      desc: computed({
+        get: () => group.value.desc,
+        set: val => waitFor(() => update(group.value, { desc: val }))
+      }),
+      categoryList: computed(() => state.categories.map(item => ({
+        icon: icon('Category'),
+        color: 'h3',
+        text: item.name,
+        value: item.id
+      }))),
       categories: computed({
-        get: () => getCategories(store.state, root.$route.params.id),
-        set: val => setCategories(store.state, root.$route.params.id)(val)
+        get: () => state.categories
+          .filter(item => (item.groups || []).includes(group.value.id))
+          .map(item => item.id),
+        set: val => waitFor(() => Promise.all(
+          state.categories.map(async c => {
+            if ((val || []).includes(c.id)) {
+              if (!(c.groups || []).includes(group.value.id)) {
+                await update(c, {
+                  groups: FieldValue.arrayUnion(group.value.id)
+                })
+              }
+            } else {
+              if ((c.groups || []).includes(group.value.id)) {
+                await update(c, {
+                  groups: FieldValue.arrayRemove(group.value.id)
+                })
+              }
+            }
+          })
+        ))
       })
     }
   }

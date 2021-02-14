@@ -153,14 +153,6 @@ const setupService = async () => {
     createdAt: new Date(),
     updatedAt: new Date()
   })
-  await db.collection('categories').add({
-    seq: 2,
-    name: 'Deleted',
-    groups: [group1.id],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: new Date()
-  })
 
   return null
 }
