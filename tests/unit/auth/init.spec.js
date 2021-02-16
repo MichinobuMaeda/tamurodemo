@@ -46,19 +46,30 @@ test('getAuthState()' +
 
 test('getAuthState()' +
   ' should set callback to auth.onAuthStateChanged() if URL is not sign-in-with-email-link.', async () => {
-  // prepare #1
+  // prepare #0
   auth.data.isSignInWithEmailLink = false
   const state = {}
   const user = {
     uid: 'id01'
   }
 
-  // run #1
+  // run #0
   await getAuthState({ db, auth, state })
 
-  // evaluate #1
+  // evaluate #0
   const cb = auth.data.onAuthStateChanged
   expect(cb).toBeInstanceOf(Function)
+
+  // prepare #1
+  state.me = { id: user.uid, valid: true }
+  state.loading = true
+
+  // run #1
+  await cb(user)
+
+  // evaluate #1
+  expect(state.me).toEqual({})
+  expect(state.loading).toBeFalsy()
 
   // prepare #2
   await db.collection('accounts').doc(user.uid).set({ valid: true })

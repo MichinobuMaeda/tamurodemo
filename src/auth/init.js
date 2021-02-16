@@ -11,7 +11,12 @@ export const getAuthState = async ({ db, auth, state }) => {
   } else {
     auth.onAuthStateChanged(async user => {
       if (user) {
-        await initMe({ db, auth, state }, user.uid)
+        try {
+          await initMe({ db, auth, state }, user.uid)
+        } catch (e) {
+          state.me = {}
+          state.loading = false
+        }
       } else {
         state.me = {}
         state.loading = false
