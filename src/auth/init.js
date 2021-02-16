@@ -16,6 +16,7 @@ export const getAuthState = async ({ db, auth, state }) => {
         } catch (e) {
           state.me = {}
           state.loading = false
+          signOut({ auth })
         }
       } else {
         state.me = {}
