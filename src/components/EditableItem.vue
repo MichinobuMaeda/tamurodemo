@@ -1,6 +1,14 @@
 <template>
   <span>
 
+    <MiniButton
+      v-if="editable"
+      class="ml-1 float-right"
+      :icon="iconEdit || defaultIcons.Edit"
+      @click="() => disabled ? null : onEdit()"
+      :disabled="disabled"
+    />
+
     <span v-if="type === 'linked-chips'">
       <LinkButton
         v-for="(v, index) in (value || [])" :key="index"
@@ -32,24 +40,24 @@
     <span v-else-if="type === 'select' && items[0].value">
       {{ (items.find(item => item.value === value) || {}).text }}
     </span>
-    <span v-else-if="!['formatted-text', 'textarea'].includes(type)">
+    <span v-else-if="!['formatted-text', 'textarea'].includes(type) && value">
       {{ value }}
     </span>
-
-    <MiniButton
-      v-if="editable"
-      :class="'ml-1' + (['formatted-text', 'textarea'].includes(type) ? ' float-right' : '')"
-      :icon="iconEdit || defaultIcons.Edit"
-      @click="() => disabled ? null : onEdit()"
-      :disabled="disabled"
-    />
-
+    <span v-else-if="!['formatted-text', 'textarea'].includes(type) && !value" class="deleted--text">
+      {{ placeholder }}
+    </span>
     <div
-      v-if="type === 'formatted-text'"
+      v-else-if="type === 'formatted-text' && value && value.data"
       class="formatted-text"
       v-html="formatted()"
     ></div>
-    <div v-if="type === 'textarea'">
+    <div v-else-if="type === 'formatted-text'" class="deleted--text">
+      {{ placeholder }}
+    </div>
+    <div v-else-if="type === 'textarea'">
+      <div v-if="!value" class="deleted--text">
+        {{ placeholder }}
+      </div>
       <div v-for="(line, index) in (value || '').split(/\n/)" :key="index">
         {{ line || '\u200C' }}
       </div>
@@ -118,11 +126,14 @@
             v-else-if="['textarea'].includes(type)"
             outlined class="mt-2"
             v-model="state.value"
+            :placeholder="placeholder"
             :rules="rules"
           />
           <v-text-field
             v-else
+            :type="type"
             v-model="state.value"
+            :placeholder="placeholder"
             :rules="rules"
           />
 
@@ -186,6 +197,7 @@ export default {
     items: Array,
     rules: Array,
     label: String,
+    placeholder: String,
     editable: {
       type: Boolean,
       default: true

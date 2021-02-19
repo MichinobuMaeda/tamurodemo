@@ -29,6 +29,7 @@
         <v-col class="title--text col-4 text-right">{{ $t('Notification expiration') }}</v-col>
         <v-col class="col-4">
           <EditableItem
+            type="number"
             :label="$t('Notification expiration')"
             v-model="notificationExpirationTime"
             :rules="[ruleNotNegative]"
@@ -44,6 +45,7 @@
         <v-col class="title--text col-4 text-right">{{ $t('Notification pause repetition') }}</v-col>
         <v-col class="col-4">
           <EditableItem
+            type="number"
             :label="$t('Notification pause repetition')"
             v-model="notificationPauseRepetitionTime"
             :rules="[ruleNotNegative]"
@@ -63,6 +65,19 @@
             v-model="notificationIconPath"
             :rules="[ruleRequired]"
             :editable="me.priv.admin"
+            :disabled="!!state.waitProc"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="title--text col-4 text-right">{{ $t('Max count of addresses') }}</v-col>
+        <v-col class="col-8">
+          <EditableItem
+            type="number"
+            :label="$t('Max count of addresses')"
+            v-model="profileAddressCount"
+            :rules="[rulePositive]"
+            :editable="me.priv.manager"
             :disabled="!!state.waitProc"
           />
         </v-col>
@@ -109,15 +124,19 @@ export default {
       }),
       notificationExpirationTime: computed({
         get: () => state.service.conf.notificationExpirationTime,
-        set: str => waitFor(() => update(state.service.conf, { notificationExpirationTime: str }))
+        set: str => waitFor(() => update(state.service.conf, { notificationExpirationTime: Number(str) }))
       }),
       notificationPauseRepetitionTime: computed({
         get: () => state.service.conf.notificationPauseRepetitionTime,
-        set: str => waitFor(() => update(state.service.conf, { notificationPauseRepetitionTime: str }))
+        set: str => waitFor(() => update(state.service.conf, { notificationPauseRepetitionTime: Number(str) }))
       }),
       notificationIconPath: computed({
         get: () => state.service.conf.notificationIconPath,
         set: str => waitFor(() => update(state.service.conf, { notificationIconPath: str }))
+      }),
+      profileAddressCount: computed({
+        get: () => state.service.conf.profileAddressCount,
+        set: str => waitFor(() => update(state.service.conf, { profileAddressCount: Number(str) }))
       }),
       apiKey: computed({
         get: () => state.service.conf.apiKey,

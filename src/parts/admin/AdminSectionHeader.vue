@@ -4,7 +4,7 @@
       class="h3--text text-h3 my-2 pa-2"
       @click="goPage(current === target ? { name: 'admin' } : { name: 'admin', params: { target: target } })"
     >
-      <v-icon color="h3">{{ sectionIcon }}</v-icon>
+      <v-icon color="h3" class="mr-1">{{ sectionIcon }}</v-icon>
       {{ label }}
       <v-spacer />
       <v-icon>{{ conf.icon(current === target ? 'Shrink' : 'Expand') }}</v-icon>

@@ -27,6 +27,7 @@
         v-if="me.priv.manager || (group.members || []).includes(me.id) || (group.desc && group.desc.data)"
         type="formatted-text"
         :label="$t('Description')"
+        :placeholder="$t('Introduction of the group')"
         v-model="desc"
         :editable="me.priv.manager || (group.members || []).includes(me.id)"
         :disabled="!!state.waitProc"
@@ -53,30 +54,33 @@
         @click="goPageUser(user.id)"
       />
 
-      <div v-if="me.priv.manager">
-        <v-divider class="my-6" />
-
-        <ConfirmButton
-          v-if="!group.deletedAt"
-          type="error"
-          :title="$t('Delete item', { name: group.name })"
-          :iconProc="conf.icon('Delete')"
-          :labelProc="$t('Delete')"
-          :message="$t('Confirm deletion', { name: group.name })"
-          @confirm="() => waitFor(() => remove(group))"
-          :disabled="!!state.waitProc"
-        />
-        <ConfirmButton
-          v-else
-          type="warning"
-          :title="$t('Restore item', { name: group.name })"
-          :iconProc="conf.icon('Restore')"
-          :labelProc="$t('Restore')"
-          :message="$t('Confirm restore', { name: group.name })"
-          @confirm="() => waitFor(() => restore(group))"
-          :disabled="!!state.waitProc"
-        />
-      </div>
+      <v-card v-if="me.priv.manager" class="mt-4">
+        <v-card-title class="pa-0">
+          <v-alert type="info" text dense width="100%">{{ $t('Administrators only') }}</v-alert>
+        </v-card-title>
+        <v-card-text>
+          <ConfirmButton
+            v-if="!group.deletedAt"
+            type="error"
+            :title="$t('Delete item', { name: group.name })"
+            :iconProc="conf.icon('Delete')"
+            :labelProc="$t('Delete')"
+            :message="$t('Confirm deletion', { name: group.name })"
+            @confirm="() => waitFor(() => remove(group))"
+            :disabled="!!state.waitProc"
+          />
+          <ConfirmButton
+            v-else
+            type="warning"
+            :title="$t('Restore item', { name: group.name })"
+            :iconProc="conf.icon('Restore')"
+            :labelProc="$t('Restore')"
+            :message="$t('Confirm restore', { name: group.name })"
+            @confirm="() => waitFor(() => restore(group))"
+            :disabled="!!state.waitProc"
+          />
+        </v-card-text>
+      </v-card>
 
     </v-col>
   </v-row>

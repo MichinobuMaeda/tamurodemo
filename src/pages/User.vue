@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <div v-if="id === me.id || me.priv.manager || me.priv.admin">
+      <div v-if="id === me.id || me.priv.manager">
         <span class="float-sm-left mt-2 mr-2">{{ $t('Visible for') }}</span>
         <v-chip-group
           v-if="!edit"
@@ -23,7 +23,7 @@
       </div>
       <v-divider class="my-2" />
       <v-switch
-        v-if="id === me.id || me.priv.manager || me.priv.admin"
+        v-if="id === me.id || me.priv.manager"
         color="primary"
         class="my-0 float-right"
         v-model="edit"

@@ -10,6 +10,7 @@ const initialData = ts => [
       notificationExpirationTime: 10 * 24 * 3600 * 1000,
       notificationPauseRepetitionTime: 3 * 3600 * 1000,
       notificationIconPath: '/img/icons/apple-touch-icon-120x120.png',
+      profileAddressCount: 3,
       desc: {
         type: 'markdown',
         data: ''

@@ -17,6 +17,7 @@
       <EditableItem
         type="formatted-text"
         :label="$t('Description')"
+        :placeholder="$t('Introduction of the site')"
         v-model="desc"
         :editable="me.priv.manager"
         :disabled="!!state.waitProc"
@@ -38,49 +39,47 @@
         />
       </div>
 
-      <div v-if="me.priv.manager || me.priv.admin">
+      <v-card v-if="me.priv.manager || me.priv.admin" class="mt-4">
+        <v-card-title class="pa-0">
+          <v-alert type="info" text dense width="100%">{{ $t('Administrators only') }}</v-alert>
+        </v-card-title>
+        <v-card-text>
+          <div
+            v-if="uncategorizedGroups.length"
+            class="my-2"
+          >
+            <v-chip color="h3" outlined>
+              <v-icon>{{ conf.icon('Category') }}</v-icon>
+              {{ $t('Uncategorized') }}
+            </v-chip>
+            <LinkButton
+              v-for="group in uncategorizedGroups" :key="group.id"
+              :icon="conf.icon('Group')"
+              :label="group.name"
+              @click="goPageGroup(group.id)"
+            />
+          </div>
 
-        <v-divider class="my-4" />
+          <div
+            v-if="deletedGroups.length"
+            class="my-2"
+          >
+            <v-chip color="h3" outlined>
+              <v-icon>{{ conf.icon('Category') }}</v-icon>
+              {{ $t('Deleted groups') }}
+            </v-chip>
+            <LinkButton
+              v-for="group in deletedGroups" :key="group.id"
+              :icon="conf.icon('Group')"
+              :label="group.name"
+              @click="goPageGroup(group.id)"
+            />
+          </div>
 
-        <v-alert type="info" text dense>{{ $t('Administrators only') }}</v-alert>
+          <CreateGroup v-if="me.priv.manager" class="mt-4" />
 
-        <div
-          v-if="uncategorizedGroups.length"
-          class="my-2"
-        >
-          <v-chip color="h3" outlined>
-            <v-icon>{{ conf.icon('Category') }}</v-icon>
-            {{ $t('Uncategorized') }}
-          </v-chip>
-          <LinkButton
-            v-for="group in uncategorizedGroups" :key="group.id"
-            :icon="conf.icon('Group')"
-            :label="group.name"
-            @click="goPageGroup(group.id)"
-          />
-        </div>
-
-        <div
-          v-if="deletedGroups.length"
-          class="my-2"
-        >
-          <v-chip color="h3" outlined>
-            <v-icon>{{ conf.icon('Category') }}</v-icon>
-            {{ $t('Deleted groups') }}
-          </v-chip>
-          <LinkButton
-            v-for="group in deletedGroups" :key="group.id"
-            :icon="conf.icon('Group')"
-            :label="group.name"
-            @click="goPageGroup(group.id)"
-          />
-        </div>
-
-        <v-divider class="my-4" />
-
-        <CreateGroup />
-
-      </div>
+        </v-card-text>
+      </v-card>
 
     </v-col>
   </v-row>
