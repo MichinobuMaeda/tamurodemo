@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <span>
     <DefaultButton
       color="primary"
       :icon="conf.icon('For permitted')"
       :label="$t('Close members')"
-      @click="onEdit(groups, users)"
+      @click="onEdit()"
     />
     <v-dialog
       max-width="640px"
@@ -94,11 +94,11 @@
 
       </v-card>
     </v-dialog>
-  </div>
+  </span>
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
+import { reactive } from '@vue/composition-api'
 import { useStore, sortedGroups } from '@/store'
 import DefaultButton from '@/components/DefaultButton'
 
@@ -112,7 +112,7 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { state, waitFor, update, profile } = store
+    const { state, waitFor, update, user, profile } = store
     const page = reactive({
       dialog: false,
       groups: [],
@@ -123,29 +123,29 @@ export default {
     return {
       ...store,
       page,
-      groups: computed(() => sortedGroups(state)
-        .filter(group => group.id !== 'managers')
-        .map(group => ({
-          ...group,
-          checked: (profile(props.id).permittedGroups || []).includes(group.id)
-        }))
-      ),
-      users: computed(() => state.users
-        .map(item => ({
-          ...item,
-          checked: item.id !== props.id && (profile(props.id).permittedUsers || []).includes(item.id)
-        }))
-      ),
-      onEdit: (groups, users) => {
+      onEdit: () => {
         page.dialog = true
-        page.groups = [...groups]
-        page.users = [...users]
+        page.groups = sortedGroups(state)
+          .filter(group => group.id !== 'managers')
+          .map(group => ({
+            ...group,
+            checked: (profile(props.id).permittedGroups || []).includes(group.id)
+          }))
+        page.users = state.users
+          .map(item => ({
+            ...item,
+            checked: item.id !== props.id && (profile(props.id).permittedUsers || []).includes(item.id)
+          }))
       },
       onSave: async (groups, users) => {
-        await waitFor(() => update(profile(props.id), {
-          permittedGroups: groups.filter(item => item.checked).map(item => item.id),
-          permittedUsers: users.filter(item => item.checked).map(item => item.id)
-        }))
+        await waitFor(async () => {
+          const ts = new Date()
+          await update(user(props.id), {}, ts)
+          await update(profile(props.id), {
+            permittedGroups: groups.filter(item => item.checked).map(item => item.id),
+            permittedUsers: users.filter(item => item.checked).map(item => item.id)
+          }, ts)
+        })
         page.dialog = false
       }
     }
