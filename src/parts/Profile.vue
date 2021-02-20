@@ -26,25 +26,25 @@
         {{ $t('User name') }}
       </v-col>
       <v-col class="col-8" v-if="/^ja_/.test(me.locale)">
-        {{ user(id).lastName }}
-        <span v-if="user(id).previousName">
-          ( {{ user(id).previousName }} )
+        {{ profile(id).lastName }}
+        <span v-if="profile(id).previousName">
+          ( {{ profile(id).previousName }} )
         </span>
-        {{ user(id).firstName }}
+        {{ profile(id).firstName }}
       </v-col>
       <v-col class="col-8" v-else>
-        {{ user(id).lastName }},
-        {{ user(id).firstName }}
-        <span v-if="user(id).previousName">
-          ( {{ $t('Previous name') }}: {{ user(id).previousName }} )
+        {{ profile(id).lastName }},
+        {{ profile(id).firstName }}
+        <span v-if="profile(id).previousName">
+          ( {{ $t('Previous name') }}: {{ profile(id).previousName }} )
         </span>
       </v-col>
-      <v-col class="title--text col-4" v-if="user(id).fullName">
+      <v-col class="title--text col-4" v-if="profile(id).fullName">
         <v-icon>{{ conf.icon(picon.a) }}</v-icon>
         {{ 'Full name' }}
       </v-col>
-      <v-col class="col-8" v-if="user(id).fullName">
-        {{ user(id).fullName }}
+      <v-col class="col-8" v-if="profile(id).fullName">
+        {{ profile(id).fullName }}
       </v-col>
     </v-row>
     <v-row
@@ -59,8 +59,8 @@
         <EditableItem
           :label="item.label"
           :placeholder="item.placeholder"
-          v-model="user(id)[item.key]"
-          @save="val => waitFor(() => update(user(id), { [item.key]: val }))"
+          v-model="profile(id)[item.key]"
+          @save="val => setProfile(item.key, val)"
           :disabled="!!state.waitProc"
         />
       </v-col>
@@ -76,7 +76,8 @@
           <EditableItem
             type="textarea"
             :label="$t('Self‐introduction')"
-            v-model="desc"
+            v-model="profile(id).desc"
+            @save="val => setProfile('desc', val)"
             :editable="edit"
             :disabled="!!state.waitProc"
           />
@@ -94,7 +95,8 @@
           <EditableItem
             type="textarea"
             :label="$t('Message for close members')"
-            v-model="descForPermitted"
+            v-model="profile(id).descForPermitted"
+            @save="val => setProfile('descForPermitted', val)"
             :editable="edit"
             :disabled="!!state.waitProc"
           />
@@ -112,7 +114,8 @@
           <EditableItem
             type="textarea"
             :label="$t('Note for managers')"
-            v-model="descForManagers"
+            v-model="profile(id).descForManagers"
+            @save="val => setProfile('descForManagers', val)"
             :editable="edit"
             :disabled="!!state.waitProc"
           />
@@ -146,7 +149,7 @@
               :label="item.label"
               :placeholder="item.placeholder"
               v-model="profile(id)[item.key]"
-              @save="val => waitFor(() => update(profile(id), { [item.key]: val }))"
+              @save="val => setProfile(item.key, val)"
               :editable="edit"
               :disabled="!!state.waitProc"
             />
@@ -185,7 +188,7 @@
                 :label="item.label"
                 :placeholder="item.placeholder"
                 v-model="profile(id)[item.key]"
-                @save="val => waitFor(() => update(profile(id), { [item.key]: val }))"
+                @save="val => setProfile(item.key, val)"
                 :editable="edit"
                 :disabled="!!state.waitProc"
               />
@@ -241,25 +244,22 @@ export default {
         .filter(id => !account(id).deletedAt)
         .map(id => user(id))),
       picon,
-      desc: computed({
-        get: () => profile(props.id).desc,
-        set: val => waitFor(() => update(profile(props.id), { desc: val }))
+      setProfile: (key, val) => waitFor(async () => {
+        const ts = new Date()
+        await update(user(props.id), {}, ts)
+        await update(profile(props.id), { [key]: val }, ts)
       }),
-      descForPermitted: computed({
-        get: () => profile(props.id).descForPermitted,
-        set: val => waitFor(() => update(profile(props.id), { descForPermitted: val }))
-      }),
-      descForManagers: computed({
-        get: () => profile(props.id).descForManagers,
-        set: val => waitFor(() => update(profile(props.id), { descForManagers: val }))
-      }),
-      switchPermission: key => update(profile(props.id), {
-        [`${key}_p`]: profile(props.id)[`${key}_p`] === 'c'
-          ? 'a'
-          : profile(props.id)[`${key}_p`] === 'a'
-            ? 'm'
-            : 'c'
-      })
+      switchPermission: async key => {
+        const ts = new Date()
+        await update(user(props.id), {}, ts)
+        await update(profile(props.id), {
+          [`${key}_p`]: profile(props.id)[`${key}_p`] === 'c'
+            ? 'a'
+            : profile(props.id)[`${key}_p`] === 'a'
+              ? 'm'
+              : 'c'
+        }, ts)
+      }
     }
   }
 }

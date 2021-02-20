@@ -33,13 +33,13 @@ export const add = (collection, data) => {
   })
 }
 
-export const update = (item, data) => item._ref.update({
+export const update = (item, data, ts) => item._ref.update({
   ...data,
-  updatedAt: new Date()
+  updatedAt: ts || new Date()
 })
 
-export const remove = item => item._ref.update({
-  deletedAt: new Date()
+export const remove = (item, ts) => item._ref.update({
+  deletedAt: ts || new Date()
 })
 
 export const restore = item => item._ref.update({

@@ -112,7 +112,7 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { state, waitFor, update, account } = store
+    const { state, waitFor, update, profile } = store
     const page = reactive({
       dialog: false,
       groups: [],
@@ -127,13 +127,13 @@ export default {
         .filter(group => group.id !== 'managers')
         .map(group => ({
           ...group,
-          checked: (account(props.id).permittedGroups || []).includes(group.id)
+          checked: (profile(props.id).permittedGroups || []).includes(group.id)
         }))
       ),
       users: computed(() => state.users
         .map(item => ({
           ...item,
-          checked: item.id !== props.id && (account(props.id).permittedUsers || []).includes(item.id)
+          checked: item.id !== props.id && (profile(props.id).permittedUsers || []).includes(item.id)
         }))
       ),
       onEdit: (groups, users) => {
@@ -142,7 +142,7 @@ export default {
         page.users = [...users]
       },
       onSave: async (groups, users) => {
-        await waitFor(() => update(account(props.id), {
+        await waitFor(() => update(profile(props.id), {
           permittedGroups: groups.filter(item => item.checked).map(item => item.id),
           permittedUsers: users.filter(item => item.checked).map(item => item.id)
         }))

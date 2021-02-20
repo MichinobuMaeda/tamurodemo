@@ -112,6 +112,7 @@
               outlined
               v-model="state.value.data"
               :rules="rules"
+              autofocus
             />
           </div>
           <v-select
@@ -121,6 +122,7 @@
             :items="items"
             v-model="state.value"
             :rules="rules"
+            autofocus
           />
           <v-textarea
             v-else-if="['textarea'].includes(type)"
@@ -128,6 +130,7 @@
             v-model="state.value"
             :placeholder="placeholder"
             :rules="rules"
+            autofocus
           />
           <v-text-field
             v-else
@@ -135,6 +138,7 @@
             v-model="state.value"
             :placeholder="placeholder"
             :rules="rules"
+            autofocus
           />
 
         </v-card-text>
