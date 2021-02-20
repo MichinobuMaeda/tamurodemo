@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import { computed, ref, watch } from '@vue/composition-api'
-import { useStore } from '@/store'
+import { computed, onMounted, ref, watch } from '@vue/composition-api'
+import { useStore, firestoreTimestampToDate } from '@/store'
 import PageTitle from '../components/PageTitle'
 import EditableItem from '../components/EditableItem'
 import GroupsOfUser from '../parts/GroupsOfUser'
@@ -87,14 +87,30 @@ export default {
     Chats,
     Account
   },
-  setup () {
+  setup (props, { root }) {
     const store = useStore()
-    const { state, waitFor, update, goPageUser, user } = store
+    const { functions, state, account, waitFor, update, goPage, goPageUser, user, profile } = store
 
     const preview = ref(2)
-    const id = computed(() => state.route.params ? state.route.params.id : '')
+    const id = computed(() => root.$route.params ? root.$route.params.id : '')
 
-    watch(() => state.route, () => { preview.value = 2 })
+    const pageHook = async () => {
+      const id = root.$route.params ? root.$route.params.id : ''
+      if (!user(id).id) {
+        goPage({ name: 'top' })
+      }
+      preview.value = 2
+      if (!(id === state.me.id || account(state.me.id).priv.manager) && !profile(id).id) {
+        const result = await functions.httpsCallable('getProfile')({ id })
+        state.profiles = [
+          ...state.profiles.filter(item => item.id !== id),
+          firestoreTimestampToDate(result.data)
+        ]
+      }
+    }
+
+    watch(() => root.$route.params, pageHook)
+    onMounted(pageHook)
 
     return {
       ...store,

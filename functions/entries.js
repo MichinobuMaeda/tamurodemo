@@ -13,6 +13,9 @@ const {
   resetUserAuth
 } = require('./accounts')
 const {
+  getProfile
+} = require('./profiles')
+const {
   invite,
   validateInvitation,
   setEmailWithInvitation,
@@ -75,6 +78,9 @@ const entries = (firebase, api, router) => {
     },
     resetUserAuth: (data, context) => guardGroups(
       data, ctx(context), adminsOrManagers, resetUserAuth
+    ),
+    getProfile: (data, context) => guardValidAccount(
+      data, ctx(context), getProfile
     ),
     // Triggers
     rejectCreateUserWithoutAccount: user => rejectCreateUserWithoutAccount(user, firebase),

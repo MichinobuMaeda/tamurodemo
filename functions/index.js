@@ -35,6 +35,8 @@ exports.setEmailAndPasswordWithInvitation =
   functions.https.onCall(ent.setEmailAndPasswordWithInvitation)
 exports.resetUserAuth =
   functions.https.onCall(ent.resetUserAuth)
+exports.getProfile =
+  functions.https.onCall(ent.getProfile)
 exports.rejectCreateUserWithoutAccount =
   functions.auth.user().onCreate(ent.rejectCreateUserWithoutAccount)
 exports.notifyMessage =

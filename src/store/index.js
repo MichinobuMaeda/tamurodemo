@@ -1,4 +1,7 @@
 export {
+  firestoreTimestampToDate
+} from './firestore'
+export {
   isValidAccount,
   isMemberOf,
   accountPriv

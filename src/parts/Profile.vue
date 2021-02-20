@@ -123,7 +123,10 @@
       </v-col>
     </v-row>
 
-    <v-card class="my-4">
+    <v-card
+      v-if="edit || socialItems.some(item => profile(id)[item.key])"
+      class="my-4"
+    >
       <v-card-title class="h3--text">
         {{ $t('Social media') }}
       </v-card-title>
@@ -247,7 +250,7 @@ export default {
       setProfile: (key, val, p) => waitFor(async () => {
         const ts = new Date()
         await update(user(props.id), {}, ts)
-        await update(profile(props.id), { [key]: val, [`${key}_p`]: p || profile(props.id)[`${key}_p`] }, ts)
+        await update(profile(props.id), { [key]: val, [`${key}_p`]: p || profile(props.id)[`${key}_p`] || 'm' }, ts)
       }),
       switchPermission: async key => {
         const ts = new Date()

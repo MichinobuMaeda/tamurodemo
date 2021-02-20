@@ -31,6 +31,7 @@ const {
   setEmailWithInvitation,
   setEmailAndPasswordWithInvitation,
   resetUserAuth,
+  getProfile,
   rejectCreateUserWithoutAccount,
   notifyMessage,
   handleUpdateServiceVersion,
@@ -252,6 +253,57 @@ test('resetUserAuth()' +
   const account = await db.collection('accounts').doc(id).get()
   expect(account.data().email).toBeNull()
   expect(auth.data[id].email).not.toBeDefined()
+})
+
+const toDateAll = item => ({
+  ...item,
+  createdAt: item.createdAt ? item.createdAt.toDate() : null,
+  updatedAt: item.updatedAt ? item.updatedAt.toDate() : null,
+  hiddenAt: item.hiddenAt ? item.hiddenAt.toDate() : null,
+  deletedAt: item.deletedAt ? item.deletedAt.toDate() : null
+})
+
+test('getProfile()' +
+  ' get the items of the profile of the given id ' +
+  ' permitted for the uid.', async () => {
+  // #1 prepare
+  const uid = 'account01'
+  const id = 'account02'
+  await db.collection('accounts').doc(uid).set({ valid: false })
+  const ts = new Date()
+  await db.collection('profiles').doc(id).set({
+    createdAt: ts,
+    updatedAt: ts,
+    lastName_p: 'a',
+    lastName: 'Last Name',
+    firstName_p: 'c',
+    firstName: 'First Name',
+    fullName_p: 'm',
+    fullName: 'Full Name',
+    twitter: '@account'
+  })
+  const data = { id }
+  const context = { auth: { uid } }
+
+  // #1 should fail
+  await expect(getProfile(data, context)).rejects.toThrow()
+
+  // #2 prepare
+  await db.collection('accounts').doc(uid).update({ valid: true })
+
+  // #2 run
+  const ret = await getProfile(data, context)
+
+  // #2 evaluate
+  expect(toDateAll(ret)).toEqual({
+    id,
+    createdAt: ts,
+    updatedAt: ts,
+    hiddenAt: null,
+    deletedAt: null,
+    lastName_p: 'a',
+    lastName: 'Last Name'
+  })
 })
 
 test('rejectCreateUserWithoutAccount()' +

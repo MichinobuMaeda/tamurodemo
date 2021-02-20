@@ -1,4 +1,4 @@
-const firestoreTimestampToDate = val => {
+export const firestoreTimestampToDate = val => {
   return val && val.toDate
     ? val.toDate()
     : (Array.isArray(val)
