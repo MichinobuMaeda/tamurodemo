@@ -24,12 +24,12 @@ export const castDoc = doc => ({
   ...firestoreTimestampToDate(doc.data())
 })
 
-export const add = (collection, data) => {
-  const ts = new Date()
+export const add = (collection, data, ts) => {
+  const createdAt = ts || new Date()
   return collection.add({
     ...data,
-    createdAt: ts,
-    updatedAt: ts
+    createdAt,
+    updatedAt: createdAt
   })
 }
 
@@ -42,6 +42,7 @@ export const remove = (item, ts) => item._ref.update({
   deletedAt: ts || new Date()
 })
 
-export const restore = item => item._ref.update({
+export const restore = (item, ts) => item._ref.update({
+  updatedAt: ts || new Date(),
   deletedAt: null
 })

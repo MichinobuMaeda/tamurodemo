@@ -70,79 +70,137 @@ test('castDoc()' +
 
 test('add()' +
   ' should add the given data with the date created and the date uodated.', async () => {
-  // prepare
+  // prepare #1
 
-  // run
+  // run #1
   await add(db.collection('groups'), { name: 'Group 1' })
 
-  // evaluate
-  const groups = (await db.collection('groups').get()).docs
-  expect(groups).toHaveLength(1)
-  const data = groups[0].data()
-  expect(data.name).toEqual('Group 1')
-  expect(data.createdAt).toBeDefined()
-  expect(data.updatedAt).toBeDefined()
-  expect(data.createdAt.toDate().getTime()).toEqual(data.updatedAt.toDate().getTime())
-  expect(data.deletedAt).not.toBeDefined()
+  // evaluate #1
+  const groups1 = (await db.collection('groups').get()).docs
+  expect(groups1).toHaveLength(1)
+  const data1 = groups1[0].data()
+  expect(data1.name).toEqual('Group 1')
+  expect(data1.createdAt.toDate().getTime()).toBeGreaterThan(new Date('2000-01-01T00:00:00.000Z').getTime())
+  expect(data1.updatedAt.toDate().getTime()).toEqual(data1.createdAt.toDate().getTime())
+  expect(data1.deletedAt).not.toBeDefined()
+
+  // prepare #2
+  const ts = new Date('2000-01-01T00:00:00.000Z')
+
+  // run #2
+  await add(db.collection('groups'), { name: 'Group 2' }, ts)
+
+  // evaluate #2
+  const groups2 = (await db.collection('groups').get()).docs
+  expect(groups2).toHaveLength(2)
+  const data2 = groups2.find(doc => doc.data().name === 'Group 2').data()
+  expect(data2.name).toEqual('Group 2')
+  expect(data2.createdAt.toDate().getTime()).toEqual(ts.getTime())
+  expect(data2.createdAt.toDate().getTime()).toEqual(data2.updatedAt.toDate().getTime())
+  expect(data2.deletedAt).not.toBeDefined()
 })
 
 test('update()' +
   ' should update the given data with the date updated.', async () => {
-  // prepare
+  // prepare #1
   await add(db.collection('groups'), { name: 'Group 1' })
   const item = castDoc((await db.collection('groups').get()).docs[0])
 
-  // run
+  // run #1
   await update(item, { name: 'Modified' })
 
-  // evaluate
-  const groups = (await db.collection('groups').get()).docs
-  expect(groups).toHaveLength(1)
-  const data = groups[0].data()
-  expect(data.name).toEqual('Modified')
-  expect(data.createdAt).toBeDefined()
-  expect(data.updatedAt).toBeDefined()
-  expect(data.createdAt.toDate().getTime()).toBeLessThan(data.updatedAt.toDate().getTime())
-  expect(data.deletedAt).not.toBeDefined()
+  // evaluate #1
+  const groups1 = (await db.collection('groups').get()).docs
+  expect(groups1).toHaveLength(1)
+  const data1 = groups1[0].data()
+  expect(data1.name).toEqual('Modified')
+  expect(data1.createdAt.toDate().getTime()).toBeGreaterThan(new Date('2000-01-01T00:00:00.000Z').getTime())
+  expect(data1.updatedAt.toDate().getTime()).toBeGreaterThan(data1.createdAt.toDate().getTime())
+  expect(data1.deletedAt).not.toBeDefined()
+
+  // prepare #2
+  const ts = new Date('2000-01-01T00:00:00.000Z')
+
+  // run #2
+  await update(item, { name: 'Modified' }, ts)
+
+  // evaluate #1
+  const groups2 = (await db.collection('groups').get()).docs
+  expect(groups2).toHaveLength(1)
+  const data2 = groups2[0].data()
+  expect(data2.name).toEqual('Modified')
+  expect(data2.createdAt.toDate().getTime()).toBeGreaterThan(new Date('2000-01-01T00:00:00.000Z').getTime())
+  expect(data2.updatedAt.toDate().getTime()).toEqual(ts.getTime())
+  expect(data2.deletedAt).not.toBeDefined()
 })
 
 test('remove()' +
   ' should set the date deleted to the given data.', async () => {
-  // prepare
+  // prepare #1
   await add(db.collection('groups'), { name: 'Group 1' })
   const item = castDoc((await db.collection('groups').get()).docs[0])
 
-  // run
+  // run #1
   await remove(item)
 
-  // evaluate
-  const groups = (await db.collection('groups').get()).docs
-  expect(groups).toHaveLength(1)
-  const data = groups[0].data()
-  expect(data.name).toEqual('Group 1')
-  expect(data.createdAt).toBeDefined()
-  expect(data.updatedAt).toBeDefined()
-  expect(data.createdAt.toDate().getTime()).toEqual(data.updatedAt.toDate().getTime())
-  expect(data.deletedAt).toBeDefined()
+  // evaluate #1
+  const groups1 = (await db.collection('groups').get()).docs
+  expect(groups1).toHaveLength(1)
+  const data1 = groups1[0].data()
+  expect(data1.name).toEqual('Group 1')
+  expect(data1.createdAt).toBeDefined()
+  expect(data1.updatedAt.toDate().getTime()).toEqual(data1.createdAt.toDate().getTime())
+  expect(data1.deletedAt.toDate().getTime()).toBeGreaterThan(data1.createdAt.toDate().getTime())
+
+  // prepare #2
+  const ts = new Date('2000-01-01T00:00:00.000Z')
+  await restore(item)
+
+  // run #2
+  await remove(item, ts)
+
+  // evaluate #2
+  const groups2 = (await db.collection('groups').get()).docs
+  expect(groups2).toHaveLength(1)
+  const data2 = groups2[0].data()
+  expect(data2.name).toEqual('Group 1')
+  expect(data2.createdAt).toBeDefined()
+  expect(data2.updatedAt.toDate().getTime()).toBeGreaterThan(data2.createdAt.toDate().getTime())
+  expect(data2.deletedAt.toDate().getTime()).toEqual(ts.getTime())
 })
 
 test('restore()' +
   ' should reset the date deleted to the given data..', async () => {
-  // prepare
+  // prepare #1
   await add(db.collection('groups'), { name: 'Group 1' })
   const item = castDoc((await db.collection('groups').get()).docs[0])
   await remove(item)
 
-  // run
+  // run #1
   await restore(item)
 
-  // evaluate
-  const groups = (await db.collection('groups').get()).docs
-  expect(groups).toHaveLength(1)
-  const data = groups[0].data()
-  expect(data.name).toEqual('Group 1')
-  expect(data.createdAt).toBeDefined()
-  expect(data.updatedAt).toBeDefined()
-  expect(data.createdAt.toDate().getTime()).toEqual(data.updatedAt.toDate().getTime())
-  expect(data.deletedAt).toBeFalsy()
+  // evaluate #1
+  const groups1 = (await db.collection('groups').get()).docs
+  expect(groups1).toHaveLength(1)
+  const data1 = groups1[0].data()
+  expect(data1.name).toEqual('Group 1')
+  expect(data1.createdAt).toBeDefined()
+  expect(data1.updatedAt.toDate().getTime()).toBeGreaterThan(data1.createdAt.toDate().getTime())
+  expect(data1.deletedAt).toBeFalsy()
+
+  // prepare #2
+  const ts = new Date('2000-01-01T00:00:00.000Z')
+  await remove(item)
+
+  // run #2
+  await restore(item, ts)
+
+  // evaluate #2
+  const groups2 = (await db.collection('groups').get()).docs
+  expect(groups2).toHaveLength(1)
+  const data2 = groups2[0].data()
+  expect(data2.name).toEqual('Group 1')
+  expect(data2.createdAt).toBeDefined()
+  expect(data2.updatedAt.toDate().getTime()).toEqual(ts.getTime())
+  expect(data2.deletedAt).toBeFalsy()
 })
