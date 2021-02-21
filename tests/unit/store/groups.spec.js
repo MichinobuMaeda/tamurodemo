@@ -1,7 +1,7 @@
 import {
   deleteApp,
   store
-} from '../utils'
+} from '../_testUtils'
 import {
   sortedGroups,
   accountGroups

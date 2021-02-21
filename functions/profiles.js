@@ -1,3 +1,7 @@
+const {
+  firestoreTimestampToDate
+} = require('./utils')
+
 const getProfile = async ({ id }, { db, uid }) => {
   const myGroups = async () => (await db.collection('groups').where('members', 'array-contains', uid).get())
     .docs.filter(group => !group.data().deletedAt).map(group => group.id)
@@ -7,7 +11,7 @@ const getProfile = async ({ id }, { db, uid }) => {
       (profile.permittedGroups || []).length &&
       (await myGroups()).some(id => profile.permittedGroups.includes(id))
     )
-  return {
+  return firestoreTimestampToDate({
     id,
     createdAt: profile.createdAt,
     updatedAt: profile.updatedAt,
@@ -24,7 +28,7 @@ const getProfile = async ({ id }, { db, uid }) => {
           profile[cur.slice(0, -2)]
         }), {})
     )
-  }
+  })
 }
 
 module.exports = {

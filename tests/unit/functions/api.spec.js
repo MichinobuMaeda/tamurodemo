@@ -5,7 +5,7 @@ const {
   clearDb,
   deleteApp,
   testData
-} = require('./utils')
+} = require('./_testUtils')
 const {
   apiKeyValidator
 } = require('../../../functions/api')

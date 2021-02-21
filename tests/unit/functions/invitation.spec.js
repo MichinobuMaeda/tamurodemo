@@ -6,7 +6,7 @@ const {
   clearDb,
   deleteApp,
   testData
-} = require('./utils')
+} = require('./_testUtils')
 const {
   invite,
   validateInvitation,

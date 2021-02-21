@@ -1,6 +1,6 @@
 import {
   waitRealtimeUpdate
-} from '../utils'
+} from '../_testUtils'
 import {
   msecToDaysAndTime,
   waitFor

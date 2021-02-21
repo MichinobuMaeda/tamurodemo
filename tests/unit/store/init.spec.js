@@ -3,7 +3,7 @@ import {
   root,
   deleteApp,
   store
-} from '../utils'
+} from '../_testUtils'
 import { defaults } from '../../../src/conf'
 import {
   useStore,

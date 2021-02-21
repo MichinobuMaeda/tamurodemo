@@ -5,7 +5,7 @@ import {
   deleteApp,
   // testData,
   store
-} from '../utils'
+} from '../_testUtils'
 import {
   initializeMessaging
 } from '../../../src/store/messaging'

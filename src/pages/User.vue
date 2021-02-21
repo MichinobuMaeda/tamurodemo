@@ -7,7 +7,7 @@
           v-if="!edit"
           mandatory column
           active-class="info--text"
-          v-model="preview"
+          v-model="previewProfile"
         >
           <v-chip v-for="p in conf.permissions" :key="p.value">
             <v-icon>{{ conf.icon(p.icon) }}</v-icon> {{ $t(p.text) }}
@@ -58,7 +58,7 @@
 
       <div v-if="(!account(id).deletedAt) || me.priv.manager">
         <GroupsOfUser class="mb-2" :id="id" :edit="edit" />
-        <Profile :id="id" :edit="edit" :preview="conf.permissions[preview].value" />
+        <Profile :id="id" :edit="edit" :preview="conf.permissions[previewProfile].value" />
       </div>
 
       <Account :id="id" v-if="me.priv.manager" />
@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from '@vue/composition-api'
-import { useStore, firestoreTimestampToDate } from '@/store'
+import { computed } from '@vue/composition-api'
+import { useStore } from '@/store'
 import PageTitle from '../components/PageTitle'
 import EditableItem from '../components/EditableItem'
 import GroupsOfUser from '../parts/GroupsOfUser'
@@ -87,30 +87,11 @@ export default {
     Chats,
     Account
   },
-  setup (props, { root }) {
+  setup () {
     const store = useStore()
-    const { functions, state, account, waitFor, update, goPage, goPageUser, user, profile } = store
+    const { state, waitFor, update, goPageUser, user } = store
 
-    const preview = ref(2)
-    const id = computed(() => root.$route.params ? root.$route.params.id : '')
-
-    const pageHook = async () => {
-      const id = root.$route.params ? root.$route.params.id : ''
-      if (!user(id).id) {
-        goPage({ name: 'top' })
-      }
-      preview.value = 2
-      if (!(id === state.me.id || account(state.me.id).priv.manager) && !profile(id).id) {
-        const result = await functions.httpsCallable('getProfile')({ id })
-        state.profiles = [
-          ...state.profiles.filter(item => item.id !== id),
-          firestoreTimestampToDate(result.data)
-        ]
-      }
-    }
-
-    watch(() => root.$route.params, pageHook)
-    onMounted(pageHook)
+    const id = computed(() => state.route.params && state.route.params.id)
 
     return {
       ...store,
@@ -122,8 +103,7 @@ export default {
       name: computed({
         get: () => user(id.value).name,
         set: val => waitFor(() => update(user(id.value), { name: val }))
-      }),
-      preview
+      })
     }
   }
 }

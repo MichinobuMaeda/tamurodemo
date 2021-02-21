@@ -9,3 +9,7 @@
   font-family: 'Lucida Console', Monaco, monospace;
   font-size: 14px;
 }
+.theme--light.v-expansion-panels,
+.theme--light.v-card > .v-card__text {
+  color: black;
+}

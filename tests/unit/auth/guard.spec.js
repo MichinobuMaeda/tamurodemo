@@ -2,7 +2,7 @@ import {
   router,
   setFakeWindow,
   deleteApp
-} from '../utils'
+} from '../_testUtils'
 import {
   routePermission,
   compareRoutes,

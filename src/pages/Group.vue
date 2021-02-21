@@ -107,6 +107,7 @@ export default {
   setup () {
     const store = useStore()
     const { state, conf, waitFor, update, FieldValue } = store
+
     const group = computed(() => store.group(state.route.params && state.route.params.id))
 
     return {

@@ -130,7 +130,7 @@ export default {
     store.goPageGroup = id => store.goPage({ name: 'group', params: { id } })
     store.goPageUser = (id, edit = false) => store.goPage({ name: 'user', params: { id, mode: (edit ? 'edit' : null) } })
     store.standalone = window.matchMedia('(display-mode: standalone)').matches
-    const { state, update, conf } = store
+    const { state, update, conf, account, user, profile, getProfile } = store
 
     onMounted(async () => {
       await getAuthState(store)
@@ -139,12 +139,40 @@ export default {
       await initializeMessaging(store)
     })
 
+    const avoidEmptyValue = route => {
+      if (!state.loading) {
+        if (route.name === 'user' && !state.users.some(item => item.id === route.params.id)) {
+          root.$router.push({ name: 'top' }).catch(() => {})
+        }
+        if (route.name === 'group' && !state.groups.some(item => item.id === route.params.id)) {
+          root.$router.push({ name: 'top' }).catch(() => {})
+        }
+      }
+    }
+
+    const onProfiePage = async () => {
+      const { name, params } = state.route
+      if (
+        !state.loading &&
+        name === 'user' &&
+        !(params.id === state.me.id || account(state.me.id).priv.manager) &&
+        user(params.id).id &&
+        !profile(params.id).id
+      ) {
+        state.loading = true
+        await getProfile(params.id)
+        state.loading = false
+      }
+    }
+
     watch(
       () => root.$route,
-      () => {
-        if (guardRoute(root.$router, root.$route, state)) {
-          const { name, params } = root.$route
+      async route => {
+        if (guardRoute(root.$router, route, state)) {
+          avoidEmptyValue(root.$route)
+          const { name, params } = route
           state.route = { name, params }
+          await onProfiePage()
         }
       }
     )
@@ -164,6 +192,7 @@ export default {
           await initUserData(store)
         }
         guardRoute(root.$router, root.$route, state)
+        avoidEmptyValue(root.$route)
         subscribeGroupChats(store)
       }
     )
@@ -172,6 +201,25 @@ export default {
       () => state.accounts,
       async () => {
         subscribeHotlines(store)
+        avoidEmptyValue(root.$route)
+      }
+    )
+
+    watch(
+      () => state.users,
+      async () => {
+        if (!account(state.me.id).priv.manager) {
+          if (state.profiles.some(profile => !user(profile.id).id)) {
+            state.profiles = state.profiles.filter(profile => user(profile.id).id)
+          }
+          if (state.profiles.some(profile => profile.id !== state.me.id && user(profile.id).updatedAt.getTime() > profile.updatedAt.getTime())) {
+            await Promise.all(
+              state.profiles
+                .filter(profile => profile.id !== state.me.id && user(profile.id).updatedAt.getTime() > profile.updatedAt.getTime())
+                .map(profile => getProfile(profile.id))
+            )
+          }
+        }
       }
     )
 
@@ -189,13 +237,16 @@ export default {
           }
         }
         guardRoute(root.$router, root.$route, state)
+        avoidEmptyValue(root.$route)
       }
     )
 
     watch(
       () => state.loading,
-      () => {
+      async () => {
         guardRoute(root.$router, root.$route, state)
+        avoidEmptyValue(root.$route)
+        await onProfiePage()
       }
     )
 

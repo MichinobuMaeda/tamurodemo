@@ -1,7 +1,7 @@
 import {
   setFakeWindow,
   deleteApp
-} from '../utils'
+} from '../_testUtils'
 import {
   LS_REQ_EMAIL,
   storeRequestedEmail,

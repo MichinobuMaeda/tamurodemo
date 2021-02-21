@@ -6,7 +6,7 @@ import {
   clearDb,
   deleteApp,
   store
-} from '../utils'
+} from '../_testUtils'
 import {
   getAuthState,
   returnLastRoute,

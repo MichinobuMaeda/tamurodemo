@@ -7,7 +7,7 @@ const {
   clearDb,
   deleteApp,
   testData
-} = require('./utils')
+} = require('./_testUtils')
 const { entries } = require('../../../functions/entries')
 
 const api = {
@@ -255,14 +255,6 @@ test('resetUserAuth()' +
   expect(auth.data[id].email).not.toBeDefined()
 })
 
-const toDateAll = item => ({
-  ...item,
-  createdAt: item.createdAt ? item.createdAt.toDate() : null,
-  updatedAt: item.updatedAt ? item.updatedAt.toDate() : null,
-  hiddenAt: item.hiddenAt ? item.hiddenAt.toDate() : null,
-  deletedAt: item.deletedAt ? item.deletedAt.toDate() : null
-})
-
 test('getProfile()' +
   ' get the items of the profile of the given id ' +
   ' permitted for the uid.', async () => {
@@ -295,12 +287,12 @@ test('getProfile()' +
   const ret = await getProfile(data, context)
 
   // #2 evaluate
-  expect(toDateAll(ret)).toEqual({
+  expect(ret).toEqual({
     id,
     createdAt: ts,
     updatedAt: ts,
-    hiddenAt: null,
-    deletedAt: null,
+    hiddenAt: undefined,
+    deletedAt: undefined,
     lastName_p: 'a',
     lastName: 'Last Name'
   })

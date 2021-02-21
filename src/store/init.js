@@ -6,6 +6,7 @@ import { accountStatus, accountPriv } from './accounts'
 import { accountGroups } from './groups'
 import { add, update, remove, restore } from './firestore'
 import { waitFor, msecToDaysAndTime } from './ui'
+import * as profiles from './profiles'
 
 const { validators, defaults, ...conf } = confAll
 
@@ -49,6 +50,8 @@ export const createStore = (firebase, root) => {
     group: id => findItem(state.groups, id),
     category: id => findItem(state.categories, id)
   }
+
+  profiles.init(store)
 
   return store
 }

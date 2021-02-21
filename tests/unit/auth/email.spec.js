@@ -5,7 +5,7 @@ import {
   testData,
   setFakeWindow,
   store
-} from '../utils'
+} from '../_testUtils'
 import {
   reauthenticate,
   updateMyEmail,

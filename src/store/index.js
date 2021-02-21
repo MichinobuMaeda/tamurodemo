@@ -1,11 +1,11 @@
 export {
-  firestoreTimestampToDate
-} from './firestore'
-export {
   isValidAccount,
   isMemberOf,
   accountPriv
 } from './accounts'
+export {
+  profileUtils
+} from './profiles'
 export {
   sortedGroups
 } from './groups'

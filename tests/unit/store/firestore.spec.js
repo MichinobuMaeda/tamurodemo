@@ -6,7 +6,7 @@ import {
   // testData,
   store
   // waitRealtimeUpdate
-} from '../utils'
+} from '../_testUtils'
 import {
   castDoc,
   add,

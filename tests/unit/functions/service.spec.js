@@ -6,7 +6,7 @@ const {
   deleteApp,
   testData,
   version
-} = require('./utils')
+} = require('./_testUtils')
 const {
   initialData
 } = require('../../../functions/initialData')

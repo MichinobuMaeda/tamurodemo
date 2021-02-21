@@ -10,7 +10,7 @@ export const theme = {
       error: colors.red.accent3, // Default: '#FF5252' red accent-2
       info: colors.teal, // Default: '#2196F3' blue
       success: '#4CAF50', // Default: '#4CAF50' green
-      warning: colors.orange.darken3, // Default: '#FB8C00' orange darken-1
+      warning: colors.orange.darken3, // Default: '#FB8C00' orange darken-1:
       theme1: colors.lime.lighten4,
       theme1r: colors.lime.darken4,
       theme2: colors.lightGreen.lighten4,

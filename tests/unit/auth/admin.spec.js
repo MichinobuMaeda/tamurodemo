@@ -1,4 +1,4 @@
-import { functions } from '../utils'
+import { functions } from '../_testUtils'
 import { resetAllSignInSettings } from '../../../src/auth/admin'
 
 test('resetAllSignInSettings()' +
