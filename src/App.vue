@@ -140,7 +140,7 @@ export default {
     })
 
     const avoidEmptyValue = route => {
-      if (!state.loading) {
+      if (state.me && state.me.id && state.me.valid && !state.loading) {
         if (route.name === 'user' && !state.users.some(item => item.id === route.params.id)) {
           root.$router.push({ name: 'top' }).catch(() => {})
         }
@@ -153,6 +153,7 @@ export default {
     const onProfiePage = async () => {
       const { name, params } = state.route
       if (
+        state.me && state.me.id && state.me.valid &&
         !state.loading &&
         name === 'user' &&
         !(params.id === state.me.id || account(state.me.id).priv.manager) &&
@@ -208,7 +209,7 @@ export default {
     watch(
       () => state.users,
       async () => {
-        if (!account(state.me.id).priv.manager) {
+        if (state.me && state.me.id && state.me.valid && !account(state.me.id).priv.manager) {
           if (state.profiles.some(profile => !user(profile.id).id)) {
             state.profiles = state.profiles.filter(profile => user(profile.id).id)
           }
