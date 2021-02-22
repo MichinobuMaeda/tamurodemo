@@ -6,7 +6,7 @@ import { initialData } from '../../functions/initialData'
 import { updateService } from '../../functions/service'
 import { createStore } from '../../src/store/init'
 
-const projectId = 'tamuro-test01'
+const projectId = 'tamuro01'
 const apiKey = 'test-api-key'
 const primary = 'primary'
 const uid = 'account01'

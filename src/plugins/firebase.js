@@ -7,12 +7,11 @@ import apiKey from './firebase-api-key.js'
 
 export const firebase = Firebase.initializeApp({
   apiKey,
-  authDomain: 'tamuro-test01.firebaseapp.com',
-  databaseURL: 'https://tamuro-test01.firebaseio.com',
-  projectId: 'tamuro-test01',
-  storageBucket: 'tamuro-test01.appspot.com',
-  messagingSenderId: '1051588852085',
-  appId: '1:1051588852085:web:c88694ba93327e24137b3c'
+  authDomain: 'tamuro01.firebaseapp.com',
+  projectId: 'tamuro01',
+  storageBucket: 'tamuro01.appspot.com',
+  messagingSenderId: '476623795624',
+  appId: '1:476623795624:web:0fce0105822bc7908cd99d'
 })
 
 export const auth = firebase.auth()

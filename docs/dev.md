@@ -6,7 +6,7 @@ Development
 ## Accounts
 
 - GitHub: ``MichinobuMaeda/tamuro``
-- Firebase: ``tamuro-test01``
+- Firebase: ``tamuro01``
 
 ## Prerequisites
 
@@ -30,8 +30,8 @@ $ cd ..
 $ yarn
 $ firebase login
 $ firebase projects:list
-$ firebase use tamuro-test01
-Now using project tamuro-test01
+$ firebase use tamuro01
+Now using project tamuro01
 
 $ node tools/resetTestVersion.js
 $ cat src/conf/version.js
@@ -47,7 +47,7 @@ export default 'xxxxxxx'
 Get "Web API Key"
 
 - https://console.firebase.google.com/
-    - tamuro-test01
+    - tamuro01
         - Project overview
             - Project Settings
                 - Web API Key: 'Axxxxxxxxxxxxxxxxxxx'

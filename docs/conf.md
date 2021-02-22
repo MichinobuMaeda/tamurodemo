@@ -22,5 +22,5 @@ https://github.com/MichinobuMaeda/tamuro/
 
 - Settings
     - Secrets
-        - API_KEY_TAMURO_TEST01
-        - FIREBASE_TOKEN_TAMURO_TEST01
+        - WEB_API_KEY
+        - FIREBASE_CI_TOKEN

@@ -7,7 +7,7 @@
 /coverage
 /dist
 /work
-tamuro-test01-firebase-adminsdk.json
+firebase-adminsdk.json
 
 .DS_Store
 node_modules

@@ -63,7 +63,7 @@ jobs:
 
       - name: Set Firebase API Key ( for unit test )
         env:
-          API_KEY: ${{ secrets.API_KEY_TAMURO_TEST01 }}
+          API_KEY: ${{ secrets.WEB_API_KEY }}
         run: echo "export default '$API_KEY'" > src/plugins/firebase-api-key.js
 
       - name: Set version to UI ( for unit test )
@@ -71,12 +71,12 @@ jobs:
 
       - name: Unit test
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN }}
         working-directory: ${{ github.workspace }}
         run: yarn test:unit:ci
 
       - name: Deploy
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN }}
         working-directory: ${{ github.workspace }}
         run: yarn deploy --only functions --force --token "$FIREBASE_TOKEN"

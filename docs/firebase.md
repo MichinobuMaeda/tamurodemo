@@ -8,59 +8,73 @@ Firebase
 https://console.firebase.google.com/
 
 - Add project: [Project ID]
+    - for your Firebase project
+        - Enable Google Analytics for this project: Off
 - [Project ID]
+    - Usage and billing
+        - Details & settings
+            - Modify plan: Blaze
     - Project overview
         - Project settings
             - General
-                - Google Cloud Platform (GCP) resource location: asia-northeast1 or 2
+                - Default GCP resource location: asia-northeast1 (Tokyo) or 2 (Osaka)
+                - Public settings
+                    - Public-facing name
+                    - Support email
+                - Your apps
+                    - Web (</>)
+                        - App nickname
+                        - Also set up Firebase Hosting for this app.
+                        - Firebase SDK snippet: [Config] -- paste to ``src/plugins/firebase.js`` except ``apiKey``
+                - Web API Key: [Web API Key] -- use later
+            - Service accounts
+                - Firebase Admin SDK
+                    - Generate new private key --> ``firebase-adminsdk.json``
     - Authentication
         - Sign in method
             - Email/Password: Enable
                 - Email link (passwordless sign in): Enable
             - enable other methods
-    - Database
-        - Cloud Firestore
-            - Create Database: Start in production mode
-    - Storage -> Get started
-    - Hosting -> Get started
-    - Functions -> Get started
+    - Cloud Firestore
+        - Create Database: Start in production mode
 
 https://console.cloud.google.com
 
-- Billing
-    - APIs & Services
-        - Library
-            - Search "IAM" -> Identity and Access Management (IAM) API
-                - Enable
+- Project: [Project ID]
+- APIs & Services
+    - Library
+        - Search "IAM" -> Identity and Access Management (IAM) API
+            - Enable
 - IAM & admin
     - [Project ID]@appspot.gservicestate.me.com
         - ADD ANOTHER ROLL: Service Account Token Creator
 
+paste [Project ID] to ``.firebaserc `` ``projects.default``
+
 ```
+$ npm install -g firebase-tools
+$ cd [Source directory]
 $ firebase login
-$ firebase init
+$ firebase login:ci
+[CI token] -- use later
+$ firebase use [Project ID]
 ? Which Firebase CLI features do you want to set up for this folder?
     Firestore, Functions, Hosting, Storage, Emulators
 ? Select a default Firebase project for this directory:
-    Using project tamuro-test01
+    Using project [Project ID]
 $ node tools/resetTestVersion.js
-$ echo "export default 'Web API Key'" > src/plugins/firebase-api-key.js
+$ echo "export default '[Web API Key]'" > src/plugins/firebase-api-key.js
+$ yarn test:unit
+$ yarn serve
+    http://localhost:8000 -- App ( auto open )
+    http://localhost:4000 -- Emulators
 ```
 
 https://console.firebase.google.com/
 
-- [Project ID]
-    - Project overview
-        - Project settings
-            - General
-                - Your apps
-                    - apiKey --> ``src/plugins/firebase-api-key.js``
-            - Cloud Messaging
-                - Web Push certificates
-                    - Generate Key Pair --> ``src/plugins/firebase.js``
-            - Service accounts
-                - Firebase Admin SDK
-                    - Generate new private key --> ``tamuro-test01-firebase-adminsdk.json``
-    - Grow
-        - Predictions
-            - Enable Google Analytics
+https://github.com/MichinobuMaeda/[Source Project ID]
+
+- Settings
+    - New repository secret
+        - WEB_API_KEY: [Web API Key]
+        - FIREBASE_CI_TOKEN: [CI token]

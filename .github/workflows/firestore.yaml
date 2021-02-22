@@ -37,6 +37,6 @@ jobs:
 
       - name: Deploy
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_TAMURO_TEST01 }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN }}
         working-directory: ${{ github.workspace }}
         run: yarn deploy --only firestore --token "$FIREBASE_TOKEN"

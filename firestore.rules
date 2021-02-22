@@ -21,7 +21,7 @@ service cloud.firestore {
       allow read: if request.auth.uid != null;
     }
     match /groups/{groupId}/chat/{messageId} {
-      allow read, write: if isManager() || request.auth.uid in resource.data.members;
+      allow read, write: if request.auth.uid in get(/databases/$(database)/documents/groups/$(groupId)).data.members;
     }
     match /accounts/{accountId} {
       allow read, write: if (request.auth.uid == accountId) || isManager() || isAdmin();

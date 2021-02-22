@@ -46,7 +46,7 @@ const messaging = firebase.messaging()
 //   const notificationTitle = payload.notification.title || 'Tamuro'
 //   const notificationOptions = {
 //     body: payload.notification.body,
-//     icon: 'https://tamuro-test01.web.app/img/icons/apple-touch-icon-120x120.png'
+//     icon: 'https://tamuro01.web.app/img/icons/apple-touch-icon-120x120.png'
 //   }
 //
 //   self.registration.showNotification(
