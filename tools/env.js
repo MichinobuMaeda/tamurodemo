@@ -11,12 +11,12 @@ admin.initializeApp({
   storageBucket: `${projectId}.appspot.com`
 })
 
-const suffix = process.argv[2] ? `${process.argv[2]}_` : ''
+const prefix = process.argv[2] ? `${process.argv[2]}_` : ''
 
 const workDir = path.join(__dirname, '..', 'work')
 const backupDir = path.join(workDir, 'backup')
-const authJson = path.join(backupDir, `${suffix}authentication.json`)
-const firestoreJson = path.join(backupDir, `${suffix}firestore.json`)
+const authJson = path.join(backupDir, `${prefix}authentication.json`)
+const firestoreJson = path.join(backupDir, `${prefix}firestore.json`)
 
 module.exports = {
   admin,
