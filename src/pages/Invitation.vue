@@ -18,16 +18,8 @@
         icon-color="h2"
         :icon="conf.icon('Guide')"
       >
-        <template v-slot:title>{{ $t('Guide') }}</template>
+        <template v-slot:title>{{ $t('Wellcome to the app', { user: me.name }) }}</template>
       </PageTitle>
-
-      <Chats
-        class="my-2"
-        :accountId="me.id"
-        :height="state.chatPaneHeight"
-      />
-
-      <UiPreferences :entity="state.me" v-if="me.valid" />
 
       <div v-if="page.error">
         <v-alert type="error" outlined text class="mt-4">
@@ -54,6 +46,13 @@
             :disabled="true"
           />
         </v-sheet>
+
+        <Chats
+          class="my-2"
+          :accountId="me.id"
+          :height="state.chatPaneHeight"
+        />
+
         <div v-if="me.email && !page.preview">
           <v-alert type="info" outlined dense>
             <div>{{ $t('E-mail address for sign-inhas been set') }}</div>
@@ -127,9 +126,14 @@
             </div>
           </v-form>
         </div>
+
         <v-divider class="my-2" />
+
         <SelectAuthProviders :noaction="page.preview" />
+
       </div>
+
+      <UiPreferences :entity="state.me" v-if="me.valid" />
     </v-col>
   </v-row>
 </template>
@@ -187,6 +191,7 @@ export default {
     onMounted(async () => {
       if (page.invitation) {
         const result = await validateInvitation(store, page.invitation)
+        state.invitations[state.me.id] = page.invitation
         if (result.status !== 'ok') {
           page.error = 'System error'
         }

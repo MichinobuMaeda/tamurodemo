@@ -60,9 +60,9 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
       github_com: false,
       microsoft_com: false,
       twitter_com: false,
-      line_me: false,
-      yahoo_co_jp: {},
-      mixi_jp: false
+      line_me: null,
+      yahoo_co_jp: null,
+      mixi_jp: null
     }
   },
   {

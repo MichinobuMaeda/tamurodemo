@@ -1,4 +1,3 @@
-const moment = require('moment-timezone')
 const axios = require('axios')
 const { initialData } = require('./initialData')
 
@@ -43,7 +42,7 @@ const updateVersion = async ({ db, logger }) => {
   const version = response.data.version
   if (conf.data().version !== response.data.version) {
     logger.log(`update from ${conf.data().version} to ${version}`)
-    await updateService({ db }, initialData)
+    await updateService({ db, logger }, initialData)
     await confRef.update({ version })
   }
   return version

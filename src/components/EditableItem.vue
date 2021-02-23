@@ -61,7 +61,7 @@
     <div
       v-else-if="type === 'formatted-text' && value && value.data"
       class="formatted-text"
-      v-html="formatted()"
+      v-html="formatted"
     ></div>
     <div v-else-if="type === 'formatted-text'" class="deleted--text">
       {{ placeholder }}
@@ -168,13 +168,13 @@
             color="primary"
             :icon="iconSave || defaultIcons.OK"
             :label="labelSave || $t(defaultLabels.Save)"
-            :disabled="disabled || !modified() || !valid()"
+            :disabled="disabled || !modified || !valid"
             @click="onSave"
           />
         </v-card-actions>
 
         <v-card-text v-if="type === 'formatted-text'">
-          <div class="formatted-text" v-html="formatted()"></div>
+          <div class="formatted-text" v-html="formatted"></div>
         </v-card-text>
 
       </v-card>
@@ -192,6 +192,16 @@ import { evalRules } from './helpers'
 import DefaultButton from './DefaultButton'
 import LinkButton from './LinkButton'
 import MiniButton from './MiniButton'
+
+const allowedTags = ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+  'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div',
+  'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
+
+const getPropsValue = props => props.type === 'formatted-text'
+  ? (props.value && props.value.type ? { ...props.value } : { type: 'plain', data: '' })
+  : props.type === 'chips'
+    ? [...props.value]
+    : props.value
 
 export default {
   name: 'EditableItem',
@@ -234,74 +244,50 @@ export default {
       value: getPropsValue(props)
     })
 
-    const onEdit = () => {
-      state.value = getPropsValue(props)
-      state.edit = true
-    }
-
-    const onCancel = () => {
-      state.edit = false
-      state.value = getPropsValue(props)
-    }
-
-    const onSave = () => {
-      state.edit = false
-      emit('save', state.value)
-    }
-
-    const valid = () => evalRules(
-      props.rules,
-      props.type === 'formatted-text' ? state.value.data : state.value
-    )
-
     return {
       state,
       defaultIcons,
       defaultLabels,
-      formatted: computed(() => () => formatted(state)),
-      modified: computed(() => () => modified(props, state)),
-      onEdit,
-      onCancel,
-      onSave,
-      valid
+      formatted: computed(() => state.value.type === 'markdown'
+        ? sanitizeHtml(marked(state.value.data), { allowedTags })
+        : state.value.type === 'html'
+          ? sanitizeHtml(state.value.data, { allowedTags })
+          : (state.value.data || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .split(/\n/)
+            .map(line => `<div>${line || '&nbsp;'}</div>`)
+            .join('\n')
+      ),
+      modified: computed(() => props.type === 'formatted-text'
+        ? !props.value || props.value.type !== state.value.type || props.value.data !== state.value.data
+        : props.type === 'chips'
+          ? (props.value || []).length !== (state.value || []).length ||
+          !(props.value || []).reduce(
+            (ret, cur) => ret && (state.value || []).includes(cur),
+            true
+          )
+          : props.value !== state.value
+      ),
+      valid: computed(() => evalRules(
+        props.rules,
+        props.type === 'formatted-text' ? state.value.data : state.value
+      )),
+      onEdit: () => {
+        state.value = getPropsValue(props)
+        state.edit = true
+      },
+      onCancel: () => {
+        state.edit = false
+        state.value = getPropsValue(props)
+      },
+      onSave: () => {
+        state.edit = false
+        emit('save', state.value)
+      }
     }
-  }
-}
-
-const allowedTags = ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-  'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div',
-  'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
-
-const getPropsValue = props => props.type === 'formatted-text'
-  ? (props.value && props.value.type ? { ...props.value } : { type: 'plain', data: '' })
-  : props.type === 'chips'
-    ? [...props.value]
-    : props.value
-
-const modified = (props, state) => props.type === 'formatted-text'
-  ? !props.value || props.value.type !== state.value.type || props.value.data !== state.value.data
-  : props.type === 'chips'
-    ? (props.value || []).length !== (state.value || []).length ||
-    !(props.value || []).reduce(
-      (ret, cur) => ret && (state.value || []).includes(cur),
-      true
-    )
-    : props.value !== state.value
-
-const formatted = state => {
-  if (state.value.type === 'markdown') {
-    return sanitizeHtml(marked(state.value.data), { allowedTags })
-  } else if (state.value.type === 'html') {
-    return sanitizeHtml(state.value.data, { allowedTags })
-  } else {
-    return (state.value.data || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .split(/\n/)
-      .map(line => `<div>${line || '&nbsp;'}</div>`)
-      .join('\n')
   }
 }
 </script>

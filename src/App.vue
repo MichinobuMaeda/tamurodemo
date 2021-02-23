@@ -27,11 +27,11 @@
     <v-main class="px-4" v-else>
       <div class="text-center">
         <DefaultButton
-          v-if="noSignInMethod(state)"
+          v-if="noSignInMethod(state) && state.invitations[state.me.id] && $route.name !== 'invitation'"
           color="warning"
           :icon="conf.icon('Sign in')"
           :label="$t('Set the sign-in method')"
-          @click="goPage({ name: 'preferences' })"
+          @click="goPage({ name: 'invitation', params: { invitation: state.invitations[state.me.id] }})"
         />
         <AppUpdater
           v-if="state.service.conf && state.service.conf.version !== conf.version"
