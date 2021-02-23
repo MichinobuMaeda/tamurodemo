@@ -30,20 +30,17 @@ test('invite()' +
   ' should call function: invite with given id.', async () => {
   // prepare
   const id = 'account01'
-  const invitation = 'invitation01'
-  store.functions.results.invite = { data: { invitation } }
 
   // run
   await invite(store, id)
 
   // evaluate
   expect(store.functions.inputs.invite.id).toEqual(id)
-  expect(store.state.invitations[id]).toEqual(invitation)
 })
 
 test('invitationUrl()' +
   ' should return the URL for given invitation for given id.', async () => {
-  // prepare
+  // #1 prepare
   const id = 'account01'
   const invitation = 'invitation01'
   const router = {
@@ -53,13 +50,25 @@ test('invitationUrl()' +
       }
     })
   }
-  store.state.invitations[id] = invitation
+  store.state.accounts = [
+    {
+      id,
+      invitation,
+      valid: true
+    }
+  ]
 
-  // run
-  const result = invitationUrl(store.state, router, id)
+  // #1 run
+  const result1 = invitationUrl(store.state, router, id)
 
-  // evaluate
-  expect(result).toEqual(`http://localhost:5000/#/invitations/${invitation}`)
+  // #1 evaluate
+  expect(result1).toEqual(`http://localhost:5000/#/invitations/${invitation}`)
+
+  // #2 run
+  const result2 = invitationUrl(store.state, router, '')
+
+  // #2 evaluate
+  expect(result2).toEqual(`http://localhost:5000/#/invitations/${undefined}`)
 })
 
 test('validateInvitation()' +
