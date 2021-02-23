@@ -112,7 +112,7 @@ test('clearUserData()' +
     groupChats: {},
     hotlines: {},
     categories: [],
-    // invitations: {},
+    invitations: {},
     route: {},
     waitProc: null
   })
