@@ -32,7 +32,7 @@
         {{ account(id).invitedBy ? `( ${account(account(id).invitedBy).name} )` : '' }}
       </div>
       <v-alert
-        v-if="account(id).invitations && invitationStatus === 'Sent'"
+        v-if="account(id).invitation && invitationStatus(account(id)) === 'Sent'"
         type="info" outlined dense class="my-2" style="word-break: break-all;"
       >
         {{ $t('Send invitation', { url: invitationUrl(state, $router, id) }) }}
@@ -100,7 +100,6 @@
 </template>
 
 <script>
-import { computed } from '@vue/composition-api'
 import { useStore } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import ConfirmButton from '../../components/ConfirmButton'
@@ -115,13 +114,13 @@ export default {
   },
   setup (props) {
     const store = useStore()
-    const { state, waitFor, account } = store
+    const { state, waitFor } = store
 
     return {
       ...store,
-      invitationStatus: computed(() => {
-        const invitedAt = account(props.id).value.invitedAt ? account(props.id).value.invitedAt.getTime() : 0
-        const signedInAt = account(props.id).value.signedInAt ? account(props.id).value.signedInAt.getTime() : 0
+      invitationStatus: account => {
+        const invitedAt = account.invitedAt ? account.invitedAt.getTime() : 0
+        const signedInAt = account.signedInAt ? account.signedInAt.getTime() : 0
         return invitedAt
           ? (signedInAt && invitedAt < signedInAt)
             ? 'Accepted'
@@ -129,7 +128,7 @@ export default {
               ? 'Sent'
               : 'Timeout'
           : ''
-      }),
+      },
       invite: () => waitFor(() => invite(store, props.id)),
       invitationUrl,
       resetAllSignInSettings: () => waitFor(() => resetAllSignInSettings(store, props.id))

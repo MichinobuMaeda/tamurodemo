@@ -135,7 +135,7 @@
   "Send invitation": "招待のリンクを渡してください: {url}",
   "Account deleted": "アカウント削除済み",
   "Account locked": "ログイン停止",
-  "Invited": "招待送信済み",
+  "Invited": "招待発行済み",
   "Invitation accepted": "招待受信済み",
   "Invitation timeout": "招待タイムアウト",
   "Account active": "アカウント利用中",
