@@ -6,7 +6,7 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        color="color"
+        :color="color"
         :dark="$vuetify.theme.dark"
         :light="!$vuetify.theme.dark"
         v-bind="attrs"
@@ -17,15 +17,15 @@
       </v-btn>
     </template>
     <v-sheet
-      class="text-center"
+      class="pa-2"
       height="200px"
     >
       <p>
-        <v-icon @click="onClickAppInstall">{{ icon }}</v-icon>
+        <v-icon color="primary" @click="onOk">{{ icon }}</v-icon>
         {{ descOk }}
       </p>
       <p>
-        <v-icon @click="onClickAppInstall">{{ icon }}</v-icon>
+        <v-icon color="primary" @click="onCancel">{{ iconCancel }}</v-icon>
         {{ descCancel }}
       </p>
     </v-sheet>
@@ -55,7 +55,7 @@ export default {
     descCancel: String,
     color: {
       type: String,
-      default: 'info'
+      default: 'primary'
     }
   },
   setup (props, { emit }) {
@@ -66,7 +66,7 @@ export default {
 
     return {
       state,
-      onClickAppInstall: () => {
+      onOk: () => {
         // Show the prompt
         state.pwaDeferredPrompt.prompt()
 
