@@ -120,8 +120,8 @@
                 color="primary"
                 :icon="conf.icon('Save')"
                 :label="$t('Save')"
-                @click="page.preview ? () => {} : setEmailAndPasswordWithInvitation"
-                :disabled="!!state.waitProc || !page.newEmail || !page.confirmEmail || !page.setEmail || page.newEmail !== page.confirmEmail || page.newPassword !== page.confirmPassword"
+                @click="setEmailAndPasswordWithInvitation"
+                :disabled="page.preview || !!state.waitProc || !page.newEmail || !page.confirmEmail || !page.setEmail || page.newEmail !== page.confirmEmail || page.newPassword !== page.confirmPassword"
               />
             </div>
           </v-form>
