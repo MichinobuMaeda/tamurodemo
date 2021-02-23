@@ -1,3 +1,4 @@
+const path = require('path')
 const {
   admin,
   backupDir,
@@ -23,6 +24,9 @@ const backup = async () => {
   execSync(`firebase auth:export ${authJson}`)
   const docs = await getDocs(db)
   await writeFile(firestoreJson, JSON.stringify(docs, 0, 2))
+  const bucket = admin.storage().bucket()
+  await bucket.upload(authJson, { destination: `backup/${path.basename(authJson)}` })
+  await bucket.upload(firestoreJson, { destination: `backup/${path.basename(firestoreJson)}` })
 }
 
 backup()
@@ -32,7 +36,7 @@ backup()
   })
   .catch(e => {
     console.error(e)
-    admin.app().delete()
+    return admin.app().delete()
   })
 
 const getDocs = async (parent, base = null) => {

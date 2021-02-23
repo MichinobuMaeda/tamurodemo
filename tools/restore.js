@@ -1,17 +1,17 @@
+const path = require('path')
 const {
   admin,
   authJson,
   firestoreJson
 } = require('./env')
 const { execSync } = require('child_process')
-const fs = require('fs')
-const { stat } = fs.promises
 
 const db = admin.firestore()
 
 const restore = async () => {
-  await stat(authJson)
-  await stat(firestoreJson)
+  const bucket = admin.storage().bucket()
+  await bucket.file(`backup/${path.basename(authJson)}`).download({ destination: authJson })
+  await bucket.file(`backup/${path.basename(firestoreJson)}`).download({ destination: firestoreJson })
   const uids = await listAllUserIds()
   await Promise.all(uids.map(uid => admin.auth().deleteUser(uid)))
   execSync(`firebase auth:import ${authJson}`)
@@ -31,7 +31,7 @@ restore()
   })
   .catch(e => {
     console.error(e)
-    admin.app().delete()
+    return admin.app().delete()
   })
 
 const listAllUserIds = async nextPageToken => {
