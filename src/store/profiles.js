@@ -1,4 +1,5 @@
 import { ref, computed } from '@vue/composition-api'
+import { isoFormatToDate } from './utils'
 
 export const profileUtils = (store, props) => {
   const { conf, state, user, profile, group, waitFor, update } = store
@@ -62,6 +63,7 @@ export const init = store => {
     const result = await functions.httpsCallable('getProfile')({ id: id })
     state.profiles = [
       ...state.profiles.filter(item => item.id !== id),
-      result.data]
+      isoFormatToDate(result.data)
+    ]
   }
 }

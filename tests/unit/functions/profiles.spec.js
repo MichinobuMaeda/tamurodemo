@@ -45,8 +45,8 @@ test('getProfile()' +
   // evaluate #1
   expect(ret1).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',
@@ -64,8 +64,8 @@ test('getProfile()' +
   // evaluate #2
   expect(ret2).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',
@@ -83,8 +83,8 @@ test('getProfile()' +
   // evaluate #3
   expect(ret3).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',
@@ -109,8 +109,8 @@ test('getProfile()' +
   // evaluate #4
   expect(ret4).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',
@@ -128,8 +128,8 @@ test('getProfile()' +
   // evaluate #5
   expect(ret5).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',
@@ -149,8 +149,8 @@ test('getProfile()' +
   // evaluate #6
   expect(ret6).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',
@@ -168,9 +168,9 @@ test('getProfile()' +
   // evaluate #7
   expect(ret7).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
-    hiddenAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
+    hiddenAt: ts.toISOString(),
     deletedAt: undefined
   })
 
@@ -186,9 +186,9 @@ test('getProfile()' +
   // evaluate #8
   expect(ret8).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: null,
-    deletedAt: ts
+    deletedAt: ts.toISOString()
   })
 })

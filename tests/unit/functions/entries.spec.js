@@ -289,8 +289,8 @@ test('getProfile()' +
   // #2 evaluate
   expect(ret).toEqual({
     id,
-    createdAt: ts,
-    updatedAt: ts,
+    createdAt: ts.toISOString(),
+    updatedAt: ts.toISOString(),
     hiddenAt: undefined,
     deletedAt: undefined,
     lastName_p: 'a',

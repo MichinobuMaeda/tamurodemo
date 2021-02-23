@@ -1,16 +1,16 @@
 const functions = require('firebase-functions')
 const { warn, error } = require('firebase-functions/lib/logger')
 
-const firestoreTimestampToDate = val => {
+const firestoreTimestampToISOString = val => {
   return val && val.toDate
-    ? val.toDate()
+    ? val.toDate().toISOString()
     : (Array.isArray(val)
-      ? val.map(item => firestoreTimestampToDate(item))
+      ? val.map(item => firestoreTimestampToISOString(item))
       : ((val && typeof val === 'object')
         ? Object.keys(val).reduce(
           (ret, cur) => ({
             ...ret,
-            [cur]: firestoreTimestampToDate(val[cur])
+            [cur]: firestoreTimestampToISOString(val[cur])
           }), ({}))
         : val
       )
@@ -24,7 +24,7 @@ const firestoreTimestampToDate = val => {
 const castDoc = doc => ({
   _ref: doc.ref,
   id: doc.id,
-  ...firestoreTimestampToDate(doc.data())
+  ...firestoreTimestampToISOString(doc.data())
 })
 
 const throwUnauthenticated = (msg, uid) => {
@@ -43,7 +43,7 @@ const throwErrorDataLoss = (proc, data, err) => {
 }
 
 module.exports = {
-  firestoreTimestampToDate,
+  firestoreTimestampToISOString,
   castDoc,
   throwUnauthenticated,
   throwPermissionDenied,

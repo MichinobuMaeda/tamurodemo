@@ -481,8 +481,8 @@ test('getProfile()' +
     data: {
       id,
       lastName: 'User 2',
-      createdAt: ts,
-      updatedAt: ts
+      createdAt: '2020-01-01T00:00:00.000Z',
+      updatedAt: '2020-01-01T00:00:00.000Z'
     }
   }
 
@@ -503,9 +503,9 @@ test('getProfile()' +
     data: {
       id,
       lastName: 'User 2',
-      createdAt: ts,
-      updatedAt: ts,
-      deletedAt: ts
+      createdAt: '2020-01-01T00:00:00.000Z',
+      updatedAt: '2020-01-01T00:00:00.000Z',
+      deletedAt: '2020-01-01T00:00:00.000Z'
     }
   }
 
