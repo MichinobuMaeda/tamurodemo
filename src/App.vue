@@ -139,7 +139,6 @@ export default {
     onMounted(async () => {
       await getAuthState(store)
       await initServiceData(store)
-      await updateInvitationStatus(store)
       await initializeMessaging(store)
     })
 
@@ -235,6 +234,7 @@ export default {
         if (mePrev.id !== me.id || mePrev.valid !== me.valid || (!!mePrev.deletedAt) !== (!!me.deletedAt)) {
           if (isValidAccount(me)) {
             await initUserData(store)
+            await updateInvitationStatus(store)
             returnLastRoute(root.$router)
           } else {
             clearUserData(state)
