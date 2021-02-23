@@ -9,6 +9,16 @@
         <template v-slot:title>{{ $t('Preferences') }}</template>
       </PageTitle>
 
+      <AppInstaller
+        v-if="me.rejectAppInstall"
+        :icon="conf.icon('Install app')"
+        :iconCancel="conf.icon('Cancel')"
+        :label="$t('You can install the app')"
+        :descOk="$t('Install app')"
+        :descCancel="$t('Reject to install app')"
+        @cancel="() => waitFor(() => update(me, { rejectAppInstall: new Date() }))"
+      />
+
       <UiPreferences :entity="state.me" />
 
       <v-divider class="my-4" v-if="me.email" />
@@ -103,6 +113,7 @@ import {
   signOut
 } from '../auth'
 import PageTitle from '../components/PageTitle'
+import AppInstaller from '../components/AppInstaller'
 import DefaultButton from '../components/DefaultButton'
 import ConfirmButton from '../components/ConfirmButton'
 import SelectAuthProviders from '../parts/SelectAuthProviders'
@@ -113,6 +124,7 @@ export default {
   name: 'Preferences',
   components: {
     PageTitle,
+    AppInstaller,
     DefaultButton,
     ConfirmButton,
     SelectAuthProviders,

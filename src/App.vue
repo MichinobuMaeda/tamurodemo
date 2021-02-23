@@ -43,9 +43,13 @@
           @click="goPage({ name: 'invitation', params: { invitation: state.invitations[state.me.id] }})"
         />
         <AppInstaller
-          v-else-if="me.valid"
+          v-else-if="me.valid && !me.rejectAppInstall"
           :icon="conf.icon('Install app')"
-          :label="$t('Install app')"
+          :iconCancel="conf.icon('Cancel')"
+          :label="$t('You can install the app')"
+          :descOk="$t('Install app')"
+          :descCancel="$t('Reject to install app')"
+          @cancel="() => waitFor(() => update(me, { rejectAppInstall: new Date() }))"
         />
       </div>
       <router-view />

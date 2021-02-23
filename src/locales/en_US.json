@@ -163,5 +163,7 @@
   "Preview": "Preview",
   "Administration": "Administration",
   "Update app": "Please update this app",
-  "Install app": "Install app"
+  "You can install the app": "You can install the app",
+  "Install app": "Install the app. Select whether to receive notifications.",
+  "Reject to install app": "Do not display this notification. You can install it later at \"Preferences\"."
 }

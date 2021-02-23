@@ -163,5 +163,7 @@
   "Preview": "プレビュー",
   "Administration": "管理",
   "Update app": "アプリを更新してください",
-  "Install app": "アプリをインストールする"
+  "You can install the app": "アプリをインストールできます",
+  "Install app": "アプリをインストールする。通知の受け取りの有無を選択してください。",
+  "Reject to install app": "この通知を表示しない。後で「設定」からインストールできます。"
 }
