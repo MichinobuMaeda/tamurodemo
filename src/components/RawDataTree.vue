@@ -18,10 +18,11 @@
         </v-btn>
       </v-card-title>
       <v-divider />
-      <v-card-text style="height: 640px;">
+      <v-card-text style="height: 640px;" class="pa-1">
         <v-treeview
           :items="tree"
           dense
+          :open.sync="openIds"
         >
           <template v-slot:label="{ item }">
             <span :class="textColor">{{ item.name }}:</span> {{ item.value }}
@@ -43,7 +44,7 @@
 </style>
 
 <script>
-import { computed } from '@vue/composition-api'
+import { computed, ref } from '@vue/composition-api'
 
 export default {
   name: 'RawDataTree',
@@ -56,6 +57,10 @@ export default {
     items: Object,
     icon: String,
     title: String,
+    defaultOpenDepth: {
+      type: Number,
+      default: 2
+    },
     iconColor: {
       type: String,
       default: 'blue darken-3'
@@ -75,9 +80,8 @@ export default {
         get: () => props.show,
         set: v => emit('showChange', v)
       }),
-      tree: computed(() => [...Object.keys(props.items || {})].sort().map(
-        key => obj2RawTree('top', key, JSON.parse(JSON.stringify(props.items || {}))[key])
-      ))
+      tree: computed(() => Object.keys(props.items).map(key => obj2RawTree('top', key, props.items[key]))),
+      openIds: ref(Object.keys(props.items).map(key => `top_${key}`))
     }
   }
 }
@@ -94,11 +98,11 @@ const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
       name: key,
       value: 'function () {...}'
     }
-    : typeof val === 'symbol'
+    : val instanceof Date || typeof val === 'symbol'
       ? {
         id: `${parent}_${key}`,
         name: key,
-        value: val.toString()
+        value: val instanceof Date ? val.toISOString() : val.toString()
       }
       : (
         typeof val === 'boolean' ||
@@ -120,8 +124,8 @@ const obj2RawTree = (parent, key, val) => typeof val === 'undefined'
               children: val.map((item, index) => obj2RawTree(
                 `${parent}_${key}`,
                 (item && item.id) ? item.id : index,
-                item)
-              )
+                item
+              ))
             }
             : {
               id: `${parent}_${key}`,

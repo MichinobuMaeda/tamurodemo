@@ -80,7 +80,7 @@
       icon-color="h2"
       title-color="h2--text"
       text-color="title--text"
-      :items="{ ...state, currentUser: auth.currentUser }"
+      :items="{ conf, state }"
     />
   </v-app>
 </template>
