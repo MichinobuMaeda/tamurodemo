@@ -1,9 +1,9 @@
 import { baseUrl } from '../conf'
 
-export const invite = async ({ functions, state }, id) => {
-  const result = await functions.httpsCallable('invite')({ id })
-  state.invitations[id] = result.data.invitation
-}
+export const invite = async ({ functions, state }, id) => functions.httpsCallable('invite')({ id })
+//   const result = await functions.httpsCallable('invite')({ id })
+//   state.invitations[id] = result.data.invitation
+// }
 
 const urlOfRoute = (router, route) => baseUrl() + '#' + router.resolve(route).resolved.path
 
@@ -12,7 +12,7 @@ export const invitationUrl = (state, router, id) =>
     router,
     {
       name: 'invitation',
-      params: { invitation: state.invitations[id] }
+      params: { invitation: (state.accounts.find(account => account.id === id) || {}).invitation }
     }
   )
 

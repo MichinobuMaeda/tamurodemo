@@ -18,7 +18,7 @@
     "@vue/composition-api": "^1.0.0-beta.9",
     "core-js": "^3.6.5",
     "firebase": "^8.0.2",
-    "marked": "^1.2.4",
+    "marked": "^2.0.0",
     "moment-timezone": "^0.5.32",
     "register-service-worker": "^1.7.1",
     "sanitize-html": "^2.1.2",

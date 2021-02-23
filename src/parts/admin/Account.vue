@@ -32,7 +32,7 @@
         {{ account(id).invitedBy ? `( ${account(account(id).invitedBy).name} )` : '' }}
       </div>
       <v-alert
-        v-if="state.invitations[id] && invitationStatus === 'Sent'"
+        v-if="account(id).invitations && invitationStatus === 'Sent'"
         type="info" outlined dense class="my-2" style="word-break: break-all;"
       >
         {{ $t('Send invitation', { url: invitationUrl(state, $router, id) }) }}

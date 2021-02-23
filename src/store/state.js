@@ -26,7 +26,7 @@ export const clearUserData = state => {
   state.groupChats = {}
   state.hotlines = {}
   state.categories = []
-  state.invitations = {}
+  // state.invitations = {}
   state.route = {}
   state.waitProc = null
   return state

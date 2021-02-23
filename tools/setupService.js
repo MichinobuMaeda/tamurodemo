@@ -57,6 +57,10 @@ const setupService = async () => {
   if (password) {
     await accounts.setPassword({ id, password }, context)
   }
+  console.log(`Add memeber: accounts.${id} to groups.all`)
+  await db.collection('groups').doc('all').update({
+    members: admin.firestore.FieldValue.arrayUnion(id)
+  })
   console.log(`Add memeber: accounts.${id} to groups.admins`)
   await db.collection('groups').doc('admins').update({
     members: admin.firestore.FieldValue.arrayUnion(id)

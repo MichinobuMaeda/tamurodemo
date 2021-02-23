@@ -10,15 +10,23 @@
     />
 
     <span v-if="type === 'linked-chips'">
+      <div v-if="editable && !(value || []).length" class="deleted--text">
+        {{ placeholder || label }}
+      </div>
       <LinkButton
+        v-else
         v-for="(v, index) in (value || [])" :key="index"
         :icon="(items.find(item => item.value === v) || {}).icon"
         :label="(items.find(item => item.value === v) || {}).text"
         @click="$emit('click', v)"
       />
     </span>
-    <span v-else-if="type === 'chips' && items[0].value">
+    <span v-else-if="type === 'chips' && items[0] && items[0].value">
+      <div v-if="editable && !(value || []).length" class="deleted--text">
+        {{ placeholder || label }}
+      </div>
       <v-chip
+        v-else
         outlined
         :color="(items.find(item => item.value === v) || {}).color || 'secondary'"
         class="ma-1"
@@ -28,8 +36,12 @@
         {{ (items.find(item => item.value === v) || {}).text }}
       </v-chip>
     </span>
-    <span class="ma-1" v-else-if="type === 'chips' && !items[0].value">
+    <span class="ma-1" v-else-if="type === 'chips' && !(items[0] && items[0].value)">
+      <div v-if="editable && !(value || []).length" class="deleted--text">
+        {{ placeholder || label }}
+      </div>
       <v-chip
+        v-else
         outlined
         class="ma-1"
         v-for="(v, index) in (value || [])" :key="index"
@@ -37,7 +49,7 @@
         {{ v }}
       </v-chip>
     </span>
-    <span v-else-if="type === 'select' && items[0].value">
+    <span v-else-if="type === 'select' && items[0] && items[0].value">
       {{ (items.find(item => item.value === value) || {}).text }}
     </span>
     <span v-else-if="!['formatted-text', 'textarea'].includes(type) && value">
