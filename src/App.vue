@@ -22,7 +22,11 @@
     </v-app-bar>
 
     <v-main v-if="state.loading || (me && me.id && $route.name === 'signin')">
-      <Loading color="h2" :size="96" />
+      <Loading
+        color="h2"
+        :size="96"
+        :message="`${$t('Please wait')} ${$t('If you wait more than x min', { min: 3 })}`"
+      />
     </v-main>
     <v-main class="px-4" v-else>
       <div class="text-center">

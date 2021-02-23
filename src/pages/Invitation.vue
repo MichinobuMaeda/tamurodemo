@@ -57,7 +57,20 @@
           <v-alert type="info" outlined dense>
             <div>{{ $t('E-mail address for sign-inhas been set') }}</div>
             <v-icon>{{ conf.icon('E-mail') }}</v-icon> {{ me.email }}
-            <div>{{ $t('Ask system admin to change e-mail address for sign-in') }}</div>
+            <div>
+              <LinkButton
+                class="ma-2"
+                :icon="conf.icon('Top')"
+                :label="$t('Top')"
+                @click="goPage({ name: 'top' })"
+              />
+              <LinkButton
+                class="ma-2"
+                :icon="conf.icon('Profile')"
+                :label="$t('Profile')"
+                @click="goPage({ name: 'user', params: { id: state.me.id, mode: 'edit' } })"
+              />
+            </div>
           </v-alert>
         </div>
         <div v-else>
@@ -203,6 +216,7 @@ export default {
       ...store,
       setEmailAndPasswordWithInvitation: () => waitFor(async () => {
         try {
+          page.setEmailMessage = 'Please wait'
           await setEmailAndPasswordWithInvitation(store, page)
           page.newEmail = ''
           page.confirmEmail = ''

@@ -54,9 +54,6 @@
         <div class="text-h3 h3--text my-4">
           {{ $t('Do not use or forget password') }}
         </div>
-        <p>
-          {{ $t('Ask system admin to change e-mail address for sign-in') }}
-        </p>
 
         <DefaultButton
           color="secondary"

@@ -1,7 +1,8 @@
 <template>
   <v-container fill-height>
     <v-row justify="center">
-      <v-col class="text-center">
+      <v-col class="text-center pa-4">
+        <p v-if="message">{{ message }}</p>
         <v-progress-circular
           indeterminate
           :size="size"
@@ -23,7 +24,8 @@ export default {
     size: {
       type: Number,
       default: 64
-    }
+    },
+    message: String
   }
 }
 </script>
