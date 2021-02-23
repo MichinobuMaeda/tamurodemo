@@ -30,6 +30,11 @@
     </v-main>
     <v-main class="px-4" v-else>
       <div class="text-center">
+        <AppUpdater
+          v-if="state.service.conf && state.service.conf.version !== conf.version"
+          :label="$t('Update app')"
+          :icon="conf.icon('Update app')"
+        />
         <DefaultButton
           v-if="noSignInMethod(state) && state.invitations[state.me.id] && $route.name !== 'invitation'"
           color="warning"
@@ -37,13 +42,8 @@
           :label="$t('Set the sign-in method')"
           @click="goPage({ name: 'invitation', params: { invitation: state.invitations[state.me.id] }})"
         />
-        <AppUpdater
-          v-if="state.service.conf && state.service.conf.version !== conf.version"
-          :label="$t('Update app')"
-          :icon="conf.icon('Update app')"
-        />
         <AppInstaller
-          v-if="me.valid"
+          v-else-if="me.valid"
           :icon="conf.icon('Install app')"
           :label="$t('Install app')"
         />

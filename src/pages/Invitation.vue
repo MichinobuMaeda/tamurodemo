@@ -67,8 +67,8 @@
               <LinkButton
                 class="ma-2"
                 :icon="conf.icon('Profile')"
-                :label="$t('Profile')"
-                @click="goPage({ name: 'user', params: { id: state.me.id, mode: 'edit' } })"
+                :label="$t('Profile', { user: me.name })"
+                @click="goPage({ name: 'user', params: { id: me.id, mode: 'edit' } })"
               />
             </div>
           </v-alert>
