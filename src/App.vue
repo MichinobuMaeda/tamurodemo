@@ -141,9 +141,8 @@ export default {
     const { state, update, conf, account, user, profile, getProfile } = store
 
     onMounted(async () => {
-      await getAuthState(store)
       await initServiceData(store)
-      await initializeMessaging(store)
+      await getAuthState(store)
     })
 
     const avoidEmptyValue = route => {
@@ -240,6 +239,7 @@ export default {
             await initUserData(store)
             await updateInvitationStatus(store)
             returnLastRoute(root.$router)
+            await initializeMessaging(store)
           } else {
             clearUserData(state)
             await signOut(store)
