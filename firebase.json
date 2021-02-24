@@ -27,7 +27,18 @@
         "source": "/invitation/*",
         "function": "api"
       }
-    ]
+    ],
+		"headers": [
+			{
+				"source": "service-worker.js",
+				"headers": [
+					{
+						"key": "Cache-Control",
+						"value": "max-age=0"
+					}
+				]
+			}
+		]
   },
   "storage": {
     "rules": "storage.rules"
