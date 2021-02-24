@@ -23,12 +23,4 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
-  <script>
-    navigator.serviceWorker.getRegistrations().then(registrations => {
-      registrations.forEach(registration => {
-        registration.unregister()
-      })
-      document.location.reload(true)
-    })
-  </script>
 </html>
