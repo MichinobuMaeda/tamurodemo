@@ -14,22 +14,15 @@ https://console.firebase.google.com/
     - Usage and billing
         - Details & settings
             - Modify plan: Blaze
-    - Project overview
-        - Project settings
-            - General
-                - Default GCP resource location: asia-northeast1 (Tokyo) or 2 (Osaka)
-                - Public settings
-                    - Public-facing name
-                    - Support email
-                - Your apps
-                    - Web (</>)
-                        - App nickname
-                        - Also set up Firebase Hosting for this app.
-                        - Firebase SDK snippet: [Config] -- paste to ``src/plugins/firebase.js`` except ``apiKey``
-                - Web API Key: [Web API Key] -- use later
-            - Service accounts
-                - Firebase Admin SDK
-                    - Generate new private key --> ``firebase-adminsdk.json``
+    - Project settings
+        - General
+            - Default GCP resource location: asia-northeast1 (Tokyo) or 2 (Osaka)
+            - Public settings
+                - Public-facing name
+                - Support email
+        - Service accounts
+            - Firebase Admin SDK
+                - Generate new private key --> ``firebase-adminsdk.json``
     - Authentication
         - Sign in method
             - Email/Password: Enable
@@ -37,6 +30,22 @@ https://console.firebase.google.com/
             - enable other methods
     - Cloud Firestore
         - Create Database: Start in production mode
+    - Cloud Messageing
+        - Send your first message
+            - Enable Google Analytics
+    - Project settings
+        - Cloud Messageing
+            - Web configuration
+                - Web Push certificates
+                    - Generate key pair
+                        - Key pair: [Web Push certificates] -- paste to ``src/plugins/firebase.js`` except ``webPushCertificateKey``
+        - General
+            - Your apps
+                - Web (</>)
+                    - App nickname
+                    - Also set up Firebase Hosting for this app.
+                    - Firebase SDK snippet: [Config] -- paste to ``src/plugins/firebase.js`` except ``apiKey``
+            - Web API Key: [Web API Key] -- use later
 
 https://console.cloud.google.com
 

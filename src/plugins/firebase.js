@@ -11,14 +11,15 @@ export const firebase = Firebase.initializeApp({
   projectId: 'tamuro01',
   storageBucket: 'tamuro01.appspot.com',
   messagingSenderId: '476623795624',
-  appId: '1:476623795624:web:0fce0105822bc7908cd99d'
+  appId: '1:476623795624:web:0fce0105822bc7908cd99d',
+  measurementId: 'G-E3ML2Q9BVM'
 })
 
 export const auth = firebase.auth()
 export const db = firebase.firestore()
 export const functions = firebase.functions()
 export const messaging = firebase.messaging()
-export const webPushCertificateKey = 'BPZ_fdPSU__DSq7IDD5cK6DlPUd4iEqQfuMEfXb7cHZnNsTzOTRFW5EW9lnd6Dnso1-0fulRxXsaPWcJhL0n0_4'
+export const webPushCertificateKey = 'BKkzKdvIWlIy4FmHSxbrHMmuDICaY1gvP-GcHscMci_E6m5gH_cImPAnRYN6IaaA66JNiAI3_PwE9IQQ1EpSWDk'
 export const FieldValue = Firebase.firestore.FieldValue
 
 console.log('ui', process.env.NODE_ENV)
