@@ -2,7 +2,13 @@
   <div class="mt-2 mb-4">
     <v-row v-if="edit">
       <v-col class="col-12">
+        <FormattedTextEditor
+          v-model="guidanceProfile"
+          :editable="me.priv && me.priv.manager"
+        />
+
         <PermittedMembers :id="id" />
+
         <LinkButton
           v-for="group in permittedGroups" :key="group.id"
           :icon="conf.icon('Group')"
@@ -206,7 +212,9 @@
 </template>
 
 <script>
+import { computed } from '@vue/composition-api'
 import { useStore, profileUtils } from '@/store'
+import FormattedTextEditor from '@/components/FormattedTextEditor'
 import TextEditor from '@/components/TextEditor'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/parts/PermittedMembers'
@@ -215,6 +223,7 @@ export default {
   name: 'Profile',
   components: {
     LinkButton,
+    FormattedTextEditor,
     TextEditor,
     PermittedMembers
   },
@@ -231,10 +240,15 @@ export default {
   },
   setup (props) {
     const store = useStore()
+    const { state, waitFor, update } = store
 
     return {
       ...store,
-      ...profileUtils(store, props)
+      ...profileUtils(store, props),
+      guidanceProfile: computed({
+        get: () => state.service.conf && state.service.conf.guidanceProfile,
+        set: str => waitFor(() => update(state.service.conf, { guidanceProfile: str }))
+      })
     }
   }
 }
