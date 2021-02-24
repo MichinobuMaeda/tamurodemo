@@ -58,7 +58,7 @@
     <v-footer
       id="footer"
       color="theme1r--text"
-      class="theme1 my-2"
+      class="theme1 mt-2"
       height="48px"
     >
       <span>Ver. {{ conf.version }}</span>
