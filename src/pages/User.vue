@@ -35,9 +35,9 @@
         :icon="conf.icon('User')"
       >
         <template v-slot:title>
-          <EditableItem
-            :label="$t('Display name')"
+          <TextEditor
             v-model="name"
+            :label="$t('Display name')"
             :editable="edit && (me.priv.manager || id === me.id)"
             :disabled="!!state.waitProc"
           />
@@ -71,7 +71,7 @@
 import { computed } from '@vue/composition-api'
 import { useStore } from '@/store'
 import PageTitle from '../components/PageTitle'
-import EditableItem from '../components/EditableItem'
+import TextEditor from '../components/TextEditor'
 import GroupsOfUser from '../parts/GroupsOfUser'
 import Profile from '../parts/Profile'
 import Chats from '../parts/Chats'
@@ -81,7 +81,7 @@ export default {
   name: 'PageUser',
   components: {
     PageTitle,
-    EditableItem,
+    TextEditor,
     GroupsOfUser,
     Profile,
     Chats,

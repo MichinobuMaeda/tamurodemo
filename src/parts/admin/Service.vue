@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Site name') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <TextEditor
             :label="$t('Site name')"
             v-model="name"
             :rules="[ruleRequired]"
@@ -16,7 +16,7 @@
       <v-row>
         <v-col class="title--text col-4 text-right">URL</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <TextEditor
             label="URL"
             v-model="hosting"
             :rules="[ruleRequired, ruleUrl]"
@@ -28,7 +28,7 @@
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Notification expiration') }}</v-col>
         <v-col class="col-4">
-          <EditableItem
+          <TextEditor
             type="number"
             :label="$t('Notification expiration')"
             v-model="notificationExpirationTime"
@@ -38,13 +38,13 @@
           />
         </v-col>
         <v-col class="col-4">
-          {{ msecToDaysAndTime(notificationExpirationTime) }}
+          {{ msecToDaysAndTime(notificationExpirationTime || 0) }}
         </v-col>
       </v-row>
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Notification pause repetition') }}</v-col>
         <v-col class="col-4">
-          <EditableItem
+          <TextEditor
             type="number"
             :label="$t('Notification pause repetition')"
             v-model="notificationPauseRepetitionTime"
@@ -54,13 +54,13 @@
           />
         </v-col>
         <v-col class="col-4">
-          {{ msecToDaysAndTime(notificationPauseRepetitionTime) }}
+          {{ msecToDaysAndTime(notificationPauseRepetitionTime || 0) }}
         </v-col>
       </v-row>
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Notification icon') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <TextEditor
             :label="$t('Notification icon')"
             v-model="notificationIconPath"
             :rules="[ruleRequired]"
@@ -72,7 +72,7 @@
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Max count of addresses') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <TextEditor
             type="number"
             :label="$t('Max count of addresses')"
             v-model="profileAddressCount"
@@ -85,7 +85,7 @@
       <v-row>
         <v-col class="title--text col-4 text-right">API key</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <TextEditor
             label="API key"
             v-model="apiKey"
             :rules="[ruleRequired]"
@@ -101,12 +101,12 @@
 <script>
 import { computed } from '@vue/composition-api'
 import { useStore } from '../../store'
-import EditableItem from '../../components/EditableItem'
+import TextEditor from '../../components/TextEditor'
 
 export default {
   name: 'AdminService',
   components: {
-    EditableItem
+    TextEditor
   },
   setup () {
     const store = useStore()

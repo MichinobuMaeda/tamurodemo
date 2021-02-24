@@ -14,9 +14,7 @@
         :height="state.chatSummaryPaneHeight"
       />
 
-      <EditableItem
-        type="formatted-text"
-        :label="$t('Description')"
+      <FormattedTextEditor
         :placeholder="$t('Introduction of the site')"
         v-model="desc"
         :editable="me.priv.manager"
@@ -89,7 +87,7 @@
 import { computed } from '@vue/composition-api'
 import { useStore } from '../store'
 import PageTitle from '../components/PageTitle'
-import EditableItem from '../components/EditableItem'
+import FormattedTextEditor from '../components/FormattedTextEditor'
 import LinkButton from '../components/LinkButton'
 import Chats from '../parts/Chats'
 import CreateGroup from '../parts/admin/CreateGroup'
@@ -98,7 +96,7 @@ export default {
   name: 'PageIndex',
   components: {
     PageTitle,
-    EditableItem,
+    FormattedTextEditor,
     LinkButton,
     Chats,
     CreateGroup

@@ -1,5 +1,3 @@
-import marked from 'marked'
-import sanitizeHtml from 'sanitize-html'
 import { defaults } from '../conf'
 
 export const msecToDaysAndTime = val => {
@@ -31,20 +29,3 @@ export const waitFor = state => async (proc, next = null) => {
     state.waitProc = null
   }
 }
-
-const allowedTags = ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-  'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'abbr', 'code', 'hr', 'br', 'div',
-  'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre']
-
-export const formatText = value => value && value.type === 'markdown'
-  ? sanitizeHtml(marked(value.data || ''), { allowedTags })
-  : value && value.type === 'html'
-    ? sanitizeHtml(value.data || '', { allowedTags })
-    : (value.data || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .split(/\n/)
-      .map(line => `<div>${line || '&nbsp;'}</div>`)
-      .join('\n')

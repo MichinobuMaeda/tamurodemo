@@ -7,9 +7,9 @@
         :icon="conf.icon(group.deletedAt ? 'Delete' : 'Group')"
       >
         <template v-slot:title>
-          <EditableItem
-            :label="$t('Group name')"
+          <TextEditor
             v-model="name"
+            :label="$t('Group name')"
             :editable="me.priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -23,10 +23,7 @@
         :height="state.chatPaneHeight"
       />
 
-      <EditableItem
-        v-if="me.priv.manager || (group.members || []).includes(me.id) || (group.desc && group.desc.data)"
-        type="formatted-text"
-        :label="$t('Description')"
+      <FormattedTextEditor
         :placeholder="$t('Introduction of the group')"
         v-model="desc"
         :editable="me.priv.manager || (group.members || []).includes(me.id)"
@@ -90,6 +87,8 @@
 import { computed } from '@vue/composition-api'
 import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
+import TextEditor from '@/components/TextEditor'
+import FormattedTextEditor from '@/components/FormattedTextEditor'
 import EditableItem from '@/components/EditableItem'
 import ConfirmButton from '@/components/ConfirmButton'
 import LinkButton from '@/components/LinkButton'
@@ -99,6 +98,8 @@ export default {
   name: 'PageGroup',
   components: {
     PageTitle,
+    TextEditor,
+    FormattedTextEditor,
     EditableItem,
     ConfirmButton,
     LinkButton,

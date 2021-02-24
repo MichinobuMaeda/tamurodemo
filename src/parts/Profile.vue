@@ -56,11 +56,12 @@
         {{ item.label }}
       </v-col>
       <v-col class="col-8">
-        <EditableItem
+        <TextEditor
           :label="item.label"
           :placeholder="item.placeholder"
           v-model="profile(id)[item.key]"
           @save="val => setProfile(item.key, val, 'a')"
+          :editable="edit"
           :disabled="!!state.waitProc"
         />
       </v-col>
@@ -73,8 +74,8 @@
           {{ $t('Self‐introduction') }}
         </div>
         <v-sheet outlined class="pa-2">
-          <EditableItem
-            type="textarea"
+          <TextEditor
+            :multiline="true"
             :label="$t('Self‐introduction')"
             v-model="profile(id).desc"
             @save="val => setProfile('desc', val, 'a')"
@@ -92,8 +93,8 @@
           {{ $t('Message for close members') }}
         </div>
         <v-sheet outlined class="pa-2">
-          <EditableItem
-            type="textarea"
+          <TextEditor
+            :multiline="true"
             :label="$t('Message for close members')"
             v-model="profile(id).descForPermitted"
             @save="val => setProfile('descForPermitted', val, 'c')"
@@ -111,8 +112,8 @@
           {{ $t('Note for managers') }}
         </div>
         <v-sheet outlined class="pa-2">
-          <EditableItem
-            type="textarea"
+          <TextEditor
+            :multiline="true"
             :label="$t('Note for managers')"
             v-model="profile(id).descForManagers"
             @save="val => setProfile('descForManagers', val, 'm')"
@@ -148,7 +149,7 @@
             {{ item.label }}
           </v-col>
           <v-col class="col-8" v-if="edit || profile(id)[item.key]">
-            <EditableItem
+            <TextEditor
               :label="item.label"
               :placeholder="item.placeholder"
               v-model="profile(id)[item.key]"
@@ -187,7 +188,7 @@
               {{ item.label }}
             </v-col>
             <v-col class="col-8" v-if="edit || profile(id)[item.key]">
-              <EditableItem
+              <TextEditor
                 :label="item.label"
                 :placeholder="item.placeholder"
                 v-model="profile(id)[item.key]"
@@ -206,7 +207,7 @@
 
 <script>
 import { useStore, profileUtils } from '@/store'
-import EditableItem from '@/components/EditableItem'
+import TextEditor from '@/components/TextEditor'
 import LinkButton from '@/components/LinkButton'
 import PermittedMembers from '@/parts/PermittedMembers'
 
@@ -214,7 +215,7 @@ export default {
   name: 'Profile',
   components: {
     LinkButton,
-    EditableItem,
+    TextEditor,
     PermittedMembers
   },
   props: {

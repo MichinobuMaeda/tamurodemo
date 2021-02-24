@@ -5,7 +5,7 @@ import { clearServiceData, clearUserData, findItem } from './state'
 import { accountStatus, accountPriv } from './accounts'
 import { accountGroups } from './groups'
 import { add, update, remove, restore } from './firestore'
-import { waitFor, msecToDaysAndTime, formatText } from './ui'
+import { waitFor, msecToDaysAndTime } from './ui'
 import * as profiles from './profiles'
 
 const { validators, defaults, ...conf } = confAll
@@ -40,7 +40,6 @@ export const createStore = (firebase, root) => {
     restore,
     msecToDaysAndTime,
     waitFor: waitFor(state),
-    formatText,
     ...validators(root),
     conf,
     withTz: date => moment(date).tz(state.tz),

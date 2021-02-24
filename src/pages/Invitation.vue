@@ -37,9 +37,7 @@
           v-if="state.service.conf.guide && state.service.conf.guide.data"
           outlined rounded class="px-3 pt-3 mb-4"
         >
-          <EditableItem
-            type="formatted-text"
-            :label="$t('Description')"
+          <FormattedTextEditor
             v-model="state.service.conf.guide"
             @save="val => waitFor(() => update(state.service.conf, { guide: val }))"
             :editable="false"
@@ -160,7 +158,7 @@ import PageTitle from '../components/PageTitle'
 import Loading from '../components/Loading.vue'
 import DefaultButton from '../components/DefaultButton'
 import LinkButton from '../components/LinkButton'
-import EditableItem from '../components/EditableItem'
+import FormattedTextEditor from '../components/FormattedTextEditor'
 import SelectAuthProviders from '../parts/SelectAuthProviders'
 import Chats from '../parts/Chats'
 import UiPreferences from '../parts/UiPreferences'
@@ -172,7 +170,7 @@ export default {
     Loading,
     DefaultButton,
     LinkButton,
-    EditableItem,
+    FormattedTextEditor,
     SelectAuthProviders,
     Chats,
     UiPreferences

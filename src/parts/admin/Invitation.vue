@@ -17,8 +17,9 @@
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Invitation expiration') }}</v-col>
         <v-col class="col-4">
-          <EditableItem
+          <TextEditor
             :label="$t('Invitation expiration')"
+            type="number"
             v-model="invitationExpirationTime"
             :rules="[ruleNotNegative]"
             :editable="me.priv.admin || me.priv.manager"
@@ -26,15 +27,13 @@
           />
         </v-col>
         <v-col class="col-4">
-          {{ msecToDaysAndTime(invitationExpirationTime) }}
+          {{ msecToDaysAndTime(invitationExpirationTime || 0) }}
         </v-col>
       </v-row>
       <v-row>
          <v-col class="title--text col-12">{{ $t('GuidanceText') }}</v-col>
          <v-col class="col-12">
-          <EditableItem
-            type="formatted-text"
-            :label="$t('Description')"
+          <FormattedTextEditor
             v-model="guide"
             :editable="me.priv.manager || me.priv.admin"
             :disabled="!!state.waitProc"
@@ -54,12 +53,16 @@
 import { computed } from '@vue/composition-api'
 import { useStore } from '../../store'
 import EditableItem from '../../components/EditableItem'
+import TextEditor from '../../components/TextEditor'
+import FormattedTextEditor from '../../components/FormattedTextEditor'
 import LinkButton from '../../components/LinkButton'
 
 export default {
   name: 'AdminInvitation',
   components: {
     EditableItem,
+    TextEditor,
+    FormattedTextEditor,
     LinkButton
   },
   setup () {

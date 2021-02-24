@@ -8,25 +8,37 @@
       >
         <template v-slot:title>{{ $t('Privacy policy') }}</template>
       </PageTitle>
-      <div class="formatted-text" v-html="formatText(state.service.conf && state.service.conf.policy)"></div>
+      <FormattedTextEditor
+        v-model="policy"
+        placeholder="Privacy policy"
+        :editable="me.priv && me.priv.manager"
+      />
     </v-col>
   </v-row>
 </template>
 
 <script>
+import { computed } from '@vue/composition-api'
 import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
+import FormattedTextEditor from '@/components/FormattedTextEditor'
 
 export default {
   name: 'PagePolicy',
   components: {
-    PageTitle
+    PageTitle,
+    FormattedTextEditor
   },
   setup () {
     const store = useStore()
+    const { state, waitFor, update } = store
 
     return {
-      ...store
+      ...store,
+      policy: computed({
+        get: () => state.service.conf && state.service.conf.policy,
+        set: str => waitFor(() => update(state.service.conf, { policy: str }))
+      })
     }
   }
 }
