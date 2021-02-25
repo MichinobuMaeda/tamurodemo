@@ -29,6 +29,17 @@
             :editable="me.priv.manager || me.priv.admin"
             :disabled="!!state.waitProc"
           />
+          <div v-else-if="target === 'invitationTemplate'">
+            <p class="info--text">[[NAME]] : {{ $t('Display name') }} / [[URL]] : {{ $t('URL for invitation') }}</p>
+            <TextEditor
+              type="multiline"
+              v-model="invitationTemplate"
+              :label="$t('Template of invitation')"
+              :placeholder="$t('Template of invitation')"
+              :editable="me.priv.manager || me.priv.admin"
+              :disabled="!!state.waitProc"
+            />
+          </div>
           <div v-else-if="target === 'aboutInvitation'">
             <FormattedTextEditor
               v-model="aboutInvitation"
@@ -56,6 +67,7 @@
 import { computed } from '@vue/composition-api'
 import { useStore } from '../store'
 import PageTitle from '../components/PageTitle'
+import TextEditor from '../components/TextEditor'
 import FormattedTextEditor from '../components/FormattedTextEditor'
 import LinkButton from '../components/LinkButton'
 import Users from '../parts/admin/Users'
@@ -69,6 +81,7 @@ export default {
   name: 'PageAdmin',
   components: {
     PageTitle,
+    TextEditor,
     FormattedTextEditor,
     LinkButton,
     Users,
@@ -102,6 +115,11 @@ export default {
           label: 'About profile editing'
         },
         {
+          target: 'invitationTemplate',
+          icon: 'Description',
+          label: 'Template of invitation'
+        },
+        {
           target: 'aboutInvitation',
           icon: 'Description',
           label: 'About invitation'
@@ -127,13 +145,17 @@ export default {
           label: 'Service settings'
         }
       ],
-      aboutInvitation: computed({
-        get: () => state.service.conf.aboutInvitation,
-        set: str => waitFor(() => update(state.service.conf, { aboutInvitation: str }))
-      }),
       aboutProfile: computed({
         get: () => state.service.conf && state.service.conf.aboutProfile,
         set: str => waitFor(() => update(state.service.conf, { aboutProfile: str }))
+      }),
+      invitationTemplate: computed({
+        get: () => state.service.conf.invitationTemplate,
+        set: str => waitFor(() => update(state.service.conf, { invitationTemplate: str }))
+      }),
+      aboutInvitation: computed({
+        get: () => state.service.conf.aboutInvitation,
+        set: str => waitFor(() => update(state.service.conf, { aboutInvitation: str }))
       })
     }
   }

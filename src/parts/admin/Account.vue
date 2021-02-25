@@ -31,12 +31,16 @@
         {{ account(id).invitedAt ? withTz(account(id).invitedAt).format('l') : '--/--/--' }}
         {{ account(id).invitedBy ? `( ${account(account(id).invitedBy).name} )` : '' }}
       </div>
-      <v-alert
-        v-if="state.invitations[id] && invitationStatus(account(id)) === 'Sent'"
-        type="info" outlined dense class="my-2" style="word-break: break-all;"
-      >
-        {{ $t('Send invitation', { url: invitationUrl(state, $router, id) }) }}
-      </v-alert>
+      <div v-if="state.invitations[id] && invitationStatus(account(id)) === 'Sent'">
+        <v-alert
+          type="info" outlined dense class="my-2" style="word-break: break-all;"
+        >
+          {{ $t('Send invitation', { url: invitationUrl(state, $router, id) }) }}
+        </v-alert>
+        <div v-for="(line, index) in (state.service.conf.invitationTemplate || '').split(/\n/)" :key="index">
+          {{ line.replace('[[NAME]]', user(id).name).replace('[[URL]]', state.invitations[id]) || '\u200C' }}
+        </div>
+      </div>
 
       <v-row>
         <v-col class="col-12 col-sm-8 my-1">
