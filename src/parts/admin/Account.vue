@@ -38,7 +38,7 @@
           {{ $t('Send invitation', { url: invitationUrl(state, $router, id) }) }}
         </v-alert>
         <div v-for="(line, index) in (state.service.conf.invitationTemplate || '').split(/\n/)" :key="index">
-          {{ line.replace('[[NAME]]', user(id).name).replace('[[URL]]', state.invitations[id]) || '\u200C' }}
+          {{ line.replace('[[NAME]]', user(id).name).replace('[[URL]]', invitationUrl(state, $router, id)) || '\u200C' }}
         </div>
       </div>
 
