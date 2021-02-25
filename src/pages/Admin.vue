@@ -9,48 +9,45 @@
         <template v-slot:title>{{ $t('Administration') }}</template>
       </PageTitle>
 
-      <AdminSectionHeader v-model="target" target="users" :sectionIcon="conf.icon('Users')" :label="$t('Users')" />
-      <v-row justify="center">
-        <v-col class="col-12">
+      <v-card v-for="item in items" :key="item.target">
+        <v-card-title
+          class="h3--text text-h3 my-2 pa-2"
+          @click="goPage(target === item.target ? { name: 'admin' } : { name: 'admin', params: { target: item.target } })"
+        >
+          <v-icon color="h3" class="mr-1">{{ conf.icon(item.icon) }}</v-icon>
+          {{ $t(item.label) }}
+          <v-spacer />
+          <v-icon>{{ conf.icon(target === item.target ? 'Shrink' : 'Expand') }}</v-icon>
+        </v-card-title>
+        <v-card-text v-if="target === item.target">
           <Users v-if="target === 'users'" />
-        </v-col>
-      </v-row>
-
-      <AdminSectionHeader v-model="target" target="categories" :sectionIcon="conf.icon('Categories')" :label="$t('Categories')" />
-      <v-row justify="center">
-        <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
           <Categories v-if="target === 'categories'" />
-        </v-col>
-      </v-row>
-
-      <AdminSectionHeader v-model="target" target="invitation" :sectionIcon="conf.icon('Invitation')" :label="$t('Invitation')" />
-      <v-row justify="center">
-        <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-          <Invitation v-if="target === 'invitation'" />
-        </v-col>
-      </v-row>
-
-      <AdminSectionHeader v-model="target" target="defaults" :sectionIcon="conf.icon('Defaults')" :label="$t('Defaults')" />
-      <v-row justify="center">
-        <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-          <UiPreferences :entity="state.service.conf" v-if="target === 'defaults'" class="my-2" />
-        </v-col>
-      </v-row>
-
-      <AdminSectionHeader v-model="target" target="auth" :sectionIcon="conf.icon('Sign in')" :label="$t('Authentication')" />
-      <v-row justify="center">
-        <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-          <Authentication v-if="target === 'auth'" />
-        </v-col>
-      </v-row>
-
-      <AdminSectionHeader v-model="target" target="service" :sectionIcon="conf.icon('Service settings')" :label="$t('Service settings')" />
-      <v-row justify="center">
-        <v-col class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-          <Service v-if="target === 'service'" />
-        </v-col>
-      </v-row>
-
+          <FormattedTextEditor
+            v-else-if="target === 'aboutProfile'"
+            v-model="guidanceProfile"
+            :placeholder="$t(item.label)"
+            :editable="me.priv.manager || me.priv.admin"
+            :disabled="!!state.waitProc"
+          />
+          <div v-else-if="target === 'aboutInvitation'">
+            <FormattedTextEditor
+              v-model="guide"
+              :placeholder="$t(item.label)"
+              :editable="me.priv.manager || me.priv.admin"
+              :disabled="!!state.waitProc"
+            />
+            <LinkButton
+              :icon="conf.icon('Preview')"
+              :label="$t('Preview')"
+              @click="goPage({ name: 'prevwInvitation' })"
+            />
+          </div>
+          <Invitation v-else-if="target === 'invitation'" />
+          <UiPreferences v-else-if="target === 'defaults'" class="my-2" :entity="state.service.conf" />
+          <Authentication v-else-if="target === 'auth'" />
+          <Service v-else-if="target === 'service'" />
+        </v-card-text>
+      </v-card>
     </v-col>
   </v-row>
 </template>
@@ -59,7 +56,8 @@
 import { computed } from '@vue/composition-api'
 import { useStore } from '../store'
 import PageTitle from '../components/PageTitle'
-import AdminSectionHeader from '../parts/admin/AdminSectionHeader'
+import FormattedTextEditor from '../components/FormattedTextEditor'
+import LinkButton from '../components/LinkButton'
 import Users from '../parts/admin/Users'
 import Categories from '../parts/admin/Categories'
 import Invitation from '../parts/admin/Invitation'
@@ -71,7 +69,8 @@ export default {
   name: 'PageAdmin',
   components: {
     PageTitle,
-    AdminSectionHeader,
+    FormattedTextEditor,
+    LinkButton,
     Users,
     Categories,
     Invitation,
@@ -81,11 +80,61 @@ export default {
   },
   setup () {
     const store = useStore()
-    const { state } = store
+    const { state, waitFor, update } = store
 
     return {
       ...store,
-      target: computed(() => state.route.params ? state.route.params.target : '')
+      target: computed(() => state.route.params ? state.route.params.target : ''),
+      items: [
+        {
+          target: 'users',
+          icon: 'Users',
+          label: 'Users'
+        },
+        {
+          target: 'categories',
+          icon: 'Categories',
+          label: 'Categories'
+        },
+        {
+          target: 'aboutProfile',
+          icon: 'Description',
+          label: 'About profile editing'
+        },
+        {
+          target: 'aboutInvitation',
+          icon: 'Description',
+          label: 'About invitation'
+        },
+        {
+          target: 'invitation',
+          icon: 'Invitation',
+          label: 'Invitation'
+        },
+        {
+          target: 'defaults',
+          icon: 'Defaults',
+          label: 'Defaults'
+        },
+        {
+          target: 'auth',
+          icon: 'Sign in',
+          label: 'Authentication'
+        },
+        {
+          target: 'service',
+          icon: 'Service settings',
+          label: 'Service settings'
+        }
+      ],
+      guide: computed({
+        get: () => state.service.conf.guide,
+        set: str => waitFor(() => update(state.service.conf, { guide: str }))
+      }),
+      guidanceProfile: computed({
+        get: () => state.service.conf && state.service.conf.guidanceProfile,
+        set: str => waitFor(() => update(state.service.conf, { guidanceProfile: str }))
+      })
     }
   }
 }

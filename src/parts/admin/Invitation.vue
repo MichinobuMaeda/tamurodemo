@@ -33,21 +33,6 @@
           {{ msecToDaysAndTime(invitationExpirationTime || 0) }}
         </v-col>
       </v-row>
-      <v-row>
-         <v-col class="title--text col-12">{{ $t('GuidanceText') }}</v-col>
-         <v-col class="col-12">
-          <FormattedTextEditor
-            v-model="guide"
-            :editable="me.priv.manager || me.priv.admin"
-            :disabled="!!state.waitProc"
-          />
-        </v-col>
-      </v-row>
-      <LinkButton
-        :icon="conf.icon('Preview')"
-        :label="$t('Preview')"
-        @click="goPage({ name: 'prevwInvitation' })"
-      />
    </v-col>
   </v-row>
 </template>
@@ -57,16 +42,12 @@ import { computed } from '@vue/composition-api'
 import { useStore } from '../../store'
 import OnOffEditor from '../../components/OnOffEditor'
 import TextEditor from '../../components/TextEditor'
-import FormattedTextEditor from '../../components/FormattedTextEditor'
-import LinkButton from '../../components/LinkButton'
 
 export default {
   name: 'AdminInvitation',
   components: {
     OnOffEditor,
-    TextEditor,
-    FormattedTextEditor,
-    LinkButton
+    TextEditor
   },
   setup () {
     const store = useStore()

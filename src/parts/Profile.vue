@@ -4,7 +4,7 @@
       <v-col class="col-12">
         <FormattedTextEditor
           v-model="guidanceProfile"
-          :editable="me.priv && me.priv.manager"
+          :editable="false"
         />
 
         <PermittedMembers :id="id" />

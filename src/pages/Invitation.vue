@@ -10,7 +10,7 @@
         <LinkButton
           :icon="conf.icon('Service settings')"
           :label="$t('Return to', { target: $t('Administration') })"
-          @click="goPage({ name: 'admin', params: { target: 'invitation' } })"
+          @click="goPage({ name: 'admin', params: { target: 'aboutInvitation' } })"
         />
       </v-alert>
       <PageTitle

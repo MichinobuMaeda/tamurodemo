@@ -63,7 +63,8 @@ const iconList = {
   'Go top': 'arrow_upward',
   'Go bottom': 'arrow_downward',
   Preview: 'preview',
-  'Install app': 'get_app'
+  'Install app': 'get_app',
+  Description: 'description'
 }
 
 export const icon = name => iconList[name] || 'description'
