@@ -12,21 +12,19 @@
         class="text-center pt-4 pb-8 px-2"
       >
         <div>{{ label }}</div>
-        <v-textarea
-          v-if="multiline || type === 'multiline'"
-          outlined
-          v-model="state.value"
-          autofocus
-        />
-        <v-text-field
-          v-else
-          outlined
-          v-model="state.value"
-          :placeholder="placeholder"
-          :type="type"
-          :rules="rules"
-          autofocus
-        />
+        <v-row class="justify-center">
+          <v-col class="col-auto">
+            <v-switch
+              class="inline-block"
+              v-model="state.value"
+            >
+              <template v-slot:label>
+                <v-icon v-if="iconTrue && iconFalse" class="mr-1">{{ state.value ? iconTrue : iconFalse }}</v-icon>
+                {{ state.value ? labelTrue : labelFalse }}
+              </template>
+            </v-switch>
+          </v-col>
+        </v-row>
         <DefaultButton
           color="secondary"
           class="mr-2"
@@ -38,18 +36,15 @@
           color="primary"
           :icon="iconSave"
           :label="$t(labelSave)"
-          :disabled="disabled || value === state.value || !valid"
+          :disabled="disabled || !!value === !!state.value || !valid"
           @click="onSave"
         />
       </v-sheet>
     </v-bottom-sheet>
-    <span v-if="editable && !state.edit && !value" class="deleted--text">
-      {{ placeholder }}
+    <span :class="textClass">
+      <v-icon v-if="iconTrue && iconFalse" class="mr-1">{{ state.value ? iconTrue : iconFalse }}</v-icon>
+      {{ state.value ? labelTrue : labelFalse }}
     </span>
-    <span :class="textClass" v-if="!(multiline || type === 'multiline')">{{ value }}</span>
-    <div v-else v-for="(line, index) in (value || '').split(/\n/)" :key="index">
-      {{ line || '\u200C' }}
-    </div>
   </span>
 </template>
 
@@ -61,7 +56,7 @@ import MiniButton from './MiniButton'
 import { evalRules } from './helpers'
 
 export default {
-  name: 'TextEditor',
+  name: 'OnOffEditor',
   components: {
     DefaultButton,
     MiniButton
@@ -71,18 +66,18 @@ export default {
     event: 'save'
   },
   props: {
-    value: [String, Number],
+    value: [String, Number, Boolean],
     label: String,
-    placeholder: String,
-    multiline: {
-      type: Boolean,
-      default: false
-    },
-    type: {
+    iconTrue: String,
+    labelTrue: {
       type: String,
-      default: 'text'
+      default: 'On'
     },
-    rules: Array,
+    iconFalse: String,
+    labelFalse: {
+      type: String,
+      default: 'Off'
+    },
     textClass: {
       type: String,
       default: ''
@@ -119,7 +114,7 @@ export default {
   setup (props, { emit }) {
     const state = reactive({
       edit: false,
-      value: props.value
+      value: !!props.value
     })
 
     return {
@@ -127,11 +122,11 @@ export default {
       valid: computed(() => evalRules(props.rules, state.value)),
       onEdit: () => {
         state.edit = true
-        state.value = props.value
+        state.value = !!props.value
       },
       onCancel: () => {
         state.edit = false
-        state.value = props.value
+        state.value = !!props.value
       },
       onSave: () => {
         state.edit = false

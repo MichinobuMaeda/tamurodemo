@@ -4,11 +4,14 @@
       <v-row>
         <v-col class="title--text col-4 text-right">{{ $t('Invitation') }}</v-col>
         <v-col class="col-8">
-          <EditableItem
+          <OnOffEditor
             type="select"
             :label="$t('Invitation')"
-            :items="[{ text: $t('Enabled'), value: true }, { text: $t('Disabled'), value: false }]"
             v-model="invitation"
+            :labelTrue="$t('Enabled')"
+            iconTrue="cloud_done"
+            :labelFalse="$t('Disabled')"
+            iconFalse="cloud_off"
             :editable="me.priv.admin || me.priv.manager"
             :disabled="!!state.waitProc"
           />
@@ -52,7 +55,7 @@
 <script>
 import { computed } from '@vue/composition-api'
 import { useStore } from '../../store'
-import EditableItem from '../../components/EditableItem'
+import OnOffEditor from '../../components/OnOffEditor'
 import TextEditor from '../../components/TextEditor'
 import FormattedTextEditor from '../../components/FormattedTextEditor'
 import LinkButton from '../../components/LinkButton'
@@ -60,7 +63,7 @@ import LinkButton from '../../components/LinkButton'
 export default {
   name: 'AdminInvitation',
   components: {
-    EditableItem,
+    OnOffEditor,
     TextEditor,
     FormattedTextEditor,
     LinkButton

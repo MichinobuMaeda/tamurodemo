@@ -30,8 +30,7 @@
         :disabled="!!state.waitProc"
       />
 
-      <EditableItem
-        type="chips"
+      <ChipSelector
         :label="$t('Categories')"
         :items="categoryList"
         v-model="categories"
@@ -89,7 +88,7 @@ import { useStore } from '@/store'
 import PageTitle from '@/components/PageTitle'
 import TextEditor from '@/components/TextEditor'
 import FormattedTextEditor from '@/components/FormattedTextEditor'
-import EditableItem from '@/components/EditableItem'
+import ChipSelector from '@/components/ChipSelector'
 import ConfirmButton from '@/components/ConfirmButton'
 import LinkButton from '@/components/LinkButton'
 import Chats from '@/parts/Chats'
@@ -100,7 +99,7 @@ export default {
     PageTitle,
     TextEditor,
     FormattedTextEditor,
-    EditableItem,
+    ChipSelector,
     ConfirmButton,
     LinkButton,
     Chats

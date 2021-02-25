@@ -1,9 +1,9 @@
 <template>
-  <EditableItem
-    type="linked-chips"
+  <ChipSelector
     :label="$t('Groups')"
     :items="groupList"
     v-model="groups"
+    clickable
     :editable="edit && me.priv.manager"
     :disabled="!!state.waitProc"
     @click="id => goPageGroup(id)"
@@ -13,12 +13,12 @@
 <script>
 import { computed } from '@vue/composition-api'
 import { useStore, sortedGroups } from '@/store'
-import EditableItem from '@/components/EditableItem'
+import ChipSelector from '@/components/ChipSelector'
 
 export default {
   name: 'GroupsOfUser',
   components: {
-    EditableItem
+    ChipSelector
   },
   props: {
     id: String,
