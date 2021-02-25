@@ -24,14 +24,14 @@
           <Categories v-if="target === 'categories'" />
           <FormattedTextEditor
             v-else-if="target === 'aboutProfile'"
-            v-model="guidanceProfile"
+            v-model="aboutProfile"
             :placeholder="$t(item.label)"
             :editable="me.priv.manager || me.priv.admin"
             :disabled="!!state.waitProc"
           />
           <div v-else-if="target === 'aboutInvitation'">
             <FormattedTextEditor
-              v-model="guide"
+              v-model="aboutInvitation"
               :placeholder="$t(item.label)"
               :editable="me.priv.manager || me.priv.admin"
               :disabled="!!state.waitProc"
@@ -127,13 +127,13 @@ export default {
           label: 'Service settings'
         }
       ],
-      guide: computed({
-        get: () => state.service.conf.guide,
-        set: str => waitFor(() => update(state.service.conf, { guide: str }))
+      aboutInvitation: computed({
+        get: () => state.service.conf.aboutInvitation,
+        set: str => waitFor(() => update(state.service.conf, { aboutInvitation: str }))
       }),
-      guidanceProfile: computed({
-        get: () => state.service.conf && state.service.conf.guidanceProfile,
-        set: str => waitFor(() => update(state.service.conf, { guidanceProfile: str }))
+      aboutProfile: computed({
+        get: () => state.service.conf && state.service.conf.aboutProfile,
+        set: str => waitFor(() => update(state.service.conf, { aboutProfile: str }))
       })
     }
   }

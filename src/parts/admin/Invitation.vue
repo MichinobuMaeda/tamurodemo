@@ -63,9 +63,9 @@ export default {
         get: () => state.service.conf.invitationExpirationTime,
         set: str => waitFor(() => update(state.service.conf, { invitationExpirationTime: str }))
       }),
-      guide: computed({
-        get: () => state.service.conf.guide,
-        set: str => waitFor(() => update(state.service.conf, { guide: str }))
+      aboutInvitation: computed({
+        get: () => state.service.conf.aboutInvitation,
+        set: str => waitFor(() => update(state.service.conf, { aboutInvitation: str }))
       })
     }
   }

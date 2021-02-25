@@ -22,7 +22,7 @@ const mkdirBackup = async () => {
 const backup = async () => {
   await mkdirBackup()
   execSync(`firebase auth:export ${authJson}`)
-  const docs = await getDocs(db)
+  const docs = await getDocs(db, [])
   await writeFile(firestoreJson, JSON.stringify(docs, 0, 2))
   const bucket = admin.storage().bucket()
   await bucket.upload(authJson, { destination: `backup/${path.basename(authJson)}` })
@@ -39,37 +39,28 @@ backup()
     return admin.app().delete()
   })
 
-const getDocs = async (parent, base = null) => {
-  const docs = []
-  const collections = (await parent.listCollections()).map(collection => collection.id)
+const getDocs = async (parent, docs) => {
+  const collections = await parent.listCollections()
   await Promise.all(
     collections.map(
-      collection => db.collection(collection).get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(
-            doc => {
-              const parent = base ? `${base}/${collection}` : collection
-              docs.push(castDoc(parent, doc))
-            }
-          )
-        })
+      async collectionRef => {
+        console.log(collectionRef.path)
+        const stapshot = await collectionRef.get()
+        stapshot.forEach(
+          async doc => {
+            docs.push(castDoc(doc))
+          }
+        )
+        await Promise.all(stapshot.docs.map(doc => getDocs(doc.ref, docs)))
+      }
     )
-  )
-  await Promise.all(
-    docs.map(async doc => {
-      (await getDocs(doc.ref, doc.path)).forEach(doc => {
-        docs.push(doc)
-      })
-      delete doc.ref
-    })
   )
   return docs
 }
 
-const castDoc = (parent, doc) => ({
-  path: `${parent}/${doc.id}`,
-  data: firestoreTimestampToISOString(doc.data()),
-  ref: doc.ref
+const castDoc = doc => ({
+  path: doc.ref.path,
+  data: firestoreTimestampToISOString(doc.data())
 })
 
 const firestoreTimestampToISOString = val => {

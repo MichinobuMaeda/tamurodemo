@@ -3,7 +3,7 @@
     <v-row v-if="edit">
       <v-col class="col-12">
         <FormattedTextEditor
-          v-model="guidanceProfile"
+          v-model="aboutProfile"
           :editable="false"
         />
 
@@ -245,9 +245,9 @@ export default {
     return {
       ...store,
       ...profileUtils(store, props),
-      guidanceProfile: computed({
-        get: () => state.service.conf && state.service.conf.guidanceProfile,
-        set: str => waitFor(() => update(state.service.conf, { guidanceProfile: str }))
+      aboutProfile: computed({
+        get: () => state.service.conf && state.service.conf.aboutProfile,
+        set: str => waitFor(() => update(state.service.conf, { aboutProfile: str }))
       })
     }
   }

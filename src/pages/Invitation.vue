@@ -34,12 +34,12 @@
       </div>
       <div v-else>
         <v-sheet
-          v-if="state.service.conf.guide && state.service.conf.guide.data"
+          v-if="state.service.conf.aboutInvitation && state.service.conf.aboutInvitation.data"
           outlined rounded class="px-3 pt-3 mb-4"
         >
           <FormattedTextEditor
-            v-model="state.service.conf.guide"
-            @save="val => waitFor(() => update(state.service.conf, { guide: val }))"
+            v-model="state.service.conf.aboutInvitation"
+            @save="val => waitFor(() => update(state.service.conf, { aboutInvitation: val }))"
             :editable="false"
             :disabled="true"
           />
