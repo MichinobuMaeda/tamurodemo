@@ -95,8 +95,7 @@ import * as firebase from './plugins/firebase'
 import {
   createStore, initUserData, clearUserData, initServiceData,
   overrideDefaults, StoreSymbol, isValidAccount,
-  subscribeGroupChats, subscribeHotlines,
-  initializeMessaging
+  subscribeGroupChats, subscribeHotlines // Disabled for Safari: 2021-02-27 // , initializeMessaging
 } from './store'
 import {
   getAuthState,
@@ -239,7 +238,7 @@ export default {
             await initUserData(store)
             await updateInvitationStatus(store)
             returnLastRoute(root.$router)
-            await initializeMessaging(store)
+            // Disabled for Safari: 2021-02-27 // await initializeMessaging(store)
           } else {
             clearUserData(state)
             await signOut(store)
