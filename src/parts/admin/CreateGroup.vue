@@ -4,54 +4,37 @@
       color="primary"
       :icon="conf.icon('Add')"
       :label="$t('Create new', { type: $t('group') })"
-      @click="page.dialog = true; page.name = ''"
+      @click="page.edit = true; page.name = ''"
     />
-    <v-dialog
-      max-width="640px"
-      v-model="page.dialog"
-    >
-      <v-card>
+    <v-bottom-sheet v-model="page.edit" inset>
+      <v-sheet class="text-center pt-4 pb-8 px-2">
+        <v-icon class="mr-2">{{ conf.icon('Add') }}</v-icon>
+        {{ $t('Create new', { type: $t('group') }) }}
 
-        <v-card-title class="headline dialogTitle">
-          <v-icon class="mr-2">{{ conf.icon('Add') }}</v-icon>
-          {{ $t('Create new', { type: $t('group') }) }}
-          <v-spacer />
-          <v-icon
-            color="gray"
-            @click="page.dialog = false; page.name = ''"
-          >
-            {{ conf.icon('Cancel') }}
-          </v-icon>
-        </v-card-title>
+        <v-text-field
+          outlined
+          :label="$t('Group name')"
+          v-model="page.name"
+          :rules="[ruleRequired]"
+          autofocus
+        />
 
-        <v-card-text>
-          <v-text-field
-            :label="$t('Group name')"
-            v-model="page.name"
-            :rules="[ruleRequired]"
-          />
-        </v-card-text>
-
-        <v-card-actions class="dialogAction">
-          <v-spacer />
-          <DefaultButton
-            color="secondary"
-            class="mr-2"
-            :icon="conf.icon('Cancel')"
-            :label="$t('Cancel')"
-            @click="page.dialog = false; page.name = ''"
-          />
-          <DefaultButton
-            color="primary"
-            :icon="conf.icon('OK')"
-            :label="$t('Create')"
-            :disabled="!!state.waitProc || !page.name"
-            @click="createGroup"
-          />
-        </v-card-actions>
-
-      </v-card>
-    </v-dialog>
+        <DefaultButton
+          color="secondary"
+          class="mr-2"
+          :icon="conf.icon('Cancel')"
+          :label="$t('Cancel')"
+          @click="page.edit = false; page.name = ''"
+        />
+        <DefaultButton
+          color="primary"
+          :icon="conf.icon('OK')"
+          :label="$t('Create')"
+          :disabled="!!state.waitProc || !page.name"
+          @click="createGroup"
+        />
+      </v-sheet>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -69,23 +52,23 @@ export default {
     const store = useStore()
     const { db, waitFor, add, goPageGroup } = store
     const page = reactive({
-      dialog: false,
+      edit: false,
       name: ''
     })
-
-    const createGroup = async () => {
-      const group = await waitFor(() => add(db.collection('groups'), {
-        name: page.name,
-        desc: { type: 'plain', data: '' },
-        members: []
-      }))
-      return goPageGroup(group.id)
-    }
 
     return {
       ...store,
       page,
-      createGroup
+      createGroup: async () => {
+        const group = await waitFor(() => add(db.collection('groups'), {
+          name: page.name,
+          desc: { type: 'plain', data: '' },
+          members: []
+        }))
+        goPageGroup(group.id)
+        page.edit = false
+        page.name = ''
+      }
     }
   }
 }

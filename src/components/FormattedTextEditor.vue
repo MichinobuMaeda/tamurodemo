@@ -56,7 +56,7 @@
     <div v-if="editable && !state.edit && !(value && value.data)" class="deleted--text">
       {{ placeholder }}
     </div>
-    <div class="formatted-text" v-html="formatText(state.edit ? state : value)"></div>
+    <div v-else class="formatted-text" v-html="formatText(state.edit ? state : value)"></div>
   </div>
 </template>
 
@@ -128,22 +128,26 @@ export default {
     return {
       state,
       org,
-      formatText: value => value && value.type === 'markdown'
-        ? sanitizeHtml(marked(value.data || ''), { allowedTags })
-        : value && value.type === 'html'
-          ? sanitizeHtml(value.data || '', { allowedTags })
-          : ((value && value.data) || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .split(/\n/)
-            .map(line => `<div>${line || '&nbsp;'}</div>`)
-            .join('\n'),
+      formatText: value => (value && value.data)
+        ? value.type === 'markdown'
+          ? sanitizeHtml(marked(value.data), { allowedTags })
+          : value && value.type === 'html'
+            ? sanitizeHtml(value.data, { allowedTags })
+            : value.data
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .split(/\n/)
+              .map(line => `<div>${line || '&nbsp;'}</div>`)
+              .join('\n')
+        : '',
       onEdit: () => {
         state.edit = true
-        state.type = (props.value && props.value.type) || 'plain'
-        state.data = (props.value && props.value.data) || ''
+        org.type = (props.value && props.value.type) || 'plain'
+        org.data = (props.value && props.value.data) || ''
+        state.type = org.type
+        state.data = org.data
       },
       onCancel: () => {
         state.edit = false

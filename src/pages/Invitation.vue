@@ -144,7 +144,7 @@
 
       </div>
 
-      <UiPreferences :entity="state.me" v-if="me.valid" />
+      <UiPreferences :entity="state.me" v-if="me && me.valid" />
     </v-col>
   </v-row>
 </template>

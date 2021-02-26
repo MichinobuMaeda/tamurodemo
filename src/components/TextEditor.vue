@@ -7,7 +7,7 @@
       @click="() => disabled ? null : onEdit()"
       :disabled="disabled || state.edit"
     />
-    <v-bottom-sheet v-model="state.edit">
+    <v-bottom-sheet v-model="state.edit" inset>
       <v-sheet
         class="text-center pt-4 pb-8 px-2"
       >

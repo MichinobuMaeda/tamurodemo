@@ -24,6 +24,7 @@
       />
 
       <FormattedTextEditor
+        class="mb-1"
         :placeholder="$t('Introduction of the group')"
         v-model="desc"
         :editable="me.priv.manager || (group.members || []).includes(me.id)"

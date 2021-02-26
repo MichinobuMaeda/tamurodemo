@@ -36,7 +36,7 @@ export const routes = [
     meta: { privs: ['user'] }
   },
   {
-    path: '/groups/:id',
+    path: '/groups/:id/:mode?',
     name: 'group',
     component: () => import('../pages/Group.vue'),
     meta: { privs: ['user'] }

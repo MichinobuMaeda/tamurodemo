@@ -105,32 +105,15 @@ export default {
     const store = useStore()
     const { state, waitFor, update } = store
 
-    const groupsOfCategory = category => (category.groups || [])
-      .map(id => state.groups.find(group => group.id === id))
-      .filter(group => group && !group.deletedAt && group.id !== 'all')
-
-    const uncategorizedGroups = computed(
-      () => state.groups
-        .filter(group =>
-          group.id === 'all' || (
-            !group.deletedAt &&
-            !store.state.categories.some(
-              category => !category.deletedAt && (category.groups || []).includes(group.id)
-            )
-          )
-        )
-    )
-
-    const deletedGroups = computed(
-      () => state.groups
-        .filter(group => group.deletedAt)
-    )
-
     return {
       ...store,
-      groupsOfCategory,
-      uncategorizedGroups,
-      deletedGroups,
+      uncategorizedGroups: computed(() => state.groups.filter(group => group.id === 'all' || (
+        !group.deletedAt &&
+        !store.state.categories.some(
+          category => !category.deletedAt && (category.groups || []).includes(group.id)
+        )
+      ))),
+      deletedGroups: computed(() => state.groups.filter(group => group.deletedAt)),
       desc: computed({
         get: () => state.service.conf && state.service.conf.desc,
         set: str => waitFor(() => update(state.service.conf, { desc: str }))

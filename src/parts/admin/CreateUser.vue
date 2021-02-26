@@ -4,54 +4,37 @@
       color="primary"
       :icon="conf.icon('Add')"
       :label="$t('Create new', { type: $t('user') })"
-      @click="page.dialog = true; page.name = ''"
+      @click="page.edit = true; page.name = ''"
     />
-    <v-dialog
-      max-width="640px"
-      v-model="page.dialog"
-    >
-      <v-card>
+    <v-bottom-sheet v-model="page.edit" inset>
+      <v-sheet class="text-center pt-4 pb-8 px-2">
+        <v-icon class="mr-2">{{ conf.icon('Add') }}</v-icon>
+        {{ $t('Create new', { type: $t('user') }) }}
 
-        <v-card-title class="headline dialogTitle">
-          <v-icon class="mr-2">{{ conf.icon('Add') }}</v-icon>
-          {{ $t('Create new', { type: $t('user') }) }}
-          <v-spacer />
-          <v-icon
-            color="gray"
-            @click="page.dialog = false; page.name = ''"
-          >
-            {{ conf.icon('Cancel') }}
-          </v-icon>
-        </v-card-title>
+        <v-text-field
+          outlined
+          :label="$t('Display name')"
+          v-model="page.name"
+          :rules="[ruleRequired]"
+          autofocus
+        />
 
-        <v-card-text>
-          <v-text-field
-            :label="$t('Display name')"
-            v-model="page.name"
-            :rules="[ruleRequired]"
-          />
-        </v-card-text>
-
-        <v-card-actions class="dialogAction">
-          <v-spacer />
-          <DefaultButton
-            color="secondary"
-            class="mr-2"
-            :icon="conf.icon('Cancel')"
-            :label="$t('Cancel')"
-            @click="page.dialog = false; page.name = ''"
-          />
-          <DefaultButton
-            color="primary"
-            :icon="conf.icon('OK')"
-            :label="$t('Create')"
-            :disabled="!!state.waitProc || !page.name"
-            @click="createUser"
-          />
-        </v-card-actions>
-
-      </v-card>
-    </v-dialog>
+        <DefaultButton
+          color="secondary"
+          class="mr-2"
+          :icon="conf.icon('Cancel')"
+          :label="$t('Cancel')"
+          @click="page.edit = false; page.name = ''"
+        />
+        <DefaultButton
+          color="primary"
+          :icon="conf.icon('OK')"
+          :label="$t('Create')"
+          :disabled="!!state.waitProc || !page.name"
+          @click="createUser"
+        />
+      </v-sheet>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -69,19 +52,19 @@ export default {
     const store = useStore()
     const { waitFor, functions, goPageUser } = store
     const page = reactive({
-      dialog: false,
+      edit: false,
       name: ''
-    })
-
-    const createUser = () => waitFor(async () => {
-      const result = await functions.httpsCallable('createAccount')({ name: page.name })
-      return goPageUser(result.data.id)
     })
 
     return {
       ...store,
       page,
-      createUser
+      createUser: () => waitFor(async () => {
+        const result = await functions.httpsCallable('createAccount')({ name: page.name })
+        goPageUser(result.data.id, true)
+        page.edit = false
+        page.name = ''
+      })
     }
   }
 }

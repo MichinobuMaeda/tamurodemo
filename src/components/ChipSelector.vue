@@ -7,9 +7,10 @@
       @click="() => disabled ? null : onEdit()"
       :disabled="disabled || state.edit"
     />
-    <v-bottom-sheet v-model="state.edit">
+    <v-bottom-sheet v-model="state.edit" inset>
       <v-sheet
         class="text-center pt-4 pb-8 px-2"
+        max-width="640px"
         height="640px"
       >
         <p>{{ label }}</p>
@@ -27,17 +28,13 @@
           :disabled="disabled || value === state.value || !valid"
           @click="onSave"
         />
-        <v-row class="justify-center">
-          <v-col class="col-auto">
-            <v-select
-              :chips="true"
-              :multiple="true"
-              :items="items"
-              v-model="state.value"
-              autofocus
-            />
-          </v-col>
-        </v-row>
+        <v-select
+          :chips="true"
+          :multiple="true"
+          :items="items"
+          v-model="state.value"
+          autofocus
+        />
       </v-sheet>
     </v-bottom-sheet>
     <span v-if="clickable">
@@ -91,6 +88,7 @@ export default {
   props: {
     value: Array,
     label: String,
+    placeholder: String,
     items: Array,
     clickable: {
       type: Boolean,
