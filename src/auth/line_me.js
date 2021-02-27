@@ -12,34 +12,36 @@ import {
   storeOAuthMessage
 } from './localStrage'
 
-const redirectToLineAuth = async ({ db }, link = null) => {
+const redirectToLineAuth = async ({ state }, link = null) => {
   console.log('redirectToLineAuth', link)
-  const params = (await db.collection('service').doc('auth').get()).data()
   const request = {
     response_type: 'code',
-    client_id: params.line_me_client_id,
-    scope: params.line_me_scope,
-    redirect_uri: window.location.href.replace(/\/[?#].*/, '/?signinwith=line_me'),
-    state: generateState(params.line_me_auth_url),
-    nonce: generateNonce(params.line_me_auth_url)
+    client_id: state.service.auth.line_me_client_id,
+    scope: state.service.auth.line_me_scope,
+    redirect_uri: state.service.auth.line_me_redirect_uri,
+    state: generateState(state.service.auth.line_me_auth_url),
+    nonce: generateNonce(state.service.auth.line_me_auth_url)
   }
   storeOAuthData({ link, ...request })
-  window.location.href = params.line_me_auth_url + '?' + querystring.stringify(request)
+  window.location.href = state.service.auth.line_me_auth_url + '?' + querystring.stringify(request)
 }
 
-export const link = ({ db }, link) => redirectToLineAuth({ db }, link)
-export const sighIn = ({ db }) => redirectToLineAuth({ db })
+export const link = (store, link) => redirectToLineAuth(store, link)
+export const sighIn = (store) => redirectToLineAuth(store)
 
-export const verifyRedirectFromLineMe = async ({ functions, auth }) => {
-  if (window.location.href.includes('?signinwith=line')) {
+export const verifyRedirectFromLineMe = async ({ functions, auth, state }) => {
+  if (window.location.href.includes(state.service.auth.line_me_redirect_uri)) {
     try {
+      console.log(window.location.href)
       // Parse GET parameters.
       var params = {}
       location.search.substr(1).split('&').forEach(item => {
         params[item.split('=')[0]] = decodeURIComponent(item.split('=')[1])
       })
+      console.log('params', params)
       // Get session state.
       const sessionState = restoreOAuthData()
+      console.log('sessionState', sessionState)
       // Validate parameters and session state.
       if (!sessionState) {
         window.location.href = topUrl()

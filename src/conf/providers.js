@@ -56,6 +56,7 @@ export const providers = [
       'client_secret',
       'scope',
       'iss',
+      'redirect_uri',
       'auth_url',
       'token_url'
     ]
