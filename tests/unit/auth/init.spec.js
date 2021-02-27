@@ -35,7 +35,11 @@ test('getAuthState()' +
   const email = 'abc@exampe.com'
   auth.data.isSignInWithEmailLink = true
   window.localStorage.data.tamuroEmailLinkRequest = email
-  const state = {}
+  const state = {
+    service: {
+      auth: {}
+    }
+  }
 
   // run
   await getAuthState({ db, auth, state })
@@ -48,7 +52,11 @@ test('getAuthState()' +
   ' should set callback to auth.onAuthStateChanged() if URL is not sign-in-with-email-link.', async () => {
   // prepare #0
   auth.data.isSignInWithEmailLink = false
-  const state = {}
+  const state = {
+    service: {
+      auth: {}
+    }
+  }
   const user = {
     uid: 'id01'
   }
