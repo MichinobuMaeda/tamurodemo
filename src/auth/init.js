@@ -6,15 +6,16 @@ import {
 } from './localStrage'
 import { verifyRedirectFromLineMe } from './line_me'
 
-export const getAuthState = async ({ db, auth, state }) => {
-  await verifyRedirectFromLineMe({ state })
+export const getAuthState = async (store) => {
+  const { auth, state } = store
+  await verifyRedirectFromLineMe(store)
   if (auth.isSignInWithEmailLink(window.location.href)) {
     await onSignInWithEmailLink(auth)
   } else {
     auth.onAuthStateChanged(async user => {
       if (user) {
         try {
-          await initMe({ db, auth, state }, user.uid)
+          await initMe(store, user.uid)
         } catch (e) {
           state.me = {}
           state.loading = false
