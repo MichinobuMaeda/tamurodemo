@@ -4,8 +4,10 @@ import {
   restoreRequestedRoute,
   eraseRequestedRoute
 } from './localStrage'
+import { verifyRedirectFromLineMe } from './line_me'
 
 export const getAuthState = async ({ db, auth, state }) => {
+  await verifyRedirectFromLineMe({ state })
   if (auth.isSignInWithEmailLink(window.location.href)) {
     await onSignInWithEmailLink(auth)
   } else {

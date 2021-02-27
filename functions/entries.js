@@ -1,5 +1,6 @@
 const { apiKeyValidator } = require('./api')
 const { updateVersion } = require('./service')
+const { signInWithLine } = require('./line_me')
 const {
   guardValidAccount,
   guardGroups,
@@ -75,6 +76,10 @@ const entries = (firebase, api, router) => {
       return guardValidAccount(
         data, ctx(context), setEmailAndPasswordWithInvitation
       )
+    },
+    signInWithLine: (data, context) => {
+      logger.log(JSON.stringify(data))
+      return signInWithLine(data, ctx(context))
     },
     resetUserAuth: (data, context) => guardGroups(
       data, ctx(context), adminsOrManagers, resetUserAuth

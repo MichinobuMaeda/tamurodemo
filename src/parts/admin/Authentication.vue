@@ -1,11 +1,10 @@
 <template>
   <v-row>
     <v-col class="col-12">
-      <v-row v-for="provider in providers.filter(provider => ['oauth', 'custom'].includes(provider.type))" :key="provider.id">
+      <v-row v-for="provider in providers.filter(provider => ['oauth'].includes(provider.type))" :key="provider.id">
         <v-col class="title--text col-4 text-right">{{ provider.name }}</v-col>
         <v-col class="col-8">
           <OnOffEditor
-            v-if="provider.type === 'oauth'"
             type="select"
             :label="provider.name"
             v-model="state.service.auth[provider.id.replace(/\./g, '_')]"
@@ -19,6 +18,40 @@
           />
         </v-col>
       </v-row>
+      <v-row v-for="provider in providers.filter(provider => ['custom'].includes(provider.type))" :key="provider.id">
+        <v-col class="title--text col-4 text-right">{{ provider.name }}</v-col>
+        <v-col class="col-8">
+          <v-row>
+            <v-col class="col-12">
+              <OnOffEditor
+                type="select"
+                :label="provider.name"
+                v-model="state.service.auth[provider.id.replace(/\./g, '_')]"
+                :labelTrue="$t('Enabled')"
+                iconTrue="cloud_done"
+                :labelFalse="$t('Disabled')"
+                iconFalse="cloud_off"
+                @save="val => waitFor(() => update(state.service.auth, { [provider.id.replace(/\./g, '_')]: val }))"
+                :editable="me.priv.admin"
+                :disabled="!!state.waitProc"
+              />
+            </v-col>
+          </v-row>
+          <v-row v-for="param in state.service.auth[provider.id.replace(/\./g, '_')] ? provider.params : []" :key="param">
+            <v-col class="col-12">
+              <TextEditor
+                type="select"
+                :label="param"
+                :placeholder="param"
+                v-model="state.service.auth[`${provider.id.replace(/\./g, '_')}_${param}`]"
+                @save="val => waitFor(() => update(state.service.auth, { [`${provider.id.replace(/\./g, '_')}_${param}`]: val }))"
+                :editable="me.priv.admin"
+                :disabled="!!state.waitProc"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-col>
   </v-row>
 </template>
@@ -27,11 +60,13 @@
 import { useStore } from '../../store'
 import { authProviders } from '../../auth'
 import OnOffEditor from '../../components/OnOffEditor'
+import TextEditor from '../../components/TextEditor'
 
 export default {
   name: 'AdminAuthentication',
   components: {
-    OnOffEditor
+    OnOffEditor,
+    TextEditor
   },
   setup () {
     const store = useStore()

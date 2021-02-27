@@ -1,6 +1,11 @@
 import { providers } from '../conf'
 import { updateMe } from '../store'
 import { updateInvitationStatus } from './invitation'
+import * as lineMe from './line_me'
+
+const cunstomProviders = {
+  line_me: lineMe
+}
 
 export const authProviders = store => providers.map(provider => ({
   ...provider,
@@ -28,7 +33,6 @@ export const toggleOAuthProvider = (store, id, provider = null) =>
           await update(state.me, { [key]: true })
         } else {
           await linkWithCustomProvider(store, id)
-          // await update(state.me, { [key]: userKey })
         }
       }
       await updateInvitationStatus(store)
@@ -43,10 +47,10 @@ export const signInWithFirebaseAuthProvider = (store, provider) =>
 
 export const signInWithCustomProvider = (store, id) =>
   () => store.waitFor(
-    id => {}
+    () => cunstomProviders[id].sighIn(store)
   )
 
 export const linkWithCustomProvider = (store, id) =>
-  store.waitFor(
-    id => {}
+  () => store.waitFor(
+    () => cunstomProviders[id].link(store, store.state.me.id)
   )

@@ -49,7 +49,16 @@ export const providers = [
     key: 'line_me',
     type: 'custom',
     name: 'LINE',
-    instance: null
+    instance: null,
+    params: [
+      'grant_type',
+      'client_id',
+      'client_secret',
+      'scope',
+      'iss',
+      'auth_url',
+      'token_url'
+    ]
   },
   {
     id: 'yahoo.co.jp',
