@@ -5,15 +5,15 @@ const querystring = require('querystring')
 // HTTP Callable API: on Sing in with LINE
 const signInWithLine = async (req, { db, auth, logger }) => {
   // Get client secret.
-  const provider = (await db.collection('service').doc('auth').get()).data().line_me
+  const params = (await db.collection('service').doc('auth').get()).data()
 
   // Get access token.
-  const acc = await axios.post(provider.token_url, querystring.stringify({
-    grant_type: provider.grant_type,
+  const acc = await axios.post(params.line_me_token_url, querystring.stringify({
+    grant_type: params.line_me_grant_type,
     code: req.code,
     redirect_uri: req.redirect_uri,
-    client_id: provider.client_id,
-    client_secret: provider.client_secret
+    client_id: params.line_me_client_id,
+    client_secret: params.line_me_client_secret
   }))
 
   // Parse access token.
@@ -30,10 +30,10 @@ const signInWithLine = async (req, { db, auth, logger }) => {
   } else if (payload.nonce !== req.nonce) {
     logger.error('mismatched nonce: ' + payload.nonce + ' / ' + req.nonce)
     return { error: 'mismatched nonce' }
-  } else if (payload.iss !== provider.iss) {
+  } else if (payload.iss !== params.line_me_iss) {
     logger.error('mismatched iss')
     return { error: 'mismatched iss' }
-  } else if (payload.aud !== provider.client_id) {
+  } else if (payload.aud !== params.line_me_client_id) {
     logger.error('mismatched aud')
     return { error: 'mismatched aud' }
   } else if (payload.exp < ((new Date()).getTime() / 1000)) {

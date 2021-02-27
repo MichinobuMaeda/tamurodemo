@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'functions/**'
+      - 'tests/unit/functions/**'
       - '.github/workflows/functions.yaml'
 jobs:
   build:

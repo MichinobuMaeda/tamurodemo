@@ -13,17 +13,18 @@ import {
 } from './localStrage'
 
 const redirectToLineAuth = async ({ db }, link = null) => {
-  const provider = (await db.collection('service').doc('auth').get()).data().line_me
+  console.log('redirectToLineAuth', link)
+  const params = (await db.collection('service').doc('auth').get()).data()
   const request = {
     response_type: 'code',
-    client_id: provider.client_id,
-    scope: provider.scope,
+    client_id: params.line_me_client_id,
+    scope: params.line_me_scope,
     redirect_uri: window.location.href.replace(/\/[?#].*/, '/?signinwith=line_me'),
-    state: generateState(provider.auth_url),
-    nonce: generateNonce(provider.auth_url)
+    state: generateState(params.line_me_auth_url),
+    nonce: generateNonce(params.line_me_auth_url)
   }
   storeOAuthData({ link, ...request })
-  window.location.href = provider.auth_url + '?' + querystring.stringify(request)
+  window.location.href = params.line_me_auth_url + '?' + querystring.stringify(request)
 }
 
 export const link = ({ db }, link) => redirectToLineAuth({ db }, link)

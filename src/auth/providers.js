@@ -34,7 +34,7 @@ export const toggleOAuthProvider = (store, id, provider = null) =>
           await auth.currentUser.linkWithRedirect(provider)
           await update(state.me, { [key]: true })
         } else {
-          await linkWithCustomProvider(store, id)
+          await linkWithCustomProvider(store, key)
         }
       }
       await updateInvitationStatus(store)
@@ -52,7 +52,7 @@ export const signInWithCustomProvider = (store, id) =>
     () => cunstomProviders[id].sighIn(store)
   )
 
-export const linkWithCustomProvider = (store, id) =>
-  () => store.waitFor(
-    () => cunstomProviders[id].link(store, store.state.me.id)
+export const linkWithCustomProvider = (store, key) =>
+  store.waitFor(
+    () => cunstomProviders[key].link(store, store.state.me.id)
   )

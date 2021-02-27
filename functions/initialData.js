@@ -60,7 +60,12 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
       github_com: false,
       microsoft_com: false,
       twitter_com: false,
-      line_me: null,
+      line_me: true,
+      line_me_grant_type: 'authorization_code',
+      line_me_scope: 'profile openid',
+      line_me_iss: 'https://access.line.me',
+      line_me_auth_url: 'https://access.line.me/oauth2/v2.1/authorize',
+      line_me_token_url: 'https://api.line.me/oauth2/v2.1/token',
       yahoo_co_jp: null,
       mixi_jp: null
     }
