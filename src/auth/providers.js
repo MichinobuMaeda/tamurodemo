@@ -16,7 +16,7 @@ export const authProviders = store => providers.map(provider => ({
     : toggleOAuthProvider(store, provider.id),
   signIn: provider.instance
     ? signInWithFirebaseAuthProvider(store, provider.instance)
-    : signInWithCustomProvider(store, provider.id)
+    : signInWithCustomProvider(store, provider.key)
 }))
 
 export const toggleOAuthProvider = (store, id, provider = null) =>
@@ -47,9 +47,9 @@ export const signInWithFirebaseAuthProvider = (store, provider) =>
     () => store.auth.signInWithRedirect(provider)
   )
 
-export const signInWithCustomProvider = (store, id) =>
+export const signInWithCustomProvider = (store, key) =>
   () => store.waitFor(
-    () => cunstomProviders[id].sighIn(store)
+    () => cunstomProviders[key].sighIn(store)
   )
 
 export const linkWithCustomProvider = (store, key) =>

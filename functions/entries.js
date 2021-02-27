@@ -78,7 +78,6 @@ const entries = (firebase, api, router) => {
       )
     },
     signInWithLine: (data, context) => {
-      logger.log(JSON.stringify(data))
       return signInWithLine(data, ctx(context))
     },
     resetUserAuth: (data, context) => guardGroups(

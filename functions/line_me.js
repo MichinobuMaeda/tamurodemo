@@ -1,22 +1,25 @@
 const axios = require('axios')
-const FormData = require('form-data')
+const querystring = require('querystring')
 const crypto = require('crypto')
 
 // HTTP Callable API: on Sing in with LINE
 const signInWithLine = async (req, { db, auth, logger }) => {
-  logger.info(req)
+  logger.info('req', req)
 
   // Get client secret.
   const params = (await db.collection('service').doc('auth').get()).data()
 
   // Get access token.
-  const form = new FormData()
-  form.append('grant_type', params.line_me_grant_type)
-  form.append('code', req.code)
-  form.append('redirect_uri', req.redirect_uri)
-  form.append('client_id', params.line_me_client_id)
-  form.append('client_secret', params.line_me_client_secret)
-  const acc = await axios.post(params.line_me_token_url, form, { headers: form.getHeaders() })
+  const data = querystring.stringify({
+    grant_type: params.line_me_grant_type,
+    code: req.code,
+    redirect_uri: req.redirect_uri,
+    client_id: params.line_me_client_id,
+    client_secret: params.line_me_client_secret
+  })
+  logger.info('data', data)
+  const options = { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
+  const acc = await axios.post(params.line_me_token_url, data, options)
 
   // Parse access token.
   const respParts = acc.data.id_token.split('.')
@@ -24,7 +27,7 @@ const signInWithLine = async (req, { db, auth, logger }) => {
   const sygniture = Buffer.from(respParts[2], 'base64').toString('hex')
 
   // Validate access token.
-  const hmac = crypto.createHmac('sha256', client_secret)
+  const hmac = crypto.createHmac('sha256', params.line_me_client_secret)
   hmac.update(respParts[0] + '.' + respParts[1])
   if (hmac.digest('hex') !== sygniture) {
     logger.error('mismatched sygniture')
@@ -61,7 +64,7 @@ const signInWithLine = async (req, { db, auth, logger }) => {
     const snapshot = await db.collection('accounts').where('line_me', '==', payload.sub).get()
     if (snapshot.size === 1) {
       // Return token.
-      const user = snapshot.docs.reduce((ret, cur) => cur || ret, null)
+      const user = snapshot.docs[0]
       logger.info('Return token: ' + user.id)
       return { token: await auth.createCustomToken(user.id) }
     } else {
