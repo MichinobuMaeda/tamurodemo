@@ -16,7 +16,7 @@ const signInWithLine = async (req, { db, auth, logger }) => {
   form.append('redirect_uri', req.redirect_uri)
   form.append('client_id', params.line_me_client_id)
   form.append('client_secret', params.line_me_client_secret)
-  const acc = await axios.post(arams.line_me_token_url, form, { headers: form.getHeaders() })
+  const acc = await axios.post(params.line_me_token_url, form, { headers: form.getHeaders() })
 
   // Parse access token.
   const respParts = acc.data.id_token.split('.')
