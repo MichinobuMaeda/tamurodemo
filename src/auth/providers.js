@@ -4,7 +4,9 @@ import { updateInvitationStatus } from './invitation'
 import * as lineMe from './line_me'
 
 const cunstomProviders = {
-  line_me: lineMe
+  line_me: lineMe,
+  yahoo_co_jp: {},
+  mixi_jp: {}
 }
 
 export const authProviders = store => providers.map(provider => ({
