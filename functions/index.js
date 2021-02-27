@@ -33,6 +33,8 @@ exports.setEmailWithInvitation =
   functions.https.onCall(ent.setEmailWithInvitation)
 exports.setEmailAndPasswordWithInvitation =
   functions.https.onCall(ent.setEmailAndPasswordWithInvitation)
+exports.signInWithLine =
+  functions.https.onCall(ent.signInWithLine)
 exports.resetUserAuth =
   functions.https.onCall(ent.resetUserAuth)
 exports.getProfile =
