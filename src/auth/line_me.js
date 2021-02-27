@@ -30,7 +30,7 @@ const redirectToLineAuth = async ({ db }, link = null) => {
 export const link = ({ db }, link) => redirectToLineAuth({ db }, link)
 export const sighIn = ({ db }) => redirectToLineAuth({ db })
 
-export const verifyRedirectFromLineMe = async ({ state }) => {
+export const verifyRedirectFromLineMe = async ({ functions, auth }) => {
   if (window.location.href.includes('?signinwith=line')) {
     // Parse GET parameters.
     var params = {}
@@ -52,14 +52,14 @@ export const verifyRedirectFromLineMe = async ({ state }) => {
       storeOAuthMessage({ key: 'retryOAuth', param: { err: '13' } })
       window.location.href = signInUrl()
     } else {
-      const result = await state.functions.httpsCallable('signInWithLine')({
+      const result = await functions.httpsCallable('signInWithLine')({
         code: params.code,
         ...sessionState
       })
       eraseOAuthData()
       if (result.data.token) {
         try {
-          await state.firebase.auth().signInWithCustomToken(result.data.token)
+          await auth.signInWithCustomToken(result.data.token)
         } catch (err) { alert(err) }
       }
       window.location.href = topUrl()
