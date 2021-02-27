@@ -1,20 +1,22 @@
 const axios = require('axios')
+const FormData = require('form-data')
 const crypto = require('crypto')
-const querystring = require('querystring')
 
 // HTTP Callable API: on Sing in with LINE
 const signInWithLine = async (req, { db, auth, logger }) => {
+  logger.info(req)
+
   // Get client secret.
   const params = (await db.collection('service').doc('auth').get()).data()
 
   // Get access token.
-  const acc = await axios.post(params.line_me_token_url, querystring.stringify({
-    grant_type: params.line_me_grant_type,
-    code: req.code,
-    redirect_uri: req.redirect_uri,
-    client_id: params.line_me_client_id,
-    client_secret: params.line_me_client_secret
-  }))
+  const form = new FormData()
+  form.append('grant_type', params.line_me_grant_type)
+  form.append('code', req.code)
+  form.append('redirect_uri', req.redirect_uri)
+  form.append('client_id', params.line_me_client_id)
+  form.append('client_secret', params.line_me_client_secret)
+  const acc = await axios.post(arams.line_me_token_url, form, { headers: form.getHeaders() })
 
   // Parse access token.
   const respParts = acc.data.id_token.split('.')

@@ -1,4 +1,4 @@
-const cacheName = '20210228011845'
+const cacheName = '20210228040155'
 const precacheResources = [
   '/',
   'index.html',

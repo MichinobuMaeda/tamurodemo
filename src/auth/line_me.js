@@ -32,36 +32,44 @@ export const sighIn = ({ db }) => redirectToLineAuth({ db })
 
 export const verifyRedirectFromLineMe = async ({ functions, auth }) => {
   if (window.location.href.includes('?signinwith=line')) {
-    // Parse GET parameters.
-    var params = {}
-    location.search.substr(1).split('&').forEach(item => {
-      params[item.split('=')[0]] = decodeURIComponent(item.split('=')[1])
-    })
-    // Get session state.
-    const sessionState = restoreOAuthData()
-    // Validate parameters and session state.
-    if (!sessionState) {
-      window.location.href = topUrl()
-    } else if (params.state !== sessionState.state) {
-      storeOAuthMessage({ key: 'retryOAuth', param: { err: '11' } })
-      window.location.href = signInUrl()
-    } else if (params.error) {
-      storeOAuthMessage({ key: 'retryOAuth', param: { err: '12' } })
-      window.location.href = signInUrl()
-    } else if (!params.code) {
-      storeOAuthMessage({ key: 'retryOAuth', param: { err: '13' } })
-      window.location.href = signInUrl()
-    } else {
-      const result = await functions.httpsCallable('signInWithLine')({
-        code: params.code,
-        ...sessionState
+    try {
+      // Parse GET parameters.
+      var params = {}
+      location.search.substr(1).split('&').forEach(item => {
+        params[item.split('=')[0]] = decodeURIComponent(item.split('=')[1])
       })
-      eraseOAuthData()
-      if (result.data.token) {
-        try {
-          await auth.signInWithCustomToken(result.data.token)
-        } catch (err) { alert(err) }
+      // Get session state.
+      const sessionState = restoreOAuthData()
+      // Validate parameters and session state.
+      if (!sessionState) {
+        window.location.href = topUrl()
+      } else if (params.state !== sessionState.state) {
+        storeOAuthMessage({ key: 'retryOAuth', param: { err: '11' } })
+        window.location.href = signInUrl()
+      } else if (params.error) {
+        storeOAuthMessage({ key: 'retryOAuth', param: { err: '12' } })
+        window.location.href = signInUrl()
+      } else if (!params.code) {
+        storeOAuthMessage({ key: 'retryOAuth', param: { err: '13' } })
+        window.location.href = signInUrl()
+      } else {
+        const result = await functions.httpsCallable('signInWithLine')({
+          code: params.code,
+          ...sessionState
+        })
+        eraseOAuthData()
+        if (result.data.token) {
+          try {
+            await auth.signInWithCustomToken(result.data.token)
+          } catch (err) {
+            alert(err)
+            window.location.href = signInUrl()
+          }
+        }
+        window.location.href = topUrl()
       }
+    } catch (err) {
+      alert(err)
       window.location.href = topUrl()
     }
   }
