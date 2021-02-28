@@ -71,6 +71,11 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
     }
   },
   {
+    collection: 'secrets',
+    id: 'auth',
+    data: {}
+  },
+  {
     collection: 'groups',
     id: 'all',
     data: {

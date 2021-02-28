@@ -11,3 +11,6 @@ export * from './invitation'
 export {
   authProviders
 } from './providers'
+export {
+  getOAuthMessage
+} from './localStrage'

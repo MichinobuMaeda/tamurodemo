@@ -53,12 +53,14 @@ export const providers = [
     params: [
       'grant_type',
       'client_id',
-      'client_secret',
       'scope',
       'iss',
       'redirect_uri',
       'auth_url',
       'token_url'
+    ],
+    secrets: [
+      'client_secret'
     ]
   },
   {

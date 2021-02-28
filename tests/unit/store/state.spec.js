@@ -114,6 +114,7 @@ test('clearUserData()' +
     categories: [],
     invitations: {},
     route: {},
+    secrets: {},
     waitProc: null
   })
 })

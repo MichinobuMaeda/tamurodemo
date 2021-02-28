@@ -1,4 +1,4 @@
-import { initMe } from '../store'
+import { initMe, clearUserData } from '../store'
 import { onSignInWithEmailLink } from './email'
 import {
   restoreRequestedRoute,
@@ -22,7 +22,7 @@ export const getAuthState = async (store) => {
           signOut({ auth })
         }
       } else {
-        state.me = {}
+        clearUserData(state)
         state.loading = false
       }
     })

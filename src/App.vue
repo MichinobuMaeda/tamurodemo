@@ -29,6 +29,13 @@
       />
     </v-main>
     <v-main class="px-4" v-else>
+      <v-alert
+        v-if="page.oAuthMessage"
+        dense outlined
+        :type="page.result.type"
+      >
+        {{ $t('OAuth Error', page.oAuthMessage.params) }}
+      </v-alert>
       <div class="text-center">
         <AppUpdater
           v-if="state.service.conf && state.service.conf.version !== conf.version"
@@ -106,7 +113,8 @@ import {
   goPage,
   authProviders,
   returnLastRoute,
-  signOut
+  signOut,
+  getOAuthMessage
 } from './auth'
 import Menu from './components/Menu'
 import Loading from './components/Loading.vue'
@@ -127,7 +135,8 @@ export default {
   },
   setup (props, { root }) {
     const page = reactive({
-      rawData: false
+      rawData: false,
+      oAuthMessage: ''
     })
 
     const store = createStore(firebase, root)
@@ -140,6 +149,7 @@ export default {
     const { state, update, conf, account, user, profile, getProfile } = store
 
     onMounted(async () => {
+      page.oAuthMessage = getOAuthMessage()
       await initServiceData(store)
       await getAuthState(store)
     })

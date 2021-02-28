@@ -31,31 +31,29 @@ export const sighIn = (store) => redirectToLineAuth(store)
 
 export const verifyRedirectFromLineMe = async ({ functions, auth, state }) => {
   if (window.location.href.includes(state.service.auth.line_me_redirect_uri)) {
+    // Get session state.
+    const sessionState = restoreOAuthData()
     try {
-      console.log(window.location.href)
       // Parse GET parameters.
       var params = {}
       location.search.substr(1).split('&').forEach(item => {
         params[item.split('=')[0]] = decodeURIComponent(item.split('=')[1])
       })
-      console.log('params', params)
-      // Get session state.
-      const sessionState = restoreOAuthData()
-      console.log('sessionState', sessionState)
       // Validate parameters and session state.
       if (!sessionState) {
         window.location.href = topUrl()
+        storeOAuthMessage({ key: 'OAuth Error', param: { err: '10' } })
       } else if (params.state !== sessionState.state) {
-        storeOAuthMessage({ key: 'retryOAuth', param: { err: '11' } })
+        storeOAuthMessage({ key: 'OAuth Error', param: { err: '11' } })
         window.location.href = signInUrl()
       } else if (params.error) {
-        storeOAuthMessage({ key: 'retryOAuth', param: { err: '12' } })
+        storeOAuthMessage({ key: 'OAuth Error', param: { err: '12' } })
         window.location.href = signInUrl()
       } else if (!params.code) {
-        storeOAuthMessage({ key: 'retryOAuth', param: { err: '13' } })
+        storeOAuthMessage({ key: 'OAuth Error', param: { err: '13' } })
         window.location.href = signInUrl()
       } else {
-        const result = await functions.httpsCallable('signInWithLine')({
+        const result = await functions.httpsCallable('signInWithLineMe')({
           code: params.code,
           ...sessionState
         })
@@ -64,15 +62,15 @@ export const verifyRedirectFromLineMe = async ({ functions, auth, state }) => {
           try {
             await auth.signInWithCustomToken(result.data.token)
           } catch (err) {
-            alert(err)
+            storeOAuthMessage({ key: 'OAuth Error', param: { err: '14' } })
             window.location.href = signInUrl()
           }
         }
         window.location.href = topUrl()
       }
     } catch (err) {
-      alert(err)
-      window.location.href = topUrl()
+      storeOAuthMessage({ key: 'OAuth Error', param: { err: '15' } })
+      window.location.href = sessionState.link ? topUrl() : signInUrl()
     }
   }
 }

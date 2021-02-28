@@ -37,19 +37,34 @@
               />
             </v-col>
           </v-row>
-          <v-row v-for="param in state.service.auth[provider.id.replace(/\./g, '_')] ? provider.params : []" :key="param">
-            <v-col class="col-12">
-              <TextEditor
-                type="select"
-                :label="param"
-                :placeholder="param"
-                v-model="state.service.auth[`${provider.id.replace(/\./g, '_')}_${param}`]"
-                @save="val => waitFor(() => update(state.service.auth, { [`${provider.id.replace(/\./g, '_')}_${param}`]: val }))"
-                :editable="me.priv.admin"
-                :disabled="!!state.waitProc"
-              />
-            </v-col>
-          </v-row>
+          <div v-if="me.priv.admin">
+            <v-row v-for="item in state.service.auth[provider.id.replace(/\./g, '_')] ? provider.params : []" :key="item">
+              <v-col class="col-12">
+                <TextEditor
+                  type="select"
+                  :label="item"
+                  :placeholder="item"
+                  v-model="state.service.auth[`${provider.id.replace(/\./g, '_')}_${item}`]"
+                  @save="val => waitFor(() => update(state.service.auth, { [`${provider.id.replace(/\./g, '_')}_${item}`]: val }))"
+                  :editable="me.priv.admin"
+                  :disabled="!!state.waitProc"
+                />
+              </v-col>
+            </v-row>
+            <v-row v-for="item in state.service.auth[provider.id.replace(/\./g, '_')] ? provider.secrets : []" :key="item">
+              <v-col class="col-12" v-if="state.secrets.auth">
+                <TextEditor
+                  type="select"
+                  :label="item"
+                  :placeholder="item"
+                  v-model="state.secrets.auth[`${provider.id.replace(/\./g, '_')}_${item}`]"
+                  @save="val => waitFor(() => update(state.secrets.auth, { [`${provider.id.replace(/\./g, '_')}_${item}`]: val }))"
+                  :editable="me.priv.admin"
+                  :disabled="!!state.waitProc"
+                />
+              </v-col>
+            </v-row>
+          </div>
         </v-col>
       </v-row>
     </v-col>

@@ -134,8 +134,8 @@ test('signInWithFirebaseAuthProvider()' +
 test('signInWithCustomProvider()' +
   ' should ... TODO ...', async () => {
   // prepare
-  const providers = authProviders(store)
-  const line = providers.find(item => item.id === 'line_me')
+  // const providers = authProviders(store)
+  // const line = providers.find(item => item.id === 'line_me')
 
   // run
   // await line.signIn()
@@ -147,8 +147,8 @@ test('signInWithCustomProvider()' +
 test('linkWithCustomProvider()' +
   ' should ... TODO ...', async () => {
   // prepare
-  const providers = authProviders(store)
-  const line = providers.find(item => item.id === 'line_me')
+  // const providers = authProviders(store)
+  // const line = providers.find(item => item.id === 'line_me')
   store.state.me = {
     id: 'account01',
     line_me: false

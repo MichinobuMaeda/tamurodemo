@@ -131,6 +131,7 @@
   "Sent message": "Information has been sent to the email address you entered. Please close this page.",
   "Please wait": "Please wait.",
   "If you wait more than x min": "If you wait more than {min} minutes, please tell the administrator.",
+  "OAuth Error": "Please give error number {err} to the administrator.",
   "Authentication": "Authentication",
   "Invitation": "Invitation",
   "Confirm to invite": "Would you like to issue an invitation link to {name}",

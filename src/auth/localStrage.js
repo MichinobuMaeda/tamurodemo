@@ -6,17 +6,22 @@ export const storeRequestedEmail = email => window.localStorage.setItem(LS_REQ_E
 export const restoreRequestedEmail = () => window.localStorage.getItem(LS_REQ_EMAIL)
 export const eraseRequestedEmail = () => window.localStorage.setItem(LS_REQ_EMAIL, '')
 
-export const LS_REQ_OAUTH_DATA = `${appId}EmailLinkRequest`
+export const LS_REQ_OAUTH_DATA = `${appId}OAuthData`
 
 export const storeOAuthData = data => window.localStorage.setItem(LS_REQ_OAUTH_DATA, JSON.stringify(data))
 export const restoreOAuthData = () => JSON.parse(window.localStorage.getItem(LS_REQ_OAUTH_DATA) || 'null')
 export const eraseOAuthData = () => window.localStorage.setItem(LS_REQ_OAUTH_DATA, 'null')
 
-export const LS_REQ_OAUTH_MESSAGE = `${appId}EmailLinkRequest`
+export const LS_REQ_OAUTH_MESSAGE = `${appId}OAuthMessage`
 
 export const storeOAuthMessage = message => window.localStorage.setItem(LS_REQ_OAUTH_MESSAGE, JSON.stringify(message))
 export const restoreOAuthMessage = () => JSON.parse(window.localStorage.getItem(LS_REQ_OAUTH_MESSAGE) || 'null')
 export const eraseOAuthMessage = () => window.localStorage.setItem(LS_REQ_OAUTH_MESSAGE, 'null')
+export const getOAuthMessage = () => {
+  const message = restoreOAuthMessage()
+  if (message) { eraseOAuthMessage() }
+  return message
+}
 
 export const LS_REQ_ROUTE = `${appId}RequestedRoute`
 

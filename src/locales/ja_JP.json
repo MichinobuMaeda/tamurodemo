@@ -131,6 +131,7 @@
   "Sent message": "入力したメールアドレス宛にご案内を送信しました。このページは閉じてください。",
   "Please wait": "しばらくお待ちください。",
   "If you wait more than x min": "{min}分以上待つ場合は管理者にお伝えください。",
+  "OAuth Error": "管理者にエラー番号 {err} をお伝えください。",
   "Authentication": "認証",
   "Invitation": "招待",
   "Confirm to invite": "{name} さんに招待のリンクを発行しますか？",

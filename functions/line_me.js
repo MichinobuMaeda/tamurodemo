@@ -1,13 +1,13 @@
-const axios = require('axios')
 const querystring = require('querystring')
 const crypto = require('crypto')
 
 // HTTP Callable API: on Sing in with LINE
-const signInWithLine = async (req, { db, auth, logger }) => {
+const signInWithLineMe = async (req, { db, auth, logger, axios }) => {
   logger.info('req', req)
 
   // Get client secret.
   const params = (await db.collection('service').doc('auth').get()).data()
+  const secrets = (await db.collection('secrets').doc('auth').get()).data()
 
   // Get access token.
   const data = querystring.stringify({
@@ -15,7 +15,7 @@ const signInWithLine = async (req, { db, auth, logger }) => {
     code: req.code,
     redirect_uri: req.redirect_uri,
     client_id: params.line_me_client_id,
-    client_secret: params.line_me_client_secret
+    client_secret: secrets.line_me_client_secret
   })
   logger.info('data', data)
   const options = { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
@@ -27,7 +27,7 @@ const signInWithLine = async (req, { db, auth, logger }) => {
   const sygniture = Buffer.from(respParts[2], 'base64').toString('hex')
 
   // Validate access token.
-  const hmac = crypto.createHmac('sha256', params.line_me_client_secret)
+  const hmac = crypto.createHmac('sha256', secrets.line_me_client_secret)
   hmac.update(respParts[0] + '.' + respParts[1])
   if (hmac.digest('hex') !== sygniture) {
     logger.error('mismatched sygniture')
@@ -75,5 +75,5 @@ const signInWithLine = async (req, { db, auth, logger }) => {
 }
 
 module.exports = {
-  signInWithLine
+  signInWithLineMe
 }

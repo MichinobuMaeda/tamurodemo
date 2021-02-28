@@ -1,3 +1,4 @@
+const axios = require('axios')
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 const express = require('express')
@@ -15,7 +16,7 @@ const messaging = admin.messaging()
 const logger = functions.logger
 const firebase = { functions, db, auth, messaging, logger }
 
-const ent = entries(firebase, api, router)
+const ent = entries(firebase, api, router, axios)
 
 exports.api =
   functions.https.onRequest(ent.api)
@@ -33,8 +34,8 @@ exports.setEmailWithInvitation =
   functions.https.onCall(ent.setEmailWithInvitation)
 exports.setEmailAndPasswordWithInvitation =
   functions.https.onCall(ent.setEmailAndPasswordWithInvitation)
-exports.signInWithLine =
-  functions.https.onCall(ent.signInWithLine)
+exports.signInWithLineMe =
+  functions.https.onCall(ent.signInWithLineMe)
 exports.resetUserAuth =
   functions.https.onCall(ent.resetUserAuth)
 exports.getProfile =

@@ -28,6 +28,7 @@ export const clearUserData = state => {
   state.categories = []
   state.invitations = {}
   state.route = {}
+  state.secrets = {}
   state.waitProc = null
   return state
 }
@@ -101,6 +102,15 @@ export const initUserData = async ({ db, auth, state }) => {
     'profiles',
     priv.managerReal ? db.collection('profiles') : db.collection('profiles').doc(state.me.id)
   )
+  if (priv.adminReal) {
+    const secrets = {}
+    state.unsubscribers.secrets = db.collection('secrets')
+      .onSnapshot(snapshot => snapshot.forEach(doc => {
+        const { id, ...data } = castDoc(doc)
+        secrets[id] = data
+      }))
+    state.secrets = secrets
+  }
   state.loading = false
 }
 

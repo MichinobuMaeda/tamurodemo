@@ -1,6 +1,6 @@
 const { apiKeyValidator } = require('./api')
 const { updateVersion } = require('./service')
-const { signInWithLine } = require('./line_me')
+const { signInWithLineMe } = require('./line_me')
 const {
   guardValidAccount,
   guardGroups,
@@ -29,7 +29,7 @@ const {
 const handleUpdateServiceVersion = firebase => async (req, res) => res.send(await updateVersion(firebase))
 const handleValidateInvitation = firebase => async (req, res) => res.send(await validateInvitation(req.params, firebase))
 
-const entries = (firebase, api, router) => {
+const entries = (firebase, api, router, axios) => {
   router.use(
     '/updateServiceVersion',
     apiKeyValidator(firebase)
@@ -47,7 +47,7 @@ const entries = (firebase, api, router) => {
 
   api.use('/', router)
 
-  const ctx = context => ({ ...context.auth, ...firebase })
+  const ctx = context => ({ ...context.auth, ...firebase, axios })
   const { logger } = firebase
   const adminsOrManagers = ['admins', 'managers']
 
@@ -77,8 +77,8 @@ const entries = (firebase, api, router) => {
         data, ctx(context), setEmailAndPasswordWithInvitation
       )
     },
-    signInWithLine: (data, context) => {
-      return signInWithLine(data, ctx(context))
+    signInWithLineMe: (data, context) => {
+      return signInWithLineMe(data, ctx(context))
     },
     resetUserAuth: (data, context) => guardGroups(
       data, ctx(context), adminsOrManagers, resetUserAuth
