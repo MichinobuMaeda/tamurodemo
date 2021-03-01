@@ -20,7 +20,14 @@
           <v-icon>{{ conf.icon(target === item.target ? 'Shrink' : 'Expand') }}</v-icon>
         </v-card-title>
         <v-card-text v-if="target === item.target">
-          <Users v-if="target === 'users'" />
+          <FormattedTextEditor
+            v-if="target === 'aboutAdmin'"
+            v-model="aboutAdmin"
+            :placeholder="$t(item.label)"
+            :editable="me.priv.manager || me.priv.admin"
+            :disabled="!!state.waitProc"
+          />
+          <Users v-else-if="target === 'users'" />
           <Categories v-if="target === 'categories'" />
           <FormattedTextEditor
             v-else-if="target === 'aboutProfile'"
@@ -100,6 +107,11 @@ export default {
       target: computed(() => state.route.params ? state.route.params.target : ''),
       items: [
         {
+          target: 'aboutAdmin',
+          icon: 'Description',
+          label: 'About administration'
+        },
+        {
           target: 'users',
           icon: 'Users',
           label: 'Users'
@@ -145,6 +157,10 @@ export default {
           label: 'Service settings'
         }
       ],
+      aboutAdmin: computed({
+        get: () => state.service.conf && state.service.conf.aboutAdmin,
+        set: str => waitFor(() => update(state.service.conf, { aboutAdmin: str }))
+      }),
       aboutProfile: computed({
         get: () => state.service.conf && state.service.conf.aboutProfile,
         set: str => waitFor(() => update(state.service.conf, { aboutProfile: str }))
