@@ -10,7 +10,7 @@
           v-model="previewProfile"
         >
           <v-chip v-for="p in conf.permissions" :key="p.value">
-            <v-icon>{{ conf.icon(p.icon) }}</v-icon> {{ $t(p.text) }}
+            <v-icon>{{ conf.icon(p.icon) }}</v-icon> {{ $t(p.text, { supervisor: group('managers').name }) }}
           </v-chip>
         </v-chip-group>
         <v-chip
@@ -18,7 +18,7 @@
           v-for="p in conf.permissions" :key="p.value"
           outlined class="my-2 mr-2"
         >
-          <v-icon>{{ conf.icon(p.icon) }}</v-icon> {{ $t(p.text) }}
+          <v-icon>{{ conf.icon(p.icon) }}</v-icon> {{ $t(p.text, { supervisor: group('managers').name }) }}
         </v-chip>
       </div>
       <v-divider class="my-2" />

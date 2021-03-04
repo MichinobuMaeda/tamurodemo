@@ -107,12 +107,13 @@ export default {
 
     return {
       ...store,
-      uncategorizedGroups: computed(() => state.groups.filter(group => group.id === 'all' || (
-        !group.deletedAt &&
-        !store.state.categories.some(
-          category => !category.deletedAt && (category.groups || []).includes(group.id)
+      uncategorizedGroups: computed(
+        () => state.groups.filter(group => !group.deletedAt &&
+          !store.state.categories.some(
+            category => !category.deletedAt && (category.groups || []).includes(group.id)
+          )
         )
-      ))),
+      ),
       deletedGroups: computed(() => state.groups.filter(group => group.deletedAt)),
       desc: computed({
         get: () => state.service.conf && state.service.conf.desc,

@@ -7,11 +7,11 @@ export const permissions = [
   {
     icon: 'For permitted',
     value: 'c',
-    text: 'Close members and managers'
+    text: 'Close members and PIC'
   },
   {
     icon: 'For managers',
     value: 'm',
-    text: 'Only managers'
+    text: 'Only PIC'
   }
 ]

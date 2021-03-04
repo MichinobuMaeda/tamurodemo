@@ -42,6 +42,44 @@
         </div>
       </div>
 
+      <v-divider class="my-4" />
+
+      <v-row>
+        <v-col class="col-12 col-sm-6">
+          <FormWithConfirmatioin
+            titleIcon="E-mail"
+            titleText="Change e-mail"
+            labelCurrentPassword="Password"
+            labelValue="New e-mail"
+            labelConfirmation="Confirm new e-mail"
+            messageComfirmationFailed="E-mail confirmation failed"
+            messageUpdateFailed="Incorrect password"
+            :reauthentication="false"
+            :password="false"
+            :rules="[ruleEmail]"
+            @click="setEmail"
+          />
+        </v-col>
+
+        <v-col class="col-12 col-sm-6">
+          <FormWithConfirmatioin
+            titleIcon="Password"
+            titleText="Change password"
+            labelCurrentPassword="Old password"
+            labelValue="New password"
+            labelConfirmation="Confirm new password"
+            messageComfirmationFailed="New password confirmation failed"
+            messageUpdateFailed="Incorrect password"
+            :reauthentication="false"
+            :password="true"
+            :rules="[rulePassword]"
+            @click="setPassword"
+          />
+        </v-col>
+      </v-row>
+
+      <v-divider class="my-4" />
+
       <v-row>
         <v-col class="col-12 col-sm-8 my-1">
           <ConfirmButton
@@ -107,18 +145,20 @@
 import { useStore } from '@/store'
 import { invite, invitationUrl, resetAllSignInSettings } from '@/auth'
 import ConfirmButton from '../../components/ConfirmButton'
+import FormWithConfirmatioin from '../FormWithConfirmatioin'
 
 export default {
   name: 'AdminAccount',
   components: {
-    ConfirmButton
+    ConfirmButton,
+    FormWithConfirmatioin
   },
   props: {
     id: String
   },
   setup (props) {
     const store = useStore()
-    const { state, waitFor } = store
+    const { functions, state, waitFor } = store
 
     return {
       ...store,
@@ -135,6 +175,8 @@ export default {
       },
       invite: () => waitFor(() => invite(store, props.id)),
       invitationUrl,
+      setEmail: value => functions.httpsCallable('setEmail')({ id: props.id, email: value }),
+      setPassword: value => functions.httpsCallable('setPassword')({ id: props.id, email: value }),
       resetAllSignInSettings: () => waitFor(() => resetAllSignInSettings(store, props.id))
     }
   }

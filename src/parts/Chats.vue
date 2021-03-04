@@ -5,8 +5,8 @@
     <v-expansion-panel>
       <v-expansion-panel-header>
         <div>
-          <v-icon>{{ conf.icon(accountId ? 'Contact the administrator' : 'Chat') }}</v-icon>
-          {{ $t(summary ? 'Recent messages' : (accountId ? 'Contact the administrator' : 'Chat')) }}
+          <v-icon>{{ conf.icon(accountId ? 'Contact the supervisor' : 'Chat') }}</v-icon>
+          {{ $t(summary ? 'Recent messages' : (accountId ? 'Contact the supervisor' : 'Chat'), { supervisor: group('managers').name }) }}
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content
@@ -20,8 +20,8 @@
           >
             <LinkButton
               v-if="summary && (state.hotlines[item.id] || []).length"
-              :icon="conf.icon((item.id === me.id) ? 'Contact the administrator' : 'User')"
-              :label="(item.id === me.id) ? $t('Contact the administrator') : account(item.id).name"
+              :icon="conf.icon((item.id === me.id) ? 'Contact the supervisor' : 'User')"
+              :label="(item.id === me.id) ? $t('Contact the supervisor', { supervisor: group('managers').name }) : account(item.id).name"
               @click="goPageUser(item.id)"
             />
             <div v-else-if="!summary && !(state.hotlines[item.id] || []).length">

@@ -115,12 +115,12 @@
       <v-col class="col-12">
         <div class="title--text mb-2">
           <v-icon>{{ conf.icon(picon.m) }}</v-icon>
-          {{ $t('Note for managers') }}
+          {{ $t('Note for PIC', { supervisor: group('managers').name }) }}
         </div>
         <v-sheet outlined class="pa-2">
           <TextEditor
             :multiline="true"
-            :label="$t('Note for managers')"
+            :label="$t('Note for PIC', { supervisor: group('managers').name })"
             v-model="profile(id).descForManagers"
             @save="val => setProfile('descForManagers', val, 'm')"
             :editable="edit"
