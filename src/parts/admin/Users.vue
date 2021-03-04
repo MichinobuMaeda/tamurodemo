@@ -102,7 +102,7 @@
   position: sticky !important;
   position: -webkit-sticky !important;
   left: 0;
-  z-index: 9998;
+  z-index: 1;
 }
 </style>
 
