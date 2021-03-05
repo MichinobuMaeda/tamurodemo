@@ -37,24 +37,6 @@
 						"value": "max-age=0"
 					}
 				]
-			},
-			{
-				"source": "service-worker.js",
-				"headers": [
-					{
-						"key": "Cache-Control",
-						"value": "max-age=0"
-					}
-				]
-			},
-			{
-				"source": "registerServiceWorker.js",
-				"headers": [
-					{
-						"key": "Cache-Control",
-						"value": "max-age=0"
-					}
-				]
 			}
 		]
   },
