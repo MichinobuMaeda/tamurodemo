@@ -1,24 +1,23 @@
 <template>
-  <v-dialog
-    scrollable max-width="1024px"
-    v-model="dialog"
-    @click:outside="dialog = false"
-    @keydown.esc="dialog = false"
+  <v-bottom-sheet
+    v-model="visible"
+    scrollable
+    fullscreen
   >
     <v-card>
-      <v-card-title>
+      <v-card-title class="py-1">
         <span :class="titleColor + ' text-h2'">
           <v-icon large :color="iconColor">{{ icon }}</v-icon>
           {{ title }}
         </span>
         <v-spacer />
         <span class="text-body-2 pr-2">Developers only</span>
-        <v-btn icon @click="dialog = false">
+        <v-btn icon @click="visible = false">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
       <v-divider />
-      <v-card-text style="height: 640px;" class="pa-1">
+      <v-card-text class="pa-1">
         <v-treeview
           :items="tree"
           dense
@@ -30,7 +29,7 @@
         </v-treeview>
       </v-card-text>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <style>
@@ -76,7 +75,7 @@ export default {
   },
   setup (props, { emit }) {
     return {
-      dialog: computed({
+      visible: computed({
         get: () => props.show,
         set: v => emit('showChange', v)
       }),
