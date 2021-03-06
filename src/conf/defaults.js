@@ -13,5 +13,8 @@ export const defaults = {
   ],
   chatSummaryPaneHeight: '240px',
   chatPaneHeight: '360px',
-  hidePrivilegedItems: false
+  hidePrivilegedItems: false,
+  messageSummaryLength: 100,
+  messageSummaryLines: 4,
+  messageShortenTimestampThreshold: 20 * 3600 * 1000
 }

@@ -20,6 +20,7 @@
           >
             <LinkButton
               v-if="summary && (state.hotlines[item.id] || []).length"
+              class="px-0"
               :icon="conf.icon((item.id === me.id) ? 'Contact the supervisor' : 'User')"
               :label="(item.id === me.id) ? $t('Contact the supervisor', { supervisor: group('managers').name }) : account(item.id).name"
               @click="goPageUser(item.id)"
@@ -41,6 +42,7 @@
           >
             <LinkButton
               v-if="summary"
+              class="px-0"
               :icon="conf.icon('Group')"
               :label="item.name"
               @click="goPageGroup(item.id)"

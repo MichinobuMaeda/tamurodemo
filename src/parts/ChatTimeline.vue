@@ -10,8 +10,8 @@
         :color="item.sender === me.id ? 'green lighten-5' : ''"
       >
         <v-card-text class="pa-1">
-          <div v-for="(line, index) in (item.message || '').split('\n')" v-bind:key="index">
-            {{ line || '\u200C' }}
+          <div v-for="(line, index) in formatMessage(item.message || '', summary)" v-bind:key="index">
+            {{ line }}
           </div>
         </v-card-text>
       </v-card>
@@ -25,7 +25,7 @@
         <span
           :class="item.deletedAt ? 'deleted--text' : 'info--text'"
         >
-          {{ withTz(item.createdAt).format(new Date().getTime() - item.createdAt.getTime() > 20 * 3600 * 1000 ? 'lll' : 'h:mm') }}
+          {{ formatTimestamp(item.createdAt) }}
         </span>
         <span
           :class="item.deletedAt ? 'deleted--text' : ''"
@@ -33,14 +33,14 @@
           {{ account(item.sender).name }}
         </span>
         <v-icon
-          v-if="(item.sender === me.id || me.priv.manager) && !item.deletedAt"
+          v-if="!summary && (item.sender === me.id || me.priv.manager) && !item.deletedAt"
           color="primary"
           @click="update(item, { deletedAt: new Date() })"
         >
           {{ conf.icon('Delete') }}
         </v-icon>
         <v-icon
-          v-else-if="(item.sender === me.id || me.priv.manager) && item.deletedAt"
+          v-else-if="!summary && (item.sender === me.id || me.priv.manager) && item.deletedAt"
           color="primary"
           @click="update(item, { deletedAt: null })"
         >
@@ -62,8 +62,26 @@ export default {
   },
   setup () {
     const store = useStore()
+    const { withTz, state } = store
 
-    return store
+    return {
+      ...store,
+      formatMessage: (msg, summary) => {
+        const lines = (
+          (summary && msg && msg.length > state.messageSummaryLength)
+            ? `${msg.slice(0, state.messageSummaryLength - 4)} ...`
+            : (msg || '')
+        ).split('\n').map(line => line || '\u200C')
+        return (summary && lines.length > state.messageSummaryLines)
+          ? [...lines.slice(0, state.messageSummaryLines - 1), '...']
+          : lines
+      },
+      formatTimestamp: ts => withTz(ts).format(
+        new Date().getTime() - ts.getTime() > state.messageShortenTimestampThreshold
+          ? 'lll'
+          : 'h:mm'
+      )
+    }
   }
 }
 </script>
