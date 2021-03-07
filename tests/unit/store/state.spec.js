@@ -111,6 +111,7 @@ test('clearUserData()' +
     groups: [],
     groupChats: {},
     hotlines: {},
+    images: {},
     categories: [],
     invitations: {},
     route: {},

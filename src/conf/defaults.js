@@ -14,7 +14,10 @@ export const defaults = {
   chatSummaryPaneHeight: '240px',
   chatPaneHeight: '360px',
   hidePrivilegedItems: false,
+  messageThumbnailSize: 128,
   messageSummaryLength: 100,
   messageSummaryLines: 4,
-  messageShortenTimestampThreshold: 20 * 3600 * 1000
+  messageSummaryThumbnailCount: 3,
+  messageShortenTimestampThreshold: 20 * 3600 * 1000,
+  uploadFileCountMax: 100
 }

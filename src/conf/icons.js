@@ -64,6 +64,9 @@ const iconList = {
   'Go bottom': 'arrow_downward',
   Preview: 'preview',
   'Install app': 'get_app',
+  Photo: 'image',
+  'Add photo': 'add_photo_alternate',
+  'Broken image': 'broken_image',
   Description: 'description'
 }
 

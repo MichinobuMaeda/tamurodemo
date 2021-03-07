@@ -57,16 +57,22 @@
           </div>
         </div>
 
+        <ImageUploader
+          v-if="!summary"
+          :groupId="groupId"
+          :accountId="accountId"
+        />
         <v-textarea
           v-if="!summary"
+          class="mb-0"
           dense outlined autofocus auto-grow clearable
           rows="2"
-          v-model="message"
+          v-model="page.message"
         >
           <template v-slot:append-outer>
             <v-icon
-              :disabled="!message"
-              :color="message ? 'primary' : 'secondary'"
+              :disabled="!page.message"
+              :color="page.message ? 'primary' : 'secondary'"
               @click="postMessage"
             >
               {{ conf.icon('Send') }}
@@ -78,17 +84,23 @@
   </v-expansion-panels>
 </template>
 
+<style scoped>
+.clear { clear: both; }
+</style>
+
 <script>
 import { useStore, postGroupChat, postHotline } from '@/store'
-import { ref, computed } from '@vue/composition-api'
+import { reactive, computed } from '@vue/composition-api'
 import LinkButton from '../components/LinkButton'
 import ChatTimeline from './ChatTimeline'
+import ImageUploader from './ImageUploader'
 
 export default {
   name: 'Chats',
   components: {
     LinkButton,
-    ChatTimeline
+    ChatTimeline,
+    ImageUploader
   },
   props: {
     groupId: String,
@@ -99,22 +111,23 @@ export default {
     }
   },
   setup (props) {
+    const page = reactive({
+      message: null
+    })
     const store = useStore()
     const { state, update } = store
 
-    const message = ref(null)
-
     const postMessage = async () => {
       if (props.groupId) {
-        await postGroupChat(store, props.groupId, message.value)
+        await postGroupChat(store, props.groupId, page.message)
       } else if (props.accountId) {
-        await postHotline(store, props.accountId, message.value)
+        await postHotline(store, props.accountId, page.message)
       }
-      message.value = null
+      page.message = null
     }
 
     return {
-      message,
+      page,
       ...store,
       expand: computed({
         get: () => state.me.chatSummaryExpand ? 0 : undefined,

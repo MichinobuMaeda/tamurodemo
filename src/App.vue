@@ -11,7 +11,7 @@
     >
       <img
         :style="`width: 40px; filter: brightness(${ this.$vuetify.theme.dark ? '300%' : '100%' });`"
-        :src="conf.baseUrl() + 'img/icons/apple-touch-icon-120x120.png'"
+        :src="`${conf.baseUrl()}img/icons/apple-touch-icon-120x120.png`"
         :alt="(state.service.conf && state.service.conf.name)"
       />
       <v-toolbar-title
@@ -100,9 +100,18 @@
 import { reactive, computed, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import {
-  createStore, initUserData, clearUserData, initServiceData,
-  overrideDefaults, StoreSymbol, isValidAccount,
-  subscribeGroupChats, subscribeHotlines // Disabled for Safari: 2021-02-27 // , initializeMessaging
+  createStore,
+  initUserData,
+  clearUserData,
+  initServiceData,
+  overrideDefaults,
+  StoreSymbol,
+  isValidAccount,
+  // Disabled for Safari: 2021-02-27 initializeMessaging,
+  subscribeGroupChats,
+  subscribeHotlines,
+  requestImageUrl,
+  getImageUrl
 } from './store'
 import {
   getAuthState,
@@ -258,6 +267,27 @@ export default {
         }
         guardRoute(root.$router, root.$route, state)
         avoidEmptyValue(root.$route)
+      }
+    )
+
+    watch(
+      () => state.groupChats,
+      messages => {
+        requestImageUrl(state, messages)
+      }
+    )
+
+    watch(
+      () => state.hotlines,
+      messages => {
+        requestImageUrl(state, messages)
+      }
+    )
+
+    watch(
+      () => state.images,
+      async () => {
+        await getImageUrl(store)
       }
     )
 

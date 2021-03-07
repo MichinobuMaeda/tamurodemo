@@ -16,7 +16,9 @@ export {
   subscribeGroupChats,
   subscribeHotlines,
   postGroupChat,
-  postHotline
+  postHotline,
+  requestImageUrl,
+  getImageUrl
 } from './chats'
 export {
   initServiceData,

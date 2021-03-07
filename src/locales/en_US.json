@@ -163,6 +163,8 @@
   "Buttons are disabled": "Buttons are disabled.",
   "Set the sign-in method": "Please set the sign-in method",
   "Priviliged items": "Priviliged items: {visible}",
+  "multiple image files": "You can upload up to {count} images.",
+  "up to n files": "You can upload up to {count} files.",
   "Show": "Show",
   "Hide": "Hide",
   "Return to": "Return to {target}",

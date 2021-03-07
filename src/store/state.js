@@ -25,6 +25,7 @@ export const clearUserData = state => {
   state.groups = []
   state.groupChats = {}
   state.hotlines = {}
+  state.images = {}
   state.categories = []
   state.invitations = {}
   state.route = {}
