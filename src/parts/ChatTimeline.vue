@@ -21,7 +21,7 @@
       >
         {{ $t('Deleted') }}
       </div>
-      <div :class="item.sender === me.id ? 'pl-8 text-right' : 'pr-8'">
+      <div :class="item.sender === me.id ? 'text-right' : ''">
         <span
           :class="item.deletedAt ? 'deleted--text' : 'info--text'"
         >
