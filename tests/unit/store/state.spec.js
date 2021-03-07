@@ -312,6 +312,7 @@ test('initUserData()' +
 
   // run
   await initUserData({ db, auth, state })
+  await waitRealtimeUpdate()
 
   // evaluate
   expect(state.groups).toHaveLength(4)
@@ -339,6 +340,7 @@ test('initUserData()' +
 
   // run
   await initUserData({ db, auth, state })
+  await waitRealtimeUpdate()
 
   // evaluate
   expect(state.groups).toHaveLength(4)

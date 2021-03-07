@@ -63,11 +63,11 @@ export const updateMe = ({ auth, state }, doc = null) => {
 }
 
 export const initMe = async ({ db, auth, state }, id) => {
-  await db.collection('accounts').doc(id).update({
-    signedInAt: new Date()
-  })
-  const me = castDoc(await db.collection('accounts').doc(id).get())
-  updateMe({ auth, state }, me)
+  const doc = await db.collection('accounts').doc(id).get()
+  if (!doc || !doc.exists) {
+    throw new Error(`failed to get account:${id}`)
+  }
+  updateMe({ auth, state }, castDoc(doc))
 }
 
 export const initUserData = async ({ db, auth, state }) => {
@@ -75,29 +75,29 @@ export const initUserData = async ({ db, auth, state }) => {
   unsubscribeAll(state)
   state.authMessage = ''
 
+  getRealtimeData(
+    state,
+    'users',
+    db.collection('users').orderBy('name', 'asc')
+  )
   await getInitialAndRealtimeData(
     state,
     'groups',
     db.collection('groups').orderBy('name', 'asc')
   )
-  await getInitialAndRealtimeData(
+  getRealtimeData(
     state,
     'categories',
     db.collection('categories').orderBy('seq', 'asc')
   )
-  await getInitialAndRealtimeData(
-    state,
-    'users',
-    db.collection('users').orderBy('name', 'asc')
-  )
   const priv = accountPriv(state, state.me)
-  await getInitialAndRealtimeData(
+  getRealtimeData(
     state,
     'accounts',
     (priv.adminReal || priv.managerReal) ? db.collection('accounts') : db.collection('accounts').doc(state.me.id),
     state => updateMe({ auth, state }, findItem(state.accounts, state.me.id))
   )
-  await getInitialAndRealtimeData(
+  getRealtimeData(
     state,
     'profiles',
     priv.managerReal ? db.collection('profiles') : db.collection('profiles').doc(state.me.id)
@@ -112,20 +112,31 @@ export const initUserData = async ({ db, auth, state }) => {
     state.secrets = secrets
   }
   state.loading = false
+  await db.collection('accounts').doc(state.me.id).update({
+    signedInAt: new Date()
+  })
+}
+
+const castSnapshot = (state, snapshot) => {
+  const priv = accountPriv(state, state.me)
+  return snapshot.docs
+    ? snapshot.docs
+      .filter(doc => priv.adminReal || priv.managerReal || !doc.data().deletedAt)
+      .map(doc => castDoc(doc))
+    : [castDoc(snapshot)]
+}
+
+export const getRealtimeData = (state, propName, queryRef, next) => {
+  state.unsubscribers[propName] = queryRef.onSnapshot(async snapshot => {
+    state[propName] = castSnapshot(state, snapshot)
+    return next ? next(state) : null
+  })
 }
 
 export const getInitialAndRealtimeData = async (state, propName, queryRef, next) => {
-  const castSnapshot = snapshot => {
-    const priv = accountPriv(state, state.me)
-    return snapshot.docs
-      ? snapshot.docs
-        .filter(doc => priv.adminReal || priv.managerReal || !doc.data().deletedAt)
-        .map(doc => castDoc(doc))
-      : [castDoc(snapshot)]
-  }
-  state[propName] = castSnapshot(await queryRef.get())
+  state[propName] = castSnapshot(state, await queryRef.get())
   state.unsubscribers[propName] = queryRef.onSnapshot(async snapshot => {
-    state[propName] = castSnapshot(snapshot)
+    state[propName] = castSnapshot(state, snapshot)
     return next ? next(state) : null
   })
 }

@@ -19,6 +19,7 @@ import {
 beforeEach(async () => {
   store.auth.clear()
   store.functions.clear()
+  await clearDb()
 })
 
 afterAll(async () => {

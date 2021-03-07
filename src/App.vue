@@ -21,7 +21,7 @@
       </v-toolbar-title>
     </v-app-bar>
 
-    <v-main v-if="state.loading || (me && me.id && $route.name === 'signin')">
+    <v-main v-if="showLoading">
       <Loading
         color="h2"
         :size="96"
@@ -72,7 +72,7 @@
     </v-footer>
 
     <Menu
-      v-if="!state.loading"
+      v-if="!showLoading"
       menu-color="menu"
       menu-item-color="menu-item"
       :menuItems="() => menuItems(me, $router)"
@@ -97,7 +97,7 @@
 </style>
 
 <script>
-import { reactive, onMounted, watch, provide } from '@vue/composition-api'
+import { reactive, computed, onMounted, watch, provide } from '@vue/composition-api'
 import * as firebase from './plugins/firebase'
 import {
   createStore, initUserData, clearUserData, initServiceData,
@@ -148,6 +148,8 @@ export default {
     store.standalone = window.matchMedia('(display-mode: standalone)').matches
     const { state, update, conf, account, user, profile, getProfile } = store
 
+    const showLoading = computed(() => state.loading || (state.me && state.me.id && (root.$route.name === 'signin' || !state.users.length)))
+
     onMounted(async () => {
       page.oAuthMessage = getOAuthMessage()
       await initServiceData(store)
@@ -155,7 +157,7 @@ export default {
     })
 
     const avoidEmptyValue = route => {
-      if (isValidAccount(state.me) && !state.loading) {
+      if (!showLoading.value) {
         if (route.name === 'user' && !state.users.some(item => item.id === route.params.id)) {
           root.$router.push({ name: 'top' }).catch(() => {})
         }
@@ -271,6 +273,7 @@ export default {
     return {
       ...store,
       page,
+      showLoading,
       guardMenuItem,
       noSignInMethod: state => state.me.valid && ![...authProviders(store).map(item => item.id), 'email'].some(key => state.me[key]),
       menuItems: (me, router) => guardMenuItem(
