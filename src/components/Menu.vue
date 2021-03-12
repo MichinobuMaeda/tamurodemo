@@ -56,6 +56,8 @@
       @mouseup="state.mouseDown = false"
       @mouseleave="state.mouseDown = false"
       @mousemove="onMenuSwipe"
+      @touchstart="onToucStart"
+      @touchmove="onTouchMove"
       @focusout="onFocusOut"
     >
       <v-icon v-if="state.menuOpen">close</v-icon>
@@ -97,7 +99,9 @@ export default {
       menuOpen: false,
       toolChip: false,
       toolChipTimer: null,
-      mouseDown: false
+      mouseDown: false,
+      startX: 0,
+      startY: 0
     })
 
     const openMenu = () => {
@@ -120,24 +124,21 @@ export default {
       }
     }
 
-    const onMenuSwipe = event => {
-      if (!state.mouseDown) {
-        return
-      }
+    const detectMove = (x, y) => {
       var changed = props.position
-      if (event.movementX < -2) {
+      if (x < -2) {
         if (isRight()) {
           changed = props.position.slice(0, 1) + 'l'
         }
-      } else if (event.movementX > 2) {
+      } else if (x > 2) {
         if (isLeft()) {
           changed = props.position.slice(0, 1) + 'r'
         }
-      } else if (event.movementY < -2) {
+      } else if (y < -2) {
         if (isBottom()) {
           changed = 't' + props.position.slice(1)
         }
-      } else if (event.movementY > 2) {
+      } else if (y > 2) {
         if (isTop()) {
           changed = 'b' + props.position.slice(1)
         }
@@ -146,6 +147,23 @@ export default {
         closeMenu()
         emit('move', changed)
       }
+    }
+
+    const onMenuSwipe = event => {
+      if (state.mouseDown) {
+        detectMove(event.movementX, event.movementY)
+      }
+    }
+
+    const onToucStart = event => {
+      const touchObj = event.changedTouches[0]
+      state.startX = touchObj.pageX
+      state.startY = touchObj.pageY
+    }
+
+    const onTouchMove = event => {
+      const touchObj = event.changedTouches[0]
+      detectMove(touchObj.pageX - state.startX, touchObj.pageY - state.startY)
     }
 
     const onFocusOut = () => {
@@ -160,6 +178,8 @@ export default {
       items: computed(() => isBottom() ? [...props.menuItems()].reverse() : [...props.menuItems()]),
       onMenuClick,
       onMenuSwipe,
+      onToucStart,
+      onTouchMove,
       onFocusOut
     }
   }
