@@ -2,13 +2,15 @@ name: UI CI/CD
 on:
   push:
     paths-ignore:
-      - 'docs/**'
-      - 'functions/**'
-      - 'firestore.*'
-      - 'storage.rules'
-      - '.github/workflows/functions.yaml'
-      - '.github/workflows/firestore.yaml'
-      - '.github/workflows/storage.yaml'
+      - 'public/**'
+      - 'src/**'
+      - 'tests/unit/**'
+      - '*.config.js'
+      - 'package.json'
+      - 'yarn.lock'
+      - 'babel.config.js'
+      - 'firebase.json'
+      - '.github/workflows/ui.yaml'
 jobs:
   build:
     runs-on: ubuntu-latest
