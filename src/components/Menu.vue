@@ -126,21 +126,25 @@ export default {
 
     const detectMove = (x, y) => {
       var changed = props.position
-      if (x < -2) {
-        if (isRight()) {
-          changed = props.position.slice(0, 1) + 'l'
+      if (Math.abs(x) > Math.abs(y)) {
+        if (x < -2) {
+          if (isRight()) {
+            changed = props.position.slice(0, 1) + 'l'
+          }
+        } else if (x > 2) {
+          if (isLeft()) {
+            changed = props.position.slice(0, 1) + 'r'
+          }
         }
-      } else if (x > 2) {
-        if (isLeft()) {
-          changed = props.position.slice(0, 1) + 'r'
-        }
-      } else if (y < -2) {
-        if (isBottom()) {
-          changed = 't' + props.position.slice(1)
-        }
-      } else if (y > 2) {
-        if (isTop()) {
-          changed = 'b' + props.position.slice(1)
+      } else {
+        if (y < -2) {
+          if (isBottom()) {
+            changed = 't' + props.position.slice(1)
+          }
+        } else if (y > 2) {
+          if (isTop()) {
+            changed = 'b' + props.position.slice(1)
+          }
         }
       }
       if (props.position !== changed) {
@@ -159,11 +163,13 @@ export default {
       const touchObj = event.changedTouches[0]
       state.startX = touchObj.pageX
       state.startY = touchObj.pageY
+      event.preventDefault()
     }
 
     const onTouchMove = event => {
       const touchObj = event.changedTouches[0]
       detectMove(touchObj.pageX - state.startX, touchObj.pageY - state.startY)
+      event.preventDefault()
     }
 
     const onFocusOut = () => {
