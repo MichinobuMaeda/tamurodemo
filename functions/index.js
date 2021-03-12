@@ -22,7 +22,7 @@ const firebase = { functions, db, storage, auth, messaging, logger }
 const ent = entries(firebase, api, router, axios)
 
 exports.api =
-  functions.region(region).https.onRequest(ent.api)
+  functions.region('us-central1').https.onRequest(ent.api)
 exports.createAccount =
   functions.region(region).https.onCall(ent.createAccount)
 exports.setEmail =
