@@ -5,6 +5,8 @@ const express = require('express')
 const cors = require('cors')
 const { entries } = require('./entries')
 
+const region = 'asia-northeast2'
+
 const api = express()
 api.use(cors({ origin: true }))
 const router = express.Router()
@@ -14,34 +16,40 @@ const db = admin.firestore()
 const auth = admin.auth()
 const messaging = admin.messaging()
 const logger = functions.logger
-const firebase = { functions, db, auth, messaging, logger }
+const storage = admin.storage()
+const firebase = { functions, db, storage, auth, messaging, logger }
 
 const ent = entries(firebase, api, router, axios)
 
 exports.api =
-  functions.https.onRequest(ent.api)
+  functions.region(region).https.onRequest(ent.api)
 exports.createAccount =
-  functions.https.onCall(ent.createAccount)
+  functions.region(region).https.onCall(ent.createAccount)
 exports.setEmail =
-  functions.https.onCall(ent.setEmail)
+  functions.region(region).https.onCall(ent.setEmail)
 exports.setPassword =
-  functions.https.onCall(ent.setPassword)
+  functions.region(region).https.onCall(ent.setPassword)
 exports.invite =
-  functions.https.onCall(ent.invite)
+  functions.region(region).https.onCall(ent.invite)
 exports.validateInvitation =
-  functions.https.onCall(ent.validateInvitation)
+  functions.region(region).https.onCall(ent.validateInvitation)
 exports.setEmailWithInvitation =
-  functions.https.onCall(ent.setEmailWithInvitation)
+  functions.region(region).https.onCall(ent.setEmailWithInvitation)
 exports.setEmailAndPasswordWithInvitation =
-  functions.https.onCall(ent.setEmailAndPasswordWithInvitation)
+  functions.region(region).https.onCall(ent.setEmailAndPasswordWithInvitation)
 exports.signInWithLineMe =
-  functions.https.onCall(ent.signInWithLineMe)
+  functions.region(region).https.onCall(ent.signInWithLineMe)
 exports.resetUserAuth =
-  functions.https.onCall(ent.resetUserAuth)
+  functions.region(region).https.onCall(ent.resetUserAuth)
 exports.getProfile =
-  functions.https.onCall(ent.getProfile)
+  functions.region(region).https.onCall(ent.getProfile)
+exports.provideImage =
+  functions.region(region).https.onCall(ent.provideImage)
 exports.rejectCreateUserWithoutAccount =
-  functions.auth.user().onCreate(ent.rejectCreateUserWithoutAccount)
-exports.notifyMessage =
-  functions.firestore.document('groups/{groupId}/messages/{messageId}')
-    .onCreate(ent.notifyMessage)
+  functions.region(region).auth.user().onCreate(ent.rejectCreateUserWithoutAccount)
+exports.onGroupCharCreate =
+  functions.region(region).firestore.document('groups/{groupId}/chat/{messageId}')
+    .onCreate(ent.onGroupCharCreate)
+exports.onHotlineCreate =
+  functions.region(region).firestore.document('accounts/{accountId}/hotline/{messageId}')
+    .onCreate(ent.onHotlineCreate)

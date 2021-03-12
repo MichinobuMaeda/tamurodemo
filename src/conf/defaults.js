@@ -1,9 +1,9 @@
 export const defaults = {
-  chatSummaryExpand: true,
-  darkTheme: false,
+  tz: 'Asia/Tokyo',
   locale: 'ja_JP',
   menuPosition: 'br',
-  tz: 'Asia/Tokyo',
+  darkTheme: false,
+  chatSummaryExpand: true,
   waitProcTimeout: 10 * 1000,
   routeExcludeFromStorage: [
     'invitation',
@@ -14,7 +14,9 @@ export const defaults = {
   chatSummaryPaneHeight: '240px',
   chatPaneHeight: '360px',
   hidePrivilegedItems: false,
-  messageThumbnailSize: 128,
+  messageThumbnailWidth: 128,
+  messageThumbnailHeight: 128,
+  messageThumbnailQuality: 30,
   messageSummaryLength: 100,
   messageSummaryLines: 4,
   messageSummaryThumbnailCount: 3,

@@ -16,9 +16,11 @@ export const firebase = Firebase.initializeApp({
   measurementId: 'G-E3ML2Q9BVM'
 })
 
+const region = 'asia-northeast2'
+
 export const auth = firebase.auth()
 export const db = firebase.firestore()
-export const functions = firebase.functions()
+export const functions = firebase.functions(region)
 export const storage = firebase.storage()
 
 // Disabled for Safari: 2021-02-27 // export const messaging = firebase.messaging()

@@ -2,15 +2,16 @@ import { castDoc } from './firestore'
 
 export const requestImageUrl = (state, messages) => {
   var changed = false
-  console.log('requestImageUrl')
   const images = { ...state.images }
   Object.keys(messages).map(key => {
-    console.log(key, messages[key].length)
     messages[key].map(item => {
-      console.log(item.images)
-      item.images && item.images.map(path => {
-        if (images[path] === undefined) {
-          images[path] = null
+      item.images && item.images.map(image => {
+        if (image.path && images[image.path] === undefined) {
+          images[image.path] = null
+          changed = true
+        }
+        if (image.tn && images[image.tn] === undefined) {
+          images[image.tn] = null
           changed = true
         }
       })
@@ -49,7 +50,6 @@ export const subscribeGroupChats = ({ db, state }) => {
       unsubscribers[`chat_${id}`] = db.collection('groups').doc(id)
         .collection('chat').orderBy('createdAt', 'asc')
         .onSnapshot(querySnapshot => {
-          console.log(2, id)
           const groupChats = { ...state.groupChats }
           groupChats[id] = querySnapshot.docs.map(doc => castDoc(doc))
           state.groupChats = groupChats

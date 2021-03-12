@@ -13,7 +13,6 @@ import {
 } from './localStrage'
 
 const redirectToLineAuth = async ({ state }, link = null) => {
-  console.log('redirectToLineAuth', link)
   const request = {
     response_type: 'code',
     client_id: state.service.auth.line_me_client_id,

@@ -67,6 +67,7 @@ const iconList = {
   Photo: 'image',
   'Add photo': 'add_photo_alternate',
   'Broken image': 'broken_image',
+  'Rotate image': 'rotate_right',
   Description: 'description'
 }
 

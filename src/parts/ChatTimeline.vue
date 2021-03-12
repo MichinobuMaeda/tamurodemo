@@ -19,15 +19,23 @@
         v-else-if="!item.deletedAt && item.images"
         :class="item.sender === me.id ? 'text-right' : ''"
       >
-        <span v-for="(path, index) in item.images" :key="path">
+        <span v-for="(image, index) in (item.images || [])" :key="image.path">
+          <v-icon
+            v-if="image.deletedAt"
+            color="secondary"
+          >
+            {{ conf.icon('Broken image') }}
+          </v-icon>
           <v-img
-            v-if="state.images[path] && (!summary || index < state.messageSummaryThumbnailCount)"
-            style="display: inline-block"
+            v-else-if="image.tn && state.images[image.tn] && (!summary || index < state.messageSummaryThumbnailCount)"
+            style="display: inline-block;"
+            class="mt-1 mr-1"
+            :max-height="state.messageThumbnailHeight / (summary ? 2 : 1)"
+            :max-width="state.messageThumbnailWidth / (summary ? 2 : 1)"
             contain
-            :max-height="state.messageThumbnailSize / (summary ? 2 : 1)"
-            :max-width="state.messageThumbnailSize / (summary ? 2 : 1)"
-            :src="state.images[path]"
-            @click="page.originalImage = state.images[path]; page.showOriginalImage = true"
+            :src="state.images[image.tn]"
+            :alt="image.path"
+            @click="page.originalImageRotateDeg = image.deg; page.originalImage = state.images[image.path]; page.showOriginalImage = true"
           />
           <v-icon
             v-else
@@ -35,19 +43,6 @@
           >
             {{ conf.icon('Photo') }}
           </v-icon>
-          <v-bottom-sheet v-model="page.showOriginalImage" inset scrollable :retain-focus="false">
-            <v-card>
-              <v-card-title>
-                <v-spacer />
-                <v-btn icon @click="page.showOriginalImage = false">
-                  <v-icon>close</v-icon>
-                </v-btn>
-              </v-card-title>
-              <v-card-text class="text-center">
-                <v-img :src="page.originalImage" />
-              </v-card-text>
-            </v-card>
-          </v-bottom-sheet>
         </span>
       </div>
       <div
@@ -83,6 +78,23 @@
         </v-icon>
       </div>
     </div>
+    <v-bottom-sheet v-model="page.showOriginalImage" fullscreen scrollable :retain-focus="false">
+      <v-card class="pa-1">
+        <v-card-title>
+          <v-spacer />
+          <v-btn icon @click="page.showOriginalImage = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="text-center px-1 pb-8">
+          <img
+            :src="page.originalImage"
+            :alt="page.originalImage"
+            style="max-width: 100%"
+          />
+        </v-card-text>
+      </v-card>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -99,7 +111,8 @@ export default {
   setup () {
     const page = reactive({
       showOriginalImage: false,
-      originalImageUrl: null
+      originalImageUrl: null,
+      originalImageRotateDeg: 0
     })
     const store = useStore()
     const { storage, withTz, state } = store

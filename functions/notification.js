@@ -3,8 +3,13 @@ const notifyMessage = async (doc, { db, messaging }) => {
   const pauseTs = new Date().getTime() - conf.data().notificationPauseRepetitionTime + 1
   const expTime = conf.data().notificationExpirationTime / 1000
   const icon = conf.data().hosting + conf.data().notificationIconPath
-  const group = await db.collection('groups').doc(doc.ref.parent.parent.id).get()
-  const tokens = await Promise.all(group.data().members
+  const group = await db.collection('groups').doc(
+    doc.ref.parent.id === 'hotline' ? 'managers' : doc.ref.parent.parent.id
+  ).get()
+  const members = (doc.ref.parent.id === 'hotline' && !(group.data().members || []).some(id => id === doc.ref.parent.parent.id))
+    ? [...(group.data().members || []), doc.ref.parent.parent.id]
+    : (group.data().members || [])
+  const tokens = await Promise.all(members
     .filter(id => doc.data().sender !== id)
     .map(async id => {
       const accountRef = db.collection('accounts').doc(id)

@@ -33,7 +33,7 @@ const {
   resetUserAuth,
   getProfile,
   rejectCreateUserWithoutAccount,
-  notifyMessage,
+  // notifyMessage,
   handleUpdateServiceVersion,
   handleValidateInvitation
 } = entries({ db, auth, logger, messaging }, api, router)
@@ -311,24 +311,24 @@ test('rejectCreateUserWithoutAccount()' +
   expect(auth.data[uid]).not.toBeDefined()
 })
 
-test('notifyMessage()' +
-  ' send notification to gtoup members except sender.', async () => {
-  // prepare
-  const token = 'token01'
-  const sender = 'account01'
-  await db.collection('accounts').doc('primary').update({
-    messagingTokens: [{ token, ts: new Date() }]
-  })
-  const message = await db.collection('groups').doc('admins')
-    .collection('messages').add({ sender })
+// test('notifyMessage()' +
+//   ' send notification to gtoup members except sender.', async () => {
+//   // prepare
+//   const token = 'token01'
+//   const sender = 'account01'
+//   await db.collection('accounts').doc('primary').update({
+//     messagingTokens: [{ token, ts: new Date() }]
+//   })
+//   const message = await db.collection('groups').doc('admins')
+//     .collection('messages').add({ sender })
 
-  // run
-  await notifyMessage(await message.get())
+//   // run
+//   await notifyMessage(await message.get())
 
-  // evaluate
-  expect(messaging.data.message.tokens.length).toEqual(1)
-  expect(messaging.data.message.tokens).toContain(token)
-})
+//   // evaluate
+//   expect(messaging.data.message.tokens.length).toEqual(1)
+//   expect(messaging.data.message.tokens).toContain(token)
+// })
 
 test('handleUpdateServiceVersion()' +
   ' call updateVersion()', async () => {
