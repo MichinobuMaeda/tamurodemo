@@ -1,52 +1,38 @@
 <template>
-  <div
-    class="pa-2"
-    :style="menuStyle"
-  >
-    <v-btn
-      v-if="state.position.slice(0, 1) === 't'"
-      :dark="!$vuetify.theme.dark"
-      :light="$vuetify.theme.dark"
-      fab
-      :color="menuColor"
-      @click="onMenuClick"
-      @mousedown="state.mouseDown = true"
-      @mouseup="state.mouseDown = false"
-      @mouseleave="state.mouseDown = false"
-      @mousemove="onMenuSwipe"
-      @focusout="onFocusOut"
-    >
-      <v-icon v-if="state.menuOpen">close</v-icon>
-      <v-icon v-else>menu</v-icon>
-    </v-btn>
+  <div>
     <div
-      v-for="(item, index) in items" :key="index"
-      class="text-center py-2"
+      :style="menuItemsStyles"
     >
-      <v-tooltip
-        :left="state.position.slice(1) === 'r'"
-        :right="state.position.slice(1) === 'l'"
-        v-if="state.menuOpen"
-        :value="state.toolChip"
+      <div
+        v-for="(item, index) in items" :key="index"
+        class="text-center py-2"
       >
-        <template v-slot:activator="{ attrs }">
-          <v-btn
-            v-bind="attrs"
-            :dark="!$vuetify.theme.dark"
-            :light="$vuetify.theme.dark"
-            fab
-            small
-            :color="item.color || menuItemColor"
-            @click="state.menuOpen = !state.menuOpen; item.action()"
-          >
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ Array.isArray(item.label) ? $t(item.label[0], item.label[1]) : $t(item.label) }}</span>
-      </v-tooltip>
+        <v-tooltip
+          :left="state.position.slice(1) === 'r'"
+          :right="state.position.slice(1) === 'l'"
+          v-if="state.menuOpen"
+          :value="state.toolChip"
+        >
+          <template v-slot:activator="{ attrs }">
+            <v-btn
+              v-bind="attrs"
+              :dark="!$vuetify.theme.dark"
+              :light="$vuetify.theme.dark"
+              fab
+              small
+              :color="item.color || menuItemColor"
+              @click="state.menuOpen = !state.menuOpen; item.action()"
+            >
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ Array.isArray(item.label) ? $t(item.label[0], item.label[1]) : $t(item.label) }}</span>
+        </v-tooltip>
+      </div>
     </div>
     <v-btn
-      v-if="state.position.slice(0, 1) === 'b'"
+      v-if="state.position.slice(0, 1) !== 'a'"
+      :style="menuButtonStyles"
       :dark="!$vuetify.theme.dark"
       :light="$vuetify.theme.dark"
       fab
@@ -68,7 +54,9 @@
 </template>
 
 <script>
-import { reactive, computed } from '@vue/composition-api'
+import { reactive, computed, watch } from '@vue/composition-api'
+
+// const isTouch = () => 'ontouchstart' in window || navigator.msMaxTouchPoints
 
 export default {
   name: 'Menu',
@@ -178,9 +166,15 @@ export default {
       setTimeout(closeMenu, 300)
     }
 
+    watch(
+      () => props.position,
+      position => position
+    )
+
     return {
       state,
-      menuStyle: computed(() => menuStyles[state.position]),
+      menuButtonStyles: computed(() => menuButtonStyles[state.position]),
+      menuItemsStyles: computed(() => menuItemsStyles[state.position]),
       items: computed(() => state.position.slice(0, 1) === 'b' ? [...props.menuItems()].reverse() : [...props.menuItems()]),
       onMenuClick,
       onMenuSwipe,
@@ -192,30 +186,57 @@ export default {
   }
 }
 
-const menuStyles = {
+const menuButtonStyles = {
   tl: {
     position: 'fixed',
-    'z-index': 999,
-    top: 0,
-    left: 0
+    'z-index': 9,
+    top: '4px',
+    left: '4px'
   },
   tr: {
     position: 'fixed',
-    'z-index': 999,
-    top: 0,
-    right: 0
+    'z-index': 9,
+    top: '4px',
+    right: '4px'
   },
   bl: {
     position: 'fixed',
-    'z-index': 999,
-    bottom: 0,
-    left: 0
+    'z-index': 9,
+    bottom: '4px',
+    left: '4px'
   },
   br: {
     position: 'fixed',
-    'z-index': 999,
-    bottom: 0,
-    right: 0
+    'z-index': 9,
+    bottom: '4px',
+    right: '4px'
+  }
+}
+
+const menuItemsStyles = {
+  tl: {
+    position: 'fixed',
+    'z-index': 9,
+    top: '64px',
+    left: '12px'
+  },
+  tr: {
+    position: 'fixed',
+    'z-index': 9,
+    top: '64px',
+    right: '12px'
+  },
+  bl: {
+    position: 'fixed',
+    'z-index': 9,
+    bottom: '64px',
+    left: '12px'
+  },
+  br: {
+    position: 'fixed',
+    'z-index': 9,
+    bottom: '64px',
+    right: '12px'
   }
 }
 </script>

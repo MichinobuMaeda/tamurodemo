@@ -68,6 +68,10 @@ export const setFakeWindow = () => {
   }
 }
 
+global.navigator = {
+  msMaxTouchPoints: 0
+}
+
 process.env.BASE_URL = '/'
 
 const currentUser = {

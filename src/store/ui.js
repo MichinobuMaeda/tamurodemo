@@ -29,3 +29,5 @@ export const waitFor = state => async (proc, next = null) => {
     state.waitProc = null
   }
 }
+
+export const isTouch = () => 'ontouchstart' in window || navigator.msMaxTouchPoints
