@@ -4,7 +4,7 @@
     :style="menuStyle"
   >
     <v-btn
-      v-if="position.slice(0, 1) === 't'"
+      v-if="state.position.slice(0, 1) === 't'"
       :dark="!$vuetify.theme.dark"
       :light="$vuetify.theme.dark"
       fab
@@ -24,8 +24,8 @@
       class="text-center py-2"
     >
       <v-tooltip
-        :left="toolChipLeft"
-        :right="toolChipRight"
+        :left="state.position.slice(1) === 'r'"
+        :right="state.position.slice(1) === 'l'"
         v-if="state.menuOpen"
         :value="state.toolChip"
       >
@@ -46,7 +46,7 @@
       </v-tooltip>
     </div>
     <v-btn
-      v-if="position.slice(0, 1) === 'b'"
+      v-if="state.position.slice(0, 1) === 'b'"
       :dark="!$vuetify.theme.dark"
       :light="$vuetify.theme.dark"
       fab
@@ -58,6 +58,7 @@
       @mousemove="onMenuSwipe"
       @touchstart="onToucStart"
       @touchmove="onTouchMove"
+      @touchend="onTouchEnd"
       @focusout="onFocusOut"
     >
       <v-icon v-if="state.menuOpen">close</v-icon>
@@ -90,12 +91,8 @@ export default {
     }
   },
   setup (props, { emit }) {
-    const isTop = () => props.position.slice(0, 1) === 't'
-    const isBottom = () => props.position.slice(0, 1) === 'b'
-    const isLeft = () => props.position.slice(1) === 'l'
-    const isRight = () => props.position.slice(1) === 'r'
-
     const state = reactive({
+      position: props.position,
       menuOpen: false,
       toolChip: false,
       toolChipTimer: null,
@@ -125,30 +122,31 @@ export default {
     }
 
     const detectMove = (x, y) => {
-      var changed = props.position
+      var changed = state.position
       if (Math.abs(x) > Math.abs(y)) {
         if (x < -2) {
-          if (isRight()) {
-            changed = props.position.slice(0, 1) + 'l'
+          if (state.position.slice(1) === 'r') {
+            changed = state.position.slice(0, 1) + 'l'
           }
         } else if (x > 2) {
-          if (isLeft()) {
-            changed = props.position.slice(0, 1) + 'r'
+          if (state.position.slice(1) === 'l') {
+            changed = state.position.slice(0, 1) + 'r'
           }
         }
       } else {
         if (y < -2) {
-          if (isBottom()) {
-            changed = 't' + props.position.slice(1)
+          if (state.position.slice(0, 1) === 'b') {
+            changed = 't' + state.position.slice(1)
           }
         } else if (y > 2) {
-          if (isTop()) {
-            changed = 'b' + props.position.slice(1)
+          if (state.position.slice(0, 1) === 't') {
+            changed = 'b' + state.position.slice(1)
           }
         }
       }
-      if (props.position !== changed) {
+      if (state.position !== changed) {
         closeMenu()
+        state.position = changed
         emit('move', changed)
       }
     }
@@ -167,8 +165,12 @@ export default {
     }
 
     const onTouchMove = event => {
+      event.preventDefault()
+    }
+
+    const onTouchEnd = event => {
       const touchObj = event.changedTouches[0]
-      detectMove(touchObj.pageX - state.startX, touchObj.pageY - state.startY)
+      detectMove((touchObj.pageX - state.startX) / 2, (touchObj.pageY - state.startY) / 2)
       event.preventDefault()
     }
 
@@ -178,14 +180,13 @@ export default {
 
     return {
       state,
-      menuStyle: computed(() => menuStyles[props.position]),
-      toolChipLeft: computed(isRight),
-      toolChipRight: computed(isLeft),
-      items: computed(() => isBottom() ? [...props.menuItems()].reverse() : [...props.menuItems()]),
+      menuStyle: computed(() => menuStyles[state.position]),
+      items: computed(() => state.position.slice(0, 1) === 'b' ? [...props.menuItems()].reverse() : [...props.menuItems()]),
       onMenuClick,
       onMenuSwipe,
       onToucStart,
       onTouchMove,
+      onTouchEnd,
       onFocusOut
     }
   }
