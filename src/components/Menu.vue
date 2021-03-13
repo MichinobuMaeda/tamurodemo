@@ -85,8 +85,9 @@ export default {
       toolChip: false,
       toolChipTimer: null,
       mouseDown: false,
-      startX: 0,
-      startY: 0
+      touchStartX: 0,
+      touchStartY: 0,
+      touchStartedAt: 0
     })
 
     const openMenu = () => {
@@ -147,8 +148,9 @@ export default {
 
     const onToucStart = event => {
       const touchObj = event.changedTouches[0]
-      state.startX = touchObj.pageX
-      state.startY = touchObj.pageY
+      state.touchStartX = touchObj.pageX
+      state.touchStartY = touchObj.pageY
+      state.touchStartedAt = new Date().getTime()
       event.preventDefault()
     }
 
@@ -157,9 +159,14 @@ export default {
     }
 
     const onTouchEnd = event => {
-      const touchObj = event.changedTouches[0]
-      detectMove((touchObj.pageX - state.startX) / 2, (touchObj.pageY - state.startY) / 2)
-      event.preventDefault()
+      const touchedTime = new Date().getTime() - state.touchStartedAt
+      if (touchedTime < 100) {
+        onMenuClick()
+      } else if (touchedTime < 2000) {
+        const touchObj = event.changedTouches[0]
+        detectMove((touchObj.pageX - state.touchStartX) / 2, (touchObj.pageY - state.touchStartY) / 2)
+        event.preventDefault()
+      }
     }
 
     const onFocusOut = () => {
