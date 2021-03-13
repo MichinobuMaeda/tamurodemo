@@ -8,8 +8,8 @@
         class="text-center py-2"
       >
         <v-tooltip
-          :left="state.position.slice(1) === 'r'"
-          :right="state.position.slice(1) === 'l'"
+          :left="position.slice(1) === 'r'"
+          :right="position.slice(1) === 'l'"
           v-if="state.menuOpen"
           :value="state.toolChip"
         >
@@ -31,7 +31,6 @@
       </div>
     </div>
     <v-btn
-      v-if="state.position.slice(0, 1) !== 'a'"
       :style="menuButtonStyles"
       :dark="!$vuetify.theme.dark"
       :light="$vuetify.theme.dark"
@@ -48,13 +47,31 @@
       @focusout="onFocusOut"
     >
       <v-icon v-if="state.menuOpen">close</v-icon>
+      <v-img
+        v-else-if="menuImage"
+        class="unselectable"
+        :src="menuImage"
+        max-width="36px"
+        max-height="36px"
+        :style="`filter: brightness(${ this.$vuetify.theme.dark ? '25%' : '400%' });`"
+      />
       <v-icon v-else>menu</v-icon>
     </v-btn>
   </div>
 </template>
 
+<style scoped>
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+</style>
+
 <script>
-import { reactive, computed, watch } from '@vue/composition-api'
+import { reactive, computed } from '@vue/composition-api'
 
 // const isTouch = () => 'ontouchstart' in window || navigator.msMaxTouchPoints
 
@@ -76,11 +93,11 @@ export default {
     menuItems: {
       type: Function,
       default: null
-    }
+    },
+    menuImage: String
   },
   setup (props, { emit }) {
     const state = reactive({
-      position: props.position,
       menuOpen: false,
       toolChip: false,
       toolChipTimer: null,
@@ -111,31 +128,30 @@ export default {
     }
 
     const detectMove = (x, y) => {
-      var changed = state.position
+      var changed = props.position
       if (Math.abs(x) > Math.abs(y)) {
         if (x < -2) {
-          if (state.position.slice(1) === 'r') {
-            changed = state.position.slice(0, 1) + 'l'
+          if (props.position.slice(1) === 'r') {
+            changed = props.position.slice(0, 1) + 'l'
           }
         } else if (x > 2) {
-          if (state.position.slice(1) === 'l') {
-            changed = state.position.slice(0, 1) + 'r'
+          if (props.position.slice(1) === 'l') {
+            changed = props.position.slice(0, 1) + 'r'
           }
         }
       } else {
         if (y < -2) {
-          if (state.position.slice(0, 1) === 'b') {
-            changed = 't' + state.position.slice(1)
+          if (props.position.slice(0, 1) === 'b') {
+            changed = 't' + props.position.slice(1)
           }
         } else if (y > 2) {
-          if (state.position.slice(0, 1) === 't') {
-            changed = 'b' + state.position.slice(1)
+          if (props.position.slice(0, 1) === 't') {
+            changed = 'b' + props.position.slice(1)
           }
         }
       }
-      if (state.position !== changed) {
+      if (props.position !== changed) {
         closeMenu()
-        state.position = changed
         emit('move', changed)
       }
     }
@@ -173,16 +189,11 @@ export default {
       setTimeout(closeMenu, 300)
     }
 
-    watch(
-      () => props.position,
-      position => position
-    )
-
     return {
       state,
-      menuButtonStyles: computed(() => menuButtonStyles[state.position]),
-      menuItemsStyles: computed(() => menuItemsStyles[state.position]),
-      items: computed(() => state.position.slice(0, 1) === 'b' ? [...props.menuItems()].reverse() : [...props.menuItems()]),
+      menuButtonStyles: computed(() => menuButtonStyles[props.position]),
+      menuItemsStyles: computed(() => menuItemsStyles[props.position]),
+      items: computed(() => props.position.slice(0, 1) === 'b' ? [...props.menuItems()].reverse() : [...props.menuItems()]),
       onMenuClick,
       onMenuSwipe,
       onToucStart,

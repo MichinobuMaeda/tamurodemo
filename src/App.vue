@@ -9,16 +9,13 @@
       elevation="0"
       @click="goPage({ name: 'top' })"
     >
-      <img
-        :style="`width: 40px; filter: brightness(${ this.$vuetify.theme.dark ? '300%' : '100%' });`"
-        :src="`${conf.baseUrl()}img/icons/apple-touch-icon-120x120.png`"
-        :alt="(state.service.conf && state.service.conf.name)"
-      />
+      <v-spacer />
       <v-toolbar-title
         class="theme1r--text text-h1 ml-2"
       >
         {{ (state.service.conf && state.service.conf.name) }}
       </v-toolbar-title>
+      <v-spacer />
     </v-app-bar>
 
     <v-main v-if="showLoading">
@@ -68,16 +65,19 @@
       class="theme1 mt-2"
       height="48px"
     >
+      <v-spacer />
       <span>Ver. {{ conf.version }}</span>
+      <v-spacer />
     </v-footer>
 
     <Menu
       v-if="!showLoading"
       menu-color="menu"
       menu-item-color="menu-item"
+      :menu-image="`${conf.baseUrl()}img/icons/emblem.png`"
       :menuItems="() => menuItems(me, $router)"
       :position="state.menuPosition"
-      @move="menuPosition => me && me.valid && waitFor(() => update(me, { menuPosition }))"
+      @move="onMenuMoved"
     />
 
     <RawDataTree
@@ -316,7 +316,14 @@ export default {
         router,
         me.priv,
         store.goPage
-      )
+      ),
+      onMenuMoved: async menuPosition => {
+        if (state.me && state.me.valid) {
+          await update(state.me, { menuPosition })
+        } else {
+          state.menuPosition = menuPosition
+        }
+      }
     }
   }
 }
