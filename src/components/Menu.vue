@@ -176,7 +176,7 @@ export default {
 
     const onTouchEnd = event => {
       const touchedTime = new Date().getTime() - state.touchStartedAt
-      if (touchedTime < 100) {
+      if (touchedTime < 200) {
         onMenuClick()
       } else if (touchedTime < 2000) {
         const touchObj = event.changedTouches[0]
