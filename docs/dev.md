@@ -11,12 +11,12 @@ Development
 ## Prerequisites
 
 ```
-$ git --version                                                                                  [2:14:32]
+$ git --version
 git version ...
 $ npm -g install npm n firebase-tools eslint @vue/cli
-$ n 10
+$ n 12
 $ node --version
-v10....
+v12....
 ```
 
 ## Set up
