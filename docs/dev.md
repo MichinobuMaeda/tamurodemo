@@ -3,11 +3,6 @@ Development
 
 [README.md](../README.md)
 
-## Accounts
-
-- GitHub: ``MichinobuMaeda/tamuro``
-- Firebase: ``tamuro01``
-
 ## Prerequisites
 
 ```
@@ -17,42 +12,47 @@ $ npm -g install npm n firebase-tools eslint @vue/cli
 $ n 12
 $ node --version
 v12....
+$ java -version
+openjdk version "11..."
 ```
 
 ## Set up
 
+Get Node.js packages.
+
 ```
 $ git clone git@github.com:MichinobuMaeda/tamuro.git
+
+    If you haven't registered your SSH Key on GitHub...
+
+$ git clone https://github.com/MichinobuMaeda/tamuro.git
+```
+
+Get Node.js packages.
+
+```
 $ cd tamuro
 $ cd functions
 $ yarn
 $ cd ..
 $ yarn
-$ firebase login
-$ firebase projects:list
-$ firebase use tamuro01
-Now using project tamuro01
+```
 
+Set ui version.
+
+```
 $ node tools/resetTestVersion.js
 $ cat src/conf/version.js
 export default '0000000'
 
-or
+    or
 
 $ node tools/setTestVersion.js
 $ cat src/conf/version.js
 export default 'xxxxxxx'
 ```
 
-Get "Web API Key"
-
-- https://console.firebase.google.com/
-    - tamuro01
-        - Project overview
-            - Project Settings
-                - Web API Key: 'Axxxxxxxxxxxxxxxxxxx'
-
-Set "Web API Key"
+Set dummy firebase API key.
 
 ```
 $ echo "export default 'Axxxxxxxxxxxxxxxxxxx'" > src/plugins/firebase-api-key.js
