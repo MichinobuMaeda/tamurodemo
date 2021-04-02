@@ -74,7 +74,10 @@ jobs:
         run: echo "export default '$API_KEY'" > src/plugins/firebase-api-key.js
 
       - name: Set version to UI
-        run: echo "export default '`git rev-parse --short HEAD`'" > src/conf/version.js
+        run: echo "export default '$(echo $GITHUB_SHA | cut -c1-7)'" > src/conf/version.js
+
+      - name: Set version to service-worker
+        run: sed s/const\ cacheName\ =\ '.*'/const\ cacheName\ =\ \'$(echo $GITHUB_SHA | cut -c1-7)\'/g -i public/service-worker.js
 
       - name: Unit test
         env:
@@ -86,7 +89,7 @@ jobs:
         run: yarn build
 
       - name: Set version to Hosting
-        run: echo "{\"version\":\"`git rev-parse --short HEAD`\"}" > dist/version.json
+        run: echo "{\"version\":\"$(echo $GITHUB_SHA | cut -c1-7)\"}" > dist/version.json
 
       - name: Deploy UI
         env:
