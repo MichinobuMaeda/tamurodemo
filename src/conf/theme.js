@@ -32,7 +32,8 @@ export const theme = {
       twitter_com: '#1DA1F2',
       line_me: '#00C300',
       yahoo_co_jp: '#FF0132',
-      mixi_jp: '#FFAA00'
+      mixi_jp: '#FFAA00',
+      mymessage: '#E0F2F1'
     },
     dark: {
       primary: colors.indigo.lighten2, // Default: '#2196F3' blue
@@ -63,7 +64,8 @@ export const theme = {
       twitter_com: '#1DA1F2',
       line_me: '#00C300',
       yahoo_co_jp: '#FF0132',
-      mixi_jp: '#FFAA00'
+      mixi_jp: '#FFAA00',
+      mymessage: '#004D40'
     }
   }
 }

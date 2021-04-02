@@ -7,7 +7,7 @@
         v-if="!item.deletedAt && item.message"
         outlined
         :class="item.sender === me.id ? 'ml-8' : 'mr-8'"
-        :color="item.sender === me.id ? 'green lighten-5' : ''"
+        :color="item.sender === me.id ? 'mymessage' : ''"
       >
         <v-card-text class="pa-1">
           <div v-for="(line, index) in formatMessage(item.message || '', summary)" v-bind:key="index">
