@@ -29,43 +29,61 @@
       }
     ],
 		"headers": [
-			{
-				"source": "/",
-				"headers": [
-					{
-						"key": "Cache-Control",
-						"value": "max-age=0"
-					}
-				]
-			},
-			{
-				"source": "/index.html",
-				"headers": [
-					{
-						"key": "Cache-Control",
-						"value": "max-age=0"
-					}
-				]
-			},
-			{
-				"source": "/service-worker.js",
-				"headers": [
-					{
-						"key": "Cache-Control",
-						"value": "max-age=0"
-					}
-				]
-			},
-			{
-				"source": "/registerServiceWorker.js",
-				"headers": [
-					{
-						"key": "Cache-Control",
-						"value": "max-age=0"
-					}
-				]
-			}
-		]
+      {
+        "source": "/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store"
+          }
+        ]
+      },
+      {
+        "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store"
+          }
+        ]
+      },
+      {
+        "source": "/service-worker.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store"
+          }
+        ]
+      },
+      {
+        "source": "/registerServiceWorker.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|js|css|eot|otf|ttf|ttc|woff|woff2|font.css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=604800"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=604800"
+          }
+        ]
+      }
+    ]
   },
   "storage": {
     "rules": "storage.rules"
