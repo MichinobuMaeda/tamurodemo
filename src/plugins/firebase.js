@@ -23,7 +23,7 @@ export const db = firebase.firestore()
 export const functions = firebase.functions(region)
 export const storage = firebase.storage()
 
-export const messaging = process.env.NODE_ENV === 'production' ? firebase.messaging() : null
+export const messaging = Firebase.messaging.isSupported() ? firebase.messaging() : null
 export const webPushCertificateKey = 'BKkzKdvIWlIy4FmHSxbrHMmuDICaY1gvP-GcHscMci_E6m5gH_cImPAnRYN6IaaA66JNiAI3_PwE9IQQ1EpSWDk'
 export const FieldValue = Firebase.firestore.FieldValue
 

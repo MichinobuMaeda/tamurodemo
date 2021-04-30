@@ -13,18 +13,7 @@ const apiKey = 'api_key'
 
 const admin = firebase.initializeAdminApp({ projectId })
 
-// Suspected emulator bug in M1
-const rules = `rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
-    }
-  }
-}
-`
-
-firebase.loadFirestoreRules({ projectId, rules })
+firebase.loadFirestoreRules({ projectId })
 const db = admin.firestore()
 const auth = admin.auth()
 const logger = console
