@@ -1,11 +1,11 @@
 export const initializeMessaging = async (
   { standalone, webPushCertificateKey, messaging, db, state }
 ) => {
-  if (standalone && webPushCertificateKey && process.env.NODE_ENV === 'production') {
+  if (messaging && standalone && webPushCertificateKey && process.env.NODE_ENV === 'production') {
     const token = await messaging.getToken({ vapidKey: webPushCertificateKey })
-    messaging.onMessage(payload => {
-      console.log('Message received. ', payload)
-    })
+    // messaging.onMessage(payload => {
+    //   console.log('Message received. ', payload)
+    // })
     if (token && state.me.id) {
       const ts = new Date()
       await db.runTransaction(async transaction => {
