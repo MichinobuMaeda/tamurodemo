@@ -3,7 +3,7 @@ import 'firebase/firestore'
 import 'firebase/functions'
 import 'firebase/auth'
 import 'firebase/storage'
-// Disabled for Safari: 2021-02-27 // import 'firebase/messaging'
+import 'firebase/messaging'
 import apiKey from './firebase-api-key.js'
 
 export const firebase = Firebase.initializeApp({
@@ -23,7 +23,7 @@ export const db = firebase.firestore()
 export const functions = firebase.functions(region)
 export const storage = firebase.storage()
 
-// Disabled for Safari: 2021-02-27 // export const messaging = firebase.messaging()
+export const messaging = firebase.messaging()
 export const webPushCertificateKey = 'BKkzKdvIWlIy4FmHSxbrHMmuDICaY1gvP-GcHscMci_E6m5gH_cImPAnRYN6IaaA66JNiAI3_PwE9IQQ1EpSWDk'
 export const FieldValue = Firebase.firestore.FieldValue
 

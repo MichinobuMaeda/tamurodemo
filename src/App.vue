@@ -107,7 +107,7 @@ import {
   overrideDefaults,
   StoreSymbol,
   isValidAccount,
-  // Disabled for Safari: 2021-02-27 initializeMessaging,
+  initializeMessaging,
   subscribeGroupChats,
   subscribeHotlines,
   requestImageUrl,
@@ -259,7 +259,7 @@ export default {
             await initUserData(store)
             await updateInvitationStatus(store)
             returnLastRoute(root.$router)
-            // Disabled for Safari: 2021-02-27 // await initializeMessaging(store)
+            await initializeMessaging(store)
           } else {
             clearUserData(state)
             await signOut(store)
