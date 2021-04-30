@@ -34,52 +34,25 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "no-cache, no-store"
+            "value": "public, max-age=31536000"
           }
         ]
       },
       {
-        "source": "/index.html",
+        "source": "precache-manifest.*.js",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "no-cache, no-store"
+            "value": "no-cache"
           }
         ]
       },
       {
-        "source": "/service-worker.js",
+        "source": "service-worker.js",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "no-cache, no-store"
-          }
-        ]
-      },
-      {
-        "source": "/registerServiceWorker.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, no-store"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|js|css|eot|otf|ttf|ttc|woff|woff2|font.css)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=604800"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(json)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=604800"
+            "value": "no-cache"
           }
         ]
       }
