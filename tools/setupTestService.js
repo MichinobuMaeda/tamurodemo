@@ -2,7 +2,7 @@ process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099'
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080'
 
 const request = require('request-promise-native')
-const admin = require('firebase-admin')
+const firebase = require('@firebase/rules-unit-testing')
 const { updateService } = require('../functions/service')
 const { initialData } = require('../functions/initialData')
 const accounts = require('../functions/accounts')
@@ -11,33 +11,24 @@ const projectId = 'tamuro01'
 const password = 'password'
 const apiKey = 'api_key'
 
-admin.initializeApp({ projectId })
+const admin = firebase.initializeAdminApp({ projectId })
 
+// Suspected emulator bug in M1
+const rules = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+`
+
+firebase.loadFirestoreRules({ projectId, rules })
 const db = admin.firestore()
 const auth = admin.auth()
 const logger = console
 const context = { db, auth, logger }
-
-const clearDb = async () => {
-  const getDocRefs = async parent => {
-    const docRefs = []
-    const collections = (await parent.listCollections()).map(collection => collection.id)
-    const result = await Promise.all(
-      collections.map(collection => db.collection(collection).listDocuments())
-    )
-    result.forEach(refs => { refs.forEach(ref => { docRefs.push(ref) }) })
-    await Promise.all(
-      docRefs.map(async ref => {
-        (await getDocRefs(ref)).forEach(ref => {
-          docRefs.push(ref)
-        })
-      })
-    )
-    return docRefs
-  }
-  const docRefs = await getDocRefs(db)
-  await Promise.all(docRefs.map(ref => ref.delete()))
-}
 
 const clearAuth = async () => {
   await request({
@@ -49,11 +40,11 @@ const clearAuth = async () => {
   })
 }
 
-const deleteApp = () => admin.app().delete()
+// const deleteApp = () => admin.app().delete()
 
 const setupService = async () => {
   await clearAuth()
-  await clearDb()
+  await firebase.clearFirestoreData({ projectId })
   await updateService(context, initialData)
 
   // set API Key.
@@ -160,9 +151,9 @@ const setupService = async () => {
 setupService()
   .then(() => {
     console.log('complete')
-    return deleteApp()
+    // return deleteApp()
   })
   .catch(e => {
     console.error(e)
-    return deleteApp()
+    // return deleteApp()
   })
