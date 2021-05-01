@@ -4,7 +4,7 @@ const fs = require('fs')
 const { initialData } = require('../../../functions/initialData')
 const { updateService } = require('../../../functions/service')
 
-const projectId = 'tamuro01'
+const projectId = 'tamuro02'
 const apiKey = 'test-api-key'
 const primary = 'primary'
 const version = 'testver01'

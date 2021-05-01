@@ -7,7 +7,7 @@ const { updateService } = require('../functions/service')
 const { initialData } = require('../functions/initialData')
 const accounts = require('../functions/accounts')
 
-const projectId = 'tamuro01'
+const projectId = 'tamuro02'
 const password = 'password'
 const apiKey = 'api_key'
 
@@ -22,7 +22,7 @@ const context = { db, auth, logger }
 const clearAuth = async () => {
   await request({
     method: 'DELETE',
-    uri: 'http://localhost:9099/emulator/v1/projects/tamuro01/accounts',
+    uri: 'http://localhost:9099/emulator/v1/projects/tamuro02/accounts',
     headers: {
       Authorization: 'Bearer owner'
     }

@@ -78,7 +78,7 @@ paragraph paragraph paragraph paragraph paragraph paragraph.
       github_com: false,
       microsoft_com: false,
       twitter_com: false,
-      line_me: true,
+      line_me: false,
       line_me_grant_type: 'authorization_code',
       line_me_scope: 'profile openid',
       line_me_iss: 'https://access.line.me',

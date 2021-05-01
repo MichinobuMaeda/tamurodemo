@@ -1,7 +1,7 @@
 const path = require('path')
 const admin = require('firebase-admin')
 
-const projectId = 'tamuro01'
+const projectId = 'tamuro02'
 process.env.GCLOUD_PROJECT = projectId
 process.env.FIREBASE_CONFIG = path.join(__dirname, '..', 'firebase-adminsdk.json')
 const serviceAccount = require(process.env.FIREBASE_CONFIG)
