@@ -112,9 +112,10 @@ Set CI/CD Secrets
 
 ```
 $ node ./tools/setupService.js
-✔ Display name: 
-✔ E-mail: 
-✔ Password: 
+? Web API key: 
+? Display name: 
+? E-mail: 
+? Password: 
 ```
 
 [Set up a local development environment](dev.md)
