@@ -95,6 +95,14 @@ $ firebase use [Project ID]
     Using project [Project ID]
 ```
 
+## Codecov
+
+https://codecov.io/
+
+- Setting
+    - Repositories
+        - Add new repository -> [CODECOV_TOKEN] 
+
 ## Git
 
 Create git repository and push sources.
@@ -107,6 +115,7 @@ Set CI/CD Secrets
             - New repository secret
                 - WEB_API_KEY: [Web API Key]
                 - FIREBASE_CI_TOKEN: [CI token]
+                - CODECOV_TOKEN: [CODECOV_TOKEN]
 
 ## Initial data
 

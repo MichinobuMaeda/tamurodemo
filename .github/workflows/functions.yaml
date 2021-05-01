@@ -73,6 +73,7 @@ jobs:
       - name: Unit test
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         working-directory: ${{ github.workspace }}
         run: yarn test:unit:ci
 

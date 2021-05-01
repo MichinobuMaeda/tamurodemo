@@ -74,7 +74,7 @@
       v-if="!showLoading"
       menu-color="menu"
       menu-item-color="menu-item"
-      :menu-image="`${conf.baseUrl()}img/icons/emblem.png`"
+      :menu-image="`${conf.baseUrl()}img/icons/android-chrome-512x512.png`"
       :menuItems="() => menuItems(me, $router)"
       :position="state.menuPosition"
       @move="onMenuMoved"
