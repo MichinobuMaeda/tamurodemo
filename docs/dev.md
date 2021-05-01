@@ -1,24 +1,11 @@
-Development
+Development environment
 =====
 
-[README.md](../README.md)
+[README](../README.md)
 
-## Prerequisites
+[Prerequisites](prerequisites.md)
 
-```
-$ git --version
-git version ...
-$ npm -g install npm n firebase-tools eslint @vue/cli
-$ n 12
-$ node --version
-v12....
-$ java -version
-openjdk version "11..."
-```
-
-## Set up
-
-Get Node.js packages.
+## Clone git repository.
 
 ```
 $ git clone git@github.com:MichinobuMaeda/tamuro.git
@@ -28,7 +15,7 @@ $ git clone git@github.com:MichinobuMaeda/tamuro.git
 $ git clone https://github.com/MichinobuMaeda/tamuro.git
 ```
 
-Get Node.js packages.
+## Get Node.js packages.
 
 ```
 $ cd tamuro
@@ -38,7 +25,7 @@ $ cd ..
 $ yarn
 ```
 
-Set ui version.
+## Set UI version.
 
 ```
 $ node tools/resetTestVersion.js
@@ -52,7 +39,7 @@ $ cat src/conf/version.js
 export default 'xxxxxxx'
 ```
 
-Set dummy firebase API key.
+## Set dummy firebase API key.
 
 ```
 $ echo "export default 'Axxxxxxxxxxxxxxxxxxx'" > src/plugins/firebase-api-key.js
@@ -70,13 +57,13 @@ i  hub: Stopping emulator hub
 ✨  Done in 113.64s.
 ```
 
-Run only one test suites.
+Coverage report: ``<Project>/coverage/lcov-report/index.html``
+
+If you want to run only one test suites.
 
 ```
 $ ./tools/testOnly.sh tests/unit/auth/admin.spec.js
 ```
-
-Open coverage report with a web browser: ``<Project>/coverage/lcov-report/index.html``
 
 ## Local server
 
@@ -106,6 +93,4 @@ Test accounts
 | deleted@example.com | password | - | - | - | o | o |
 
 
-Stop local server
-
-^C
+Stop local server with [Ctrl]+[C]

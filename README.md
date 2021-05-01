@@ -1,10 +1,9 @@
 Tamuro
 ==========
 
-- [Development](docs/dev.md)
-- [Vue.js](docs/vue.md)
-- [Firebase](docs/firebase.md)
-- [Configuration](docs/conf.md)
+- [Prerequisites](docs/prerequisites.md)
+- [Development environment](docs/dev.md)
+- [Create this project](docs/project.md)
 
 Currently under development.
 
