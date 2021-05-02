@@ -36,7 +36,7 @@ https://console.firebase.google.com/
 - [Project ID]
     - Usage and billing
         - Details & settings
-            - Modify plan: Blaze
+            - Modify plan: Blaze ( required for functiond )
     - Project settings
         - General
             - Default GCP resource location: asia-northeast1 (Tokyo) or 2 (Osaka)
@@ -45,9 +45,9 @@ https://console.firebase.google.com/
                 - Support email: your email address
             - Your apps
                 - Web (</>)
-                    - App nickname
+                    - App nickname: 
                     - Also set up Firebase Hosting for this app.
-                    - Firebase SDK snippet: [Config] -- paste to ``src/plugins/firebase.js`` except ``apiKey``
+                    - Firebase SDK snippet: [Config] -- copy & paste to ``src/plugins/firebase.js`` except ``apiKey``
             - Web API Key: [Web API Key] -- use later
         - Service accounts
             - Firebase Admin SDK
@@ -55,11 +55,6 @@ https://console.firebase.google.com/
         - Usage and billing
             - Modify plan
                 - Blaze [Select plan] → [Purchase]
-        - Cloud Messageing
-            - Web configuration
-                - Web Push certificates
-                    - Generate key pair
-                        - Key pair: [Web Push certificates] -- paste to ``src/plugins/firebase.js`` except ``webPushCertificateKey``
     - Authentication
         - Sign in method
             - Email/Password: Enable
@@ -70,6 +65,12 @@ https://console.firebase.google.com/
     - Cloud Messageing
         - Send your first message
             - Enable Google Analytics
+    - Project settings
+        - Cloud Messageing
+            - Web configuration
+                - Web Push certificates
+                    - Generate key pair
+                        - Key pair: [Web Push certificates] -- paste to ``src/plugins/firebase.js`` except ``webPushCertificateKey``
 
 https://console.cloud.google.com
 
@@ -86,14 +87,30 @@ paste [Project ID] to ``.firebaserc `` ``projects.default``
 
 ```
 $ firebase login
+
 $ firebase login:ci
 [CI token] -- use later
+
 $ firebase use [Project ID]
 ? Which Firebase CLI features do you want to set up for this folder?
     Firestore, Functions, Hosting, Storage, Emulators
 ? Select a default Firebase project for this directory:
     Using project [Project ID]
+
+$ firebase deploy --only storage,firestore
 ```
+
+## Codecov
+
+https://codecov.io/
+
+- Setting
+    - Repositories
+        - Add new repository
+        - [repository name]
+            - Settings
+                - Default Branch
+                    - Branch Name: mastar
 
 ## Git
 
@@ -112,9 +129,10 @@ Set CI/CD Secrets
 
 ```
 $ node ./tools/setupService.js
-✔ Display name: 
-✔ E-mail: 
-✔ Password: 
+? Web API key: 
+? Display name: 
+? E-mail: 
+? Password: 
 ```
 
 [Set up a local development environment](dev.md)
