@@ -1,1 +1,1 @@
-node ./node_modules/.bin/firebase emulators:exec --only firestore,hosting "node ./node_modules/.bin/vue-cli-service test:unit %1"
+node_modules\.bin\firebase.cmd emulators:exec --only firestore,hosting "node_modules\.bin\vue-cli-service.cmd test:unit %1"
