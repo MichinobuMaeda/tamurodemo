@@ -8,17 +8,17 @@ Development environment
 ## Clone git repository.
 
 ```
-$ git clone git@github.com:MichinobuMaeda/tamuro.git
+$ git clone git@github.com:MichinobuMaeda/tamurodemo.git
 
     If you haven't registered your SSH Key on GitHub...
 
-$ git clone https://github.com/MichinobuMaeda/tamuro.git
+$ git clone https://github.com/MichinobuMaeda/tamurodemo.git
 ```
 
 ## Get Node.js packages.
 
 ```
-$ cd tamuro
+$ cd tamurodemo
 $ cd functions
 $ yarn
 $ cd ..

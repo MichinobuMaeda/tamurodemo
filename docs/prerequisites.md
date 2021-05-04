@@ -15,7 +15,7 @@ $ n 12
 $ node --version
 v12....
 
-$ npm -g install firebase-tools eslint jest @vue/cli
+$ npm -g install yarn firebase-tools eslint jest @vue/cli
 
 ```
 
