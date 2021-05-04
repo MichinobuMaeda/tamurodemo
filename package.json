@@ -6,13 +6,13 @@
     "node": "12"
   },
   "scripts": {
-    "serve": "firebase emulators:exec --ui --only auth,firestore,functions 'node tools/setupTestService.js && vue-cli-service serve --open --port=8000'",
+    "serve": "firebase emulators:exec --ui --only auth,firestore,functions \"node tools/setupTestService.js && vue-cli-service serve --open --port=8000\"",
     "build": "vue-cli-service build",
-    "test:unit": "firebase emulators:exec 'vue-cli-service test:unit --coverage --silent' --only firestore,hosting",
-    "test:unit:ci": "firebase emulators:exec 'vue-cli-service test:unit --coverage --silent && codecov' --only firestore,hosting --token \"$FIREBASE_TOKEN\"",
+    "test:unit": "firebase emulators:exec \"vue-cli-service test:unit --coverage --silent\" --only firestore,hosting",
+    "test:unit:ci": "firebase emulators:exec \"vue-cli-service test:unit --coverage --silent && codecov\" --only firestore,hosting --token \"$FIREBASE_TOKEN\"",
     "lint": "vue-cli-service lint",
     "deploy": "firebase deploy",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
+    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
     "@vue/composition-api": "^1.0.0-beta.9",
