@@ -25,28 +25,6 @@ $ cd ..
 $ yarn
 ```
 
-## Set UI version.
-
-```
-$ node tools/resetTestVersion.js
-$ cat src/conf/version.js
-export default '0000000'
-
-    or
-
-$ node tools/setTestVersion.js
-$ cat src/conf/version.js
-export default 'xxxxxxx'
-```
-
-## Set dummy firebase API key.
-
-```
-$ echo "export default 'Axxxxxxxxxxxxxxxxxxx'" > src/plugins/firebase-api-key.js
-$ cat src/plugins/firebase-api-key.js
-export default 'Axxxxxxxxxxxxxxxxxxx'
-```
-
 ## Unit test
 
 ```
