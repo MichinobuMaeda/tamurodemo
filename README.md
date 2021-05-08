@@ -7,7 +7,7 @@ Tamuro デモ用ソース
 
 [![codecov](https://codecov.io/gh/MichinobuMaeda/tamurodemo/branch/master/graph/badge.svg?token=BwGnjvAxsk)](https://codecov.io/gh/MichinobuMaeda/tamurodemo)
 
-開発用のリポジトリは https://github.com/MichinobuMaeda/tamuro です。
+元の開発用のリポジトリは https://github.com/MichinobuMaeda/tamuro です。
 
 デモ用アプリは https://tamuro02.web.app/ です。
 
@@ -19,6 +19,13 @@ Tamuro デモ用ソース
 - node.js ( v12 〜 )
 - java ( OpenJDK の JRE でよい )
 
+初めて git を使う場合はユーザ名とメールアドレスを設定すること。
+
+```bash
+$ git config --global user.name "FIRST_NAME LAST_NAME"
+$ git config --global user.email "MY_NAME@example.com"
+```
+
 ### 1.1. Debian 10 の場合
 
 Node.js は
@@ -26,11 +33,9 @@ Node.js は
 - NVM 使って複数のバージョンの Node.js をインストールする。
 - 新ししいバージョンの Node.js を入れて n で古いバージョンに切り替える。
 
-のどちらかの方法でバージョンを切り替えができるようにする。以下は n  を使う例。
+のどちらかの方法でバージョンを切り替えができるようにする。以下は n を使う例。
 
-`apt` コマンドでは Node.js の古いバージョンが入ってしまうので [h ttps://github.com/nodesource/distributions/blob/master/README.md](https://github.com/nodesource/distributions/blob/master/README.md)
-
-の手順で入れる。LTS ( Long time support ) の 14 または 16 が無難。
+`apt` コマンドでは Node.js の古いバージョンが入ってしまうので [h ttps://github.com/nodesource/distributions/blob/master/README.md](https://github.com/nodesource/distributions/blob/master/README.md) の手順で入れる。LTS ( Long time support ) の 14 または 16 が無難。
 
 ```bash
 $ sudo apt update
@@ -42,18 +47,11 @@ $ npm -g install npm n
 $ n 12
 $ node --version
 v12....
-$ npm -g install firebase-tools jest eslint @vue/cli
+$ npm -g install yarn firebase-tools jest eslint @vue/cli
 
 $ sudo apt install default-jre
 $ java -version
 openjdk version "11..."
-```
-
-初めて git を使う場合はユーザ名とメールアドレスを設定すること。
-
-```bash
-$ git config --global user.name "FIRST_NAME LAST_NAME"
-$ git config --global user.email "MY_NAME@example.com"
 ```
 
 ### 1.2 Windows の場合
@@ -61,38 +59,7 @@ $ git config --global user.email "MY_NAME@example.com"
 WSL 2 を利用するのが無難。その場合は Linux と同じ。
 [https://docs.microsoft.com/ja-jp/windows/wsl/install-win10](https://docs.microsoft.com/ja-jp/windows/wsl/install-win10)
 
-それ以外の場合は Chocolatey ( [https://chocolatey.org/](https://chocolatey.org/) ) を利用するのが現実的。個別にインストールするよりマシだがそこそこたいへん。 Node.js の `n` は Windows に対応していないので バージョンは 12 を指定してインストールする。 NVM については未確認。
-
-```bash
-$ sudo apt update
-$ sudo apt install git
-$ git --version
-git version ...
-
-$ npm -g install npm n
-$ n 12
-$ node --version
-v12....
-$ npm -g install firebase-tools jest eslint @vue/cli
-
-$ sudo apt install default-jre
-$ java -version
-openjdk version "11..."
-```
-
-初めて git を使う場合はユーザ名とメールアドレスを設定すること。
-
-```bash
-$ git config --global user.name "FIRST_NAME LAST_NAME"
-$ git config --global user.email "MY_NAME@example.com"
-```
-
-### 1.2 Windows の場合
-
-WSL 2 を利用するのが無難。その場合は Linux と同じ。
-[https://docs.microsoft.com/ja-jp/windows/wsl/install-win10](https://docs.microsoft.com/ja-jp/windows/wsl/install-win10)
-
-それ以外の場合は Chocolatey ( [https://chocolatey.org/](https://chocolatey.org/) ) を利用するのが現実的。個別にインストールするよりマシだがそこそこたいへん。 Node.js の `n` は Windows に対応していないので バージョンは 12 を指定してインストールする。
+それ以外の場合は Chocolatey ( [https://chocolatey.org/](https://chocolatey.org/) ) を利用するのが現実的。個別にインストールするよりマシだがそこそこたいへん。 Node.js の `n` は Windows に対応していないので NVM を使う。手順はこちら https://michinobu.jp/tec/dialy/windowschocogitnodejs
 
 ### 1.3. Mac の場合
 
@@ -133,7 +100,7 @@ Fork の手順は [https://docs.github.com/ja/github/getting-started-with-github
 私自身は自分のリポジトリを Fork できないので以下の手順でコピーを作成した。
 [https://github.com/youraccount](https://github.com/youraccount) で New repository を選択
 
-![New repository](./newrepo.png)
+![New repository](./docs/newrepo.png)
 
 Repository name: tamurodemo として [Create repository]
 
@@ -154,7 +121,7 @@ $ git pull upstream master
 
 ### 3.3. デモ用にソースを変更
 
-Firebase のプロジェクトを変更する。
+Firebase のプロジェクトを変更する。ソースの以下の場所に記載されている。
 
 ```bash
 $ grep -r tamuro01 .
@@ -173,6 +140,8 @@ $ grep -r tamuro01 .
 
 "tamuro01" を "tamuroYourName" に全置換する。
 
+firebase コマンドが ``tamuroYourName`` を参照するように設定変更する。
+
 ```bash
 $ firebase use tamuroYourName
 Now using project tamuroYourName
@@ -182,9 +151,9 @@ Firebase のプロジェクトの "firebaseConfig" の apiKey 以外の値を sr
 
 Firebase のプロジェクトの "Web Push certificates" の "Key pair" の値を src/plugins/firebase.js の変数 webPushCertificateKey に反映する。
 
-[https://github.com/MichinobuMaeda/tamuro/blob/master/docs/dev.md](https://github.com/MichinobuMaeda/tamuro/blob/master/docs/dev.md) の手順でローカルでの動作を確認する。ローカルでテストが通らない場合は、 GitHub に push してもActions でエラーになる。
+[https://github.com/MichinobuMaeda/tamuro/blob/master/docs/dev.md](https://github.com/MichinobuMaeda/tamuro/blob/master/docs/dev.md) の手順でローカルでの動作を確認する。ローカルでテストが通らない場合は、 GitHub に push しても Actions でエラーになる。
 
-public/img/icons/safari-pinned-tab.svg をデモ用に変更する。
+public/img/icons/safari-pinned-tab.svg をデモ用に変更して
 
 ```
 $ node tools/resize-icons.js
