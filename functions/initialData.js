@@ -5,7 +5,7 @@ const initialData = ts => [
     data: {
       version: '0000000',
       name: 'Tamuro',
-      hosting: 'https://tamuro01.web.app',
+      hosting: 'https://tamuro02.web.app',
       invitationExpirationTime: 24 * 3600 * 1000,
       notificationExpirationTime: 10 * 24 * 3600 * 1000,
       notificationPauseRepetitionTime: 3 * 3600 * 1000,

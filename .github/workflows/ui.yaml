@@ -100,4 +100,4 @@ jobs:
       - name: Set version to DB
         env:
           API_KEY: ${{ secrets.WEB_API_KEY }}
-        run: curl https://tamuro01.web.app/updateServiceVersion\?key\=$API_KEY
+        run: curl https://tamuro02.web.app/updateServiceVersion\?key\=$API_KEY
